@@ -1,6 +1,35 @@
 import pandas as pd
 import numpy as np
 
+def zipf_distribution(keys, alpha):
+    """
+    Method to generate Zipf distribution's probabilities
+    :param keys: File keys
+    :param alpha: Zipf distribution's parameter
+    :return: probabilities: Zipf distribution's probabilities
+    """
+    # calculate the probability of the keys according to Zipf's distribution
+    probabilities = 1.0 / np.power(keys, alpha)
+
+    # normalize probabilities to make sum to 1
+    probabilities = probabilities / np.sum(probabilities)
+
+    return probabilities
+
+def create_dataset(timestamps, requests, file_name):
+    """
+    Method to create the dataset
+    :param timestamps: Timestamps (first column)
+    :param requests: File requests (second column)
+    :param file_name: The name of the dataset file
+    :return:
+    """
+    # create the dataframe
+    df = pd.DataFrame({'timestamp': timestamps, 'key': requests})
+
+    # convert the dataframe to CSV file
+    df.to_csv(file_name, index=False)
+
 def generate_static_zipf_requests(n_requests=10000, n_keys=5000, alpha=1.3):
     """
     Method to generate static access logs according to the Zipf's distribution
@@ -62,32 +91,3 @@ def generate_zipf_dynamic_requests(
 
     # create the dataset
     create_dataset(timestamps, requests, 'dynamic_access_logs.csv')
-
-def zipf_distribution(keys, alpha):
-    """
-    Method to generate Zipf distribution's probabilities
-    :param keys: File keys
-    :param alpha: Zipf distribution's parameter
-    :return: probabilities: Zipf distribution's probabilities
-    """
-    # calculate the probability of the keys according to Zipf's distribution
-    probabilities = 1.0 / np.power(keys, alpha)
-
-    # normalize probabilities to make sum to 1
-    probabilities = probabilities / np.sum(probabilities)
-
-    return probabilities
-
-def create_dataset(timestamps, requests, file_name):
-    """
-    Method to create the dataset
-    :param timestamps: Timestamps (first column)
-    :param requests: File requests (second column)
-    :param file_name: The name of the dataset file
-    :return:
-    """
-    # create the dataframe
-    df = pd.DataFrame({'timestamp': timestamps, 'key': requests})
-
-    # convert the dataframe to CSV file
-    df.to_csv(file_name, index=False)
