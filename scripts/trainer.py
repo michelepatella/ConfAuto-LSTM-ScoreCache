@@ -1,4 +1,3 @@
-import pandas as pd
 from model.lstm_model import LSTM
 from utils.access_log_dataset import AccessLogsDataset
 from utils.config_loader import load_config
@@ -18,7 +17,7 @@ def train():
     training_config = config['training']
 
     # load the dataset
-    dataset = AccessLogsDataset(data_config['static_dataset_path'])
+    dataset = AccessLogsDataset(data_config['static_train_path'])
     dataloader = DataLoader(dataset=dataset, batch_size=training_config['batch_size'], shuffle=True)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

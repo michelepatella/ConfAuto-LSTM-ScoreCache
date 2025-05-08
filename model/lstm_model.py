@@ -61,13 +61,13 @@ class LSTM(nn.Module):
         )
 
         # fully-connected layer
-        self.fc = nn.Linear(self.hidden_size, self.n_keys)
+        self.fc = nn.Linear(self.hidden_size, self.n_keys + 1)
 
     def forward(self, x):
         """
         Method to perform the forward pass through the LSTM.
         :param self: LSTM model
-        :param x: [batch_size, seq_len, embedding_dim]
+        :param x: Tensor of shape [batch_size, seq_len]
         :return: logits
         """
         # embedding

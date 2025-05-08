@@ -1,9 +1,7 @@
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
-
 from utils.config_loader import load_config
-
 
 class AccessLogsDataset(Dataset):
 

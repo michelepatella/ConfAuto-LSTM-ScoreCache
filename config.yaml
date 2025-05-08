@@ -21,5 +21,11 @@ data:
   alpha_start: 1.3
   alpha_end: 1.8
   time_steps: 100
-  static_dataset_path: "../data/static_access_logs.csv"
-  dynamic_dataset_path: "../data/dynamic_access_logs.csv"
+  train_ratio: 0.7
+  val_ratio: 0.15
+  static_train_path: "../data/static_train_access_logs.csv"
+  static_val_path: "../data/static_val_access_logs.csv"
+  static_test_path: "../data/static_test_access_logs.csv"
+  dynamic_train_path: "../data/dynamic_train_access_logs.csv"
+  dynamic_val_path: "../data/dynamic_val_access_logs.csv"
+  dynamic_test_path: "../data/dynamic_test_access_logs.csv"
