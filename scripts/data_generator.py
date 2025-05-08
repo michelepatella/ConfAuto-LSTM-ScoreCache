@@ -7,7 +7,7 @@ def zipf_distribution(keys, alpha):
     Method to generate Zipf distribution's probabilities.
     :param keys: File keys
     :param alpha: Zipf distribution's parameter
-    :return: probabilities: Zipf distribution's probabilities
+    :return: Zipf distribution's probabilities
     """
     # calculate the probability of the keys according to Zipf's distribution
     probabilities = 1.0 / np.power(keys, alpha)

@@ -5,7 +5,7 @@ class LSTM(nn.Module):
 
     def __init__(
             self,
-            input_size=None,
+            embedding_dim=None,
             hidden_size=None,
             num_layers=None,
             bias=None,
@@ -13,11 +13,11 @@ class LSTM(nn.Module):
             dropout=None,
             bidirectional=None,
             proj_size=None,
-            num_keys=None
+            n_keys=None
     ):
         """
         Method to initialize the LSTM model with output probabilities.
-        :param input_size: Number of input features
+        :param embedding_dim: Embedding layer dimension
         :param hidden_size: Number of hidden features
         :param num_layers: Number of LSTM layers
         :param bias: Indicates whether bias should be applied
@@ -25,7 +25,7 @@ class LSTM(nn.Module):
         :param dropout: Dropout layer to apply
         :param bidirectional: Indicates if the LSTM should be bidirectional
         :param proj_size: Size of the projection layer
-        :param num_keys: Number of cache keys
+        :param n_keys: Number of cache keys
         """
         super(LSTM, self).__init__()
 
@@ -34,8 +34,8 @@ class LSTM(nn.Module):
         model_config = config['model']
         data_config = config['data']
 
-        # define the model configuration (+ num_keys)
-        self.input_size = input_size if input_size is not None else model_config['input_size']
+        # define the model configuration (+ n_keys)
+        self.embedding_dim = embedding_dim if embedding_dim is not None else model_config['embedding_dim']
         self.hidden_size = hidden_size if hidden_size is not None else model_config['hidden_size']
         self.num_layers = num_layers if num_layers is not None else model_config['num_layers']
         self.bias = bias if bias is not None else model_config['bias']
@@ -43,11 +43,14 @@ class LSTM(nn.Module):
         self.dropout = dropout if dropout is not None else model_config['dropout']
         self.bidirectional = bidirectional if bidirectional is not None else model_config['bidirectional']
         self.proj_size = proj_size if proj_size is not None else model_config['proj_size']
-        self.num_keys = num_keys if num_keys is not None else data_config['num_keys']
+        self.n_keys = n_keys if n_keys is not None else data_config['n_keys']
+
+        # embedding layer for keys
+        self.embedding = nn.Embedding(num_embeddings=self.n_keys + 1, embedding_dim=self.embedding_dim)
 
         # instantiate the LSTM model
         self.lstm = nn.LSTM(
-            self.input_size,
+            self.embedding_dim,
             self.hidden_size,
             self.num_layers,
             self.bias,
@@ -58,26 +61,22 @@ class LSTM(nn.Module):
         )
 
         # fully-connected layer
-        self.fc = nn.Linear(self.hidden_size, self.num_keys)
-
-        # softmax to rescale an n-dimensional input Tensor
-        # ensuring values within [0,1] and sum to 1
-        self.softmax = nn.Softmax(dim=1)
+        self.fc = nn.Linear(self.hidden_size, self.n_keys)
 
     def forward(self, x):
         """
         Method to perform the forward pass through the LSTM.
         :param self: LSTM model
-        :param x: [batch_size, seq_len, input_size]
-        :return:
+        :param x: [batch_size, seq_len, embedding_dim]
+        :return: logits
         """
+        # embedding
+        embedded = self.embedding(x)
+
         # calculate the LSTM output
-        lstm_out, _ = self.lstm(x)
+        lstm_out, _ = self.lstm(embedded)
 
         # pass through the fully connected layer to get logits
         logits = self.fc(lstm_out[:, -1, :])
 
-        # apply softmax to get probabilities
-        probabilities = self.softmax(logits)
-
-        return probabilities
+        return logits
