@@ -1,35 +1,38 @@
 data:
-  n_requests: 50000
-  n_keys: 1000
+  n_requests: 10000
+  n_keys: 500
   alpha: 1.3
   alpha_start: 1.3
   alpha_end: 1.8
   time_steps: 100
-  seq_len: 100
+  seq_len: 25
+  training_perc: 0.7
+  testing_perc: 0.2
+  validation_perc: 0.1
   static_dataset_path: "../data/static_access_logs.csv"
   dynamic_dataset_path: "../data/dynamic_access_logs.csv"
 
 model:
   hidden_size: null
   num_layers: null
-  bias: null
-  batch_first: null
+  bias: True
+  batch_first: True
   dropout: null
-  bidirectional: null
-  proj_size: null
+  bidirectional: False
+  proj_size: 0
   embedding_dim: null
   model_save_path: "../model/trained_lstm_model.pt"
 
 training:
   epochs: 5
-  batch_size: 64
+  batch_size: 256
   learning_rate: null
 
 validation:
-  num_folds: 10
+  num_folds: 5
   random_state: 42
   embedding_dim_range: [32, 64]
   hidden_size_range: [64, 128]
   num_layers_range: [1, 3]
   dropout_range: [0.0, 0.5]
-  learning_rate_range: [0.001, 0.0005]
+  learning_rate_range: [0.001, 0.003]

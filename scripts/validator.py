@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 import torch
 from torch import nn
 from torch.utils.data import Subset, DataLoader
@@ -26,10 +27,12 @@ def evaluate_model(model, loader, criterion, device):
     with torch.no_grad():
         for x, y in loader:
 
-            x, y = x.to(device), y.to(device)
+            # unpack
+            x_keys, x_timestamps = x
+            x_keys, x_timestamps, y = x_keys.to(device), x_timestamps.to(device), y.to(device)
 
             # calculate the outputs
-            outputs = model(x)
+            outputs = model(x_keys, x_timestamps)
 
             # calculate the loss and update the total one
             loss = criterion(outputs, y)
@@ -97,11 +100,15 @@ def stratified_cv(
         model.train()
 
         for x, y in training_loader:
-            x, y = x.to(device), y.to(device)
+
             optimizer.zero_grad()
 
+            # unpack
+            x_keys, x_timestamps = x
+            x_keys, x_timestamps, y = x_keys.to(device), x_timestamps.to(device), y.to(device)
+
             # calculate the outputs
-            outputs = model(x)
+            outputs = model(x_keys, x_timestamps)
 
             # calculate the loss
             loss = criterion(outputs, y)
@@ -142,6 +149,15 @@ def set_best_params(best_params):
     })
 
 def check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_params):
+    """
+    Method to calculate the average loss and update the best parameters
+    in case the average loss is less than the current best loss.
+    :param fold_losses: The loss of the current fold iteration.
+    :param best_avg_loss: The current best average loss.
+    :param curr_params: The current parameters (used in the current fold iteration).
+    :param best_params: The current best parameters.
+    :return: The best average loss and the best parameters as output.
+    """
     # calculate the average loss
     avg_loss = np.mean(fold_losses)
 
@@ -163,6 +179,12 @@ def check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_p
     return best_avg_loss, best_params
 
 def grid_search(dataset, criterion):
+    """
+    Method to perform grid search to find the best parameters.
+    :param dataset: The dataset on which to work on.
+    :param criterion: The loss function.
+    :return: The best parameters as output.
+    """
     # load validation configuration
     config = load_config()
     validation_config = config["validation"]
@@ -171,43 +193,54 @@ def grid_search(dataset, criterion):
     best_params = {}
     best_avg_loss = float("inf")
 
-    # grid search algorithm
-    for embedding_dim in validation_config["embedding_dim"]:
-        for hidden_size in validation_config["hidden_dim"]:
-            for num_layers in validation_config["num_layers"]:
-                for dropout in validation_config["dropout"]:
-                    for learning_rate in validation_config["learning_rate"]:
-                        fold_losses = []
+    # define the parameters combination
+    param_combinations = [
+        (embedding_dim, hidden_size, num_layers, dropout, learning_rate)
+        for embedding_dim in validation_config["embedding_dim_range"]
+        for hidden_size in validation_config["hidden_size_range"]
+        for num_layers in validation_config["num_layers_range"]
+        for dropout in validation_config["dropout_range"]
+        for learning_rate in validation_config["learning_rate_range"]
+    ]
 
-                        # perform stratified 10-folds CV
-                        fold_losses = stratified_cv(
-                            dataset,
-                            embedding_dim,
-                            hidden_size,
-                            num_layers,
-                            dropout,
-                            learning_rate,
-                            criterion,
-                            fold_losses
-                        )
+    # grid search
+    with tqdm(total=len(param_combinations), desc="Grid Search Progress") as pbar:
+        for embedding_dim, hidden_size, num_layers, dropout, learning_rate in param_combinations:
 
-                        # group current parameters together
-                        curr_params = {
-                            "embedding_dim": embedding_dim,
-                            "hidden_size": hidden_size,
-                            "num_layers": num_layers,
-                            "dropout": dropout,
-                            "learning_rate": learning_rate
-                        }
+            fold_losses = []
 
-                        # check the loss and eventually update the best parameters
-                        best_avg_loss, best_params = check_and_update_best_params(
-                            fold_losses,
-                            best_avg_loss,
-                            curr_params,
-                            best_params
-                        )
+            # perform stratified 10-folds CV
+            fold_losses = stratified_cv(
+                dataset,
+                embedding_dim,
+                hidden_size,
+                num_layers,
+                dropout,
+                learning_rate,
+                criterion,
+                fold_losses
+            )
 
+            # group current parameters together
+            curr_params = {
+                "embedding_dim": embedding_dim,
+                "hidden_size": hidden_size,
+                "num_layers": num_layers,
+                "dropout": dropout,
+                "learning_rate": learning_rate
+            }
+
+            # check the loss and eventually update the best parameters
+            best_avg_loss, best_params = check_and_update_best_params(
+                fold_losses,
+                best_avg_loss,
+                curr_params,
+                best_params
+            )
+
+            # update the progress bar
+            pbar.update(1)
+    print("Best avg loss:", best_avg_loss)
     return best_params
 
 def parameter_tuning():
@@ -215,12 +248,12 @@ def parameter_tuning():
     Method to orchestrate the parameter tuning of the model.
     :return:
     """
-    # load data and validation configurations
+    # load data configuration
     config = load_config()
     data_config = config["data"]
 
     # load the dataset
-    dataset = AccessLogsDataset(data_config["static_dataset_path"])
+    dataset = AccessLogsDataset(data_config["static_dataset_path"], "validation")
 
     # define the loss function
     criterion = nn.CrossEntropyLoss()
@@ -230,3 +263,5 @@ def parameter_tuning():
 
     # set the best parameters
     set_best_params(best_params)
+
+parameter_tuning()

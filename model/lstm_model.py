@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 from utils.config_loader import load_config
 
@@ -71,7 +72,7 @@ class LSTM(nn.Module):
 
         # instantiate the LSTM model
         self.lstm = nn.LSTM(
-            self.embedding_dim,
+            self.embedding_dim + 1,
             self.hidden_size,
             self.num_layers,
             self.bias,
@@ -84,18 +85,25 @@ class LSTM(nn.Module):
         # fully-connected layer (linear)
         self.fc = nn.Linear(self.hidden_size, self.n_keys + 1)
 
-    def forward(self, x):
+    def forward(self, x_keys, x_timestamps):
         """
         Method to perform the forward pass through the LSTM.
         :param self: LSTM model.
-        :param x: Tensor of shape [batch_size, seq_len].
+        :param x_keys: The keys.
+        :param x_timestamps: The timestamps.
         :return: Logits as output.
         """
         # embedding
-        embedded = self.embedding(x)
+        embedded = self.embedding(x_keys)
+
+        # timestamp reshape
+        timestamps = x_timestamps.unsqueeze(-1)
+
+        # concatenation to obtain [batch_size, seq_len, embedding_dim + 1]
+        x_cat = torch.cat([embedded, timestamps], dim=-1)
 
         # calculate the LSTM output
-        lstm_out, _ = self.lstm(embedded)
+        lstm_out, _ = self.lstm(x_cat)
 
         # pass through the fully connected layer to get logits
         logits = self.fc(lstm_out[:, -1, :])
