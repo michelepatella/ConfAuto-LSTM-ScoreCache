@@ -59,6 +59,13 @@ def generate_dynamic_requests(n_requests, n_keys, alpha_values, time_steps):
     """
     # calculate the time step duration
     time_step_duration = n_requests // time_steps
+
+    # check if some requests are ignored
+    remainder = n_requests % time_steps
+    # show a warning message if some requests are ignored
+    if remainder > 0:
+        print(f"Warning: {remainder} requests will be ignored due to uneven split.")
+
     requests, timestamps = [], []
 
     # for each alpha value
@@ -138,5 +145,6 @@ def generate_zipf_dataset(distribution_type):
     else:
         raise ValueError("Unknown distribution type.")
 
-generate_zipf_dataset("static")
-generate_zipf_dataset("dynamic")
+if __name__ == "__main__":
+    generate_zipf_dataset("static")
+    generate_zipf_dataset("dynamic")
