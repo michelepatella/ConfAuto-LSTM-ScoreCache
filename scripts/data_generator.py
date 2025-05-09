@@ -73,9 +73,9 @@ def generate_dynamic_requests(n_requests, n_keys, alpha_values, time_steps):
 
     return requests, timestamps
 
-def generate_static_data():
+def generate_static_dataset():
     """
-    Method to generate static data following Zipf's distribution.
+    Method to generate static dataset following Zipf's distribution.
     :return:
     """
     # load data configuration
@@ -93,9 +93,9 @@ def generate_static_data():
     # create the static dataset
     create_dataset(timestamps, requests, data_config['static_dataset_path'])
 
-def generate_dynamic_data():
+def generate_dynamic_dataset():
     """
-    Method to generate dynamic data following Zipf's distribution.
+    Method to generate dynamic dataset following Zipf's distribution.
     :return:
     """
     # load data configuration
@@ -122,17 +122,17 @@ def generate_dynamic_data():
 
 def generate_zipf_dataset(distribution_type):
     """
-    Method to generate the (static or dynamic) dataset.
+    Method to call the (static or dynamic) zipf dataset generator.
     :param distribution_type: Zipf distribution's type (static or dynamic).
     :return:
     """
-    # generate a static distribution
+    # generate a static dataset
     if distribution_type == "static":
-        generate_static_data()
+        generate_static_dataset()
 
-    # generate a dynamic distribution
+    # generate a dynamic dataset
     elif distribution_type == "dynamic":
-        generate_dynamic_data()
+        generate_dynamic_dataset()
 
     # handle errors
     else:
