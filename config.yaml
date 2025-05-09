@@ -1,19 +1,3 @@
-model:
-  hidden_size: 128
-  num_layers: 2
-  bias: True
-  batch_first: True
-  dropout: 0.3
-  bidirectional: False
-  proj_size: 0
-  embedding_dim: 256
-
-training:
-  epochs: 5
-  batch_size: 64
-  learning_rate: 0.001
-  model_save_path: "../model/trained_lstm_model.pt"
-
 data:
   n_requests: 50000
   n_keys: 1000
@@ -21,5 +5,31 @@ data:
   alpha_start: 1.3
   alpha_end: 1.8
   time_steps: 100
+  seq_len: 100
   static_dataset_path: "../data/static_access_logs.csv"
   dynamic_dataset_path: "../data/dynamic_access_logs.csv"
+
+model:
+  hidden_size: null
+  num_layers: null
+  bias: null
+  batch_first: null
+  dropout: null
+  bidirectional: null
+  proj_size: null
+  embedding_dim: null
+  model_save_path: "../model/trained_lstm_model.pt"
+
+training:
+  epochs: 5
+  batch_size: 64
+  learning_rate: null
+
+validation:
+  num_folds: 10
+  random_state: 42
+  embedding_dim_range: [32, 64]
+  hidden_size_range: [64, 128]
+  num_layers_range: [1, 3]
+  dropout_range: [0.0, 0.5]
+  learning_rate_range: [0.001, 0.0005]

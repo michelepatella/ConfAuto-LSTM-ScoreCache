@@ -12,14 +12,14 @@ class AccessLogsDataset(Dataset):
         """
         # load data configuration
         config = load_config()
-        data_config = config['data']
+        data_config = config["data"]
 
         # get the csv dataset file
         df = pd.read_csv(csv_path)
 
         # set keys and seq_len fields
-        self.keys = df['key'].values
-        self.seq_len = data_config['time_steps']
+        self.keys = df["key"].values
+        self.seq_len = data_config["seq_len"]
 
     def __len__(self):
         """
@@ -41,4 +41,3 @@ class AccessLogsDataset(Dataset):
         y = torch.tensor(self.keys[idx + self.seq_len], dtype=torch.long)
 
         return x, y
-

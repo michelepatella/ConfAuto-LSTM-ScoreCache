@@ -11,16 +11,17 @@ def train():
     Method to train the LSTM model.
     :return:
     """
-    # load data and training configurations
+    # load data, model, and training configurations
     config = load_config()
-    data_config = config['data']
-    training_config = config['training']
+    data_config = config["data"]
+    model_config = config["model"]
+    training_config = config["training"]
 
     # load the dataset
-    dataset = AccessLogsDataset(data_config['static_dataset_path'])
-    dataloader = DataLoader(dataset=dataset, batch_size=training_config['batch_size'], shuffle=True)
+    dataset = AccessLogsDataset(data_config["static_dataset_path"])
+    dataloader = DataLoader(dataset=dataset, batch_size=training_config["batch_size"], shuffle=True)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # use LSTM customized model
     model = LSTM().to(device)
 
@@ -28,9 +29,9 @@ def train():
     criterion = nn.CrossEntropyLoss()
 
     # optimizer to accelerate the learning process
-    optimizer = torch.optim.Adam(model.parameters(), lr=training_config['learning_rate'])
+    optimizer = torch.optim.Adam(model.parameters(), lr=training_config["learning_rate"])
 
-    for epoch in range(training_config['epochs']):
+    for epoch in range(training_config["epochs"]):
 
         # initialize the total loss to 0
         total_loss = 0.0
@@ -61,6 +62,6 @@ def train():
             progress_bar.set_postfix(loss=loss.item())
 
     # save the trained model
-    torch.save(model.state_dict(), training_config['model_save_path'])
+    torch.save(model.state_dict(), model_config["model_save_path"])
 
 train()

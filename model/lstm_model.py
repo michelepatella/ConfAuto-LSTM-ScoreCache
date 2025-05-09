@@ -31,22 +31,43 @@ class LSTM(nn.Module):
 
         # load model and data configurations
         config = load_config()
-        model_config = config['model']
-        data_config = config['data']
+        model_config = config["model"]
+        data_config = config["data"]
 
         # define the model's configuration (+ n_keys)
-        self.embedding_dim = embedding_dim if embedding_dim is not None else model_config['embedding_dim']
-        self.hidden_size = hidden_size if hidden_size is not None else model_config['hidden_size']
-        self.num_layers = num_layers if num_layers is not None else model_config['num_layers']
-        self.bias = bias if bias is not None else model_config['bias']
-        self.batch_first = batch_first if batch_first is not None else model_config['batch_first']
-        self.dropout = dropout if dropout is not None else model_config['dropout']
-        self.bidirectional = bidirectional if bidirectional is not None else model_config['bidirectional']
-        self.proj_size = proj_size if proj_size is not None else model_config['proj_size']
-        self.n_keys = n_keys if n_keys is not None else data_config['n_keys']
+        self.embedding_dim = embedding_dim \
+            if embedding_dim is not None \
+            else model_config["embedding_dim"]
+        self.hidden_size = hidden_size \
+            if hidden_size is not None \
+            else model_config["hidden_size"]
+        self.num_layers = num_layers \
+            if num_layers is not None \
+            else model_config["num_layers"]
+        self.bias = bias \
+            if bias is not None \
+            else model_config["bias"]
+        self.batch_first = batch_first \
+            if batch_first is not None \
+            else model_config["batch_first"]
+        self.dropout = dropout \
+            if dropout is not None \
+            else model_config["dropout"]
+        self.bidirectional = bidirectional \
+            if bidirectional is not None \
+            else model_config["bidirectional"]
+        self.proj_size = proj_size \
+            if proj_size is not None \
+            else model_config["proj_size"]
+        self.n_keys = n_keys \
+            if n_keys is not None \
+            else data_config["n_keys"]
 
         # embedding layer for keys
-        self.embedding = nn.Embedding(num_embeddings=self.n_keys + 1, embedding_dim=self.embedding_dim)
+        self.embedding = nn.Embedding(
+            num_embeddings=self.n_keys + 1,
+            embedding_dim=self.embedding_dim
+        )
 
         # instantiate the LSTM model
         self.lstm = nn.LSTM(

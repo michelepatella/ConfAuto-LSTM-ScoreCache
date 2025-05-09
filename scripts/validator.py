@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-import yaml
 from torch import nn
 from torch.utils.data import Subset, DataLoader
 from sklearn.model_selection import StratifiedKFold
@@ -11,11 +10,11 @@ from utils.config_loader import load_config
 def evaluate_model(model, loader, criterion, device):
     """
     Evaluate a model on a validation dataset.
-    :param model: the model to evaluate
-    :param loader: the validation loader
-    :param criterion: the loss criterion
-    :param device: device to use
-    :return: the average loss
+    :param model: The model to evaluate.
+    :param loader: The validation loader.
+    :param criterion: The loss function.
+    :param device: Device to use.
+    :return: The average loss.
     """
     # evaluate the model
     model.eval()
@@ -40,35 +39,48 @@ def evaluate_model(model, loader, criterion, device):
     return total_loss / len(loader)
 
 def stratified_cv(
-        labels,
         dataset,
         embedding_dim,
         hidden_size,
         num_layers,
         dropout,
-        lr,
+        learning_rate,
         criterion,
         fold_losses
 ):
-    # load training configuration
+    # load training and validation configurations
     config = load_config()
-    training_config = config['training']
+    training_config = config["training"]
+    validation_config = config["validation"]
 
-    # setup for the 10-fold CV
-    skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
+    # extract labels from the dataset
+    labels = np.array([label for _, label in dataset])
+
+    # setup for the 10-folds CV
+    skf = StratifiedKFold(
+        n_splits=validation_config["num_folds"],
+        shuffle=True,
+        random_state=validation_config["random_state"]
+    )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     for train_idx, val_idx in skf.split(np.zeros(len(labels)), labels):
 
         # define training and validation sets
-        train_dataset = Subset(dataset, train_idx)
-        val_dataset = Subset(dataset, val_idx)
+        training_dataset = Subset(dataset, train_idx)
+        validation_dataset = Subset(dataset, val_idx)
 
-        train_loader = DataLoader(
-            train_dataset, batch_size=training_config['batch_size'], shuffle=True
+        # define train and validation loader
+        training_loader = DataLoader(
+            training_dataset,
+            batch_size=training_config["batch_size"],
+            shuffle=True
         )
-        val_loader = DataLoader(val_dataset, batch_size=training_config['batch_size'])
+        validation_loader = DataLoader(
+            validation_dataset,
+            batch_size=training_config["batch_size"]
+        )
 
         # define the custom model
         model = LSTM(
@@ -79,12 +91,12 @@ def stratified_cv(
         ).to(device)
 
         # optimize to accelerate the learning process
-        optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
         # train the model
         model.train()
 
-        for x, y in train_loader:
+        for x, y in training_loader:
             x, y = x.to(device), y.to(device)
             optimizer.zero_grad()
 
@@ -101,84 +113,120 @@ def stratified_cv(
             optimizer.step()
 
         # evaluate the model
-        val_loss = evaluate_model(model, val_loader, criterion, device)
+        val_loss = evaluate_model(model, validation_loader, criterion, device)
         fold_losses.append(val_loss)
 
     return fold_losses
 
-def parameter_tuning():
+def set_best_params(best_params):
     """
-    Method to perform parameter tuning.
+    Method to save the best parameters into a configuration file.
+    :param best_params: Best parameters found.
     :return:
     """
-    # load data configuration
+    # load configuration
     config = load_config()
-    data_config = config['data']
 
-    # load the dataset and extract the labels
-    dataset = AccessLogsDataset(data_config['static_dataset_path'])
-    labels = np.array([label for _, label in dataset])
-
-    # define the loss function
-    criterion = nn.CrossEntropyLoss()
-
-    best_params = {}
-    best_avg_loss = float("inf")
-
-    # grid search to find best params
-    for embedding_dim in [32, 64]:
-        for hidden_size in [64, 128]:
-            for num_layers in [1, 3]:
-                for dropout in [0.0, 0.5]:
-                    for lr in [0.001, 0.0005]:
-                        fold_losses = []
-
-                        # loop over all the folders of the CV
-                        fold_losses = stratified_cv(
-                            labels,
-                            dataset,
-                            embedding_dim,
-                            hidden_size,
-                            num_layers,
-                            dropout,
-                            lr,
-                            criterion,
-                            fold_losses
-                        )
-
-                        # calculate and show the average loss
-                        avg_loss = np.mean(fold_losses)
-                        print(f"[CV] Params: emb={embedding_dim}, hid={hidden_size}, "
-                              f"layers={num_layers}, drop={dropout}, lr={lr} -> avg_loss={avg_loss}")
-
-                        # if the average loss is less than the best one, update it
-                        if avg_loss < best_avg_loss:
-
-                            # update the best loss
-                            best_avg_loss = avg_loss
-
-                            # save best params
-                            best_params = {
-                                "embedding_dim": embedding_dim,
-                                "hidden_size": hidden_size,
-                                "num_layers": num_layers,
-                                "dropout": dropout,
-                                "learning_rate": lr
-                            }
-
-    # print the best params
-    print("Best params from CV:", best_params)
+    # print the best params found
+    print("Best params from Stratified 10-folds CV:", best_params)
 
     # update the best params
-    config['model'].update({
+    config["model"].update({
         "embedding_dim": best_params["embedding_dim"],
         "hidden_size": best_params["hidden_size"],
         "num_layers": best_params["num_layers"],
         "dropout": best_params["dropout"]
     })
-    config['training']['learning_rate'] = best_params["learning_rate"]
+    config["training"].update({
+        "learning_rate": best_params["learning_rate"],
+    })
 
-    with open("config.yaml", "w") as f:
-        yaml.dump(config, f)
+def check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_params):
+    # calculate the average loss
+    avg_loss = np.mean(fold_losses)
 
-    print("Updated config saved to 'config.yaml'")
+    # if the average loss is less than the best one,
+    # update it and the best params
+    if avg_loss < best_avg_loss:
+        # update the best loss
+        best_avg_loss = avg_loss
+
+        # update the best params
+        best_params = {
+            "embedding_dim": curr_params["embedding_dim"],
+            "hidden_size": curr_params["hidden_size"],
+            "num_layers": curr_params["num_layers"],
+            "dropout": curr_params["dropout"],
+            "learning_rate": curr_params["learning_rate"]
+        }
+
+    return best_avg_loss, best_params
+
+def grid_search(dataset, criterion):
+    # load validation configuration
+    config = load_config()
+    validation_config = config["validation"]
+
+    # initialize the best parameters and average loss
+    best_params = {}
+    best_avg_loss = float("inf")
+
+    # grid search algorithm
+    for embedding_dim in validation_config["embedding_dim"]:
+        for hidden_size in validation_config["hidden_dim"]:
+            for num_layers in validation_config["num_layers"]:
+                for dropout in validation_config["dropout"]:
+                    for learning_rate in validation_config["learning_rate"]:
+                        fold_losses = []
+
+                        # perform stratified 10-folds CV
+                        fold_losses = stratified_cv(
+                            dataset,
+                            embedding_dim,
+                            hidden_size,
+                            num_layers,
+                            dropout,
+                            learning_rate,
+                            criterion,
+                            fold_losses
+                        )
+
+                        # group current parameters together
+                        curr_params = {
+                            "embedding_dim": embedding_dim,
+                            "hidden_size": hidden_size,
+                            "num_layers": num_layers,
+                            "dropout": dropout,
+                            "learning_rate": learning_rate
+                        }
+
+                        # check the loss and eventually update the best parameters
+                        best_avg_loss, best_params = check_and_update_best_params(
+                            fold_losses,
+                            best_avg_loss,
+                            curr_params,
+                            best_params
+                        )
+
+    return best_params
+
+def parameter_tuning():
+    """
+    Method to orchestrate the parameter tuning of the model.
+    :return:
+    """
+    # load data and validation configurations
+    config = load_config()
+    data_config = config["data"]
+
+    # load the dataset
+    dataset = AccessLogsDataset(data_config["static_dataset_path"])
+
+    # define the loss function
+    criterion = nn.CrossEntropyLoss()
+
+    # grid search for best parameters
+    best_params = grid_search(dataset, criterion)
+
+    # set the best parameters
+    set_best_params(best_params)
