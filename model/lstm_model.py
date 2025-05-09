@@ -16,25 +16,25 @@ class LSTM(nn.Module):
             n_keys=None
     ):
         """
-        Method to initialize the LSTM model with output probabilities.
-        :param embedding_dim: Embedding layer dimension
-        :param hidden_size: Number of hidden features
-        :param num_layers: Number of LSTM layers
-        :param bias: Indicates whether bias should be applied
-        :param batch_first: Indicates whether batch_first should be applied
-        :param dropout: Dropout layer to apply
-        :param bidirectional: Indicates if the LSTM should be bidirectional
-        :param proj_size: Size of the projection layer
-        :param n_keys: Number of cache keys
+        Method to initialize the LSTM model.
+        :param embedding_dim: Embedding layer dimension.
+        :param hidden_size: Number of hidden features.
+        :param num_layers: Number of LSTM layers.
+        :param bias: Indicates whether bias should be applied.
+        :param batch_first: Indicates whether batch_first should be applied.
+        :param dropout: Dropout layer to apply.
+        :param bidirectional: Indicates if the LSTM should be bidirectional.
+        :param proj_size: Size of the projection layer.
+        :param n_keys: Number of cache keys.
         """
         super(LSTM, self).__init__()
 
-        # load the configuration file
+        # load model and data configurations
         config = load_config()
         model_config = config['model']
         data_config = config['data']
 
-        # define the model configuration (+ n_keys)
+        # define the model's configuration (+ n_keys)
         self.embedding_dim = embedding_dim if embedding_dim is not None else model_config['embedding_dim']
         self.hidden_size = hidden_size if hidden_size is not None else model_config['hidden_size']
         self.num_layers = num_layers if num_layers is not None else model_config['num_layers']
@@ -60,15 +60,15 @@ class LSTM(nn.Module):
             self.proj_size
         )
 
-        # fully-connected layer
+        # fully-connected layer (linear)
         self.fc = nn.Linear(self.hidden_size, self.n_keys + 1)
 
     def forward(self, x):
         """
         Method to perform the forward pass through the LSTM.
-        :param self: LSTM model
-        :param x: Tensor of shape [batch_size, seq_len]
-        :return: logits
+        :param self: LSTM model.
+        :param x: Tensor of shape [batch_size, seq_len].
+        :return: Logits as output.
         """
         # embedding
         embedded = self.embedding(x)

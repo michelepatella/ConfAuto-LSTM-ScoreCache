@@ -5,9 +5,9 @@ from utils.config_loader import load_config
 def zipf_distribution(keys, alpha):
     """
     Method to generate Zipf distribution's probabilities.
-    :param keys: List of keys
-    :param alpha: Zipf distribution's parameter
-    :return: Zipf distribution's probabilities
+    :param keys: List of keys.
+    :param alpha: Zipf distribution's parameter.
+    :return: Zipf distribution's probabilities as output.
     """
     # calculate the probability of the keys according to Zipf's distribution
     probabilities = 1.0 / np.power(keys, alpha)
@@ -19,10 +19,10 @@ def zipf_distribution(keys, alpha):
 
 def create_dataset(timestamps, requests, file_name):
     """
-    Method to create the dataset csv file.
-    :param timestamps: List of timestamps (first column)
-    :param requests: List of keys requested (second column)
-    :param file_name: The name of the dataset file
+    Method to create the dataset (csv file).
+    :param timestamps: List of timestamps (first column).
+    :param requests: List of keys requested (second column).
+    :param file_name: The name of the dataset file.
     :return:
     """
     # create the dataframe
@@ -31,68 +31,113 @@ def create_dataset(timestamps, requests, file_name):
     # convert the dataframe to CSV file
     df.to_csv(file_name, index=False)
 
-def generate_zipf_dataset(distribution_type):
+def generate_requests_and_timestamps(n_requests, n_keys, alpha, time_steps=None):
     """
-    Method to generate the (static or dynamic) data for the dataset.
-    :param distribution_type: Zipf distribution's type (static or dynamic)
-    :return:
+    Method to generate (static or dynamic) requests and timestamps.
+    :param n_requests: Total number of requests.
+    :param n_keys: Total number of keys.
+    :param alpha: Zipf distribution's parameter(s).
+    :param time_steps: Total number of time steps.
+    :return: Requests and timestamps generated as output.
     """
-    # load data configuration
-    config = load_config()['data']
-    n_requests = config['n_requests']
-    n_keys = config['n_keys']
+    requests, timestamps = [], []
 
-    # generate a static distribution
-    if distribution_type == "static":
+    # static requests and timestamps
+    if time_steps is None:
 
-        # get the Zipf distribution's parameter
-        alpha = config['alpha']
+        # take all the Zipf's distribution parameter values
+        alpha = alpha
 
-        # generate keys
-        keys = np.arange(1, n_keys + 1)
-
-        # get the probabilities
-        probabilities = zipf_distribution(keys, alpha)
+        # calculate probabilities
+        probabilities = zipf_distribution(np.arange(1, n_keys + 1), alpha)
 
         # generate requests and timestamps
-        requests = np.random.choice(keys, size=n_requests, p=probabilities)
+        requests = np.random.choice(np.arange(1, n_keys + 1), size=n_requests, p=probabilities)
         timestamps = np.arange(n_requests)
 
-        # create the static dataset
-        create_dataset(timestamps, requests, config['static_dataset_path'])
+    # dynamic requests and timestamps
+    else:
 
-    # generate a dynamic distribution
-    elif distribution_type == "dynamic":
-
-        # get the start and final Zipf distribution's parameter
-        alpha_start = config['alpha_start']
-        alpha_end = config['alpha_end']
-
-        # get the time steps
-        time_steps = config['time_steps']
-
-        # generate the Zipf distribution's parameter values within the predefined range
-        alpha_values = np.linspace(alpha_start, alpha_end, time_steps)
-
-        # define the step duration
+        # calculate the time step duration
         time_step_duration = n_requests // time_steps
 
-        # generate dynamic requests
-        requests, timestamps = [], []
-        for t, alpha in enumerate(alpha_values):
-            # generate keys
-            keys = np.arange(1, n_keys + 1)
+        # for each alpha value
+        for t, alpha in enumerate(alpha):
 
-            # get probabilities
-            probabilities = zipf_distribution(keys, alpha)
+            # calculate the probabilities
+            probabilities = zipf_distribution(np.arange(1, n_keys + 1), alpha)
 
             # generate requests and timestamps
-            reqs = np.random.choice(keys, size=time_step_duration, p=probabilities)
+            reqs = np.random.choice(np.arange(1, n_keys + 1), size=time_step_duration, p=probabilities)
             requests.extend(reqs)
             timestamps.extend(np.arange(t * time_step_duration, (t + 1) * time_step_duration))
 
-        # create the dynamic dataset
-        create_dataset(timestamps, requests, config['dynamic_dataset_path'])
+    return requests, timestamps
+
+def generate_static_data():
+    """
+    Method to generate static data following Zipf's distribution.
+    :return:
+    """
+    # load data configuration
+    config = load_config()
+    data_config = config['data']
+    n_requests = data_config['n_requests']
+    n_keys = data_config['n_keys']
+
+    # get the Zipf distribution's parameter
+    alpha = data_config['alpha']
+
+    # generate static requests and timestamps
+    requests, timestamps = generate_requests_and_timestamps(n_requests, n_keys, alpha)
+
+    # create the static dataset
+    create_dataset(timestamps, requests, data_config['static_dataset_path'])
+
+def generate_dynamic_data():
+    """
+    Method to generate dynamic data following Zipf's distribution.
+    :return:
+    """
+    # load data configuration
+    config = load_config()
+    data_config = config['data']
+    n_requests = data_config['n_requests']
+    n_keys = data_config['n_keys']
+
+    # get the initial and final Zipf distribution's parameter
+    alpha_start = data_config['alpha_start']
+    alpha_end = data_config['alpha_end']
+
+    # get the time steps
+    time_steps = data_config['time_steps']
+
+    # generate the Zipf distribution's parameter values
+    alpha_values = np.linspace(alpha_start, alpha_end, time_steps)
+
+    # generate dynamic requests and timestamps
+    requests, timestamps = generate_requests_and_timestamps(n_requests, n_keys, alpha_values, time_steps)
+
+    # create the dynamic dataset
+    create_dataset(timestamps, requests, data_config['dynamic_dataset_path'])
+
+def generate_zipf_dataset(distribution_type):
+    """
+    Method to generate the (static or dynamic) dataset.
+    :param distribution_type: Zipf distribution's type (static or dynamic).
+    :return:
+    """
+    # generate a static distribution
+    if distribution_type == "static":
+        generate_static_data()
+
+    # generate a dynamic distribution
+    elif distribution_type == "dynamic":
+        generate_dynamic_data()
+
+    # handle errors
+    else:
+        ValueError("Unknown distribution type.")
 
 generate_zipf_dataset("static")
 generate_zipf_dataset("dynamic")
