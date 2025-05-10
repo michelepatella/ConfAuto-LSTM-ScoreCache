@@ -20,12 +20,7 @@ def _generate_static_requests(num_requests, num_keys, alpha):
 
     # load config file
     config = load_config()
-
-    # load data config
-    if config is not None and "data" in config:
-        data_config = config["data"]
-    else:
-        raise ValueError("Error while loading or reading config file.")
+    data_config = config["data"]
 
     # calculate the probabilities
     probs = _calculate_zipf_distribution_probs(
@@ -68,12 +63,7 @@ def _generate_dynamic_requests(num_requests, num_keys, alpha_values, time_steps)
 
     # load config file
     config = load_config()
-
-    # load data config
-    if config is not None and "data" in config:
-        data_config = config["data"]
-    else:
-        raise ValueError("Error while loading or reading config file.")
+    data_config = config["data"]
 
     # calculate the time step duration
     time_step_duration = num_requests // time_steps

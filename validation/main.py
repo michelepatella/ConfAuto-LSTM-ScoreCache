@@ -13,23 +13,14 @@ def parameter_tuning():
     """
     # load config file
     config = load_config()
-
-    # load data config
-    if config is not None and "data" in config:
-        data_config = config["data"]
-    else:
-        raise ValueError("Error while loading or reading config file.")
+    data_config = config["data"]
 
     # try to load the dataset
     try:
         # load the dataset
         dataset = AccessLogsDataset(data_config["static_dataset_path"], "validation")
-    except FileNotFoundError as e:
-        logging.error(f"Error opening the file: {e}")
-        return
     except Exception as e:
-        logging.error(f"An unexpected error while loading dataset: {e}")
-        return
+        raise Exception(f"An unexpected error while loading dataset: {e}")
 
     # define the loss function
     criterion = nn.CrossEntropyLoss()
@@ -41,7 +32,7 @@ def parameter_tuning():
         # set the best parameters
         _save_best_params(best_params)
     except Exception as e:
-        logging.error(f"Parameter tuning failed: {e}")
+        raise Exception(f"Parameter tuning failed: {e}")
 
     logging.info(f"Parameter tuning successfully completed.")
 

@@ -18,12 +18,7 @@ def _grid_search(dataset, criterion):
 
     # load config file
     config = load_config()
-
-    # load validation config
-    if config is not None and "validation" in config:
-        validation_config = config["validation"]
-    else:
-        raise ValueError("Error while loading or reading config file.")
+    validation_config = config["validation"]
 
     # try to define the combination of parameters
     try:
@@ -36,12 +31,8 @@ def _grid_search(dataset, criterion):
             for dropout in validation_config["dropout_range"]
             for learning_rate in validation_config["learning_rate_range"]
         ]
-    except KeyError as e:
-        logging.error(f"Missing key in validation config: {e}")
-        return best_params
     except Exception as e:
-        logging.error(f"An unexpected error while loading validation config: {e}")
-        return best_params
+        raise Exception(f"An unexpected error while loading validation config: {e}")
 
     # check the params combination calculated
     if not param_combinations:

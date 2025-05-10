@@ -33,33 +33,22 @@ def _time_series_cv(
     """
     # load config file
     config = load_config()
-
-    # load configs
-    if (config is not None and ("training" in config)
-            and ("validation" in config)):
-        training_config = config["training"]
-        validation_config = config["validation"]
-    else:
-        return fold_losses
+    training_config = config["training"]
+    validation_config = config["validation"]
 
     # try to extract labels
     try:
         # extract labels
         labels = np.array([label for _, label in dataset])
     except Exception as e:
-        logging.error(f"An unexpected error while extracting labels from dataset: {e}")
-        return fold_losses
+        raise Exception(f"An unexpected error while extracting labels from dataset: {e}")
 
     # try setup for the TimeSeriesSplit
     try:
         # setup
         tscv = TimeSeriesSplit(n_splits=validation_config["num_folds"])
-    except KeyError as e:
-        logging.error(f"Missing key in validation config: {e}")
-        return fold_losses
     except Exception as e:
-        logging.error(f"An unexpected error while instantiating Time Series Split: {e}")
-        return fold_losses
+        raise Exception(f"An unexpected error while instantiating Time Series Split: {e}")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -78,8 +67,7 @@ def _time_series_cv(
                 shuffle=False
             )
         except Exception as e:
-            logging.error(f"An unexpected error while loading training data: {e}")
-            return fold_losses
+            raise Exception(f"An unexpected error while loading training data: {e}")
 
         # try to define validation loader
         try:
@@ -89,8 +77,7 @@ def _time_series_cv(
                 batch_size=training_config["batch_size"]
             )
         except Exception as e:
-            logging.error(f"An unexpected error while loading validation data: {e}")
-            return fold_losses
+            raise Exception(f"An unexpected error while loading validation data: {e}")
 
         # try to define the LSTM model
         try:
@@ -102,8 +89,7 @@ def _time_series_cv(
                 dropout=dropout
             ).to(device)
         except Exception as e:
-            logging.error(f"An unexpected error while loading model: {e}")
-            return fold_losses
+            raise Exception(f"An unexpected error while loading model: {e}")
 
         # optimize to accelerate the learning process
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -128,8 +114,7 @@ def _time_series_cv(
                 loss.backward()
                 optimizer.step()
             except Exception as e:
-                logging.error(f"An unexpected error during backpropagation: {e}")
-                return fold_losses
+                raise Exception(f"An unexpected error during backpropagation: {e}")
 
         # evaluate the model
         val_loss = _evaluate_model(model, validation_loader, criterion, device)

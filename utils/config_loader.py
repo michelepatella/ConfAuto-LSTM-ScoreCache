@@ -1,5 +1,4 @@
 import yaml
-import logging
 
 
 def load_config(config_path="../config.yaml"):
@@ -13,7 +12,6 @@ def load_config(config_path="../config.yaml"):
         with open(config_path, "r") as f:
             config = yaml.safe_load(f)
     except Exception as e:
-        logging.error(f"An unexpected error while loading config file: {e}")
-        return None
+        raise Exception(f"An unexpected error while loading config file: {e}")
 
     return config

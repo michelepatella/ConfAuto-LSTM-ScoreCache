@@ -12,15 +12,15 @@ def generate_zipf_dataset(distribution_type):
         # generate a static dataset
         if distribution_type == "static":
             _generate_static_dataset()
-            logging.info(f"Zipf dataset generation successfully completed.")
+            logging.info(f"Zipf static dataset generation successfully completed.")
 
         # generate a dynamic dataset
         elif distribution_type == "dynamic":
             _generate_dynamic_dataset()
-            logging.info(f"Zipf dataset generation successfully completed.")
+            logging.info(f"Zipf dynamic dataset generation successfully completed.")
 
         else:
             raise ValueError("Unknown distribution type.")
 
     except Exception as e:
-        logging.error(f"Zipf dataset generation failed: {e}")
+        raise Exception(f"Zipf dataset generation failed: {e}")

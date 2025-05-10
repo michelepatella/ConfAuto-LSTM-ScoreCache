@@ -13,15 +13,10 @@ def _generate_static_dataset():
     """
     # load config file
     config = load_config()
-
-    # load data config
-    if config is not None and "data" in config:
-        data_config = config["data"]
-        num_requests = data_config["num_requests"]
-        num_keys = data_config["num_keys"]
-        alpha = data_config["alpha"]
-    else:
-        raise ValueError("Error while loading or reading config file.")
+    data_config = config["data"]
+    num_requests = data_config["num_requests"]
+    num_keys = data_config["num_keys"]
+    alpha = data_config["alpha"]
 
     # generate static requests and timestamps
     requests, timestamps = _generate_static_requests(
@@ -56,17 +51,12 @@ def _generate_dynamic_dataset():
     """
     # load config file
     config = load_config()
-
-    # load data config
-    if config is not None and "data" in config:
-        data_config = config["data"]
-        num_requests = data_config["num_requests"]
-        num_keys = data_config["num_keys"]
-        alpha_start = data_config["alpha_start"]
-        alpha_end = data_config["alpha_end"]
-        time_steps = data_config["time_steps"]
-    else:
-        raise ValueError("Error while loading or reading config file.")
+    data_config = config["data"]
+    num_requests = data_config["num_requests"]
+    num_keys = data_config["num_keys"]
+    alpha_start = data_config["alpha_start"]
+    alpha_end = data_config["alpha_end"]
+    time_steps = data_config["time_steps"]
 
     # generate the Zipf distribution's parameter values
     alpha_values = np.linspace(alpha_start, alpha_end, time_steps)

@@ -21,8 +21,7 @@ def _check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_
         # calculate the average loss
         avg_loss = np.mean(fold_losses)
     except Exception as e:
-        logging.error(f"An unexpected error while calculating the average loss: {e}")
-        return best_avg_loss, best_params
+        raise Exception(f"An unexpected error while calculating the average loss: {e}")
 
     # if the average loss is less than the best one,
     # update it and the best params
@@ -41,10 +40,8 @@ def _check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_
                     "learning_rate": curr_params["learning_rate"]
                 }
                 logging.info(f"Updated best parameters: {best_params}")
-            except KeyError as e:
-                logging.error(f"Missing key in current parameters: {e}")
             except Exception as e:
-                logging.error(f"An unexpected error while updating best params: {e}")
+                raise Exception(f"An unexpected error while updating best parameters: {e}")
         else:
             logging.warning("Invalid best average loss. Skipping update.")
 

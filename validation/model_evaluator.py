@@ -42,7 +42,6 @@ def _evaluate_model(model, loader, criterion, device):
         # calculate the average loss
         avg_loss = total_loss / len(loader)
     except ZeroDivisionError:
-        logging.error("ZeroDivisionError: The loader has no batches.")
-        return None
+        raise Exception("ZeroDivisionError: The loader has no batches.")
 
     return avg_loss

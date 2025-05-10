@@ -1,5 +1,4 @@
 import numpy as np
-import logging
 
 
 def _generate_cyclic_time_features(timestamps):
@@ -33,5 +32,4 @@ def _generate_cyclic_time_features(timestamps):
         return hour_of_day_sin, hour_of_day_cos, day_of_week_sin, day_of_week_cos
 
     except Exception as e:
-        logging.error(f"An unexpected error while generating cyclic time features: {e}")
-        return None, None, None, None
+        raise Exception(f"An unexpected error while generating cyclic time features: {e}")

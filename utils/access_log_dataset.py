@@ -1,4 +1,3 @@
-import logging
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
@@ -15,12 +14,7 @@ class AccessLogsDataset(Dataset):
         """
         # load config file
         config = load_config()
-
-        # load data config
-        if config is not None and "dataset" in config:
-            data_config = config["data"]
-        else:
-            raise ValueError("Error while loading or reading config file.")
+        data_config = config["data"]
 
         # get the csv dataset file
         df = pd.read_csv(csv_path)
@@ -36,8 +30,7 @@ class AccessLogsDataset(Dataset):
             self.keys = df["key"].values
             self.seq_len = data_config["seq_len"]
         except Exception as e:
-            logging.error(f"An unexpected error while reading the access logs dataset: {e}")
-            return
+            raise Exception(f"An unexpected error while reading the access logs dataset: {e}")
 
         try:
             # define the splittings
@@ -45,8 +38,7 @@ class AccessLogsDataset(Dataset):
             split_idx_2 = int(len(self.keys) *
                               (data_config["training_perc"] + data_config["validation_perc"]))
         except Exception as e:
-            logging.error(f"An unexpected error while defining the splittings: {e}")
-            return
+            raise Exception(f"An unexpected error while defining the splittings: {e}")
 
         # split the dataset
         if split == "training":
