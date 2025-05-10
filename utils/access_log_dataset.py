@@ -3,6 +3,7 @@ import torch
 from torch.utils.data import Dataset
 from utils.config_loader import load_config
 
+
 class AccessLogsDataset(Dataset):
 
     def __init__(self, csv_path, split):
@@ -18,32 +19,56 @@ class AccessLogsDataset(Dataset):
         # get the csv dataset file
         df = pd.read_csv(csv_path)
 
-        # set keys and seq_len fields
-        self.keys = df["key"].values
+        # set all the fields
         self.timestamps = df["timestamp"].values
+        self.hour_of_day_sin = df["hour_of_day_sin"].values
+        self.hour_of_day_cos = df["hour_of_day_cos"].values
+        self.day_of_week_sin = df["day_of_week_sin"].values
+        self.day_of_week_cos = df["day_of_week_cos"].values
+        self.keys = df["key"].values
+
+        # set the sequence length
         self.seq_len = data_config["seq_len"]
 
         # split dataset into training, testing, and validation set
-        self.train_size = int(len(self.keys) * data_config["training_perc"])
-        self.val_size = int(len(self.keys) * data_config["validation_perc"])
-        self.test_size = len(self.keys) - self.train_size - self.val_size
+        split_idx_1 = int(len(self.keys) * data_config["training_perc"])
+        split_idx_2 = int(len(self.keys) *
+                          (data_config["training_perc"] + data_config["validation_perc"]))
 
-        # split data
+        # split the dataset
         if split == "training":
-            self.data = list(zip(
-                self.keys[:self.train_size],
-                self.timestamps[:self.train_size]
-            ))
+            self.data = list(
+                zip(
+                    self.keys[:split_idx_1],
+                    self.timestamps[:split_idx_1],
+                    self.hour_of_day_cos[:split_idx_1],
+                    self.hour_of_day_sin[:split_idx_1],
+                    self.day_of_week_cos[:split_idx_1],
+                    self.day_of_week_sin[:split_idx_1]
+                )
+            )
         elif split == "validation":
-            self.data = list(zip(
-                self.keys[self.train_size:self.train_size + self.val_size],
-                self.timestamps[self.train_size:self.train_size + self.val_size]
-            ))
+            self.data = list(
+                zip(
+                    self.keys[split_idx_1:split_idx_2],
+                    self.timestamps[split_idx_1:split_idx_2],
+                    self.hour_of_day_cos[split_idx_1:split_idx_2],
+                    self.hour_of_day_sin[split_idx_1:split_idx_2],
+                    self.day_of_week_cos[split_idx_1:split_idx_2],
+                    self.day_of_week_sin[split_idx_1:split_idx_2]
+                )
+            )
         elif split == "testing":
-            self.data = list(zip(
-                self.keys[self.train_size + self.val_size:],
-                self.timestamps[self.train_size + self.val_size:]
-            ))
+            self.data = list(
+                zip(
+                    self.keys[split_idx_2:],
+                    self.timestamps[split_idx_2:],
+                    self.hour_of_day_cos[split_idx_2:],
+                    self.hour_of_day_sin[split_idx_2:],
+                    self.day_of_week_cos[split_idx_2:],
+                    self.day_of_week_sin[split_idx_2:]
+                )
+            )
         else:
             raise ValueError("Invalid split type.")
 
@@ -69,6 +94,28 @@ class AccessLogsDataset(Dataset):
             [item[1] for item in self.data[idx:idx + self.seq_len]],
             dtype=torch.float
         )
+        x_hour_of_day_cos = torch.tensor(
+            [item[2] for item in self.data[idx:idx + self.seq_len]],
+            dtype=torch.float
+        )
+        x_hour_of_day_sin = torch.tensor(
+            [item[3] for item in self.data[idx:idx + self.seq_len]],
+            dtype=torch.float
+        )
+        x_day_of_week_cos = torch.tensor(
+            [item[4] for item in self.data[idx:idx + self.seq_len]],
+            dtype=torch.float
+        )
+        x_day_of_week_sin = torch.tensor(
+            [item[5] for item in self.data[idx:idx + self.seq_len]],
+            dtype=torch.float
+        )
+
+        # combine all features
+        x_features = torch.stack(
+            [x_hour_of_day_cos, x_hour_of_day_sin, x_day_of_week_cos, x_day_of_week_sin],
+            dim=-1
+        )
 
         # the next value in the sequence (y)
         y_key = torch.tensor(
@@ -76,4 +123,4 @@ class AccessLogsDataset(Dataset):
             dtype=torch.long
         )
 
-        return (x_keys, x_timestamps), y_key
+        return (x_keys, x_timestamps, x_features), y_key

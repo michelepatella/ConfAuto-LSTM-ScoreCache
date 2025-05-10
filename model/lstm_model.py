@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
+from torch.nn.functional import dropout
 from utils.config_loader import load_config
+
 
 class LSTM(nn.Module):
 
@@ -14,7 +16,7 @@ class LSTM(nn.Module):
             dropout=None,
             bidirectional=None,
             proj_size=None,
-            n_keys=None
+            num_keys=None
     ):
         """
         Method to initialize the LSTM model.
@@ -26,7 +28,7 @@ class LSTM(nn.Module):
         :param dropout: Dropout layer to apply.
         :param bidirectional: Indicates if the LSTM should be bidirectional.
         :param proj_size: Size of the projection layer.
-        :param n_keys: Number of cache keys.
+        :param num_keys: Number of cache keys.
         """
         super(LSTM, self).__init__()
 
@@ -35,7 +37,7 @@ class LSTM(nn.Module):
         model_config = config["model"]
         data_config = config["data"]
 
-        # define the model's configuration (+ n_keys)
+        # define the model's configuration (+ num_keys)
         self.embedding_dim = embedding_dim \
             if embedding_dim is not None \
             else model_config["embedding_dim"]
@@ -51,40 +53,42 @@ class LSTM(nn.Module):
         self.batch_first = batch_first \
             if batch_first is not None \
             else model_config["batch_first"]
-        self.dropout = dropout \
+        self.dropout = float(dropout) \
             if dropout is not None \
-            else model_config["dropout"]
+            else float(model_config["dropout"])
         self.bidirectional = bidirectional \
             if bidirectional is not None \
             else model_config["bidirectional"]
         self.proj_size = proj_size \
             if proj_size is not None \
             else model_config["proj_size"]
-        self.n_keys = n_keys \
-            if n_keys is not None \
-            else data_config["n_keys"]
+        self.num_keys = num_keys \
+            if num_keys is not None \
+            else data_config["num_keys"]
 
         # embedding layer for keys
         self.embedding = nn.Embedding(
-            num_embeddings=self.n_keys + 1,
+            num_embeddings=self.num_keys + 1,
             embedding_dim=self.embedding_dim
         )
 
+        # check if dropout should be applied or not
+        effective_dropout = self.dropout if self.num_layers > 1 else 0.0
+
         # instantiate the LSTM model
         self.lstm = nn.LSTM(
-            6, # features + timestamp
-            self.embedding_dim + 1,
-            self.hidden_size,
-            self.num_layers,
-            self.bias,
-            self.batch_first,
-            self.dropout,
-            self.bidirectional,
-            self.proj_size
+            input_size=4 + 1 + self.embedding_dim,  # features + timestamp + embedding
+            hidden_size=self.hidden_size,
+            num_layers=self.num_layers,
+            bias=self.bias,
+            batch_first=self.batch_first,
+            dropout=effective_dropout,
+            bidirectional=self.bidirectional,
+            proj_size=self.proj_size
         )
 
         # fully-connected layer (linear)
-        self.fc = nn.Linear(self.hidden_size, self.n_keys + 1)
+        self.fc = nn.Linear(self.hidden_size, self.num_keys + 1)
 
     def forward(self, x_features, x_timestamps, keys):
         """

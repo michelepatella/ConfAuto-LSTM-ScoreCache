@@ -1,5 +1,6 @@
 import yaml
 
+
 def load_config(config_path="../config.yaml"):
     """
     Method to load the config file.

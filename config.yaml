@@ -1,6 +1,6 @@
 data:
-  n_requests: 10000
-  n_keys: 500
+  num_requests: 50000
+  num_keys: 500
   alpha: 1.3
   alpha_start: 1.3
   alpha_end: 1.8
@@ -26,14 +26,14 @@ model:
 
 training:
   epochs: 5
-  batch_size: 256
+  batch_size: 128
   learning_rate: null
 
 validation:
   num_folds: 5
   random_state: 42
   embedding_dim_range: [32, 64]
-  hidden_size_range: [64, 128]
-  num_layers_range: [1, 3]
+  hidden_size_range: [64, 256]
+  num_layers_range: [1, 5]
   dropout_range: [0.0, 0.5]
-  learning_rate_range: [0.001, 0.003]
+  learning_rate_range: [0.001, 0.005]
