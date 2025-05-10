@@ -1,4 +1,5 @@
 import numpy as np
+import logging
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
 from utils.config_loader import load_config
 
@@ -11,9 +12,20 @@ def _generate_static_requests(num_requests, num_keys, alpha):
     :param alpha: Zipf distribution's parameter.
     :return: Static requests and timestamps as output.
     """
-    # load data config
+    # check the validity of the parameters
+    if num_requests <= 0 or num_keys <= 0:
+        raise ValueError("num_requests and num_keys must be positive integers.")
+    if alpha <= 0:
+        raise ValueError("alpha must be a positive float.")
+
+    # load config file
     config = load_config()
-    data_config = config["data"]
+
+    # load data config
+    if config is not None and "data" in config:
+        data_config = config["data"]
+    else:
+        raise ValueError("Error while loading or reading config file.")
 
     # calculate the probabilities
     probs = _calculate_zipf_distribution_probs(
@@ -29,7 +41,10 @@ def _generate_static_requests(num_requests, num_keys, alpha):
     )
 
     # generate timestamp randomly, with an average freq
-    freq = np.random.exponential(scale=data_config['freq_timestamp'] + 1, size=num_requests)
+    freq = np.random.exponential(
+        scale=data_config['freq_timestamp'] + 1,
+        size=num_requests
+    )
     timestamps = np.cumsum(freq).astype(int)
 
     return requests, timestamps
@@ -43,9 +58,22 @@ def _generate_dynamic_requests(num_requests, num_keys, alpha_values, time_steps)
     :param time_steps: Total number of time steps.
     :return: Dynamic requests and timestamps as output.
     """
-    # load data config
+    # check the validity of the parameters
+    if num_requests <= 0 or num_keys <= 0 or time_steps <= 0:
+        raise ValueError("num_requests, num_keys, and time_steps must be positive integers.")
+    if len(alpha_values) != time_steps:
+        raise ValueError("alpha_values length must match time_steps.")
+    if any(alpha <= 0 for alpha in alpha_values):
+        raise ValueError("All alpha values must be positive.")
+
+    # load config file
     config = load_config()
-    data_config = config["data"]
+
+    # load data config
+    if config is not None and "data" in config:
+        data_config = config["data"]
+    else:
+        raise ValueError("Error while loading or reading config file.")
 
     # calculate the time step duration
     time_step_duration = num_requests // time_steps
@@ -54,7 +82,7 @@ def _generate_dynamic_requests(num_requests, num_keys, alpha_values, time_steps)
     remainder = num_requests % time_steps
     # show a warning message if some requests are ignored
     if remainder > 0:
-        print(f"Warning: {remainder} requests will be ignored due to uneven split.")
+        logging.warning(f"{remainder} requests will be ignored due to uneven split.")
 
     requests, timestamps = [], []
 
@@ -75,7 +103,10 @@ def _generate_dynamic_requests(num_requests, num_keys, alpha_values, time_steps)
         requests.extend(reqs)
 
         # generate timestamp randomly, with an average freq
-        freq = np.random.exponential(scale=data_config['freq_timestamp'] + 1, size=time_step_duration)
+        freq = np.random.exponential(
+            scale=data_config['freq_timestamp'] + 1,
+            size=time_step_duration
+        )
         ts = np.cumsum(freq).astype(int)
 
         if timestamps:

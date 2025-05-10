@@ -1,4 +1,5 @@
 import pandas as pd
+import logging
 
 
 def _save_dataset_to_csv(
@@ -21,15 +22,27 @@ def _save_dataset_to_csv(
     :param file_name: The name of the dataset file.
     :return:
     """
-    # create the dataframe
-    df = pd.DataFrame({
-        "timestamp": timestamps,
-        "hour_of_day_sin": hour_of_day_sin,
-        "hour_of_day_cos": hour_of_day_cos,
-        "day_of_week_sin": day_of_week_sin,
-        "day_of_week_cos": day_of_week_cos,
-        "key": requests
-    })
+    # check the field's lengths
+    if not all(len(lst) == len(timestamps) for lst in
+               [hour_of_day_sin, hour_of_day_cos, day_of_week_sin, day_of_week_cos, requests]):
+        raise ValueError("All input lists must have the same length.")
 
-    # convert the dataframe to CSV file
-    df.to_csv(file_name, index=False)
+    # try to create and save the dataset
+    try:
+        # create the dataframe
+        df = pd.DataFrame({
+            "timestamp": timestamps,
+            "hour_of_day_sin": hour_of_day_sin,
+            "hour_of_day_cos": hour_of_day_cos,
+            "day_of_week_sin": day_of_week_sin,
+            "day_of_week_cos": day_of_week_cos,
+            "key": requests
+        })
+
+        # convert the dataframe to CSV file
+        df.to_csv(file_name, index=False)
+
+        logging.info("Dataset saved correctly.")
+
+    except Exception as e:
+        logging.error(f"An unexpected error occured while saving the dataset: {e}")

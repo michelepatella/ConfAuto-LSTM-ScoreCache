@@ -14,7 +14,7 @@ def _save_best_params(best_params):
 
     # check config file read
     if config is None:
-        return
+        raise ValueError("Error while loading or reading config file.")
 
     # try to update the config file
     try:

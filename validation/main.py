@@ -18,7 +18,7 @@ def parameter_tuning():
     if config is not None and "data" in config:
         data_config = config["data"]
     else:
-        return
+        raise ValueError("Error while loading or reading config file.")
 
     # try to load the dataset
     try:
@@ -34,11 +34,16 @@ def parameter_tuning():
     # define the loss function
     criterion = nn.CrossEntropyLoss()
 
-    # grid search for best parameters
-    best_params = _grid_search(dataset, criterion)
+    try:
+        # grid search for best parameters
+        best_params = _grid_search(dataset, criterion)
 
-    # set the best parameters
-    _save_best_params(best_params)
+        # set the best parameters
+        _save_best_params(best_params)
+    except Exception as e:
+        logging.error(f"Parameter tuning failed: {e}")
+
+    logging.info(f"Parameter tuning successfully completed.")
 
 if __name__ == "__main__":
     parameter_tuning()

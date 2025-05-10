@@ -13,13 +13,14 @@ class AccessLogsDataset(Dataset):
         :param csv_path: The csv path of the access logs dataset.
         :param split: The type of dataset split ("training", "validation", or "testing").
         """
-        # load data config
+        # load config file
         config = load_config()
 
+        # load data config
         if config is not None and "dataset" in config:
             data_config = config["data"]
         else:
-            return
+            raise ValueError("Error while loading or reading config file.")
 
         # get the csv dataset file
         df = pd.read_csv(csv_path)

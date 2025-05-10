@@ -23,7 +23,7 @@ def _grid_search(dataset, criterion):
     if config is not None and "validation" in config:
         validation_config = config["validation"]
     else:
-        return best_params
+        raise ValueError("Error while loading or reading config file.")
 
     # try to define the combination of parameters
     try:
@@ -87,9 +87,9 @@ def _grid_search(dataset, criterion):
             pbar.update(1)
 
     # print the best params found
-    print("Best params found:", best_params)
+    logging.info(f"Best params found: {best_params}")
 
     # print the best average loss found
-    print("Best avg loss:", best_avg_loss)
+    logging.info(f"Best avg loss: {best_avg_loss}")
 
     return best_params

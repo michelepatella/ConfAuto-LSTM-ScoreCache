@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 from data_generation.dataset_saver import _save_dataset_to_csv
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
@@ -10,14 +11,17 @@ def _generate_static_dataset():
     Method to generate static dataset following Zipf's distribution.
     :return:
     """
-    # load data config
+    # load config file
     config = load_config()
-    data_config = config["data"]
-    num_requests = data_config["num_requests"]
-    num_keys = data_config["num_keys"]
 
-    # get the Zipf distribution's parameter
-    alpha = data_config["alpha"]
+    # load data config
+    if config is not None and "data" in config:
+        data_config = config["data"]
+        num_requests = data_config["num_requests"]
+        num_keys = data_config["num_keys"]
+        alpha = data_config["alpha"]
+    else:
+        raise ValueError("Error while loading or reading config file.")
 
     # generate static requests and timestamps
     requests, timestamps = _generate_static_requests(
@@ -43,23 +47,26 @@ def _generate_static_dataset():
         data_config["static_dataset_path"]
     )
 
+    logging.info("Static dataset generated.")
+
 def _generate_dynamic_dataset():
     """
     Method to generate dynamic dataset following Zipf's distribution.
     :return:
     """
-    # load data config
+    # load config file
     config = load_config()
-    data_config = config["data"]
-    num_requests = data_config["num_requests"]
-    num_keys = data_config["num_keys"]
 
-    # get the initial and final Zipf distribution's parameter
-    alpha_start = data_config["alpha_start"]
-    alpha_end = data_config["alpha_end"]
-
-    # get the time steps
-    time_steps = data_config["time_steps"]
+    # load data config
+    if config is not None and "data" in config:
+        data_config = config["data"]
+        num_requests = data_config["num_requests"]
+        num_keys = data_config["num_keys"]
+        alpha_start = data_config["alpha_start"]
+        alpha_end = data_config["alpha_end"]
+        time_steps = data_config["time_steps"]
+    else:
+        raise ValueError("Error while loading or reading config file.")
 
     # generate the Zipf distribution's parameter values
     alpha_values = np.linspace(alpha_start, alpha_end, time_steps)
@@ -88,3 +95,5 @@ def _generate_dynamic_dataset():
         requests,
         data_config["dynamic_dataset_path"]
     )
+
+    logging.info("Dynamic dataset generated.")
