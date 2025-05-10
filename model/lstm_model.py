@@ -72,6 +72,7 @@ class LSTM(nn.Module):
 
         # instantiate the LSTM model
         self.lstm = nn.LSTM(
+            6, # features + timestamp
             self.embedding_dim + 1,
             self.hidden_size,
             self.num_layers,
@@ -85,27 +86,28 @@ class LSTM(nn.Module):
         # fully-connected layer (linear)
         self.fc = nn.Linear(self.hidden_size, self.n_keys + 1)
 
-    def forward(self, x_keys, x_timestamps):
+    def forward(self, x_features, x_timestamps, keys):
         """
         Method to perform the forward pass through the LSTM.
-        :param self: LSTM model.
-        :param x_keys: The keys.
-        :param x_timestamps: The timestamps.
-        :return: Logits as output.
+        :param x_features: The 4 features (hour of day sin, hour of day cos,
+        day of week sin, day of week cos).
+        :param x_timestamps: The timestamps of the 4 features.
+        :param keys: The keys requested.
+        :return: The logits of the LSTM as output
         """
-        # embedding
-        embedded = self.embedding(x_keys)
-
-        # timestamp reshape
+        # concatenate features and timestamps
         timestamps = x_timestamps.unsqueeze(-1)
 
-        # concatenation to obtain [batch_size, seq_len, embedding_dim + 1]
-        x_cat = torch.cat([embedded, timestamps], dim=-1)
+        # get embedding for the keys
+        key_embeddings = self.embedding(keys)
 
-        # calculate the LSTM output
+        # concatenate features and keys
+        x_cat = torch.cat([x_features, timestamps, key_embeddings], dim=-1)
+
+        # pass the features to the LSTM
         lstm_out, _ = self.lstm(x_cat)
 
-        # pass through the fully connected layer to get logits
+        # get the logits
         logits = self.fc(lstm_out[:, -1, :])
 
         return logits

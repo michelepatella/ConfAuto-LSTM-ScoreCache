@@ -25,9 +25,24 @@ def create_dataset(timestamps, requests, file_name):
     :param file_name: The name of the dataset file.
     :return:
     """
+    # add hour and day
+    hours_of_day = np.array([timestamp % 24 for timestamp in timestamps])
+    days_of_week = np.array([timestamp // 24 % 7 for timestamp in timestamps])
+
+    # add cyclic features
+    hour_of_day_sin = np.sin(2 * np.pi * hours_of_day / 24)
+    hour_of_day_cos = np.cos(2 * np.pi * hours_of_day / 24)
+
+    day_of_week_sin = np.sin(2 * np.pi * days_of_week / 7)
+    day_of_week_cos = np.cos(2 * np.pi * days_of_week / 7)
+
     # create the dataframe
     df = pd.DataFrame({
         "timestamp": timestamps,
+        "hour_of_day_sin": hour_of_day_sin,
+        "hour_of_day_cos": hour_of_day_cos,
+        "day_of_week_sin": day_of_week_sin,
+        "day_of_week_cos": day_of_week_cos,
         "key": requests
     })
 
@@ -42,19 +57,26 @@ def generate_static_requests(n_requests, n_keys, alpha):
     :param alpha: Zipf distribution's parameter.
     :return: Static requests and timestamps as output.
     """
+    # load data configuration
+    config = load_config()
+    data_config = config["data"]
+
     # calculate the probabilities
     probs = calculate_zipf_distribution_probs(
         np.arange(1, n_keys + 1),
         alpha
     )
 
-    # generate requests and timestamps
+    # generate requests
     requests = np.random.choice(
         np.arange(1, n_keys + 1),
         size=n_requests,
         p=probs
     )
-    timestamps = np.arange(n_requests)
+
+    # generate timestamp randomly each 5 min on average
+    freq = np.random.exponential(scale=data_config['freq_timestamp'] + 1, size=n_requests)
+    timestamps = np.cumsum(freq).astype(int)
 
     return requests, timestamps
 
@@ -67,6 +89,10 @@ def generate_dynamic_requests(n_requests, n_keys, alpha_values, time_steps):
     :param time_steps: Total number of time steps.
     :return: Dynamic requests and timestamps as output.
     """
+    # load data configuration
+    config = load_config()
+    data_config = config["data"]
+
     # calculate the time step duration
     time_step_duration = n_requests // time_steps
 
@@ -86,16 +112,22 @@ def generate_dynamic_requests(n_requests, n_keys, alpha_values, time_steps):
             alpha
         )
 
-        # generate requests and timestamps
+        # generate requests
         reqs = np.random.choice(
             np.arange(1, n_keys + 1),
             size=time_step_duration,
             p=probs
         )
         requests.extend(reqs)
-        timestamps.extend(
-            np.arange(t * time_step_duration, (t + 1) * time_step_duration)
-        )
+
+        # generate timestamp randomly each 5 min on average
+        freq = np.random.exponential(scale=data_config['freq_timestamp'] + 1, size=time_step_duration)
+        ts = np.cumsum(freq).astype(int)
+
+        if timestamps:
+            ts += timestamps[-1] + 1
+
+        timestamps.extend(ts)
 
     return requests, timestamps
 

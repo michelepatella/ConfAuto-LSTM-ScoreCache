@@ -6,6 +6,7 @@ data:
   alpha_end: 1.8
   time_steps: 100
   seq_len: 25
+  freq_timestamp: 5
   training_perc: 0.7
   testing_perc: 0.2
   validation_perc: 0.1
