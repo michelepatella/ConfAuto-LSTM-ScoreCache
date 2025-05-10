@@ -86,7 +86,8 @@ def _time_series_cv(
                 embedding_dim=embedding_dim,
                 hidden_size=hidden_size,
                 num_layers=num_layers,
-                dropout=dropout
+                dropout=dropout,
+                use_embedding=False
             ).to(device)
         except Exception as e:
             raise Exception(f"An unexpected error while loading model: {e}")

@@ -15,7 +15,8 @@ class LSTM(nn.Module):
             dropout=None,
             bidirectional=None,
             proj_size=None,
-            num_keys=None
+            num_keys=None,
+            use_embedding=True
     ):
         """
         Method to initialize the LSTM model.
@@ -28,6 +29,7 @@ class LSTM(nn.Module):
         :param bidirectional: Indicates if the LSTM should be bidirectional.
         :param proj_size: Size of the projection layer.
         :param num_keys: Number of cache keys.
+        :param use_embedding: Speifies whether to use embeddings.
         """
         super(LSTM, self).__init__()
 
@@ -64,12 +66,17 @@ class LSTM(nn.Module):
         self.num_keys = num_keys \
             if num_keys is not None \
             else data_config["num_keys"]
+        self.use_embedding = use_embedding
 
-        # embedding layer for keys
-        self.embedding = nn.Embedding(
-            num_embeddings=self.num_keys + 1,
-            embedding_dim=self.embedding_dim
-        )
+        if self.use_embedding:
+            # embedding layer for keys
+            self.embedding = nn.Embedding(
+                num_embeddings=self.num_keys + 1,
+                embedding_dim=self.embedding_dim
+            )
+            input_size = 5 + self.embedding_dim
+        else:
+            input_size = 5
 
         # check if dropout should be applied or not
         effective_dropout = self.dropout if self.num_layers > 1 else 0.0
@@ -77,7 +84,7 @@ class LSTM(nn.Module):
         try:
             # instantiate the LSTM model
             self.lstm = nn.LSTM(
-                input_size=5+self.embedding_dim,  # features + embedding
+                input_size=input_size,  # features + embedding
                 hidden_size=self.hidden_size,
                 num_layers=self.num_layers,
                 bias=self.bias,
