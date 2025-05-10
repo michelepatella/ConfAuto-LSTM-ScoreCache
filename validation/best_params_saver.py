@@ -1,6 +1,7 @@
 import logging
 import yaml
 from utils.config_loader import load_config
+import os
 
 
 def _save_best_params(best_params):
@@ -29,9 +30,17 @@ def _save_best_params(best_params):
 
     # try to write the best parameters to the config file
     try:
-        config_file_path = "../config.yaml"
+        # define the absolute path of the config file
+        config_file_path = os.path.join(os.path.dirname(__file__), '..', 'config.yaml')
+        config_file_path = os.path.abspath(config_file_path)
+
         with open(config_file_path, "w") as config_file:
-            yaml.dump(config, config_file, default_flow_style=False)
+            yaml.dump(
+                config, config_file,
+                default_flow_style=False,
+                sort_keys=False,
+                allow_unicode=True
+            )
         logging.info(f"Best parameters have been saved.")
     except Exception as e:
         raise Exception(f"An unexpected error while writing the best parameters to the config file: {e}")

@@ -45,4 +45,4 @@ def _save_dataset_to_csv(
         logging.info("Dataset saved correctly.")
 
     except Exception as e:
-        raise Exception(f"An unexpected error occured while saving the dataset: {e}")
+        raise Exception(f"An unexpected error while saving the dataset: {e}")

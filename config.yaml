@@ -1,6 +1,6 @@
 data:
-  num_requests: 50000
-  num_keys: 500
+  num_requests: 10000
+  num_keys: 5000
   alpha: 1.3
   alpha_start: 1.3
   alpha_end: 1.8
@@ -10,30 +10,45 @@ data:
   training_perc: 0.7
   testing_perc: 0.2
   validation_perc: 0.1
-  static_dataset_path: "data/static_access_logs.csv"
-  dynamic_dataset_path: "data/dynamic_access_logs.csv"
-
+  static_dataset_path: data/static_access_logs.csv
+  dynamic_dataset_path: data/dynamic_access_logs.csv
 model:
-  hidden_size: null
-  num_layers: null
-  bias: True
-  batch_first: True
-  dropout: null
-  bidirectional: False
+  hidden_size: 256
+  num_layers: 5
+  bias: true
+  batch_first: true
+  dropout: 0.0
+  bidirectional: false
   proj_size: 0
-  embedding_dim: null
-  model_save_path: "model/trained_lstm_model.pt"
-
+  embedding_dim: 32
+  model_save_path: model/trained_lstm_model.pt
 training:
   epochs: 5
   batch_size: 128
-  learning_rate: null
-
+  learning_rate: 0.005
 validation:
-  num_folds: 5
-  random_state: 42
-  embedding_dim_range: [32, 64]
-  hidden_size_range: [64, 256]
-  num_layers_range: [1, 5]
-  dropout_range: [0.0, 0.5]
-  learning_rate_range: [0.001, 0.005]
+  num_folds: 10
+  embedding_dim_range:
+  - 32
+  - 64
+  hidden_size_range:
+  - 64
+  - 128
+  - 256
+  num_layers_range:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  dropout_range:
+  - 0.0
+  - 0.1
+  - 0.2
+  - 0.3
+  - 0.4
+  - 0.5
+  learning_rate_range:
+  - 0.001
+  - 0.003
+  - 0.005

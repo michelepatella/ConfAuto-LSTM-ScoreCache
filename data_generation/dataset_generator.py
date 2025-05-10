@@ -1,4 +1,3 @@
-import logging
 import numpy as np
 from data_generation.dataset_saver import _save_dataset_to_csv
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests

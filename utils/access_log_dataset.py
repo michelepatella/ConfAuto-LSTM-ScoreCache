@@ -32,6 +32,10 @@ class AccessLogsDataset(Dataset):
         except Exception as e:
             raise Exception(f"An unexpected error while reading the access logs dataset: {e}")
 
+        # add min and max timestamps
+        self.timestamps_min = self.timestamps.min()
+        self.timestamps_max = self.timestamps.max()
+
         try:
             # define the splittings
             split_idx_1 = int(len(self.keys) * data_config["training_perc"])
@@ -120,6 +124,9 @@ class AccessLogsDataset(Dataset):
             dtype=torch.float
         )
 
+        # normalize timestamps
+        x_timestamps = ((x_timestamps - self.timestamps_min) /
+                        (self.timestamps_max - self.timestamps_min))
         # combine all features
         x_features = torch.stack(
             [x_hour_of_day_cos, x_hour_of_day_sin, x_day_of_week_cos, x_day_of_week_sin],

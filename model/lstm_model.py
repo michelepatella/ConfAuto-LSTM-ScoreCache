@@ -75,17 +75,20 @@ class LSTM(nn.Module):
         # check if dropout should be applied or not
         effective_dropout = self.dropout if self.num_layers > 1 else 0.0
 
-        # instantiate the LSTM model
-        self.lstm = nn.LSTM(
-            input_size=4 + 1 + self.embedding_dim,  # features + timestamp + embedding
-            hidden_size=self.hidden_size,
-            num_layers=self.num_layers,
-            bias=self.bias,
-            batch_first=self.batch_first,
-            dropout=effective_dropout,
-            bidirectional=self.bidirectional,
-            proj_size=self.proj_size
-        )
+        try:
+            # instantiate the LSTM model
+            self.lstm = nn.LSTM(
+                input_size=4 + 1 + self.embedding_dim,  # features + timestamp + embedding
+                hidden_size=self.hidden_size,
+                num_layers=self.num_layers,
+                bias=self.bias,
+                batch_first=self.batch_first,
+                dropout=effective_dropout,
+                bidirectional=self.bidirectional,
+                proj_size=self.proj_size
+            )
+        except:
+            raise Exception("An unexpected error while instantiating LSTM model.")
 
         # fully-connected layer (linear)
         self.fc = nn.Linear(self.hidden_size, self.num_keys + 1)
@@ -99,11 +102,22 @@ class LSTM(nn.Module):
         :param keys: The keys requested.
         :return: The logits of the LSTM as output
         """
+        # check the inputs validity
+        if x_features is None or x_timestamps is None or keys is None:
+            raise ValueError("Input features and timestamps cannot be None.")
+
+        # check the input length
+        if x_features.shape[0] != x_timestamps.shape[0] or x_features.shape[0] != keys.shape[0]:
+            raise ValueError(f"The shape of x_features and x_timestamps must match.")
+
         # concatenate features and timestamps
         timestamps = x_timestamps.unsqueeze(-1)
 
-        # get embedding for the keys
-        key_embeddings = self.embedding(keys)
+        try:
+            # get embedding for the keys
+            key_embeddings = self.embedding(keys)
+        except:
+            raise Exception("An unexpected error while embedding.")
 
         # concatenate features and keys
         x_cat = torch.cat([x_features, timestamps, key_embeddings], dim=-1)
