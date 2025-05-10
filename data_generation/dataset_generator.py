@@ -10,7 +10,7 @@ def _generate_static_dataset():
     Method to generate static dataset following Zipf's distribution.
     :return:
     """
-    # load data configuration
+    # load data config
     config = load_config()
     data_config = config["data"]
     num_requests = data_config["num_requests"]
@@ -48,7 +48,7 @@ def _generate_dynamic_dataset():
     Method to generate dynamic dataset following Zipf's distribution.
     :return:
     """
-    # load data configuration
+    # load data config
     config = load_config()
     data_config = config["data"]
     num_requests = data_config["num_requests"]

@@ -1,3 +1,4 @@
+import logging
 from torch import nn
 from utils.access_log_dataset import AccessLogsDataset
 from utils.config_loader import load_config
@@ -10,12 +11,25 @@ def parameter_tuning():
     Method to orchestrate the parameter tuning of the model.
     :return:
     """
-    # load data configuration
+    # load config file
     config = load_config()
-    data_config = config["data"]
 
-    # load the dataset
-    dataset = AccessLogsDataset(data_config["static_dataset_path"], "validation")
+    # load data config
+    if config is not None and "data" in config:
+        data_config = config["data"]
+    else:
+        return
+
+    # try to load the dataset
+    try:
+        # load the dataset
+        dataset = AccessLogsDataset(data_config["static_dataset_path"], "validation")
+    except FileNotFoundError as e:
+        logging.error(f"Error opening the file: {e}")
+        return
+    except Exception as e:
+        logging.error(f"An unexpected error while loading dataset: {e}")
+        return
 
     # define the loss function
     criterion = nn.CrossEntropyLoss()

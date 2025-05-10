@@ -11,7 +11,7 @@ def train():
     Method to train the LSTM model.
     :return:
     """
-    # load data, model, and training configurations
+    # load data, model, and training configs
     config = load_config()
     data_config = config["data"]
     model_config = config["model"]

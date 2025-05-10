@@ -32,12 +32,12 @@ class LSTM(nn.Module):
         """
         super(LSTM, self).__init__()
 
-        # load model and data configurations
+        # load model and data configs
         config = load_config()
         model_config = config["model"]
         data_config = config["data"]
 
-        # define the model's configuration (+ num_keys)
+        # define the model's config (+ num_keys)
         self.embedding_dim = embedding_dim \
             if embedding_dim is not None \
             else model_config["embedding_dim"]

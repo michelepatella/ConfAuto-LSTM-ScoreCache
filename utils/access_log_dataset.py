@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
@@ -12,28 +13,39 @@ class AccessLogsDataset(Dataset):
         :param csv_path: The csv path of the access logs dataset.
         :param split: The type of dataset split ("training", "validation", or "testing").
         """
-        # load data configuration
+        # load data config
         config = load_config()
-        data_config = config["data"]
+
+        if config is not None and "dataset" in config:
+            data_config = config["data"]
+        else:
+            return
 
         # get the csv dataset file
         df = pd.read_csv(csv_path)
 
-        # set all the fields
-        self.timestamps = df["timestamp"].values
-        self.hour_of_day_sin = df["hour_of_day_sin"].values
-        self.hour_of_day_cos = df["hour_of_day_cos"].values
-        self.day_of_week_sin = df["day_of_week_sin"].values
-        self.day_of_week_cos = df["day_of_week_cos"].values
-        self.keys = df["key"].values
+        # try to set the fields
+        try:
+            # set all the fields
+            self.timestamps = df["timestamp"].values
+            self.hour_of_day_sin = df["hour_of_day_sin"].values
+            self.hour_of_day_cos = df["hour_of_day_cos"].values
+            self.day_of_week_sin = df["day_of_week_sin"].values
+            self.day_of_week_cos = df["day_of_week_cos"].values
+            self.keys = df["key"].values
+            self.seq_len = data_config["seq_len"]
+        except Exception as e:
+            logging.error(f"An unexpected error while reading the access logs dataset: {e}")
+            return
 
-        # set the sequence length
-        self.seq_len = data_config["seq_len"]
-
-        # split dataset into training, testing, and validation set
-        split_idx_1 = int(len(self.keys) * data_config["training_perc"])
-        split_idx_2 = int(len(self.keys) *
-                          (data_config["training_perc"] + data_config["validation_perc"]))
+        try:
+            # define the splittings
+            split_idx_1 = int(len(self.keys) * data_config["training_perc"])
+            split_idx_2 = int(len(self.keys) *
+                              (data_config["training_perc"] + data_config["validation_perc"]))
+        except Exception as e:
+            logging.error(f"An unexpected error while defining the splittings: {e}")
+            return
 
         # split the dataset
         if split == "training":
@@ -85,6 +97,10 @@ class AccessLogsDataset(Dataset):
         :param idx: The index of the access logs dataset
         :return: Access logs dataset as output.
         """
+        # check idx + seq_len does not exceed bounds
+        if idx + self.seq_len >= len(self.data):
+            raise IndexError(f"Index {idx} out of bounds for sequence length {self.seq_len}.")
+
         # get the sequence (x)
         x_keys = torch.tensor(
             [item[0] for item in self.data[idx:idx + self.seq_len]],

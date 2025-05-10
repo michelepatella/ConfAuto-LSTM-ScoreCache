@@ -11,7 +11,7 @@ def _generate_static_requests(num_requests, num_keys, alpha):
     :param alpha: Zipf distribution's parameter.
     :return: Static requests and timestamps as output.
     """
-    # load data configuration
+    # load data config
     config = load_config()
     data_config = config["data"]
 
@@ -43,7 +43,7 @@ def _generate_dynamic_requests(num_requests, num_keys, alpha_values, time_steps)
     :param time_steps: Total number of time steps.
     :return: Dynamic requests and timestamps as output.
     """
-    # load data configuration
+    # load data config
     config = load_config()
     data_config = config["data"]
 

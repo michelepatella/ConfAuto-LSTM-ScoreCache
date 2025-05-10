@@ -1,4 +1,6 @@
+import logging
 import torch
+from validation.batch_processor import _process_batch
 
 
 def _evaluate_model(model, loader, criterion, device):
@@ -16,23 +18,31 @@ def _evaluate_model(model, loader, criterion, device):
     # initialize the total loss
     total_loss = 0.0
 
+    # check the loader dimension
+    if len(loader) == 0:
+        logging.warning("The loader is empty. Skipping evaluation.")
+        return 0.0
+
     # calculate the average loss
     with torch.no_grad():
         for x, y in loader:
 
-            # unpack
-            x_keys, x_timestamps, x_features = x
-            x_keys = x_keys.to(device)
-            x_timestamps = x_timestamps.to(device)
-            x_features = x_features.to(device)
-            y = y.to(device)
+            # calculate loss by processing the batch
+            loss = _process_batch((x, y), model, criterion, device)
 
-            # calculate the outputs
-            outputs = model(x_features, x_timestamps, x_keys)
+            # check loss
+            if loss is None:
+                return None
 
-            # calculate the loss and update the total one
-            loss = criterion(outputs, y)
+            # update total loss
             total_loss += loss.item()
 
-    # return the average loss
-    return total_loss / len(loader)
+    # try to calculate the average loss
+    try:
+        # calculate the average loss
+        avg_loss = total_loss / len(loader)
+    except ZeroDivisionError:
+        logging.error("ZeroDivisionError: The loader has no batches.")
+        return None
+
+    return avg_loss

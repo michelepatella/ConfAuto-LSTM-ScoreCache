@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 
 
@@ -11,22 +12,40 @@ def _check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_
     :param best_params: The current best parameters.
     :return: The best average loss and the best parameters as output.
     """
-    # calculate the average loss
-    avg_loss = np.mean(fold_losses)
+    if not fold_losses:
+        logging.warning("Fold losses are empty. Skipping update.")
+        return best_avg_loss, best_params
+
+    # try to calculate the average loss
+    try:
+        # calculate the average loss
+        avg_loss = np.mean(fold_losses)
+    except Exception as e:
+        logging.error(f"An unexpected error while calculating the average loss: {e}")
+        return best_avg_loss, best_params
 
     # if the average loss is less than the best one,
     # update it and the best params
-    if avg_loss < best_avg_loss:
-        # update the best loss
-        best_avg_loss = avg_loss
+    if best_avg_loss is not None and best_avg_loss >= 0:
+        if avg_loss < best_avg_loss:
+            # update the best loss
+            best_avg_loss = avg_loss
 
-        # update the best params
-        best_params = {
-            "embedding_dim": curr_params["embedding_dim"],
-            "hidden_size": curr_params["hidden_size"],
-            "num_layers": curr_params["num_layers"],
-            "dropout": curr_params["dropout"],
-            "learning_rate": curr_params["learning_rate"]
-        }
+            try:
+                # update the best params
+                best_params = {
+                    "embedding_dim": curr_params["embedding_dim"],
+                    "hidden_size": curr_params["hidden_size"],
+                    "num_layers": curr_params["num_layers"],
+                    "dropout": curr_params["dropout"],
+                    "learning_rate": curr_params["learning_rate"]
+                }
+                logging.info(f"Updated best parameters: {best_params}")
+            except KeyError as e:
+                logging.error(f"Missing key in current parameters: {e}")
+            except Exception as e:
+                logging.error(f"An unexpected error while updating best params: {e}")
+        else:
+            logging.warning("Invalid best average loss. Skipping update.")
 
     return best_avg_loss, best_params
