@@ -42,7 +42,7 @@ def _check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_
                 logging.info(f"Updated best parameters: {best_params}")
             except Exception as e:
                 raise Exception(f"An unexpected error while updating best parameters: {e}")
-        else:
-            logging.warning("Invalid best average loss. Skipping update.")
+    else:
+        logging.warning("Invalid best average loss. Skipping update.")
 
     return best_avg_loss, best_params

@@ -42,8 +42,6 @@ def _generate_static_dataset():
         data_config["static_dataset_path"]
     )
 
-    logging.info("Static dataset generated.")
-
 def _generate_dynamic_dataset():
     """
     Method to generate dynamic dataset following Zipf's distribution.
@@ -85,5 +83,3 @@ def _generate_dynamic_dataset():
         requests,
         data_config["dynamic_dataset_path"]
     )
-
-    logging.info("Dynamic dataset generated.")

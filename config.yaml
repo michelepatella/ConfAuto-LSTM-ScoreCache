@@ -10,8 +10,8 @@ data:
   training_perc: 0.7
   testing_perc: 0.2
   validation_perc: 0.1
-  static_dataset_path: "../data/static_access_logs.csv"
-  dynamic_dataset_path: "../data/dynamic_access_logs.csv"
+  static_dataset_path: "data/static_access_logs.csv"
+  dynamic_dataset_path: "data/dynamic_access_logs.csv"
 
 model:
   hidden_size: null
@@ -22,7 +22,7 @@ model:
   bidirectional: False
   proj_size: 0
   embedding_dim: null
-  model_save_path: "../model/trained_lstm_model.pt"
+  model_save_path: "model/trained_lstm_model.pt"
 
 training:
   epochs: 5
