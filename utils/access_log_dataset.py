@@ -99,37 +99,43 @@ class AccessLogsDataset(Dataset):
             raise IndexError(f"Index {idx} out of bounds for sequence length {self.seq_len}.")
 
         # get the sequence (x)
-        x_keys = torch.tensor(
-            [item[0] for item in self.data[idx:idx + self.seq_len]],
-            dtype=torch.long
-        )
         x_timestamps = torch.tensor(
             [item[1] for item in self.data[idx:idx + self.seq_len]],
             dtype=torch.float
-        )
+        ).unsqueeze(-1)
+
         x_hour_of_day_cos = torch.tensor(
             [item[2] for item in self.data[idx:idx + self.seq_len]],
             dtype=torch.float
-        )
+        ).unsqueeze(-1)
+
         x_hour_of_day_sin = torch.tensor(
             [item[3] for item in self.data[idx:idx + self.seq_len]],
             dtype=torch.float
-        )
+        ).unsqueeze(-1)
+
         x_day_of_week_cos = torch.tensor(
             [item[4] for item in self.data[idx:idx + self.seq_len]],
             dtype=torch.float
-        )
+        ).unsqueeze(-1)
+
         x_day_of_week_sin = torch.tensor(
             [item[5] for item in self.data[idx:idx + self.seq_len]],
             dtype=torch.float
-        )
+        ).unsqueeze(-1)
 
         # normalize timestamps
-        x_timestamps = ((x_timestamps - self.timestamps_min) /
-                        (self.timestamps_max - self.timestamps_min))
+        x_timestamps = (
+                (x_timestamps - self.timestamps_min) /
+                (self.timestamps_max - self.timestamps_min))
+
         # combine all features
-        x_features = torch.stack(
-            [x_hour_of_day_cos, x_hour_of_day_sin, x_day_of_week_cos, x_day_of_week_sin],
+        x_features = torch.cat([
+            x_timestamps,
+            x_hour_of_day_cos,
+            x_hour_of_day_sin,
+            x_day_of_week_cos,
+            x_day_of_week_sin],
             dim=-1
         )
 
@@ -139,4 +145,4 @@ class AccessLogsDataset(Dataset):
             dtype=torch.long
         )
 
-        return (x_keys, x_timestamps, x_features), y_key
+        return x_features, y_key

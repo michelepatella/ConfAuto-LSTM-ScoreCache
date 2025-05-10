@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from torch.nn.functional import dropout
 from utils.config_loader import load_config
 
 
@@ -78,7 +77,7 @@ class LSTM(nn.Module):
         try:
             # instantiate the LSTM model
             self.lstm = nn.LSTM(
-                input_size=4 + 1 + self.embedding_dim,  # features + timestamp + embedding
+                input_size=5+self.embedding_dim,  # features + embedding
                 hidden_size=self.hidden_size,
                 num_layers=self.num_layers,
                 bias=self.bias,
@@ -93,39 +92,40 @@ class LSTM(nn.Module):
         # fully-connected layer (linear)
         self.fc = nn.Linear(self.hidden_size, self.num_keys + 1)
 
-    def forward(self, x_features, x_timestamps, keys):
+    def forward(self, x_features, keys=None):
         """
         Method to perform the forward pass through the LSTM.
         :param x_features: The 4 features (hour of day sin, hour of day cos,
         day of week sin, day of week cos).
-        :param x_timestamps: The timestamps of the 4 features.
         :param keys: The keys requested.
         :return: The logits of the LSTM as output
         """
         # check the inputs validity
-        if x_features is None or x_timestamps is None or keys is None:
-            raise ValueError("Input features and timestamps cannot be None.")
-
-        # check the input length
-        if x_features.shape[0] != x_timestamps.shape[0] or x_features.shape[0] != keys.shape[0]:
-            raise ValueError(f"The shape of x_features and x_timestamps must match.")
-
-        # concatenate features and timestamps
-        timestamps = x_timestamps.unsqueeze(-1)
+        if x_features is None:
+            raise ValueError("Input features cannot be None.")
 
         try:
-            # get embedding for the keys
-            key_embeddings = self.embedding(keys)
-        except:
-            raise Exception("An unexpected error while embedding.")
+            # embedding used only while training
+            if keys is not None:
+                key_embeddings = self.embedding(keys)
+                # concatenate features and keys
+                x_cat = torch.cat([x_features, key_embeddings], dim=-1)
+            else:
+                # embedding not used at prediction time
+                x_cat = x_features
+        except Exception as e:
+            raise Exception(f"An unexpected error while processing inputs: {e}")
 
-        # concatenate features and keys
-        x_cat = torch.cat([x_features, timestamps, key_embeddings], dim=-1)
+        try:
+            # pass the features to the LSTM
+            lstm_out, _ = self.lstm(x_cat)
+        except Exception as e:
+            raise Exception(f"An unexpected error while passing data through LSTM: {e}")
 
-        # pass the features to the LSTM
-        lstm_out, _ = self.lstm(x_cat)
-
-        # get the logits
-        logits = self.fc(lstm_out[:, -1, :])
+        try:
+            # get the logits from the LSTM output
+            logits = self.fc(lstm_out[:, -1, :])
+        except Exception as e:
+            raise Exception(f"An unexpected error while processing LSTM output: {e}")
 
         return logits

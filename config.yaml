@@ -1,6 +1,6 @@
 data:
-  num_requests: 10000
-  num_keys: 5000
+  num_requests: 50000
+  num_keys: 100
   alpha: 1.3
   alpha_start: 1.3
   alpha_end: 1.8
@@ -13,7 +13,7 @@ data:
   static_dataset_path: data/static_access_logs.csv
   dynamic_dataset_path: data/dynamic_access_logs.csv
 model:
-  hidden_size: 256
+  hidden_size: 128
   num_layers: 5
   bias: true
   batch_first: true
@@ -27,27 +27,21 @@ training:
   batch_size: 128
   learning_rate: 0.005
 validation:
-  num_folds: 10
+  num_folds: 3
   embedding_dim_range:
   - 32
   - 64
   hidden_size_range:
   - 64
   - 128
-  - 256
   num_layers_range:
   - 1
-  - 2
   - 3
-  - 4
   - 5
   dropout_range:
   - 0.0
   - 0.1
-  - 0.2
   - 0.3
-  - 0.4
-  - 0.5
   learning_rate_range:
   - 0.001
   - 0.003
