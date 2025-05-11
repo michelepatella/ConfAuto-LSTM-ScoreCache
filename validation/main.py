@@ -6,9 +6,10 @@ from validation.best_params_saver import _save_best_params
 from validation.grid_search_optimizer import _grid_search
 
 
-def parameter_tuning():
+def validation():
     """
-    Method to orchestrate the parameter tuning of the model.
+    Method to orchestrate the validaton of the model, to find
+    the best parameters.
     :return:
     """
     # load config file
@@ -37,4 +38,4 @@ def parameter_tuning():
     logging.info(f"Parameter tuning successfully completed.")
 
 if __name__ == "__main__":
-    parameter_tuning()
+    validation()

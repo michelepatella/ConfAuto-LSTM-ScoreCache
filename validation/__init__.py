@@ -1,4 +1,4 @@
-from .main import parameter_tuning
+from .main import validation
 
 
-__all__ = ['parameter_tuning']
+__all__ = ['validation']

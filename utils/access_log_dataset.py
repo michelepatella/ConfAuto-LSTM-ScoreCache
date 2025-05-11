@@ -6,7 +6,7 @@ from utils.config_loader import load_config
 
 class AccessLogsDataset(Dataset):
 
-    def __init__(self, csv_path, split):
+    def __init__(self, csv_path, split, return_keys=False):
         """
         Method to instantiate the access logs dataset.
         :param csv_path: The csv path of the access logs dataset.
@@ -31,6 +31,9 @@ class AccessLogsDataset(Dataset):
             self.seq_len = data_config["seq_len"]
         except Exception as e:
             raise Exception(f"An unexpected error while reading the access logs dataset: {e}")
+
+        # to keep track if keys should be returned or not
+        self.return_keys = return_keys
 
         # add min and max timestamps
         self.timestamps_min = self.timestamps.min()
@@ -144,5 +147,14 @@ class AccessLogsDataset(Dataset):
             self.data[idx + self.seq_len][0],
             dtype=torch.long
         )
+
+        # if the keys should be returned
+        if self.return_keys:
+            # add also x_keys to the sequence
+            x_keys = torch.tensor(
+                [item[0] for item in self.data[idx:idx + self.seq_len]],
+                dtype=torch.long
+            )
+            return x_features, x_keys, y_key
 
         return x_features, y_key

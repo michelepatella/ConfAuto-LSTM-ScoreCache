@@ -25,7 +25,10 @@ def _process_batch(batch, model, criterion, device):
     # try to calculate the outputs
     try:
         # calculate the outputs
-        outputs = model(x_features)
+        if model.use_embedding:
+            outputs = model(x_features, keys=y_key)
+        else:
+            outputs = model(x_features)
     except Exception as e:
         raise Exception(f"An unexpected error during model inference: {e}")
 
