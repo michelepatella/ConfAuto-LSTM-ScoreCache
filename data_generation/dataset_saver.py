@@ -13,11 +13,11 @@ def _save_dataset_to_csv(
 ):
     """
     Method to save the dataset as csv file.
-    :param hour_of_day_sin: Sine of the hours of the day.
-    :param day_of_week_cos: Cosine of the hours of the day.
-    :param day_of_week_sin: Sine of the days of the week.
-    :param hour_of_day_cos: Cosine of the days of the week.
     :param timestamps: List of timestamps (first column).
+    :param hour_of_day_sin: Sine of the hours of the day.
+    :param hour_of_day_cos: Cosine of the days of the week.
+    :param day_of_week_sin: Sine of the days of the week.
+    :param day_of_week_cos: Cosine of the hours of the day.
     :param requests: List of keys requested (second column).
     :param file_name: The name of the dataset file.
     :return:
@@ -42,7 +42,7 @@ def _save_dataset_to_csv(
         # convert the dataframe to CSV file
         df.to_csv(file_name, index=False)
 
-        logging.info("Dataset saved correctly.")
+        logging.info(f"Dataset correctly saved in {file_name}")
 
     except Exception as e:
         raise Exception(f"An unexpected error while saving the dataset: {e}")

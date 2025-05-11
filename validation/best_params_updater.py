@@ -13,8 +13,7 @@ def _check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_
     :return: The best average loss and the best parameters as output.
     """
     if not fold_losses:
-        logging.warning("Fold losses are empty. Skipping update.")
-        return best_avg_loss, best_params
+        raise Exception("Error checking and updating best paramaters due to empty fold losses.")
 
     # try to calculate the average loss
     try:
@@ -33,13 +32,16 @@ def _check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_
             try:
                 # update the best params
                 best_params = {
-                    "embedding_dim": curr_params["embedding_dim"],
                     "hidden_size": curr_params["hidden_size"],
                     "num_layers": curr_params["num_layers"],
                     "dropout": curr_params["dropout"],
                     "learning_rate": curr_params["learning_rate"]
                 }
+
+                # print updated parameters and best average loss
                 logging.info(f"Updated best parameters: {best_params}")
+                logging.info(f"Updated best average loss: {best_avg_loss}")
+
             except Exception as e:
                 raise Exception(f"An unexpected error while updating best parameters: {e}")
     else:

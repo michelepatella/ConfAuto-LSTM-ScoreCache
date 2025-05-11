@@ -1,6 +1,6 @@
 data:
-  num_requests: 1000
-  num_keys: 10
+  num_requests: 100000
+  num_keys: 100
   alpha: 1.3
   alpha_start: 1.3
   alpha_end: 1.8
@@ -14,23 +14,19 @@ data:
   dynamic_dataset_path: data/dynamic_access_logs.csv
 model:
   hidden_size: 128
-  num_layers: 1
+  num_layers: 3
   bias: false
   batch_first: true
-  dropout: 0.0
+  dropout: 0.3
   bidirectional: false
   proj_size: 0
-  embedding_dim: 32
   model_save_path: model/trained_lstm_model.pt
 training:
   epochs: 5
   batch_size: 64
-  learning_rate: 0.005
+  learning_rate: 0.001
 validation:
   num_folds: 3
-  embedding_dim_range:
-  - 32
-  - 64
   hidden_size_range:
   - 64
   - 128

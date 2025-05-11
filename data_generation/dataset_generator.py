@@ -2,7 +2,7 @@ import numpy as np
 from data_generation.dataset_saver import _save_dataset_to_csv
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
 from data_generation.cyclic_time_features_generator import _generate_cyclic_time_features
-from utils.config_loader import load_config
+from utils.config_utils import load_config
 
 
 def _generate_static_dataset():
@@ -30,7 +30,7 @@ def _generate_static_dataset():
      day_of_week_sin,
      day_of_week_cos) = _generate_cyclic_time_features(timestamps)
 
-    # create the static dataset
+    # save the static dataset
     _save_dataset_to_csv(
         timestamps,
         hour_of_day_sin,
@@ -72,7 +72,7 @@ def _generate_dynamic_dataset():
      day_of_week_sin,
      day_of_week_cos) = _generate_cyclic_time_features(timestamps)
 
-    # create the static dataset
+    # save the static dataset
     _save_dataset_to_csv(
         timestamps,
         hour_of_day_sin,

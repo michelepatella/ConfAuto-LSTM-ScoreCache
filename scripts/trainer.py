@@ -1,6 +1,6 @@
-from model.lstm_model import LSTM
-from utils.access_log_dataset import AccessLogsDataset
-from utils.config_loader import load_config
+from model.LSTM import LSTM
+from utils.AccessLogsDataset import AccessLogsDataset
+from utils.config_utils import load_config
 from torch.utils.data import DataLoader
 import torch
 import torch.nn as nn

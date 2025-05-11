@@ -1,17 +1,17 @@
 import logging
 import numpy as np
 import torch
-from torch.utils.data import Subset, DataLoader
+from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
-from model.lstm_model import LSTM
-from utils.config_loader import load_config
-from validation.batch_processor import _process_batch
-from validation.model_evaluator import _evaluate_model
+from model.LSTM import LSTM
+from utils.config_utils import load_config
+from utils.data_loader_utils import _create_data_loader
+from utils.evaluation_utils import _evaluate_model
+from utils.training_utils import _train_one_epoch
 
 
 def _time_series_cv(
         dataset,
-        embedding_dim,
         hidden_size,
         num_layers,
         dropout,
@@ -22,7 +22,6 @@ def _time_series_cv(
     """
     Method to perform time series cross-validation.
     :param dataset: The dataset to use.
-    :param embedding_dim: The embedding dimension.
     :param hidden_size: The hidden dimension.
     :param num_layers: The number of layers.
     :param dropout: The dropout rate.
@@ -36,12 +35,8 @@ def _time_series_cv(
     training_config = config["training"]
     validation_config = config["validation"]
 
-    # try to extract labels
-    try:
-        # extract labels
-        labels = np.array([label for _, label in dataset])
-    except Exception as e:
-        raise Exception(f"An unexpected error while extracting labels from dataset: {e}")
+    # get the no. of samples in the dataset
+    n_samples = len(dataset)
 
     # try setup for the TimeSeriesSplit
     try:
@@ -52,38 +47,26 @@ def _time_series_cv(
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    for train_idx, val_idx in tscv.split(np.zeros(len(labels))):
+    for train_idx, val_idx in tscv.split(np.arange(n_samples)):
 
         # define training and validation sets
         training_dataset = Subset(dataset, train_idx)
         validation_dataset = Subset(dataset, val_idx)
 
-        # try to define training loader
-        try:
-            # define training loader
-            training_loader = DataLoader(
-                training_dataset,
-                batch_size=training_config["batch_size"],
-                shuffle=False
-            )
-        except Exception as e:
-            raise Exception(f"An unexpected error while loading training data: {e}")
-
-        # try to define validation loader
-        try:
-            # define training loader
-            validation_loader = DataLoader(
-                validation_dataset,
-                batch_size=training_config["batch_size"]
-            )
-        except Exception as e:
-            raise Exception(f"An unexpected error while loading validation data: {e}")
+        # create training and validation loaders
+        training_loader = _create_data_loader(
+            training_dataset,
+            training_config["batch_size"]
+        )
+        validation_loader = _create_data_loader(
+            validation_dataset,
+            training_config["batch_size"]
+        )
 
         # try to define the LSTM model
         try:
             # define the LSTM model
             model = LSTM(
-                embedding_dim=embedding_dim,
                 hidden_size=hidden_size,
                 num_layers=num_layers,
                 dropout=dropout
@@ -94,30 +77,8 @@ def _time_series_cv(
         # optimize to accelerate the learning process
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-        # train the model
-        model.train()
-
-        # enable use_embedding
-        model.use_embedding = True
-
-        for x, y in training_loader:
-
-            optimizer.zero_grad()
-
-            # calculate loss by processing the batch
-            loss = _process_batch((x, y), model, criterion, device)
-
-            # check loss
-            if loss is None:
-                return fold_losses
-
-            # try to perform backward pass
-            try:
-                # backward pass with optimization
-                loss.backward()
-                optimizer.step()
-            except Exception as e:
-                raise Exception(f"An unexpected error during backpropagation: {e}")
+        # train the model (only once)
+        _train_one_epoch(model, training_loader, optimizer, criterion, device)
 
         # evaluate the model
         val_loss = _evaluate_model(model, validation_loader, criterion, device)

@@ -1,7 +1,7 @@
 import numpy as np
 import logging
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
-from utils.config_loader import load_config
+from utils.config_utils import load_config
 
 
 def _generate_static_requests(num_requests, num_keys, alpha):
@@ -37,7 +37,7 @@ def _generate_static_requests(num_requests, num_keys, alpha):
 
     # generate timestamp randomly, with an average freq
     freq = np.random.exponential(
-        scale=data_config['freq_timestamp'] + 1,
+        scale=data_config['freq_timestamp'],
         size=num_requests
     )
     timestamps = np.cumsum(freq).astype(int)
@@ -94,7 +94,7 @@ def _generate_dynamic_requests(num_requests, num_keys, alpha_values, time_steps)
 
         # generate timestamp randomly, with an average freq
         freq = np.random.exponential(
-            scale=data_config['freq_timestamp'] + 1,
+            scale=data_config['freq_timestamp'],
             size=time_step_duration
         )
         ts = np.cumsum(freq).astype(int)

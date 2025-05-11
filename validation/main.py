@@ -1,14 +1,14 @@
 import logging
 from torch import nn
-from utils.access_log_dataset import AccessLogsDataset
-from utils.config_loader import load_config
+from utils.AccessLogsDataset import AccessLogsDataset
+from utils.config_utils import load_config
 from validation.best_params_saver import _save_best_params
 from validation.grid_search_optimizer import _grid_search
 
 
 def validation():
     """
-    Method to orchestrate the validaton of the model, to find
+    Method to orchestrate the validation of the model, to find
     the best parameters.
     :return:
     """
