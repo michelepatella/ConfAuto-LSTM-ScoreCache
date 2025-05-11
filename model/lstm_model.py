@@ -113,10 +113,13 @@ class LSTM(nn.Module):
 
         try:
             # embedding used only while training
-            if keys is not None:
-                key_embeddings = self.embedding(keys)
-                # concatenate features and keys
-                x_cat = torch.cat([x_features, key_embeddings], dim=-1)
+            if self.use_embedding:
+                if keys is not None:
+                    key_embeddings = self.embedding(keys)
+                    # concatenate features and keys
+                    x_cat = torch.cat([x_features, key_embeddings], dim=-1)
+                else:
+                    raise ValueError("Keys not passed to the model.")
             else:
                 # embedding not used at prediction time
                 x_cat = x_features
