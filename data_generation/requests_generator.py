@@ -1,7 +1,7 @@
 import numpy as np
 import logging
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
-from utils.config_utils import load_config
+from utils.config_utils import load_config, get_config_value
 
 
 def _generate_static_requests(num_requests, num_keys, alpha):
@@ -10,7 +10,7 @@ def _generate_static_requests(num_requests, num_keys, alpha):
     :param num_requests: Total number of requests.
     :param num_keys: Total number of keys.
     :param alpha: Zipf distribution's parameter.
-    :return: Static requests and timestamps as output.
+    :return: Static requests and timestamps.
     """
     # check the validity of the parameters
     if num_requests <= 0 or num_keys <= 0:
@@ -20,7 +20,6 @@ def _generate_static_requests(num_requests, num_keys, alpha):
 
     # load config file
     config = load_config()
-    data_config = config["data"]
 
     # calculate the probabilities
     probs = _calculate_zipf_distribution_probs(
@@ -37,7 +36,7 @@ def _generate_static_requests(num_requests, num_keys, alpha):
 
     # generate timestamp randomly, with an average freq
     freq = np.random.exponential(
-        scale=data_config['freq_timestamp'],
+        scale=get_config_value(config, "data.freq_timestamp"),
         size=num_requests
     )
     timestamps = np.cumsum(freq).astype(int)
@@ -51,7 +50,7 @@ def _generate_dynamic_requests(num_requests, num_keys, alpha_values, time_steps)
     :param num_keys: Total number of keys.
     :param alpha_values: Zipf distribution's parameter values.
     :param time_steps: Total number of time steps.
-    :return: Dynamic requests and timestamps as output.
+    :return: Dynamic requests and timestamps.
     """
     # check the validity of the parameters
     if num_requests <= 0 or num_keys <= 0 or time_steps <= 0:
@@ -63,7 +62,6 @@ def _generate_dynamic_requests(num_requests, num_keys, alpha_values, time_steps)
 
     # load config file
     config = load_config()
-    data_config = config["data"]
 
     # calculate the time step duration
     time_step_duration = num_requests // time_steps
@@ -94,7 +92,7 @@ def _generate_dynamic_requests(num_requests, num_keys, alpha_values, time_steps)
 
         # generate timestamp randomly, with an average freq
         freq = np.random.exponential(
-            scale=data_config['freq_timestamp'],
+            scale=get_config_value(config, "data.freq_timestamp"),
             size=time_step_duration
         )
         ts = np.cumsum(freq).astype(int)

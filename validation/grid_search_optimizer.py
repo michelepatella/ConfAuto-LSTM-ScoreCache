@@ -1,23 +1,35 @@
 import logging
 from tqdm import tqdm
-from utils.config_utils import load_config
+from utils.config_utils import load_config, get_config_value
 from validation.best_params_updater import _check_and_update_best_params
 from validation.time_series_cv import _time_series_cv
 
-def _parameter_combination(validation_config):
+def _parameter_combination():
     """
     Method to combine the parameters of each fold iteration.
-    :param validation_config: Validation configuration on which to read parameters.
     """
+    config = load_config()
     # try to define the combination of parameters
     try:
         # define the parameters combination
         param_combinations = [
             (hidden_size, num_layers, dropout, learning_rate)
-            for hidden_size in validation_config["hidden_size_range"]
-            for num_layers in validation_config["num_layers_range"]
-            for dropout in validation_config["dropout_range"]
-            for learning_rate in validation_config["learning_rate_range"]
+            for hidden_size in get_config_value(
+                config,
+                "validation.hidden_size_range"
+            )
+            for num_layers in get_config_value(
+                config,
+                "validation.num_layers_range"
+            )
+            for dropout in get_config_value(
+                config,
+                "validation.dropout_range"
+            )
+            for learning_rate in get_config_value(
+                config,
+                "validation.learning_rate_range"
+            )
         ]
     except Exception as e:
         raise Exception(f"An unexpected error while loading validation config: {e}")
@@ -33,21 +45,20 @@ def _grid_search(dataset, criterion):
     Method to perform grid search to find the best parameters.
     :param dataset: The dataset on which to work on.
     :param criterion: The loss function.
-    :return: The best parameters as output.
+    :return: The best parameters.
     """
     # initialize the best parameters and average loss
     best_params = {}
     best_avg_loss = float("inf")
 
-    # load config file
-    config = load_config()
-    validation_config = config["validation"]
-
     # get the parameters combination
-    param_combinations = _parameter_combination(validation_config)
+    param_combinations = _parameter_combination()
 
     # grid search
-    with tqdm(total=len(param_combinations), desc="Grid Search Progress") as pbar:
+    with tqdm(
+            total=len(param_combinations),
+            desc="Grid Search Progress"
+    ) as pbar:
         for hidden_size, num_layers, dropout, learning_rate in param_combinations:
 
             fold_losses = []

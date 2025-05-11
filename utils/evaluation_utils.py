@@ -57,7 +57,6 @@ def _compute_avg_loss_and_predictions(
 
     return avg_loss, all_preds, all_targets
 
-
 def _compute_metrics(predictions, targets):
     """
     Method to compute metrics based on predictions and targets.
@@ -92,6 +91,7 @@ def _evaluate_model(
     :param loader: The loader on which to evaluate the model.
     :param criterion: The loss function.
     :param device: Device to use.
+    :param compute_metrics: Specifies whether to compute metrics or not.
     :return: The average loss.
     """
     try:

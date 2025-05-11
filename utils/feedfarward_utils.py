@@ -5,7 +5,7 @@ def _compute_forward(batch, model, criterion, device):
     :param model: The model to use.
     :param criterion: The loss function.
     :param device: The device to use.
-    :return: The loss function for the batch as output.
+    :return: The loss function for the batch.
     """
     # try unpack data
     try:

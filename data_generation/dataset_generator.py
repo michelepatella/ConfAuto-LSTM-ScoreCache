@@ -2,7 +2,7 @@ import numpy as np
 from data_generation.dataset_saver import _save_dataset_to_csv
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
 from data_generation.cyclic_time_features_generator import _generate_cyclic_time_features
-from utils.config_utils import load_config
+from utils.config_utils import load_config, get_config_value
 
 
 def _generate_static_dataset():
@@ -12,10 +12,9 @@ def _generate_static_dataset():
     """
     # load config file
     config = load_config()
-    data_config = config["data"]
-    num_requests = data_config["num_requests"]
-    num_keys = data_config["num_keys"]
-    alpha = data_config["alpha"]
+    num_requests = get_config_value(config, "data.num_requests")
+    num_keys = get_config_value(config, "data.num_keys")
+    alpha = get_config_value(config, "data.alpha")
 
     # generate static requests and timestamps
     requests, timestamps = _generate_static_requests(
@@ -38,8 +37,9 @@ def _generate_static_dataset():
         day_of_week_sin,
         day_of_week_cos,
         requests,
-        data_config["static_dataset_path"]
+        get_config_value(config, "data.static_dataset_path")
     )
+
 
 def _generate_dynamic_dataset():
     """
@@ -48,12 +48,11 @@ def _generate_dynamic_dataset():
     """
     # load config file
     config = load_config()
-    data_config = config["data"]
-    num_requests = data_config["num_requests"]
-    num_keys = data_config["num_keys"]
-    alpha_start = data_config["alpha_start"]
-    alpha_end = data_config["alpha_end"]
-    time_steps = data_config["time_steps"]
+    num_requests = get_config_value(config, "data.num_requests")
+    num_keys = get_config_value(config, "data.num_keys")
+    alpha_start = get_config_value(config, "data.alpha_start")
+    alpha_end = get_config_value(config, "data.alpha_end")
+    time_steps = get_config_value(config, "data.time_steps")
 
     # generate the Zipf distribution's parameter values
     alpha_values = np.linspace(alpha_start, alpha_end, time_steps)
@@ -80,5 +79,5 @@ def _generate_dynamic_dataset():
         day_of_week_sin,
         day_of_week_cos,
         requests,
-        data_config["dynamic_dataset_path"]
+        get_config_value(config, "data.dynamic_dataset_path")
     )

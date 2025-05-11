@@ -1,7 +1,7 @@
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
-from utils.config_utils import load_config
+from utils.config_utils import load_config, get_config_value
 
 
 class AccessLogsDataset(Dataset):
@@ -66,7 +66,6 @@ class AccessLogsDataset(Dataset):
         """
         # load config file
         config = load_config()
-        data_config = config["data"]
 
         # get the csv dataset file
         df = pd.read_csv(csv_path)
@@ -80,7 +79,7 @@ class AccessLogsDataset(Dataset):
             self.day_of_week_sin = df["day_of_week_sin"].values
             self.day_of_week_cos = df["day_of_week_cos"].values
             self.keys = df["key"].values
-            self.seq_len = data_config["seq_len"]
+            self.seq_len = get_config_value(config, "data.seq_len")
         except Exception as e:
             raise Exception(f"An unexpected error while reading the access logs dataset: {e}")
 
@@ -88,14 +87,14 @@ class AccessLogsDataset(Dataset):
         # split the dataset
         self._split_dataset(
             split,
-            data_config["training_perc"],
-            data_config["validation_perc"]
+            get_config_value(config, "data.training_perc"),
+            get_config_value(config, "data.validation_perc")
         )
 
     def __len__(self):
         """
         Method to return the length of the access logs dataset.
-        :return: The length of the access logs dataset as output.
+        :return: The length of the access logs dataset.
         """
         return len(self.data) - self.seq_len
 
@@ -147,7 +146,7 @@ class AccessLogsDataset(Dataset):
         """
         Method to return a sequence and the next value in the sequence.
         :param idx: The index of the access logs dataset.
-        :return: Access logs dataset as output.
+        :return: Access logs dataset.
         """
         # check idx + seq_len does not exceed bounds
         if idx + self.seq_len >= len(self.data):

@@ -5,7 +5,7 @@ import os
 def load_config():
     """
     Method to load the config file.
-    :return: The configuration object as output.
+    :return: The configuration object.
     """
     # determine the path
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -41,3 +41,24 @@ def update_config(updated_content):
             )
     except Exception as e:
         raise Exception(f"An unexpected error while updating the config file: {e}")
+
+def get_config_value(config, keys):
+    """
+    Method to get the config value from the config file.
+    :param config: Config object.
+    :param keys: Requested keys.
+    :return: The config value required.
+    """
+    if isinstance(keys, str):
+        keys = keys.split(".")
+
+    value = config
+    # try to access to the requested key
+    try:
+        # find the requested key
+        for key in keys:
+            value = value[key]
+
+        return value
+    except Exception as e:
+        raise Exception(f"An unexpected error while reading config file: {e}")

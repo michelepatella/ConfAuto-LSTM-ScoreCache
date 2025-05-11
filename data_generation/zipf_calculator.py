@@ -6,7 +6,7 @@ def _calculate_zipf_distribution_probs(keys, alpha):
     Method to calculate the Zipf distribution's probabilities.
     :param keys: List of keys.
     :param alpha: Zipf distribution's parameter.
-    :return: Zipf distribution's probabilities as output.
+    :return: Zipf distribution's probabilities.
     """
     # convert keys to a numpy array for safety
     keys = np.array(keys, dtype=np.float64)
@@ -19,7 +19,7 @@ def _calculate_zipf_distribution_probs(keys, alpha):
         # calculate the probability of the keys according to the Zipf's distribution
         probs = 1.0 / np.power(keys, alpha)
     except ZeroDivisionError:
-        raise Exception("ZeroDivisionError: Zipf distribution probabilities cannot be calculated.")
+        raise ZeroDivisionError("Zipf distribution probabilities cannot be calculated.")
 
     # normalize probabilities to make sum to 1
     probs = probs / np.sum(probs)

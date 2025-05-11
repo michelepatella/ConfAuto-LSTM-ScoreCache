@@ -1,5 +1,5 @@
 import torch.nn as nn
-from utils.config_utils import load_config
+from utils.config_utils import load_config, get_config_value
 
 
 class LSTM(nn.Module):
@@ -30,34 +30,32 @@ class LSTM(nn.Module):
 
         # load model and data configs
         config = load_config()
-        model_config = config["model"]
-        data_config = config["data"]
 
         # define the model's config (+ num_keys)
         self.hidden_size = hidden_size \
             if hidden_size is not None \
-            else model_config["hidden_size"]
+            else get_config_value(config, "model.hidden_size")
         self.num_layers = num_layers \
             if num_layers is not None \
-            else model_config["num_layers"]
+            else get_config_value(config, "model.num_layers")
         self.bias = bias \
             if bias is not None \
-            else model_config["bias"]
+            else get_config_value(config, "model.bias")
         self.batch_first = batch_first \
             if batch_first is not None \
-            else model_config["batch_first"]
+            else get_config_value(config, "model.batch_first")
         self.dropout = float(dropout) \
             if dropout is not None \
-            else float(model_config["dropout"])
+            else float(get_config_value(config, "model.dropout"))
         self.bidirectional = bidirectional \
             if bidirectional is not None \
-            else model_config["bidirectional"]
+            else get_config_value(config, "model.bidirectional")
         self.proj_size = proj_size \
             if proj_size is not None \
-            else model_config["proj_size"]
+            else get_config_value(config, "model.proj_size")
         self.num_keys = num_keys \
             if num_keys is not None \
-            else data_config["num_keys"]
+            else get_config_value(config, "data.num_keys")
 
         # check if dropout should be applied or not
         effective_dropout = self.dropout if self.num_layers > 1 else 0.0
@@ -85,7 +83,7 @@ class LSTM(nn.Module):
         Method to perform the forward pass through the LSTM.
         :param x_features: The 5 features (timestamp, hour of day sin, hour of day cos,
         day of week sin, day of week cos).
-        :return: The logits of the LSTM as output
+        :return: The logits of the LSTM.
         """
         # check the inputs validity
         if x_features is None:

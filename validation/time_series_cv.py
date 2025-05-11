@@ -4,7 +4,7 @@ import torch
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
 from model.LSTM import LSTM
-from utils.config_utils import load_config
+from utils.config_utils import load_config, get_config_value
 from utils.data_loader_utils import _create_data_loader
 from utils.evaluation_utils import _evaluate_model
 from utils.training_utils import _train_one_epoch
@@ -28,12 +28,10 @@ def _time_series_cv(
     :param learning_rate: The learning rate.
     :param criterion: The loss function.
     :param fold_losses: The fold_losses.
-    :return: The updated fold losses as output.
+    :return: The updated fold losses.
     """
     # load config file
     config = load_config()
-    training_config = config["training"]
-    validation_config = config["validation"]
 
     # get the no. of samples in the dataset
     n_samples = len(dataset)
@@ -41,7 +39,10 @@ def _time_series_cv(
     # try setup for the TimeSeriesSplit
     try:
         # setup
-        tscv = TimeSeriesSplit(n_splits=validation_config["num_folds"])
+        tscv = TimeSeriesSplit(n_splits=get_config_value(
+            config,
+            "validation.num_folds"
+        ))
     except Exception as e:
         raise Exception(f"An unexpected error while instantiating Time Series Split: {e}")
 
@@ -56,11 +57,11 @@ def _time_series_cv(
         # create training and validation loaders
         training_loader = _create_data_loader(
             training_dataset,
-            training_config["batch_size"]
+            get_config_value(config, "training.batch_size")
         )
         validation_loader = _create_data_loader(
             validation_dataset,
-            training_config["batch_size"]
+            get_config_value(config, "training.batch_size")
         )
 
         # try to define the LSTM model
@@ -75,13 +76,27 @@ def _time_series_cv(
             raise Exception(f"An unexpected error while loading model: {e}")
 
         # optimize to accelerate the learning process
-        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+        optimizer = torch.optim.Adam(
+            model.parameters(),
+            lr=learning_rate
+        )
 
         # train the model (only once)
-        _train_one_epoch(model, training_loader, optimizer, criterion, device)
+        _train_one_epoch(
+            model,
+            training_loader,
+            optimizer,
+            criterion,
+            device
+        )
 
         # evaluate the model
-        val_loss = _evaluate_model(model, validation_loader, criterion, device)
+        val_loss = _evaluate_model(
+            model,
+            validation_loader,
+            criterion,
+            device
+        )
 
         # check the val_loss and update fold losses
         if val_loss is not None:

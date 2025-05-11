@@ -2,7 +2,12 @@ import logging
 import numpy as np
 
 
-def _check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_params):
+def _check_and_update_best_params(
+        fold_losses,
+        best_avg_loss,
+        curr_params,
+        best_params
+):
     """
     Method to calculate the average loss and update the best parameters
     in case the average loss is less than the current best loss.
@@ -10,10 +15,10 @@ def _check_and_update_best_params(fold_losses, best_avg_loss, curr_params, best_
     :param best_avg_loss: The current best average loss.
     :param curr_params: The current parameters (used in the current fold iteration).
     :param best_params: The current best parameters.
-    :return: The best average loss and the best parameters as output.
+    :return: The best average loss and the best parameters.
     """
     if not fold_losses:
-        raise Exception("Error checking and updating best paramaters due to empty fold losses.")
+        raise Exception("Error checking and updating best parameters due to empty fold losses.")
 
     # try to calculate the average loss
     try:

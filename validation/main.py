@@ -1,7 +1,7 @@
 import logging
 from torch import nn
 from utils.AccessLogsDataset import AccessLogsDataset
-from utils.config_utils import load_config
+from utils.config_utils import load_config, get_config_value
 from validation.best_params_saver import _save_best_params
 from validation.grid_search_optimizer import _grid_search
 
@@ -14,12 +14,14 @@ def validation():
     """
     # load config file
     config = load_config()
-    data_config = config["data"]
 
     # try to load the dataset
     try:
         # load the dataset
-        dataset = AccessLogsDataset(data_config["static_dataset_path"], "validation")
+        dataset = AccessLogsDataset(
+            get_config_value(config,"data.static_dataset_path"),
+            "validation"
+        )
     except Exception as e:
         raise Exception(f"An unexpected error while loading dataset: {e}")
 
@@ -33,9 +35,6 @@ def validation():
         # set the best parameters
         _save_best_params(best_params)
     except Exception as e:
-        raise Exception(f"Parameter tuning failed: {e}")
+        raise Exception(f"Validation failed: {e}")
 
-    logging.info(f"Parameter tuning successfully completed.")
-
-if __name__ == "__main__":
-    validation()
+    logging.info(f"Validation successfully completed.")

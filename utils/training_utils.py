@@ -1,7 +1,13 @@
 from utils.feedfarward_utils import _compute_forward, _compute_backward
 
 
-def _train_one_epoch(model, training_loader, optimizer, criterion, device):
+def _train_one_epoch(
+        model,
+        training_loader,
+        optimizer,
+        criterion,
+        device
+):
     """
     Method to train the model one epoch.
     :param model: Model to be trained.
@@ -16,6 +22,7 @@ def _train_one_epoch(model, training_loader, optimizer, criterion, device):
 
     for x, y in training_loader:
 
+        # reset the gradients
         optimizer.zero_grad()
 
         # forward pass

@@ -42,7 +42,7 @@ def _save_dataset_to_csv(
         # convert the dataframe to CSV file
         df.to_csv(file_name, index=False)
 
-        logging.info(f"Dataset correctly saved in {file_name}")
+        logging.info(f"Dataset correctly saved to '{file_name}'.")
 
     except Exception as e:
         raise Exception(f"An unexpected error while saving the dataset: {e}")

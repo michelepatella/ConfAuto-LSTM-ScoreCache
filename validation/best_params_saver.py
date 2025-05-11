@@ -1,5 +1,5 @@
 import logging
-from utils.config_utils import load_config, update_config
+from utils.config_utils import load_config, update_config, get_config_value
 
 
 def _save_best_params(best_params):
@@ -14,12 +14,12 @@ def _save_best_params(best_params):
     # try to update the config file
     try:
         # update the best params
-        config["model"].update({
+        get_config_value(config, "model").update({
             "hidden_size": best_params["hidden_size"],
             "num_layers": best_params["num_layers"],
             "dropout": best_params["dropout"]
         })
-        config["training"].update({
+        get_config_value(config, "training").update({
             "learning_rate": best_params["learning_rate"],
         })
     except Exception as e:
@@ -27,4 +27,4 @@ def _save_best_params(best_params):
 
     # update the best parameters on the config file
     update_config(config)
-    logging.info(f"Best parameters have been saved.")
+    logging.info(f"Best parameters have been saved on the config file.")
