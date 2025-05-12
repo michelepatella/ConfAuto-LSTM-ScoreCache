@@ -11,7 +11,7 @@ def _remove_duplicates(df):
         # clear the dataset removing duplicated timestamps
         df.drop_duplicates(subset=['timestamp'], inplace=True)
     except Exception as e:
-        raise Exception(f"An unexpected error while deduplicating the dataset: {e}")
+        raise Exception(f"Error while deduplicating the dataset: {e}")
 
     # print a successful message
     logging.info("Dataset correctly deduplicated.")

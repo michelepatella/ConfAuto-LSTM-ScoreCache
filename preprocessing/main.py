@@ -21,13 +21,16 @@ def preprocessing(dataset_type):
     elif dataset_type == "dynamic":
         dataset_path = "data.dynamic_dataset_path"
     else:
-        raise Exception("Unknown dataset type.")
+        raise Exception("Unknown dataset type passed to preprocessing.")
 
-    # load the dataset
-    df = pd.read_csv(get_config_value(
-        config,
-        dataset_path
-    ))
+    try:
+        # load the dataset
+        df = pd.read_csv(get_config_value(
+            config,
+            dataset_path
+        ))
+    except Exception as e:
+        raise Exception(f"Error while reading csv dataset file: {e}")
 
     # remove duplicates from the dataset
     df_deduplicated = _remove_duplicates(df)

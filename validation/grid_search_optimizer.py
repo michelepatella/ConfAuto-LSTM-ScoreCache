@@ -9,30 +9,27 @@ def _parameter_combination():
     Method to combine the parameters of each fold iteration.
     """
     config = load_config()
-    # try to define the combination of parameters
-    try:
-        # define the parameters combination
-        param_combinations = [
-            (hidden_size, num_layers, dropout, learning_rate)
-            for hidden_size in get_config_value(
-                config,
-                "validation.hidden_size_range"
-            )
-            for num_layers in get_config_value(
-                config,
-                "validation.num_layers_range"
-            )
-            for dropout in get_config_value(
-                config,
-                "validation.dropout_range"
-            )
-            for learning_rate in get_config_value(
-                config,
-                "validation.learning_rate_range"
-            )
-        ]
-    except Exception as e:
-        raise Exception(f"An unexpected error while loading validation config: {e}")
+
+    # define the parameters combination
+    param_combinations = [
+        (hidden_size, num_layers, dropout, learning_rate)
+        for hidden_size in get_config_value(
+            config,
+            "validation.hidden_size_range"
+        )
+        for num_layers in get_config_value(
+            config,
+            "validation.num_layers_range"
+        )
+        for dropout in get_config_value(
+            config,
+            "validation.dropout_range"
+        )
+        for learning_rate in get_config_value(
+            config,
+            "validation.learning_rate_range"
+        )
+    ]
 
     # check the params combination calculated
     if not param_combinations:

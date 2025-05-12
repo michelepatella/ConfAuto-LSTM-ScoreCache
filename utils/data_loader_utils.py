@@ -16,6 +16,6 @@ def _create_data_loader(dataset, batch_size):
             shuffle=False
         )
     except Exception as e:
-        raise Exception(f"An unexpected error while creating data loader: {e}")
+        raise Exception(f"Error while creating data loader: {e}")
 
     return loader

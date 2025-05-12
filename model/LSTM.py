@@ -73,10 +73,13 @@ class LSTM(nn.Module):
                 proj_size=self.proj_size
             )
         except:
-            raise Exception("An unexpected error while instantiating LSTM model.")
+            raise Exception("Error while instantiating LSTM model.")
 
-        # fully-connected layer (linear)
-        self.fc = nn.Linear(self.hidden_size, self.num_keys + 1)
+        try:
+            # fully-connected layer (linear)
+            self.fc = nn.Linear(self.hidden_size, self.num_keys + 1)
+        except:
+            raise Exception(f"Error while instantiating the FC layer: {e}")
 
     def forward(self, x_features):
         """
@@ -93,12 +96,12 @@ class LSTM(nn.Module):
             # pass the features to the LSTM
             lstm_out, _ = self.lstm(x_features)
         except Exception as e:
-            raise Exception(f"An unexpected error while passing data through LSTM: {e}")
+            raise Exception(f"Error while passing data through LSTM: {e}")
 
         try:
             # get the logits from the LSTM output
             logits = self.fc(lstm_out[:, -1, :])
         except Exception as e:
-            raise Exception(f"An unexpected error while processing LSTM output: {e}")
+            raise Exception(f"Error while processing LSTM output: {e}")
 
         return logits

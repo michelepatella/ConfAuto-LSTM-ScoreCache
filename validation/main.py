@@ -15,26 +15,19 @@ def validation():
     # load config file
     config = load_config()
 
-    # try to load the dataset
-    try:
-        # load the dataset
-        dataset = AccessLogsDataset(
-            get_config_value(config,"data.static_dataset_path"),
-            "validation"
-        )
-    except Exception as e:
-        raise Exception(f"An unexpected error while loading dataset: {e}")
+    # load the dataset
+    dataset = AccessLogsDataset(
+        get_config_value(config, "data.static_dataset_path"),
+        "validation"
+    )
 
     # define the loss function
     criterion = nn.CrossEntropyLoss()
 
-    try:
-        # grid search for best parameters
-        best_params = _grid_search(dataset, criterion)
+    # grid search for best parameters
+    best_params = _grid_search(dataset, criterion)
 
-        # set the best parameters
-        _save_best_params(best_params)
-    except Exception as e:
-        raise Exception(f"Validation failed: {e}")
+    # set the best parameters
+    _save_best_params(best_params)
 
     logging.info(f"Validation successfully completed.")

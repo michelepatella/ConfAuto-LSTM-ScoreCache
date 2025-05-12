@@ -50,7 +50,7 @@ def _compute_avg_loss_and_predictions(
                     all_targets.extend(y.cpu().numpy())
 
     except Exception as e:
-        raise Exception(f"An unexpected error while evaluating the model: {e}")
+        raise Exception(f"Error while computing avg loss and predictions: {e}")
 
     # compute the average loss
     avg_loss = total_loss / len(loader)
@@ -70,7 +70,7 @@ def _compute_metrics(predictions, targets):
         recall = recall_score(targets, predictions, average="macro")
         f1 = f1_score(targets, predictions, average="macro")
     except Exception as e:
-        raise Exception(f"An unexpected error while computing metrics: {e}")
+        raise Exception(f"Error while computing metrics: {e}")
 
     return {
         "precision": precision,
@@ -94,17 +94,14 @@ def _evaluate_model(
     :param compute_metrics: Specifies whether to compute metrics or not.
     :return: The average loss.
     """
-    try:
-        # perform the model evaluation
-        avg_loss, all_preds, all_targets = _compute_avg_loss_and_predictions(
-            model,
-            loader,
-            criterion,
-            device,
-            compute_metrics
-        )
-    except Exception as e:
-        raise Exception(f"An unexpected error while evaluating model: {e}")
+    # perform the model evaluation
+    avg_loss, all_preds, all_targets = _compute_avg_loss_and_predictions(
+        model,
+        loader,
+        criterion,
+        device,
+        compute_metrics
+    )
 
     # if metrics are requested, compute them
     if compute_metrics:

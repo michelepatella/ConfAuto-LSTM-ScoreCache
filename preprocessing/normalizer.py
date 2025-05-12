@@ -12,13 +12,9 @@ def _normalize_timestamps(df):
     # load config file
     config = load_config()
 
-    # try to load training percentage from data config
-    try:
-        # load percentage
-        training_perc = get_config_value(config, "data.training_perc")
-        total_len = len(df)
-    except Exception as e:
-        raise Exception(f"An unexpected error while loading data configuration: {e}")
+    # load training percentage
+    training_perc = get_config_value(config, "data.training_perc")
+    total_len = len(df)
 
     # calculate the final index of the training set
     train_end_idx = int(training_perc * total_len)
@@ -37,7 +33,7 @@ def _normalize_timestamps(df):
             df["timestamp"].values.reshape(-1, 1)
         )
     except Exception as e:
-        raise Exception(f"An unexpected error while normalizing timestamps: {e}")
+        raise Exception(f"Error while normalizing timestamps: {e}")
 
     # print a successful message
     logging.info("Timestamps correctly normalized.")

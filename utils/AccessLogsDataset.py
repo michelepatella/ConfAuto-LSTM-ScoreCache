@@ -1,3 +1,5 @@
+from csv import excel
+
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
@@ -19,44 +21,47 @@ class AccessLogsDataset(Dataset):
             split_idx_1 = int(len(self.keys) * training_perc)
             split_idx_2 = int(len(self.keys) * (training_perc + validation_perc))
         except Exception as e:
-            raise Exception(f"An unexpected error while defining the splittings: {e}")
+            raise Exception(f"Error while defining the dataset splittings: {e}")
 
-        # split the dataset
-        if split == "training":
-            self.data = list(
-                zip(
-                    self.keys[:split_idx_1],
-                    self.timestamps[:split_idx_1],
-                    self.hour_of_day_cos[:split_idx_1],
-                    self.hour_of_day_sin[:split_idx_1],
-                    self.day_of_week_cos[:split_idx_1],
-                    self.day_of_week_sin[:split_idx_1]
+        try:
+            # split the dataset
+            if split == "training":
+                self.data = list(
+                    zip(
+                        self.keys[:split_idx_1],
+                        self.timestamps[:split_idx_1],
+                        self.hour_of_day_cos[:split_idx_1],
+                        self.hour_of_day_sin[:split_idx_1],
+                        self.day_of_week_cos[:split_idx_1],
+                        self.day_of_week_sin[:split_idx_1]
+                    )
                 )
-            )
-        elif split == "validation":
-            self.data = list(
-                zip(
-                    self.keys[split_idx_1:split_idx_2],
-                    self.timestamps[split_idx_1:split_idx_2],
-                    self.hour_of_day_cos[split_idx_1:split_idx_2],
-                    self.hour_of_day_sin[split_idx_1:split_idx_2],
-                    self.day_of_week_cos[split_idx_1:split_idx_2],
-                    self.day_of_week_sin[split_idx_1:split_idx_2]
+            elif split == "validation":
+                self.data = list(
+                    zip(
+                        self.keys[split_idx_1:split_idx_2],
+                        self.timestamps[split_idx_1:split_idx_2],
+                        self.hour_of_day_cos[split_idx_1:split_idx_2],
+                        self.hour_of_day_sin[split_idx_1:split_idx_2],
+                        self.day_of_week_cos[split_idx_1:split_idx_2],
+                        self.day_of_week_sin[split_idx_1:split_idx_2]
+                    )
                 )
-            )
-        elif split == "testing":
-            self.data = list(
-                zip(
-                    self.keys[split_idx_2:],
-                    self.timestamps[split_idx_2:],
-                    self.hour_of_day_cos[split_idx_2:],
-                    self.hour_of_day_sin[split_idx_2:],
-                    self.day_of_week_cos[split_idx_2:],
-                    self.day_of_week_sin[split_idx_2:]
+            elif split == "testing":
+                self.data = list(
+                    zip(
+                        self.keys[split_idx_2:],
+                        self.timestamps[split_idx_2:],
+                        self.hour_of_day_cos[split_idx_2:],
+                        self.hour_of_day_sin[split_idx_2:],
+                        self.day_of_week_cos[split_idx_2:],
+                        self.day_of_week_sin[split_idx_2:]
+                    )
                 )
-            )
-        else:
-            raise ValueError("Invalid split type.")
+            else:
+                raise ValueError("Invalid split type.")
+        except Exception as e:
+            raise Exception(f"Error while splitting the dataset: {e}")
 
     def __init__(self, csv_path, split):
         """
@@ -67,10 +72,12 @@ class AccessLogsDataset(Dataset):
         # load config file
         config = load_config()
 
-        # get the csv dataset file
-        df = pd.read_csv(csv_path)
+        try:
+            # get the csv dataset file
+            df = pd.read_csv(csv_path)
+        except Exception as e:
+            raise Exception(f"Error while reading csv dataset file: {e}")
 
-        # try to set the fields
         try:
             # set all the fields
             self.timestamps = df["timestamp"].values
@@ -81,7 +88,7 @@ class AccessLogsDataset(Dataset):
             self.keys = df["key"].values
             self.seq_len = get_config_value(config, "data.seq_len")
         except Exception as e:
-            raise Exception(f"An unexpected error while reading the access logs dataset: {e}")
+            raise Exception(f"Error while reading the dataset fields: {e}")
 
 
         # split the dataset
@@ -105,40 +112,46 @@ class AccessLogsDataset(Dataset):
         :return: The features of the access logs dataset.
         """
         # get the sequence (x)
-        x_timestamps = torch.tensor(
-            [item[1] for item in self.data[idx:idx + self.seq_len]],
-            dtype=torch.float
-        ).unsqueeze(-1)
+        try:
+            x_timestamps = torch.tensor(
+                [item[1] for item in self.data[idx:idx + self.seq_len]],
+                dtype=torch.float
+            ).unsqueeze(-1)
 
-        x_hour_of_day_cos = torch.tensor(
-            [item[2] for item in self.data[idx:idx + self.seq_len]],
-            dtype=torch.float
-        ).unsqueeze(-1)
+            x_hour_of_day_cos = torch.tensor(
+                [item[2] for item in self.data[idx:idx + self.seq_len]],
+                dtype=torch.float
+            ).unsqueeze(-1)
 
-        x_hour_of_day_sin = torch.tensor(
-            [item[3] for item in self.data[idx:idx + self.seq_len]],
-            dtype=torch.float
-        ).unsqueeze(-1)
+            x_hour_of_day_sin = torch.tensor(
+                [item[3] for item in self.data[idx:idx + self.seq_len]],
+                dtype=torch.float
+            ).unsqueeze(-1)
 
-        x_day_of_week_cos = torch.tensor(
-            [item[4] for item in self.data[idx:idx + self.seq_len]],
-            dtype=torch.float
-        ).unsqueeze(-1)
+            x_day_of_week_cos = torch.tensor(
+                [item[4] for item in self.data[idx:idx + self.seq_len]],
+                dtype=torch.float
+            ).unsqueeze(-1)
 
-        x_day_of_week_sin = torch.tensor(
-            [item[5] for item in self.data[idx:idx + self.seq_len]],
-            dtype=torch.float
-        ).unsqueeze(-1)
+            x_day_of_week_sin = torch.tensor(
+                [item[5] for item in self.data[idx:idx + self.seq_len]],
+                dtype=torch.float
+            ).unsqueeze(-1)
+        except Exception as e:
+            raise Exception(f"Error while reading the sequence (x): {e}")
 
-        # combine all features
-        x_features = torch.cat([
-            x_timestamps,
-            x_hour_of_day_cos,
-            x_hour_of_day_sin,
-            x_day_of_week_cos,
-            x_day_of_week_sin],
-            dim=-1
-        )
+        try:
+            # combine all features
+            x_features = torch.cat([
+                x_timestamps,
+                x_hour_of_day_cos,
+                x_hour_of_day_sin,
+                x_day_of_week_cos,
+                x_day_of_week_sin],
+                dim=-1
+            )
+        except Exception as e:
+            raise Exception(f"Error while combining features: {e}")
 
         return x_features
 
@@ -155,10 +168,13 @@ class AccessLogsDataset(Dataset):
         # get the features
         x_features = self._get_features(idx)
 
-        # the next value in the sequence (y)
-        y_key = torch.tensor(
-            self.data[idx + self.seq_len][0],
-            dtype=torch.long
-        )
+        try:
+            # the next value in the sequence (y)
+            y_key = torch.tensor(
+                self.data[idx + self.seq_len][0],
+                dtype=torch.long
+            )
+        except Exception as e:
+            raise Exception(f"Error while reading the next value in the sequence (y): {e}")
 
         return x_features, y_key

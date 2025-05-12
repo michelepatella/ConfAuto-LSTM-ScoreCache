@@ -11,7 +11,6 @@ def _save_best_params(best_params):
     # load config file
     config = load_config()
 
-    # try to update the config file
     try:
         # update the best params
         get_config_value(config, "model").update({
@@ -23,7 +22,7 @@ def _save_best_params(best_params):
             "learning_rate": best_params["learning_rate"],
         })
     except Exception as e:
-        raise Exception(f"An unexpected error while updating config: {e}")
+        raise Exception(f"Error while saving the best parameters: {e}")
 
     # update the best parameters on the config file
     update_config(config)

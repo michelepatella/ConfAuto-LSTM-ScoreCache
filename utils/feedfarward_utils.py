@@ -12,29 +12,26 @@ def _compute_forward(batch, model, criterion, device):
         # unpack data
         x_features, y_key = batch
     except Exception as e:
-        raise Exception(f"An unexpected error while error unpacking data: {e}")
+        raise Exception(f"Error while error unpacking data: {e}")
 
-    # try to move data to the device
     try:
         # move data to the device
         x_features = x_features.to(device)
         y_key = y_key.to(device)
     except Exception as e:
-        raise Exception(f"An unexpected error while moving data to device: {e}")
+        raise Exception(f"Error while moving data to device: {e}")
 
-    # try to calculate the outputs
     try:
         # calculate the outputs
         outputs = model(x_features)
     except Exception as e:
-        raise Exception(f"An unexpected error during model inference: {e}")
+        raise Exception(f"Error during model inference: {e}")
 
-    # try to calculate the loss and do the update
     try:
         # calculate the loss and update the total one
         loss = criterion(outputs, y_key)
     except Exception as e:
-        raise Exception(f"An unexpected error while calculating loss: {e}")
+        raise Exception(f"Error while calculating loss: {e}")
 
     return loss, outputs
 
@@ -45,10 +42,14 @@ def _compute_backward(loss, optimizer):
     :param optimizer: The optimizer to use.
     :return:
     """
-    # try to perform backward pass
     try:
-        # backward pass with optimization
+        # backward pass
         loss.backward()
+    except Exception as e:
+        raise Exception(f"Error during backpropagation: {e}")
+
+    try:
+        # optimize backward pass
         optimizer.step()
     except Exception as e:
-        raise Exception(f"An unexpected error during backpropagation: {e}")
+        raise Exception(f"Error while optimizing backpropagation: {e}")

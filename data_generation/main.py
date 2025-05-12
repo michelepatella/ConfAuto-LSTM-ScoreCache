@@ -8,19 +8,15 @@ def generate_zipf_dataset(distribution_type):
     :param distribution_type: Zipf distribution's type (static or dynamic).
     :return:
     """
-    try:
-        # generate a static dataset
-        if distribution_type == "static":
-            _generate_static_dataset()
+    # generate a static dataset
+    if distribution_type == "static":
+        _generate_static_dataset()
 
-        # generate a dynamic dataset
-        elif distribution_type == "dynamic":
-            _generate_dynamic_dataset()
+    # generate a dynamic dataset
+    elif distribution_type == "dynamic":
+        _generate_dynamic_dataset()
 
-        else:
-            raise ValueError("Unknown distribution type.")
-
-    except Exception as e:
-        raise Exception(f"Zipf dataset generation failed: {e}")
+    else:
+        raise ValueError("Unknown distribution type.")
 
     logging.info(f"Data generation successfully completed.")

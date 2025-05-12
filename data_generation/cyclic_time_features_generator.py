@@ -15,7 +15,6 @@ def _generate_cyclic_time_features(timestamps):
     if not np.all(np.array(timestamps) >= 0):
         raise ValueError("Timestamps should be non-negative values.")
 
-    # try to create cyclic time features
     try:
 
         # create hour of the day and day of the week as fields
@@ -32,4 +31,4 @@ def _generate_cyclic_time_features(timestamps):
         return hour_of_day_sin, hour_of_day_cos, day_of_week_sin, day_of_week_cos
 
     except Exception as e:
-        raise Exception(f"An unexpected error while generating cyclic time features: {e}")
+        raise Exception(f"Error while generating cyclic time features: {e}")

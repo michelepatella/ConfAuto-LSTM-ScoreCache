@@ -27,7 +27,6 @@ def _save_dataset_to_csv(
                [hour_of_day_sin, hour_of_day_cos, day_of_week_sin, day_of_week_cos, requests]):
         raise ValueError("All input lists must have the same length.")
 
-    # try to create and save the dataset
     try:
         # create the dataframe
         df = pd.DataFrame({
@@ -45,4 +44,4 @@ def _save_dataset_to_csv(
         logging.info(f"Dataset correctly saved to '{file_name}'.")
 
     except Exception as e:
-        raise Exception(f"An unexpected error while saving the dataset: {e}")
+        raise Exception(f"Error while saving the dataset: {e}")

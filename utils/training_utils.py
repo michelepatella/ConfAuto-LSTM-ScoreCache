@@ -22,8 +22,11 @@ def _train_one_epoch(
 
     for x, y in training_loader:
 
-        # reset the gradients
-        optimizer.zero_grad()
+        try:
+            # reset the gradients
+            optimizer.zero_grad()
+        except Exception as e:
+            raise Exception(f"Error resetting the gradients: {e}")
 
         # forward pass
         loss, _ = _compute_forward((x, y), model, criterion, device)

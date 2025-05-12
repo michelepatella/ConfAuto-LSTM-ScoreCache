@@ -20,12 +20,11 @@ def _check_and_update_best_params(
     if not fold_losses:
         raise Exception("Error checking and updating best parameters due to empty fold losses.")
 
-    # try to calculate the average loss
     try:
         # calculate the average loss
         avg_loss = np.mean(fold_losses)
     except Exception as e:
-        raise Exception(f"An unexpected error while calculating the average loss: {e}")
+        raise Exception(f"Error while calculating the average loss: {e}")
 
     # if the average loss is less than the best one,
     # update it and the best params
@@ -48,8 +47,8 @@ def _check_and_update_best_params(
                 logging.info(f"Updated best average loss: {best_avg_loss}")
 
             except Exception as e:
-                raise Exception(f"An unexpected error while updating best parameters: {e}")
+                raise Exception(f"Error while updating the best parameters: {e}")
     else:
-        logging.warning("Invalid best average loss. Skipping update.")
+        raise Exception(f"Invalid average loss: {avg_loss}")
 
     return best_avg_loss, best_params

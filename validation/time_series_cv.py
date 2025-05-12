@@ -1,4 +1,3 @@
-import logging
 import numpy as np
 import torch
 from torch.utils.data import Subset
@@ -44,15 +43,18 @@ def _time_series_cv(
             "validation.num_folds"
         ))
     except Exception as e:
-        raise Exception(f"An unexpected error while instantiating Time Series Split: {e}")
+        raise Exception(f"Error while instantiating Time Series Split: {e}")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     for train_idx, val_idx in tscv.split(np.arange(n_samples)):
 
-        # define training and validation sets
-        training_dataset = Subset(dataset, train_idx)
-        validation_dataset = Subset(dataset, val_idx)
+        try:
+            # define training and validation sets
+            training_dataset = Subset(dataset, train_idx)
+            validation_dataset = Subset(dataset, val_idx)
+        except Exception as e:
+            raise Exception(f"Error while defining training and validation sets: {e}")
 
         # create training and validation loaders
         training_loader = _create_data_loader(
@@ -64,22 +66,21 @@ def _time_series_cv(
             get_config_value(config, "training.batch_size")
         )
 
-        # try to define the LSTM model
-        try:
-            # define the LSTM model
-            model = LSTM(
-                hidden_size=hidden_size,
-                num_layers=num_layers,
-                dropout=dropout
-            ).to(device)
-        except Exception as e:
-            raise Exception(f"An unexpected error while loading model: {e}")
+        # define the LSTM model
+        model = LSTM(
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            dropout=dropout
+        ).to(device)
 
-        # optimize to accelerate the learning process
-        optimizer = torch.optim.Adam(
-            model.parameters(),
-            lr=learning_rate
-        )
+        try:
+            # optimize to accelerate the learning process
+            optimizer = torch.optim.Adam(
+                model.parameters(),
+                lr=learning_rate
+            )
+        except Exception as e:
+            raise Exception(f"Error while instantiating optimizer: {e}")
 
         # train the model (only once)
         _train_one_epoch(
@@ -102,6 +103,6 @@ def _time_series_cv(
         if val_loss is not None:
             fold_losses.append(val_loss)
         else:
-            logging.warning("Validation returned None. Skipping this fold.")
+            raise Exception(f"Validation loss returned None.")
 
     return fold_losses

@@ -12,6 +12,6 @@ def _save_preprocessed_dataset(df, path):
         # save the preprocessed dataset as csv
         df.to_csv(path, index=False)
     except Exception as e:
-        raise Exception(f"An unexpected error while saving preprocessed dataset: {e}")
+        raise Exception(f"Error while saving preprocessed dataset: {e}")
 
     logging.info(f"Preprocessed dataset saved to '{path}'.")
