@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 from torch.utils.data import DataLoader
+from utils.config_utils import _get_config_value
 
 
 def _save_dataset(df, dataset_path):
@@ -66,7 +67,32 @@ def _load_dataset(dataset_path):
     except Exception as e:
         raise Exception(f"❌ Error while loading dataset: {e}")
 
-     # show a successful message
+    # show a successful message
     logging.info("🟢 Dataset loaded.")
 
     return df
+
+
+def _get_dataset_path_type():
+    """
+    Method to get the dataset path and type from config file.
+    :return: The dataset path and type.
+    """
+    # ongoing message
+    logging.info("🔄 Dataset path and type retrieval started...")
+
+    # read the dataset type
+    dataset_type = _get_config_value("data.distribution_type")
+
+    # keep track of the dataset path
+    if dataset_type == "static":
+        dataset_path = "data.static_dataset_path"
+    elif dataset_type == "dynamic":
+        dataset_path = "data.dynamic_dataset_path"
+    else:
+        raise Exception("❌ Unknown dataset type.")
+
+    # show a successful message
+    logging.info("🟢 Dataset path and type retrieved.")
+
+    return dataset_path, dataset_type

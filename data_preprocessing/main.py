@@ -2,7 +2,7 @@ import logging
 from data_preprocessing.cleaner import _remove_duplicates
 from data_preprocessing.normalizer import _normalize_timestamps
 from utils.config_utils import _get_config_value
-from utils.dataset_utils import _save_dataset, _load_dataset
+from utils.dataset_utils import _save_dataset, _load_dataset, _get_dataset_path_type
 
 
 def data_preprocessing():
@@ -13,16 +13,8 @@ def data_preprocessing():
     # ongoing message
     logging.info("🔄 Data preprocessing started...")
 
-    # read the dataset type
-    dataset_type = _get_config_value("data.distribution_type")
-
-    # keep track of the dataset path
-    if dataset_type == "static":
-        dataset_path = "data.static_dataset_path"
-    elif dataset_type == "dynamic":
-        dataset_path = "data.dynamic_dataset_path"
-    else:
-        raise Exception("❌ Unknown dataset type.")
+    # get the dataset path
+    dataset_path,_ = _get_dataset_path_type()
 
     # load the dataset
     df = _load_dataset(_get_config_value(dataset_path))

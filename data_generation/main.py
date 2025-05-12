@@ -3,7 +3,7 @@ import pandas as pd
 from data_generation.cyclic_time_features_generator import _generate_cyclic_time_features
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
 from utils.config_utils import _get_config_value
-from utils.dataset_utils import _save_dataset
+from utils.dataset_utils import _save_dataset, _get_dataset_path_type
 
 
 def data_generation():
@@ -14,23 +14,15 @@ def data_generation():
     # ongoing message
     logging.info("🔄 Data generation started...")
 
-    # read the distribution type
-    distribution_type = _get_config_value("data.distribution_type")
+    # get the dataset path
+    dataset_path, distribution_type = _get_dataset_path_type()
 
     if distribution_type == "static":
         # generate static requests and timestamps
         requests, timestamps = _generate_static_requests()
-
-        # keep track of the dataset path
-        dataset_path = "data.static_dataset_path"
-
     elif distribution_type == "dynamic":
         # generate dynamic requests and timestamps
         requests, timestamps = _generate_dynamic_requests()
-
-        # keep track of the dataset path
-        dataset_path = "data.dynamic_dataset_path"
-
     else:
         raise ValueError("❌ Unknown distribution type.")
 

@@ -1,18 +1,21 @@
 import logging
 from utils.AccessLogsDataset import AccessLogsDataset
-from utils.config_utils import _get_config_value
 from training_with_validation.best_params_saver import _save_best_params
 from training_with_validation.grid_search_optimizer import _grid_search
+from utils.dataset_utils import _get_dataset_path_type
 
 
 def training_with_validation():
     """
-    Method to orchestrate training and validation of the model.
+    Method to orchestrate training with validation of the model.
     :return:
     """
+    # get the dataset path
+    dataset_path,_ = _get_dataset_path_type()
+
     # load the training set
     training_set = AccessLogsDataset(
-        _get_config_value("data.static_dataset_path"),
+        dataset_path,
         "training"
     )
 
