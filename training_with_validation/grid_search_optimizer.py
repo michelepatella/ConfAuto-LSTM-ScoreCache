@@ -114,5 +114,5 @@ def _grid_search(training_set):
 
     # show a successful message
     logging.info("🟢 Grid Search completed.")
-    print(best_params)
+
     return best_params
