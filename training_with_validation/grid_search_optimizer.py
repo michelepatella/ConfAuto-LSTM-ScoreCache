@@ -112,6 +112,6 @@ def _grid_search(training_set):
     logging.info(f"🏆 Best avg loss: {best_avg_loss}")
 
     # show a successful message
-    logging.info("🟢 Grid Search finished.")
+    logging.info("🟢 Grid Search completed.")
 
     return best_params

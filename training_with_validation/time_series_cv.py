@@ -91,16 +91,14 @@ def _time_series_cv(
             device
         )
 
-        # evaluate the model
-        val_loss = _evaluate_model(
+        # evaluate the model (by only average loss, no metrics)
+        avg_loss = _evaluate_model(
             model,
             validation_loader,
             criterion,
             device
         )
 
-        logging.info(f"📉 Loss: {val_loss}")
-
     logging.info("🟢 Time Series CV completed.")
 
-    return val_loss
+    return avg_loss
