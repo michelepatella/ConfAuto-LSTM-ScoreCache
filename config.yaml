@@ -1,7 +1,7 @@
 data:
   distribution_type: static
-  num_requests: 10000
-  num_keys: 50
+  num_requests: 100
+  num_keys: 2
   alpha: 1.3
   alpha_start: 1.3
   alpha_end: 1.8
@@ -12,20 +12,20 @@ data:
   static_dataset_path: data/static_access_logs.csv
   dynamic_dataset_path: data/dynamic_access_logs.csv
 model:
-  hidden_size: 128
-  num_layers: 1
+  hidden_size: 64
+  num_layers: 2
   bias: false
-  batch_first: True
-  dropout: 0.0
-  bidirectional: False
+  batch_first: true
+  dropout: 0.1
+  bidirectional: false
   proj_size: 0
   model_save_path: model/trained_lstm_model.pt
 training:
   epochs: 5
   batch_size: 128
-  learning_rate: 0.005
+  learning_rate: 0.0005
 validation:
-  num_folds: 5
+  num_folds: 3
   hidden_size_range:
   - 64
   - 128

@@ -32,9 +32,9 @@ def data_generation():
     # create dataframe
     df = pd.DataFrame(
         {
-            "timestamps": timestamps,
+            "timestamp": timestamps,
             **cyclic_time_features,
-            "requests": requests,
+            "request": requests,
         }
     )
 

@@ -14,7 +14,7 @@ class AccessLogsDataset(Dataset):
         """
         try:
             # define the splitting's index
-            split_idx = int(len(self.keys) *
+            split_idx = int(len(self.requests) *
                             _get_config_value("data.training_perc"))
         except Exception as e:
             raise Exception(f"❌ Error while defining the dataset splitting's index: {e}")
@@ -24,7 +24,7 @@ class AccessLogsDataset(Dataset):
             if dataset_type == "training":
                 self.data = list(
                     zip(
-                        self.keys[:split_idx],
+                        self.requests[:split_idx],
                         self.timestamps[:split_idx],
                         self.hour_of_day_cos[:split_idx],
                         self.hour_of_day_sin[:split_idx],
@@ -35,7 +35,7 @@ class AccessLogsDataset(Dataset):
             elif dataset_type == "testing":
                 self.data = list(
                     zip(
-                        self.keys[split_idx:],
+                        self.requests[split_idx:],
                         self.timestamps[split_idx:],
                         self.hour_of_day_cos[split_idx:],
                         self.hour_of_day_sin[split_idx:],
@@ -65,7 +65,7 @@ class AccessLogsDataset(Dataset):
             self.hour_of_day_cos = df["hour_of_day_cos"].values
             self.day_of_week_sin = df["day_of_week_sin"].values
             self.day_of_week_cos = df["day_of_week_cos"].values
-            self.keys = df["key"].values
+            self.requests = df["request"].values
             self.seq_len = _get_config_value("data.seq_len")
         except Exception as e:
             raise Exception(f"❌ Error while reading the dataset fields: {e}")

@@ -2,6 +2,7 @@ import logging
 from utils.AccessLogsDataset import AccessLogsDataset
 from training_with_validation.best_params_saver import _save_best_params
 from training_with_validation.grid_search_optimizer import _grid_search
+from utils.config_utils import _get_config_value
 from utils.dataset_utils import _get_dataset_path_type
 
 
@@ -18,7 +19,7 @@ def training_with_validation():
 
     # load the training set
     training_set = AccessLogsDataset(
-        dataset_path,
+        _get_config_value(dataset_path),
         "training"
     )
 

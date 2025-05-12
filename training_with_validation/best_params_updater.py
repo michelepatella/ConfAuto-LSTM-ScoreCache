@@ -5,7 +5,8 @@ import numpy as np
 def _check_and_update_best_params(
         fold_losses,
         best_avg_loss,
-        curr_params
+        curr_params,
+        best_params,
 ):
     """
     Method to calculate the average loss and update the best parameters
@@ -13,6 +14,7 @@ def _check_and_update_best_params(
     :param fold_losses: The loss of the current fold iteration.
     :param best_avg_loss: The current best average loss.
     :param curr_params: The current parameters (used in the current fold iteration).
+    :param best_params: The best parameters found so far.
     :return: The best average loss and the best parameters.
     """
     # initial message
@@ -27,7 +29,7 @@ def _check_and_update_best_params(
     except Exception as e:
         raise Exception(f"❌ Error while calculating the average loss: {e}")
 
-    best_params = {}
+    best_params = best_params
 
     # if the average loss is less than the best one,
     # update it and the best parameters
@@ -41,13 +43,13 @@ def _check_and_update_best_params(
                 best_params = {
                     "model":
                         {
-                            "hidden_size": curr_params["hidden_size"],
-                            "num_layers": curr_params["num_layers"],
-                            "dropout": curr_params["dropout"]
+                            "hidden_size": curr_params["model"]["hidden_size"],
+                            "num_layers": curr_params["model"]["num_layers"],
+                            "dropout": curr_params["model"]["dropout"]
                         },
                     "training":
                         {
-                            "learning_rate": curr_params["learning_rate"]
+                            "learning_rate": curr_params["training"]["learning_rate"]
                         }
                 }
 

@@ -99,7 +99,8 @@ def _grid_search(training_set):
             best_avg_loss, best_params = _check_and_update_best_params(
                 fold_losses,
                 best_avg_loss,
-                curr_params
+                curr_params,
+                best_params
             )
 
             # update the progress bar
@@ -113,5 +114,5 @@ def _grid_search(training_set):
 
     # show a successful message
     logging.info("🟢 Grid Search completed.")
-
+    print(best_params)
     return best_params
