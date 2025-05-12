@@ -1,9 +1,10 @@
 import numpy as np
+import logging
 import torch
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
 from model.LSTM import LSTM
-from utils.config_utils import _load_config, _get_config_value
+from utils.config_utils import _get_config_value
 from utils.dataset_utils import _create_data_loader
 from utils.evaluation_utils import _evaluate_model
 from utils.training_utils import _train_one_epoch
@@ -14,37 +15,38 @@ def _time_series_cv(
         hidden_size,
         num_layers,
         dropout,
-        learning_rate,
-        fold_losses
+        learning_rate
 ):
     """
-    Method to perform time series cross-validation.
+    Method to perform Time Series cross-validation.
     :param training_set: The training set.
     :param hidden_size: The hidden dimension.
     :param num_layers: The number of layers.
     :param dropout: The dropout rate.
     :param learning_rate: The learning rate.
-    :param fold_losses: The fold_losses.
-    :return: The updated fold losses.
+    :return: The loss value calculated.
     """
-    # load config file
-    config = _load_config()
+    # initial message
+    logging.info("🔄 Time Series started...")
 
     # get the no. of samples in the dataset
     n_samples = len(training_set)
 
-    # try setup for the TimeSeriesSplit
     try:
-        # setup
+        # setup for Time Series Split
         tscv = TimeSeriesSplit(n_splits=_get_config_value(
-            config,
             "validation.num_folds"
         ))
     except Exception as e:
-        raise Exception(f"Error while instantiating Time Series Split: {e}")
+        raise Exception(f"❌ Error while instantiating Time Series Split: {e}")
 
+    # define the device to use
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+    # define the loss function
+    criterion = torch.nn.CrossEntropyLoss()
+
+    # iterate over the training set
     for train_idx, val_idx in tscv.split(np.arange(n_samples)):
 
         try:
@@ -52,7 +54,7 @@ def _time_series_cv(
             training_dataset = Subset(training_set, train_idx)
             validation_dataset = Subset(training_set, val_idx)
         except Exception as e:
-            raise Exception(f"Error while defining training and validation sets: {e}")
+            raise Exception(f"❌ Error while defining training and validation sets: {e}")
 
         # create training and validation loaders
         training_loader = _create_data_loader(
@@ -72,13 +74,13 @@ def _time_series_cv(
         ).to(device)
 
         try:
-            # optimize
+            # define the optimizer
             optimizer = torch.optim.Adam(
                 model.parameters(),
                 lr=learning_rate
             )
         except Exception as e:
-            raise Exception(f"Error while instantiating optimizer: {e}")
+            raise Exception(f"❌ Error while instantiating optimizer: {e}")
 
         # train the model (only once)
         _train_one_epoch(
@@ -97,10 +99,8 @@ def _time_series_cv(
             device
         )
 
-        # check the val_loss and update fold losses
-        if val_loss is not None:
-            fold_losses.append(val_loss)
-        else:
-            raise Exception("Validation loss returned None.")
+        logging.info(f"📉 Loss: {val_loss}")
 
-    return fold_losses
+    logging.info("🟢 Time Series CV completed.")
+
+    return val_loss

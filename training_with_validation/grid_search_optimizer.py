@@ -66,14 +66,19 @@ def _grid_search(training_set):
             fold_losses = []
 
             # perform the time series CV
-            fold_losses = _time_series_cv(
+            val_loss = _time_series_cv(
                 training_set,
                 hidden_size,
                 num_layers,
                 dropout,
-                learning_rate,
-                fold_losses
+                learning_rate
             )
+
+            # check the val_loss and update fold losses
+            if val_loss is not None:
+                fold_losses.append(val_loss)
+            else:
+                raise Exception("❌ None loss encountered.")
 
             # group current parameters together
             curr_params = {
