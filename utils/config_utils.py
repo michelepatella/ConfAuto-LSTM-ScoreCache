@@ -1,38 +1,59 @@
 import yaml
 import os
+import logging
 
 
-def load_config():
+def _get_config_abs_path():
+    """
+    Method to get the absolute path of the config file.
+    :return: The absolute path of the config file.
+    """
+    # define the absolute path of the config file
+    path = os.path.join(os.path.dirname(__file__), '..', 'config.yaml')
+    abs_path = os.path.abspath(path)
+
+    return abs_path
+
+
+def _load_config():
     """
     Method to load the config file.
     :return: The configuration object.
     """
-    # determine the path
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(current_dir, "..", "config.yaml")
+    # ongoing message
+    logging.info("🔄 Config file loading started...")
+
+    # get the abs path of the config file
+    config_path = _get_config_abs_path()
 
     try:
         # load the file
         with open(config_path, "r") as f:
             config = yaml.safe_load(f)
     except Exception as e:
-        raise Exception(f"Error while loading config file: {e}")
+        raise Exception(f"❌ Error while loading config file: {e}")
+
+    # show a successful message
+    logging.info("🟢 Config file loaded.")
 
     return config
 
-def update_config(updated_content):
+
+def _update_config(updated_content):
     """
     Method to update the config file.
     :param updated_content: The updated content to write.
     :return:
     """
-    # define the absolute path of the config file
-    config_file_path = os.path.join(os.path.dirname(__file__), '..', 'config.yaml')
-    config_file_path = os.path.abspath(config_file_path)
+    # ongoing message
+    logging.info("🔄 Config file updating started...")
+
+    # get the abs path of the config file
+    config_path = _get_config_abs_path()
 
     try:
         # update the config file
-        with open(config_file_path, "w") as config_file:
+        with open(config_path, "w") as config_file:
             yaml.dump(
                 updated_content, config_file,
                 default_flow_style=False,
@@ -40,18 +61,25 @@ def update_config(updated_content):
                 allow_unicode=True
             )
     except Exception as e:
-        raise Exception(f"Error while updating the config file: {e}")
+        raise Exception(f"❌ Error while updating the config file: {e}")
 
-def get_config_value(config, keys):
+    # show a successful message
+    logging.info("🟢 Config file updated.")
+
+def _get_config_value(keys):
     """
     Method to get the config value from the config file.
-    :param config: Config object.
     :param keys: Requested keys.
     :return: The config value required.
     """
+    # ongoing message
+    logging.info("🔄 Config file reading started...")
+
     if isinstance(keys, str):
         keys = keys.split(".")
 
+    # get the config file
+    config = _load_config()
     value = config
 
     try:
@@ -59,6 +87,9 @@ def get_config_value(config, keys):
         for key in keys:
             value = value[key]
 
+        # show a successful message
+        logging.info(f"🟢 {keys} read.")
+
         return value
     except Exception as e:
-        raise Exception(f"Error while reading config file: {e}")
+        raise Exception(f"❌ Error while reading config file: {e}")

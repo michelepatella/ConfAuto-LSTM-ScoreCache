@@ -1,5 +1,5 @@
 import torch.nn as nn
-from utils.config_utils import load_config, get_config_value
+from utils.config_utils import _load_config, _get_config_value
 
 
 class LSTM(nn.Module):
@@ -29,33 +29,33 @@ class LSTM(nn.Module):
         super(LSTM, self).__init__()
 
         # load model and data configs
-        config = load_config()
+        config = _load_config()
 
         # define the model's config (+ num_keys)
         self.hidden_size = hidden_size \
             if hidden_size is not None \
-            else get_config_value(config, "model.hidden_size")
+            else _get_config_value("model.hidden_size")
         self.num_layers = num_layers \
             if num_layers is not None \
-            else get_config_value(config, "model.num_layers")
+            else _get_config_value("model.num_layers")
         self.bias = bias \
             if bias is not None \
-            else get_config_value(config, "model.bias")
+            else _get_config_value("model.bias")
         self.batch_first = batch_first \
             if batch_first is not None \
-            else get_config_value(config, "model.batch_first")
+            else _get_config_value("model.batch_first")
         self.dropout = float(dropout) \
             if dropout is not None \
-            else float(get_config_value(config, "model.dropout"))
+            else float(_get_config_value("model.dropout"))
         self.bidirectional = bidirectional \
             if bidirectional is not None \
-            else get_config_value(config, "model.bidirectional")
+            else _get_config_value("model.bidirectional")
         self.proj_size = proj_size \
             if proj_size is not None \
-            else get_config_value(config, "model.proj_size")
+            else _get_config_value("model.proj_size")
         self.num_keys = num_keys \
             if num_keys is not None \
-            else get_config_value(config, "data.num_keys")
+            else _get_config_value("data.num_keys")
 
         # check if dropout should be applied or not
         effective_dropout = self.dropout if self.num_layers > 1 else 0.0

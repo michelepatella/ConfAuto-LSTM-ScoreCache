@@ -1,6 +1,6 @@
 import torch
 from sklearn.metrics import precision_score, recall_score, f1_score
-from utils.feedfarward_utils import _compute_forward
+from utils.feedforward_utils import _compute_forward
 
 
 def _compute_avg_loss_and_predictions(

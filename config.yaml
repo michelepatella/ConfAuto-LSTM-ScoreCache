@@ -9,8 +9,6 @@ data:
   seq_len: 50
   freq_timestamp: 5
   training_perc: 0.7
-  testing_perc: 0.2
-  validation_perc: 0.1
   static_dataset_path: data/static_access_logs.csv
   dynamic_dataset_path: data/dynamic_access_logs.csv
 model:

@@ -1,20 +1,19 @@
 import logging
 from sklearn.preprocessing import MinMaxScaler
-from utils.config_utils import get_config_value
+from utils.config_utils import _get_config_value
 
 
-def _normalize_timestamps(df, config):
+def _normalize_timestamps(df):
     """
     Method to normalize the timestamps of dataset.
     :param df: The dataframe to normalize.
-    :param config: The config object.
     :return: The normalized dataframe.
     """
     # ongoing message
     logging.info("🔄 Dataset normalization started...")
 
     # load training percentage
-    training_perc = get_config_value(config, "data.training_perc")
+    training_perc = _get_config_value("data.training_perc")
     total_len = len(df)
 
     # calculate the final index of the training set

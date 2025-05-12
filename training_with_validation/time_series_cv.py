@@ -3,7 +3,7 @@ import torch
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
 from model.LSTM import LSTM
-from utils.config_utils import load_config, get_config_value
+from utils.config_utils import _load_config, _get_config_value
 from utils.dataset_utils import _create_data_loader
 from utils.evaluation_utils import _evaluate_model
 from utils.training_utils import _train_one_epoch
@@ -28,7 +28,7 @@ def _time_series_cv(
     :return: The updated fold losses.
     """
     # load config file
-    config = load_config()
+    config = _load_config()
 
     # get the no. of samples in the dataset
     n_samples = len(training_set)
@@ -36,7 +36,7 @@ def _time_series_cv(
     # try setup for the TimeSeriesSplit
     try:
         # setup
-        tscv = TimeSeriesSplit(n_splits=get_config_value(
+        tscv = TimeSeriesSplit(n_splits=_get_config_value(
             config,
             "validation.num_folds"
         ))
@@ -57,11 +57,11 @@ def _time_series_cv(
         # create training and validation loaders
         training_loader = _create_data_loader(
             training_dataset,
-            get_config_value(config, "training.batch_size")
+            _get_config_value("training.batch_size")
         )
         validation_loader = _create_data_loader(
             validation_dataset,
-            get_config_value(config, "training.batch_size")
+            _get_config_value("training.batch_size")
         )
 
         # define the LSTM model

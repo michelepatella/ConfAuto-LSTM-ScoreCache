@@ -1,80 +1,62 @@
 import torch
 from torch.utils.data import Dataset
-from utils.config_utils import load_config, get_config_value
+from utils.config_utils import _get_config_value
 from utils.dataset_utils import _load_dataset
 
 
 class AccessLogsDataset(Dataset):
 
-    def _split_dataset(self, split, training_perc, validation_perc):
+    def _split_dataset(self, dataset_type):
         """
-        Method to split the dataset.
-        :param split: Type of split.
-        :param training_perc: Percentage of training set.
-        :param validation_perc: Percentage of validation set.
+        Method to split the dataset based on the requested type.
+        :param dataset_type: The dataset type requested ("training" or "testing").
         :return:
         """
         try:
-            # define the splittings
-            split_idx_1 = int(len(self.keys) * training_perc)
-            split_idx_2 = int(len(self.keys) * (training_perc + validation_perc))
+            # define the splitting's index
+            split_idx = int(len(self.keys) *
+                            _get_config_value("data.training_perc"))
         except Exception as e:
-            raise Exception(f"Error while defining the dataset splittings: {e}")
+            raise Exception(f"❌ Error while defining the dataset splitting's index: {e}")
 
         try:
             # split the dataset
-            if split == "training":
+            if dataset_type == "training":
                 self.data = list(
                     zip(
-                        self.keys[:split_idx_1],
-                        self.timestamps[:split_idx_1],
-                        self.hour_of_day_cos[:split_idx_1],
-                        self.hour_of_day_sin[:split_idx_1],
-                        self.day_of_week_cos[:split_idx_1],
-                        self.day_of_week_sin[:split_idx_1]
+                        self.keys[:split_idx],
+                        self.timestamps[:split_idx],
+                        self.hour_of_day_cos[:split_idx],
+                        self.hour_of_day_sin[:split_idx],
+                        self.day_of_week_cos[:split_idx],
+                        self.day_of_week_sin[:split_idx]
                     )
                 )
-            elif split == "validation":
+            elif dataset_type == "testing":
                 self.data = list(
                     zip(
-                        self.keys[split_idx_1:split_idx_2],
-                        self.timestamps[split_idx_1:split_idx_2],
-                        self.hour_of_day_cos[split_idx_1:split_idx_2],
-                        self.hour_of_day_sin[split_idx_1:split_idx_2],
-                        self.day_of_week_cos[split_idx_1:split_idx_2],
-                        self.day_of_week_sin[split_idx_1:split_idx_2]
-                    )
-                )
-            elif split == "testing":
-                self.data = list(
-                    zip(
-                        self.keys[split_idx_2:],
-                        self.timestamps[split_idx_2:],
-                        self.hour_of_day_cos[split_idx_2:],
-                        self.hour_of_day_sin[split_idx_2:],
-                        self.day_of_week_cos[split_idx_2:],
-                        self.day_of_week_sin[split_idx_2:]
+                        self.keys[split_idx:],
+                        self.timestamps[split_idx:],
+                        self.hour_of_day_cos[split_idx:],
+                        self.hour_of_day_sin[split_idx:],
+                        self.day_of_week_cos[split_idx:],
+                        self.day_of_week_sin[split_idx:]
                     )
                 )
             else:
-                raise ValueError("Invalid split type.")
+                raise ValueError("❌ Invalid split type.")
         except Exception as e:
-            raise Exception(f"Error while splitting the dataset: {e}")
+            raise Exception(f"❌ Error while splitting the dataset: {e}")
 
-    def __init__(self, csv_path, split):
+
+    def __init__(self, dataset_path, dataset_type):
         """
         Method to instantiate the access logs dataset.
-        :param csv_path: The csv path of the access logs dataset.
-        :param split: The type of dataset split ("training", "validation", or "testing").
+        :param dataset_path: The path of the access logs dataset.
+        :param dataset_type: The type of dataset requested ("training" or "testing").
         """
-        # load config file
-        config = load_config()
-
-        try:
-            # get the csv dataset file
-            df = _load_dataset(csv_path)
-        except Exception as e:
-            raise Exception(f"Error while reading csv dataset file: {e}")
+        # load the dataset
+        df = _load_dataset(dataset_path)
 
         try:
             # set all the fields
@@ -84,17 +66,14 @@ class AccessLogsDataset(Dataset):
             self.day_of_week_sin = df["day_of_week_sin"].values
             self.day_of_week_cos = df["day_of_week_cos"].values
             self.keys = df["key"].values
-            self.seq_len = get_config_value(config, "data.seq_len")
+            self.seq_len = _get_config_value("data.seq_len")
         except Exception as e:
-            raise Exception(f"Error while reading the dataset fields: {e}")
+            raise Exception(f"❌ Error while reading the dataset fields: {e}")
 
 
-        # split the dataset
-        self._split_dataset(
-            split,
-            get_config_value(config, "data.training_perc"),
-            get_config_value(config, "data.validation_perc")
-        )
+        # split the dataset to assign data properly
+        self._split_dataset(dataset_type)
+
 
     def __len__(self):
         """
@@ -102,6 +81,7 @@ class AccessLogsDataset(Dataset):
         :return: The length of the access logs dataset.
         """
         return len(self.data) - self.seq_len
+
 
     def _get_features(self, idx):
         """
@@ -136,7 +116,7 @@ class AccessLogsDataset(Dataset):
                 dtype=torch.float
             ).unsqueeze(-1)
         except Exception as e:
-            raise Exception(f"Error while reading the sequence (x): {e}")
+            raise Exception(f"❌ Error while reading the sequence (x): {e}")
 
         try:
             # combine all features
@@ -149,9 +129,10 @@ class AccessLogsDataset(Dataset):
                 dim=-1
             )
         except Exception as e:
-            raise Exception(f"Error while combining features: {e}")
+            raise Exception(f"❌ Error while combining features: {e}")
 
         return x_features
+
 
     def __getitem__(self, idx):
         """
@@ -161,7 +142,7 @@ class AccessLogsDataset(Dataset):
         """
         # check idx + seq_len does not exceed bounds
         if idx + self.seq_len >= len(self.data):
-            raise IndexError(f"Index {idx} out of bounds for sequence length {self.seq_len}.")
+            raise IndexError(f"❌ Index {idx} out of bounds for sequence length {self.seq_len}.")
 
         # get the features
         x_features = self._get_features(idx)
@@ -173,6 +154,6 @@ class AccessLogsDataset(Dataset):
                 dtype=torch.long
             )
         except Exception as e:
-            raise Exception(f"Error while reading the next value in the sequence (y): {e}")
+            raise Exception(f"❌ Error while reading the next value in the sequence (y): {e}")
 
         return x_features, y_key

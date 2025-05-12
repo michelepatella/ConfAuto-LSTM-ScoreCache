@@ -1,6 +1,6 @@
 import logging
 from tqdm import tqdm
-from utils.config_utils import load_config, get_config_value
+from utils.config_utils import _load_config, _get_config_value
 from training_with_validation.best_params_updater import _check_and_update_best_params
 from training_with_validation.time_series_cv import _time_series_cv
 
@@ -8,24 +8,24 @@ def _parameter_combination():
     """
     Method to combine the parameters of each fold iteration.
     """
-    config = load_config()
+    config = _load_config()
 
     # define the parameters combination
     param_combinations = [
         (hidden_size, num_layers, dropout, learning_rate)
-        for hidden_size in get_config_value(
+        for hidden_size in _get_config_value(
             config,
             "validation.hidden_size_range"
         )
-        for num_layers in get_config_value(
+        for num_layers in _get_config_value(
             config,
             "validation.num_layers_range"
         )
-        for dropout in get_config_value(
+        for dropout in _get_config_value(
             config,
             "validation.dropout_range"
         )
-        for learning_rate in get_config_value(
+        for learning_rate in _get_config_value(
             config,
             "validation.learning_rate_range"
         )

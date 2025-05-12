@@ -1,21 +1,19 @@
 import numpy as np
 import logging
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
-from utils.config_utils import get_config_value
+from utils.config_utils import _get_config_value
 
 
 def _generate_requests_with_timestamps(
         num_keys,
         num_requests,
-        probs,
-        config
+        probs
 ):
     """
     Method to generate requests with timestamps.
     :param num_keys: Number of keys.
     :param num_requests: Number of requests to generate.
     :param probs: Zipf's probabilities.
-    :param config: Config object.
     :return: Requests and timestamps generated.
     """
     # generate requests
@@ -27,7 +25,7 @@ def _generate_requests_with_timestamps(
 
     # generate timestamps with an average freq
     freq = np.random.exponential(
-        scale=get_config_value(config, "data.freq_timestamp"),
+        scale=_get_config_value("data.freq_timestamp"),
         size=num_requests
     )
     timestamps = np.cumsum(freq).astype(int)
@@ -35,19 +33,18 @@ def _generate_requests_with_timestamps(
     return requests, timestamps
 
 
-def _generate_static_requests(config):
+def _generate_static_requests():
     """
     Method to orchestrate the static requests and timestamps generation.
-    :param config: Config object.
     :return: Static requests and timestamps generated.
     """
     # ongoing message
     logging.info("🔄 Static requests generation started...")
 
     # read configurations
-    num_requests = get_config_value(config, "data.num_requests")
-    num_keys = get_config_value(config, "data.num_keys")
-    alpha = get_config_value(config, "data.alpha")
+    num_requests = _get_config_value("data.num_requests")
+    num_keys = _get_config_value("data.num_keys")
+    alpha = _get_config_value("data.alpha")
 
     # check the validity of the parameters
     if num_requests <= 0 or num_keys <= 0:
@@ -65,8 +62,7 @@ def _generate_static_requests(config):
     requests, timestamps = _generate_requests_with_timestamps(
         num_keys,
         num_requests,
-        probs,
-        config
+        probs
     )
 
     # show a successful message
@@ -75,21 +71,20 @@ def _generate_static_requests(config):
     return requests, timestamps
 
 
-def _generate_dynamic_requests(config):
+def _generate_dynamic_requests():
     """
     Method to orchestrate the dynamic requests and timestamps generation.
-    :param config: Config object.
     :return: Dynamic requests and timestamps generated.
     """
     # ongoing message
     logging.info("🔄 Dynamic requests generation started...")
 
     # read configurations
-    num_requests = get_config_value(config, "data.num_requests")
-    num_keys = get_config_value(config, "data.num_keys")
-    alpha_start = get_config_value(config, "data.alpha_start")
-    alpha_end = get_config_value(config, "data.alpha_end")
-    time_steps = get_config_value(config, "data.time_steps")
+    num_requests = _get_config_value("data.num_requests")
+    num_keys = _get_config_value("data.num_keys")
+    alpha_start = _get_config_value("data.alpha_start")
+    alpha_end = _get_config_value("data.alpha_end")
+    time_steps = _get_config_value("data.time_steps")
 
     # generate the Zipf distribution's parameter values
     alpha_values = np.linspace(alpha_start, alpha_end, time_steps)
@@ -125,8 +120,7 @@ def _generate_dynamic_requests(config):
         reqs, ts = _generate_requests_with_timestamps(
             num_keys,
             time_step_duration,
-            probs,
-            config
+            probs
         )
 
         if timestamps:

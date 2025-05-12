@@ -1,5 +1,5 @@
 from tqdm import tqdm
-from utils.feedfarward_utils import _compute_forward, _compute_backward
+from utils.feedforward_utils import _compute_forward, _compute_backward
 
 
 def _train_one_epoch(
