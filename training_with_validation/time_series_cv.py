@@ -83,14 +83,15 @@ def _time_series_cv(
         except Exception as e:
             raise Exception(f"❌ Error while instantiating optimizer: {e}")
 
-        # train the model (only once)
-        _train_one_epoch(
-            model,
-            training_loader,
-            optimizer,
-            criterion,
-            device
-        )
+        # train the model
+        for epoch in range(_get_config_value("validation.epochs")):
+            _train_one_epoch(
+                model,
+                training_loader,
+                optimizer,
+                criterion,
+                device
+            )
 
         # evaluate the model (by only average loss, no metrics)
         avg_loss, _ = _evaluate_model(
