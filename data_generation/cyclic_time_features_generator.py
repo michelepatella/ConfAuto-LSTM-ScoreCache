@@ -5,16 +5,19 @@ import logging
 def _generate_cyclic_time_features(timestamps):
     """
     Method to generate cyclic time features starting from timestamps.
-    :param timestamps: The timestamps generated.
-    :return: The cyclic time features (hours of the day and days of the week).
+    :param timestamps: The timestamps from which to generate cyclic time features.
+    :return: The cyclic time features generated.
     """
+    # ongoing message
+    logging.info(f"🔄Cyclic time features generation started...")
+
     # check if the timestamps is a valid array/list
     if not isinstance(timestamps, (list, np.ndarray)):
-        raise TypeError("Timestamps should be a list or a numpy array.")
+        raise TypeError("❌Timestamps should be a list or a numpy array.")
 
     # check if all timestamps are positive
     if not np.all(np.array(timestamps) >= 0):
-        raise ValueError("Timestamps should be non-negative values.")
+        raise ValueError("❌Timestamps should be non-negative values.")
 
     try:
 
@@ -42,4 +45,4 @@ def _generate_cyclic_time_features(timestamps):
         )
 
     except Exception as e:
-        raise Exception(f"Error while generating cyclic time features: {e}")
+        raise Exception(f"❌Error while generating cyclic time features: {e}")

@@ -10,6 +10,9 @@ def data_generation():
     Method to orchestrate the (static or dynamic) data generation.
     :return:
     """
+    # ongoing message
+    logging.info(f"🔄Data generation started...")
+
     # load config file
     config = load_config()
 
@@ -26,7 +29,7 @@ def data_generation():
         # generate dynamic requests and timestamps
         requests, timestamps = _generate_dynamic_requests(config)
     else:
-        raise ValueError("Unknown distribution type.")
+        raise ValueError("❌Unknown distribution type.")
 
     # generate cyclic time features starting from timestamps
     cyclic_time_features = _generate_cyclic_time_features(timestamps)
