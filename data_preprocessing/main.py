@@ -1,14 +1,14 @@
 import pandas as pd
 import logging
-from preprocessing.cleaner import _remove_duplicates
-from preprocessing.normalizer import _normalize_timestamps
-from preprocessing.preprocessed_dataset_saver import _save_preprocessed_dataset
+from data_preprocessing.cleaner import _remove_duplicates
+from data_preprocessing.normalizer import _normalize_timestamps
+from data_preprocessing.preprocessed_dataset_saver import _save_preprocessed_dataset
 from utils.config_utils import load_config, get_config_value
 
 
-def preprocessing(dataset_type):
+def data_preprocessing(dataset_type):
     """
-    Method to orchestrate preprocessing of dataset.
+    Method to orchestrate data_preprocessing of dataset.
     :param dataset_type: The dataset type to preprocess.
     :return:
     """
@@ -21,7 +21,7 @@ def preprocessing(dataset_type):
     elif dataset_type == "dynamic":
         dataset_path = "data.dynamic_dataset_path"
     else:
-        raise Exception("Unknown dataset type passed to preprocessing.")
+        raise Exception("Unknown dataset type passed to data_preprocessing.")
 
     try:
         # load the dataset

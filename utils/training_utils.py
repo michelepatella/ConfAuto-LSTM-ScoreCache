@@ -1,3 +1,4 @@
+from tqdm import tqdm
 from utils.feedfarward_utils import _compute_forward, _compute_backward
 
 
@@ -20,6 +21,13 @@ def _train_one_epoch(
     # train the model
     model.train()
 
+    # to show the progress bar
+    training_loader = tqdm(
+        training_loader,
+        desc="Training Progress",
+        leave=False
+    )
+
     for x, y in training_loader:
 
         try:
@@ -37,3 +45,5 @@ def _train_one_epoch(
 
         # backward pass
         _compute_backward(loss, optimizer)
+
+        training_loader.set_postfix(loss=loss.item())

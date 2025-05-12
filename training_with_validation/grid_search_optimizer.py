@@ -1,8 +1,8 @@
 import logging
 from tqdm import tqdm
 from utils.config_utils import load_config, get_config_value
-from validation.best_params_updater import _check_and_update_best_params
-from validation.time_series_cv import _time_series_cv
+from training_with_validation.best_params_updater import _check_and_update_best_params
+from training_with_validation.time_series_cv import _time_series_cv
 
 def _parameter_combination():
     """
@@ -31,17 +31,16 @@ def _parameter_combination():
         )
     ]
 
-    # check the params combination calculated
+    # check the parameters combination calculated
     if not param_combinations:
         raise Exception("No parameter combinations found while performing Grid Search.")
 
     return param_combinations
 
-def _grid_search(dataset, criterion):
+def _grid_search(training_set):
     """
     Method to perform grid search to find the best parameters.
-    :param dataset: The dataset on which to work on.
-    :param criterion: The loss function.
+    :param training_set: The training set.
     :return: The best parameters.
     """
     # initialize the best parameters and average loss
@@ -62,12 +61,11 @@ def _grid_search(dataset, criterion):
 
             # perform the time series CV
             fold_losses = _time_series_cv(
-                dataset,
+                training_set,
                 hidden_size,
                 num_layers,
                 dropout,
                 learning_rate,
-                criterion,
                 fold_losses
             )
 

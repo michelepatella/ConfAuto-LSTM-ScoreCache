@@ -10,22 +10,20 @@ from utils.training_utils import _train_one_epoch
 
 
 def _time_series_cv(
-        dataset,
+        training_set,
         hidden_size,
         num_layers,
         dropout,
         learning_rate,
-        criterion,
         fold_losses
 ):
     """
     Method to perform time series cross-validation.
-    :param dataset: The dataset to use.
+    :param training_set: The training set.
     :param hidden_size: The hidden dimension.
     :param num_layers: The number of layers.
     :param dropout: The dropout rate.
     :param learning_rate: The learning rate.
-    :param criterion: The loss function.
     :param fold_losses: The fold_losses.
     :return: The updated fold losses.
     """
@@ -33,7 +31,7 @@ def _time_series_cv(
     config = load_config()
 
     # get the no. of samples in the dataset
-    n_samples = len(dataset)
+    n_samples = len(training_set)
 
     # try setup for the TimeSeriesSplit
     try:
@@ -51,8 +49,8 @@ def _time_series_cv(
 
         try:
             # define training and validation sets
-            training_dataset = Subset(dataset, train_idx)
-            validation_dataset = Subset(dataset, val_idx)
+            training_dataset = Subset(training_set, train_idx)
+            validation_dataset = Subset(training_set, val_idx)
         except Exception as e:
             raise Exception(f"Error while defining training and validation sets: {e}")
 
@@ -74,7 +72,7 @@ def _time_series_cv(
         ).to(device)
 
         try:
-            # optimize to accelerate the learning process
+            # optimize
             optimizer = torch.optim.Adam(
                 model.parameters(),
                 lr=learning_rate

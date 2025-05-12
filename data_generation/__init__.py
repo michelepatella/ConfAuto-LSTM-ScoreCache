@@ -1,4 +1,4 @@
-from .main import generate_zipf_dataset
+from .main import data_generation
 
 
-__all__ = ['generate_zipf_dataset']
+__all__ = ['data_generation']

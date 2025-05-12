@@ -1,4 +1,5 @@
 import numpy as np
+import logging
 
 
 def _generate_cyclic_time_features(timestamps):
@@ -28,7 +29,17 @@ def _generate_cyclic_time_features(timestamps):
         day_of_week_sin = np.sin(2 * np.pi * days_of_week / 7)
         day_of_week_cos = np.cos(2 * np.pi * days_of_week / 7)
 
-        return hour_of_day_sin, hour_of_day_cos, day_of_week_sin, day_of_week_cos
+        # show a successful message
+        logging.info(f"🟢Cyclic time features generated.")
+
+        return (
+            {
+                "hour_of_day_sin": hour_of_day_sin,
+                "hour_of_day_cos": hour_of_day_cos,
+                "day_of_week_sin": day_of_week_sin,
+                "day_of_week_cos": day_of_week_cos
+            }
+        )
 
     except Exception as e:
         raise Exception(f"Error while generating cyclic time features: {e}")

@@ -1,11 +1,12 @@
 data:
-  num_requests: 1000
-  num_keys: 5
+  distribution_type: static
+  num_requests: 10000
+  num_keys: 50
   alpha: 1.3
   alpha_start: 1.3
   alpha_end: 1.8
   time_steps: 100
-  seq_len: 25
+  seq_len: 50
   freq_timestamp: 5
   training_perc: 0.7
   testing_perc: 0.2
@@ -16,29 +17,31 @@ model:
   hidden_size: 128
   num_layers: 1
   bias: false
-  batch_first: true
+  batch_first: True
   dropout: 0.0
-  bidirectional: false
+  bidirectional: False
   proj_size: 0
   model_save_path: model/trained_lstm_model.pt
 training:
   epochs: 5
-  batch_size: 64
+  batch_size: 128
   learning_rate: 0.005
 validation:
   num_folds: 3
   hidden_size_range:
   - 64
   - 128
+  - 256
   num_layers_range:
   - 1
+  - 2
   - 3
-  - 5
   dropout_range:
   - 0.0
   - 0.1
   - 0.3
+  - 0.5
   learning_rate_range:
+  - 0.0005
   - 0.001
   - 0.003
-  - 0.005
