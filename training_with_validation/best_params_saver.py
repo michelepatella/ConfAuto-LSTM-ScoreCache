@@ -26,4 +26,4 @@ def _save_best_params(best_params):
 
     # update the best parameters on the config file
     update_config(config)
-    logging.info(f"Best parameters have been saved on the config file.")
+    logging.info("Best parameters have been saved on the config file.")

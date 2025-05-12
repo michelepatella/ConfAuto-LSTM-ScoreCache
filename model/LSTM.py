@@ -72,36 +72,36 @@ class LSTM(nn.Module):
                 bidirectional=self.bidirectional,
                 proj_size=self.proj_size
             )
-        except:
-            raise Exception("Error while instantiating LSTM model.")
+        except Exception as e:
+            raise Exception(f"❌ Error while instantiating LSTM model: {e}")
 
         try:
             # fully-connected layer (linear)
             self.fc = nn.Linear(self.hidden_size, self.num_keys + 1)
-        except:
-            raise Exception(f"Error while instantiating the FC layer: {e}")
+        except Exception as e:
+            raise Exception(f"❌ Error while instantiating the FC layer: {e}")
+
 
     def forward(self, x_features):
         """
         Method to perform the forward pass through the LSTM.
-        :param x_features: The 5 features (timestamp, hour of day sin, hour of day cos,
-        day of week sin, day of week cos).
+        :param x_features: The features.
         :return: The logits of the LSTM.
         """
         # check the inputs validity
         if x_features is None:
-            raise ValueError("Input features cannot be None.")
+            raise ValueError("❌ Input features cannot be None.")
 
         try:
             # pass the features to the LSTM
             lstm_out, _ = self.lstm(x_features)
         except Exception as e:
-            raise Exception(f"Error while passing data through LSTM: {e}")
+            raise Exception(f"❌ Error while passing data through LSTM: {e}")
 
         try:
             # get the logits from the LSTM output
             logits = self.fc(lstm_out[:, -1, :])
         except Exception as e:
-            raise Exception(f"Error while processing LSTM output: {e}")
+            raise Exception(f"❌ Error while processing LSTM output: {e}")
 
         return logits

@@ -1,9 +1,7 @@
-from csv import excel
-
-import pandas as pd
 import torch
 from torch.utils.data import Dataset
 from utils.config_utils import load_config, get_config_value
+from utils.dataset_utils import _load_dataset
 
 
 class AccessLogsDataset(Dataset):
@@ -74,7 +72,7 @@ class AccessLogsDataset(Dataset):
 
         try:
             # get the csv dataset file
-            df = pd.read_csv(csv_path)
+            df = _load_dataset(csv_path)
         except Exception as e:
             raise Exception(f"Error while reading csv dataset file: {e}")
 

@@ -26,4 +26,4 @@ def training_with_validation():
     # set the best parameters
     _save_best_params(best_params)
 
-    logging.info(f"Training with validation successfully completed.")
+    logging.info("Training with validation successfully completed.")

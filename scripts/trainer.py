@@ -4,7 +4,7 @@ import logging
 from model.LSTM import LSTM
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.config_utils import load_config, get_config_value
-from utils.data_loader_utils import _create_data_loader
+from utils.dataset_utils import _create_data_loader
 from utils.training_utils import _train_one_epoch
 
 

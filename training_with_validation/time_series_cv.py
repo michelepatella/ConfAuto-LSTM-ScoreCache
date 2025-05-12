@@ -4,7 +4,7 @@ from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
 from model.LSTM import LSTM
 from utils.config_utils import load_config, get_config_value
-from utils.data_loader_utils import _create_data_loader
+from utils.dataset_utils import _create_data_loader
 from utils.evaluation_utils import _evaluate_model
 from utils.training_utils import _train_one_epoch
 
@@ -101,6 +101,6 @@ def _time_series_cv(
         if val_loss is not None:
             fold_losses.append(val_loss)
         else:
-            raise Exception(f"Validation loss returned None.")
+            raise Exception("Validation loss returned None.")
 
     return fold_losses

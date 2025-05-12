@@ -1,16 +1,17 @@
 import logging
 from sklearn.preprocessing import MinMaxScaler
-from utils.config_utils import load_config, get_config_value
+from utils.config_utils import get_config_value
 
 
-def _normalize_timestamps(df):
+def _normalize_timestamps(df, config):
     """
     Method to normalize the timestamps of dataset.
-    :param df: The dataset to normalize.
-    :return: The normalized dataset.
+    :param df: The dataframe to normalize.
+    :param config: The config object.
+    :return: The normalized dataframe.
     """
-    # load config file
-    config = load_config()
+    # ongoing message
+    logging.info("🔄 Dataset normalization started...")
 
     # load training percentage
     training_perc = get_config_value(config, "data.training_perc")
@@ -33,9 +34,9 @@ def _normalize_timestamps(df):
             df["timestamp"].values.reshape(-1, 1)
         )
     except Exception as e:
-        raise Exception(f"Error while normalizing timestamps: {e}")
+        raise Exception(f"❌ Error while normalizing the dataset: {e}")
 
     # print a successful message
-    logging.info("Timestamps correctly normalized.")
+    logging.info("🟢 Dataset normalized.")
 
     return df

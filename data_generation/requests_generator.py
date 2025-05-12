@@ -1,7 +1,7 @@
 import numpy as np
 import logging
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
-from utils.config_utils import load_config, get_config_value
+from utils.config_utils import get_config_value
 
 
 def _generate_requests_with_timestamps(
@@ -42,7 +42,7 @@ def _generate_static_requests(config):
     :return: Static requests and timestamps generated.
     """
     # ongoing message
-    logging.info(f"🔄Static requests generation started...")
+    logging.info("🔄 Static requests generation started...")
 
     # read configurations
     num_requests = get_config_value(config, "data.num_requests")
@@ -51,9 +51,9 @@ def _generate_static_requests(config):
 
     # check the validity of the parameters
     if num_requests <= 0 or num_keys <= 0:
-        raise ValueError("❌num_requests and num_keys must be positive integers.")
+        raise ValueError("❌ num_requests and num_keys must be positive integers.")
     if alpha <= 0:
-        raise ValueError("❌alpha must be a positive float.")
+        raise ValueError("❌ alpha must be a positive float.")
 
     # calculate the probabilities
     probs = _calculate_zipf_distribution_probs(
@@ -70,7 +70,7 @@ def _generate_static_requests(config):
     )
 
     # show a successful message
-    logging.info(f"🟢Static requests and timestamps generated.")
+    logging.info("🟢 Static requests and timestamps generated.")
 
     return requests, timestamps
 
@@ -82,7 +82,7 @@ def _generate_dynamic_requests(config):
     :return: Dynamic requests and timestamps generated.
     """
     # ongoing message
-    logging.info(f"🔄Dynamic requests generation started...")
+    logging.info("🔄 Dynamic requests generation started...")
 
     # read configurations
     num_requests = get_config_value(config, "data.num_requests")
@@ -96,11 +96,11 @@ def _generate_dynamic_requests(config):
 
     # check the validity of the parameters
     if num_requests <= 0 or num_keys <= 0 or time_steps <= 0:
-        raise ValueError("❌num_requests, num_keys, and time_steps must be positive integers.")
+        raise ValueError("❌ num_requests, num_keys, and time_steps must be positive integers.")
     if len(alpha_values) != time_steps:
-        raise ValueError("❌alpha_values length must match time_steps.")
+        raise ValueError("❌ alpha_values length must match time_steps.")
     if any(alpha <= 0 for alpha in alpha_values):
-        raise ValueError("❌All alpha values must be positive.")
+        raise ValueError("❌ All alpha values must be positive.")
 
     # calculate the time step duration
     time_step_duration = num_requests // time_steps
@@ -136,6 +136,6 @@ def _generate_dynamic_requests(config):
         timestamps.extend(ts)
 
     # show a successful message
-    logging.info(f"🟢Dynamic requests and timestamps generated.")
+    logging.info("🟢 Dynamic requests and timestamps generated.")
 
     return requests, timestamps
