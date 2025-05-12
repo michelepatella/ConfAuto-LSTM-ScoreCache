@@ -7,7 +7,7 @@ def _remove_duplicates(df):
     :param df: Dataframe to remove duplicated rows from.
     :return: The dataframe with duplicate rows removed.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Dataset deduplication started...")
 
     try:

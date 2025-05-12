@@ -9,7 +9,7 @@ def _calculate_zipf_distribution_probs(keys, alpha):
     :param alpha: Zipf distribution's parameter.
     :return: Zipf distribution's probabilities calculated.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Zipf distribution's probabilities calculation started...")
 
     # convert keys to a numpy array for safety

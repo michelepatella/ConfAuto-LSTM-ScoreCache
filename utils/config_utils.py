@@ -20,7 +20,7 @@ def _load_config():
     Method to load the config file.
     :return: The configuration object.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Config file loading started...")
 
     # get the abs path of the config file
@@ -39,13 +39,13 @@ def _load_config():
     return config
 
 
-def _update_config(updated_content):
+def _update_config(updated_config):
     """
     Method to update the config file.
-    :param updated_content: The updated content to write.
+    :param updated_config: The updated config to write.
     :return:
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Config file updating started...")
 
     # get the abs path of the config file
@@ -55,7 +55,7 @@ def _update_config(updated_content):
         # update the config file
         with open(config_path, "w") as config_file:
             yaml.dump(
-                updated_content, config_file,
+                updated_config, config_file,
                 default_flow_style=False,
                 sort_keys=False,
                 allow_unicode=True
@@ -72,7 +72,7 @@ def _get_config_value(keys):
     :param keys: Requested keys.
     :return: The config value required.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Config file reading started...")
 
     if isinstance(keys, str):

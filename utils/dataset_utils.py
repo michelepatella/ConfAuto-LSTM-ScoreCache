@@ -11,7 +11,7 @@ def _save_dataset(df, dataset_path):
     :param dataset_path: The path of the dataset to save.
     :return:
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Dataset saving started...")
 
     try:
@@ -33,7 +33,7 @@ def _create_data_loader(dataset, batch_size):
     :param batch_size: The batch size to use.
     :return: The data loader.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Data loader creation started...")
 
     try:
@@ -58,7 +58,7 @@ def _load_dataset(dataset_path):
     :param dataset_path: Path of the dataset to load.
     :return: The dataset read.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Dataset loading started...")
 
     try:
@@ -78,7 +78,7 @@ def _get_dataset_path_type():
     Method to get the dataset path and type from config file.
     :return: The dataset path and type.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Dataset path and type retrieval started...")
 
     # read the dataset type

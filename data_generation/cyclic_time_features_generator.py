@@ -8,7 +8,7 @@ def _generate_cyclic_time_features(timestamps):
     :param timestamps: The timestamps from which to generate cyclic time features.
     :return: The cyclic time features generated.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Cyclic time features generation started...")
 
     # check if the timestamps is a valid array/list

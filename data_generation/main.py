@@ -11,7 +11,7 @@ def data_generation():
     Method to orchestrate data generation.
     :return:
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Data generation started...")
 
     # get the dataset path

@@ -10,7 +10,7 @@ def data_preprocessing():
     Method to orchestrate data preprocessing of dataset.
     :return:
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Data preprocessing started...")
 
     # get the dataset path

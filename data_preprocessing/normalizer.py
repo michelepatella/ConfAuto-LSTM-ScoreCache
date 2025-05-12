@@ -9,7 +9,7 @@ def _normalize_timestamps(df):
     :param df: The dataframe to normalize.
     :return: The normalized dataframe.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Dataset normalization started...")
 
     # load training percentage

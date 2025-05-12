@@ -38,7 +38,7 @@ def _generate_static_requests():
     Method to orchestrate the static requests and timestamps generation.
     :return: Static requests and timestamps generated.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Static requests generation started...")
 
     # read configurations
@@ -76,7 +76,7 @@ def _generate_dynamic_requests():
     Method to orchestrate the dynamic requests and timestamps generation.
     :return: Dynamic requests and timestamps generated.
     """
-    # ongoing message
+    # initial message
     logging.info("🔄 Dynamic requests generation started...")
 
     # read configurations

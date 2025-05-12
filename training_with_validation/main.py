@@ -10,6 +10,9 @@ def training_with_validation():
     Method to orchestrate training with validation of the model.
     :return:
     """
+    # initial message
+    logging.info("🔄 Training with validation started...")
+
     # get the dataset path
     dataset_path,_ = _get_dataset_path_type()
 
@@ -25,4 +28,5 @@ def training_with_validation():
     # set the best parameters
     _save_best_params(best_params)
 
-    logging.info("Training with validation successfully completed.")
+    # print a successful message
+    logging.info("✅ Training with validation successfully completed.")
