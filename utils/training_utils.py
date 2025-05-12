@@ -1,4 +1,5 @@
 from tqdm import tqdm
+import logging
 from utils.feedforward_utils import _compute_forward, _compute_backward
 
 
@@ -18,13 +19,15 @@ def _train_one_epoch(
     :param device: Device to be used.
     :return:
     """
-    # train the model
+    # initial message
+    logging.info("🔄 Epoch training started...")
+
     model.train()
 
     # to show the progress bar
     training_loader = tqdm(
         training_loader,
-        desc="Training Progress",
+        desc="🧠 Training Progress",
         leave=False
     )
 
@@ -34,16 +37,24 @@ def _train_one_epoch(
             # reset the gradients
             optimizer.zero_grad()
         except Exception as e:
-            raise Exception(f"Error resetting the gradients: {e}")
+            raise Exception(f"❌ Error resetting the gradients: {e}")
 
         # forward pass
-        loss, _ = _compute_forward((x, y), model, criterion, device)
+        loss, _ = _compute_forward(
+            (x, y),
+            model,
+            criterion,
+            device
+        )
 
         # check loss
         if loss is None:
-            raise Exception("Error while training the model due to None loss returned.")
+            raise Exception("❌ Error while training the model due to None loss returned.")
 
         # backward pass
         _compute_backward(loss, optimizer)
 
         training_loader.set_postfix(loss=loss.item())
+
+    # show a successful message
+    logging.info("🟢 Epoch training completed.")

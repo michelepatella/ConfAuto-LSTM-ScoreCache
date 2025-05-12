@@ -72,6 +72,7 @@ def _compute_avg_loss_and_predictions(
 
     return avg_loss, all_preds, all_targets
 
+
 def _compute_metrics(predictions, targets):
     """
     Method to compute metrics based on predictions and targets.
@@ -116,6 +117,7 @@ def _compute_metrics(predictions, targets):
     logging.info("🟢 Metrics computed.")
 
     return metrics
+
 
 def _evaluate_model(
         model,
