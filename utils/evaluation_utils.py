@@ -159,4 +159,4 @@ def _evaluate_model(
     # show a successful message
     logging.info("🟢 Model's evaluation completed.")
 
-    return avg_loss
+    return avg_loss, None

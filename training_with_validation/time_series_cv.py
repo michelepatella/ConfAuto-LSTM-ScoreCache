@@ -24,7 +24,7 @@ def _time_series_cv(
     :param num_layers: The number of layers.
     :param dropout: The dropout rate.
     :param learning_rate: The learning rate.
-    :return: The loss value calculated.
+    :return: The final average loss.
     """
     # initial message
     logging.info("🔄 Time Series started...")
@@ -46,6 +46,7 @@ def _time_series_cv(
     # define the loss function
     criterion = torch.nn.CrossEntropyLoss()
 
+    fold_losses = []
     # iterate over the training set
     for train_idx, val_idx in tscv.split(np.arange(n_samples)):
 
@@ -98,7 +99,11 @@ def _time_series_cv(
             criterion,
             device
         )
+        fold_losses.append(avg_loss)
 
     logging.info("🟢 Time Series CV completed.")
 
-    return avg_loss
+    # calculate the average of the loss
+    final_avg_loss = np.mean(fold_losses)
+
+    return final_avg_loss

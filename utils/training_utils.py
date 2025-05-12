@@ -32,7 +32,6 @@ def _train_one_epoch(
     )
 
     for x, y in training_loader:
-
         try:
             # reset the gradients
             optimizer.zero_grad()

@@ -63,22 +63,14 @@ def _grid_search(training_set):
     ) as pbar:
         for hidden_size, num_layers, dropout, learning_rate in param_combinations:
 
-            fold_losses = []
-
             # perform the time series CV
-            val_loss = _time_series_cv(
+            avg_loss = _time_series_cv(
                 training_set,
                 hidden_size,
                 num_layers,
                 dropout,
                 learning_rate
             )
-
-            # check the val_loss and update fold losses
-            if val_loss is not None:
-                fold_losses.append(val_loss)
-            else:
-                raise Exception("❌ None loss encountered.")
 
             # group current parameters together
             curr_params = {
@@ -97,7 +89,7 @@ def _grid_search(training_set):
 
             # check the loss and eventually update the best parameters
             best_avg_loss, best_params = _check_and_update_best_params(
-                fold_losses,
+                avg_loss,
                 best_avg_loss,
                 curr_params,
                 best_params

@@ -150,9 +150,9 @@ class AccessLogsDataset(Dataset):
         try:
             # the next value in the sequence (y)
             y_key = torch.tensor(
-                self.data[idx + self.seq_len][0],
+                [self.data[idx + self.seq_len][0]],
                 dtype=torch.long
-            )
+            ).squeeze()
         except Exception as e:
             raise Exception(f"❌ Error while reading the next value in the sequence (y): {e}")
 
