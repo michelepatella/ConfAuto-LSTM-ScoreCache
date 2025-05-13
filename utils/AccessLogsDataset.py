@@ -73,9 +73,12 @@ class AccessLogsDataset(Dataset):
         except Exception as e:
             raise Exception(f"❌ Error while reading the dataset fields: {e}")
 
-        # instantiate the encoder
-        self.encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore")
-        self.requests = self.encoder.fit_transform(df[["request"]])
+        try:
+            # instantiate the encoder
+            self.encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore")
+            self.requests = self.encoder.fit_transform(df[["request"]])
+        except Exception as e:
+            raise Exception(f"❌ Error while encoding 'request' field: {e}")
 
         # split the dataset to assign data properly
         self._split_dataset(dataset_type)

@@ -55,7 +55,8 @@ def _update_config(updated_config):
         # update the config file
         with open(config_path, "w") as config_file:
             yaml.dump(
-                updated_config, config_file,
+                updated_config,
+                config_file,
                 default_flow_style=False,
                 sort_keys=False,
                 allow_unicode=True
