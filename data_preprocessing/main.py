@@ -20,13 +20,16 @@ def data_preprocessing():
     df = _load_dataset(_get_config_value(dataset_path))
 
     # remove duplicates from the dataset
-    df_deduplicated = _remove_duplicates(df)
+    df_deduplicated = _remove_duplicates(df, "timestamp")
 
     # remove missing values
     df_no_missing_values = _remove_missing_values(df_deduplicated)
 
     # standardize timestamps
-    df_standardized = _standardize_timestamps(df_no_missing_values)
+    df_standardized = _standardize_timestamps(
+        df_no_missing_values,
+        ["timestamp"]
+    )
 
     # save the preprocessed dataset
     _save_dataset(

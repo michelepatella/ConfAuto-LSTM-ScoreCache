@@ -1,18 +1,19 @@
 import logging
 
 
-def _remove_duplicates(df):
+def _remove_duplicates(df, column):
     """
     Method to remove duplicated rows from a dataframe.
     :param df: Dataframe to remove duplicated rows from.
+    :param column: Column for which duplicates will be removed.
     :return: The dataframe with duplicate rows removed.
     """
     # initial message
     logging.info("🔄 Dataset deduplication started...")
 
     try:
-        # clear the dataset removing duplicated timestamps
-        df.drop_duplicates(subset=['timestamp'], inplace=True)
+        # clear the dataset removing duplicated columns
+        df.drop_duplicates(subset=[column], inplace=True)
     except Exception as e:
         raise Exception(f"❌ Error while deduplicating the dataset: {e}")
 

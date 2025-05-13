@@ -3,10 +3,11 @@ from sklearn.preprocessing import StandardScaler
 from utils.config_utils import _get_config_value
 
 
-def _standardize_timestamps(df):
+def _standardize_timestamps(df, columns):
     """
     Method to standardize the timestamps of dataset.
     :param df: The dataframe to standardize.
+    :param columns: The columns to standardize.
     :return: The standardized dataframe.
     """
     # initial message
@@ -23,15 +24,16 @@ def _standardize_timestamps(df):
     scaler = StandardScaler()
 
     try:
-        # standardize timestamps of training set
-        train_timestamps = (df.loc[:train_end_idx - 1, "timestamp"]
-                            .values.reshape(-1, 1))
-        scaler.fit(train_timestamps)
+        for column in columns:
+            # standardize the specified column
+            train_set = (df.loc[:train_end_idx - 1, column]
+                                .values.reshape(-1, 1))
+            scaler.fit(train_set)
 
-        # standardize the whole timestamp column using the fitted scaler
-        df["timestamp"] = scaler.transform(
-            df["timestamp"].values.reshape(-1, 1)
-        )
+            # standardize the whole specified column using the fitted scaler
+            df[column] = scaler.transform(
+                df[column].values.reshape(-1, 1)
+            )
     except Exception as e:
         raise Exception(f"❌ Error while standardizing the dataset: {e}")
 
