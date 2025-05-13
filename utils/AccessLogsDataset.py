@@ -55,6 +55,12 @@ class AccessLogsDataset(Dataset):
         # set the sequence length
         self.seq_len = _get_config_value("data.seq_len")
 
+        # set data equals created fields
+        self.data = list(zip(*[
+            getattr(self, column)
+            for column in self.columns
+        ]))
+
 
     def __init__(self, dataset_path, dataset_type):
         """
@@ -67,12 +73,6 @@ class AccessLogsDataset(Dataset):
 
         # set the fields of the dataset
         self._set_fields(df)
-
-        # create data from created fields
-        self.data = list(zip(*[
-            getattr(self, column)
-            for column in self.columns
-        ]))
 
         # split the dataset to assign data properly
         self._split_dataset(dataset_type)

@@ -1,6 +1,7 @@
 import torch
 import logging
 from sklearn.metrics import precision_score, recall_score, f1_score
+from utils.config_utils import _get_config_value
 from utils.feedforward_utils import _compute_forward
 
 
@@ -70,7 +71,7 @@ def _collect_predictions(
     return avg_loss, all_preds, all_targets, all_outputs
 
 
-def _top_k_accuracy(targets, outputs, k=3):
+def _top_k_accuracy(targets, outputs, k):
     """
     To calculate the top-k accuracy of the predictions.
     :param targets: The targets.
@@ -80,7 +81,7 @@ def _top_k_accuracy(targets, outputs, k=3):
     """
     # prepare data
     outputs_tensor = torch.stack(outputs)
-    top_k_preds = (torch.topk(outputs_tensor, k=3, dim=1)
+    top_k_preds = (torch.topk(outputs_tensor, k=k, dim=1)
                    .indices.cpu().numpy())
 
     # initialize the no. of correct predictions
@@ -103,7 +104,7 @@ def _top_k_accuracy(targets, outputs, k=3):
 def _compute_metrics(targets, predictions, outputs):
     """
     Method to compute metrics based on predictions and targets.
-    :param targets: Targets.
+    :param targets: The targets.
     :param predictions: Predictions from model.
     :param outputs: Probabilities from model.
     :return: The computed metrics.
@@ -111,26 +112,31 @@ def _compute_metrics(targets, predictions, outputs):
     # initial message
     logging.info("🔄 Metrics computation started...")
 
+    # load some configurations
+    average = _get_config_value("evaluation.average")
+    top_k = _get_config_value("evaluation.top_k")
+
     try:
         # compute the metrics
         precision = precision_score(
             targets,
             predictions,
-            average="macro"
+            average=average
         )
         recall = recall_score(
             targets,
             predictions,
-            average="macro"
+            average=average
         )
         f1 = f1_score(
             targets,
             predictions,
-            average="macro"
+            average=average
         )
         top_k_accuracy = _top_k_accuracy(
             targets,
-            outputs
+            outputs,
+            top_k
         )
     except Exception as e:
         raise Exception(f"❌ Error while computing metrics: {e}")

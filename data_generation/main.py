@@ -24,7 +24,7 @@ def data_generation():
         # generate dynamic requests and timestamps
         requests, timestamps = _generate_dynamic_requests()
     else:
-        raise ValueError("❌ Unknown distribution type.")
+        raise ValueError(f"❌ Invalid distribution type: {distribution_type}")
 
     # generate cyclic time features starting from timestamps
     cyclic_time_features = _generate_cyclic_time_features(timestamps)

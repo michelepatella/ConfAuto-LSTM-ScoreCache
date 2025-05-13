@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import logging
 import torch
+from utils.config_utils import _get_config_value
 from utils.feedforward_utils import _compute_forward, _compute_backward
 
 
@@ -67,13 +68,35 @@ def _build_optimizer(model, learning_rate):
     :param learning_rate: Learning rate.
     :return: The created optimizer.
     """
+    # read the optimizer
+    optimizer = _get_config_value("training.optimizer")
+
     try:
         # define the optimizer
-        optimizer = torch.optim.Adam(
-            model.parameters(),
-            lr=learning_rate
-        )
+        if optimizer == "adam":
+            return torch.optim.Adam(
+                model.parameters(),
+                lr=learning_rate
+            )
+        elif optimizer == "adamw":
+            return torch.optim.AdamW(
+                model.parameters(),
+                lr=learning_rate,
+                weight_decay=_get_config_value("training.weight_decay")
+            )
+        elif optimizer == "rmsprop":
+            return torch.optim.RMSprop(
+                model.parameters(),
+                lr=learning_rate,
+                momentum=_get_config_value("training.momentum")
+            )
+        elif optimizer == "sgd":
+            return torch.optim.SGD(
+                model.parameters(),
+                lr=learning_rate,
+                momentum=_get_config_value("training.momentum")
+            )
+        else:
+            raise Exception(f"❌ Invalid optimizer: {optimizer}")
     except Exception as e:
         raise Exception(f"❌ Error while building optimizer: {e}")
-
-    return optimizer

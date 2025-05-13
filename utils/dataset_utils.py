@@ -15,13 +15,11 @@ def _save_dataset(df, dataset_path):
     logging.info("🔄 Dataset saving started...")
 
     try:
-
         # convert dataframe to CSV file
         df.to_csv(dataset_path, index=False)
 
         # show a successful message
         logging.info(f"🟢 Dataset saved to '{dataset_path}'.")
-
     except Exception as e:
         raise Exception(f"❌ Error while saving the dataset: {e}")
 
@@ -90,7 +88,7 @@ def _get_dataset_path_type():
     elif dataset_type == "dynamic":
         dataset_path = "data.dynamic_dataset_path"
     else:
-        raise Exception("❌ Unknown dataset type.")
+        raise Exception(f"❌ Invalid dataset type: {dataset_type}")
 
     # show a successful message
     logging.info("🟢 Dataset path and type retrieved.")

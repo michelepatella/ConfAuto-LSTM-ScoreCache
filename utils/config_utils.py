@@ -67,6 +67,7 @@ def _update_config(updated_config):
     # show a successful message
     logging.info("🟢 Config file updated.")
 
+
 def _get_config_value(keys):
     """
     Method to get the config value from the config file.
