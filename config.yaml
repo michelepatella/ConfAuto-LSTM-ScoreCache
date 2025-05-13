@@ -31,20 +31,16 @@ validation:
   - 64
   - 128
   - 256
-  - 512
   num_layers_range:
   - 1
   - 2
   - 3
-  - 4
-  - 5
   dropout_range:
   - 0.0
   - 0.1
   - 0.3
   - 0.5
   learning_rate_range:
-  - 0.0003
   - 0.0005
   - 0.001
   - 0.003
