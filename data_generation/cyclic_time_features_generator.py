@@ -11,7 +11,7 @@ def _generate_cyclic_time_features(timestamps):
     # initial message
     logging.info("🔄 Cyclic time features generation started...")
 
-    # check if the timestamps is a valid array/list
+    # check if timestamp is a valid array/list
     if not isinstance(timestamps, (list, np.ndarray)):
         raise TypeError("❌ Timestamps should be a list or a numpy array.")
 
