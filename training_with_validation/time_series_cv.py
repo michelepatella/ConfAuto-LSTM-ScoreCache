@@ -10,20 +10,10 @@ from utils.evaluation_utils import _evaluate_model
 from utils.training_utils import _train_one_epoch, _build_optimizer
 
 
-def _time_series_cv(
-        training_set,
-        hidden_size,
-        num_layers,
-        dropout,
-        learning_rate
-):
+def _time_series_cv(training_set, params):
     """
     Method to perform Time Series cross-validation.
-    :param training_set: The training set.
-    :param hidden_size: The hidden dimension.
-    :param num_layers: The number of layers.
-    :param dropout: The dropout rate.
-    :param learning_rate: The learning rate.
+    :param params: The hyperparameters of the model.
     :return: The final average loss.
     """
     # initial message
@@ -68,14 +58,13 @@ def _time_series_cv(
         )
 
         # define the LSTM model
-        model = LSTM(
-            hidden_size=hidden_size,
-            num_layers=num_layers,
-            dropout=dropout
-        ).to(device)
+        model = LSTM(**params).to(device)
 
         # get the optimizer
-        optimizer = _build_optimizer(model, learning_rate)
+        optimizer = _build_optimizer(
+            model,
+            params["training"]["learning_rate"]
+        )
 
         # train the model
         for epoch in range(_get_config_value("validation.epochs")):

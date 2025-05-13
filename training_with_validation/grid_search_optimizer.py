@@ -15,19 +15,20 @@ def _get_parameter_combination():
 
     # define the parameters combination
     param_combinations = [
-        (hidden_size, num_layers, dropout, learning_rate)
-        for hidden_size in _get_config_value(
-            "validation.hidden_size_range"
-        )
-        for num_layers in _get_config_value(
-            "validation.num_layers_range"
-        )
-        for dropout in _get_config_value(
-            "validation.dropout_range"
-        )
-        for learning_rate in _get_config_value(
-            "validation.learning_rate_range"
-        )
+        {
+            "model": {
+                "hidden_size": hidden_size,
+                "num_layers": num_layers,
+                "dropout": dropout
+            },
+            "training": {
+                "learning_rate": learning_rate
+            }
+        }
+        for hidden_size in _get_config_value("validation.hidden_size_range")
+        for num_layers in _get_config_value("validation.num_layers_range")
+        for dropout in _get_config_value("validation.dropout_range")
+        for learning_rate in _get_config_value("validation.learning_rate_range")
     ]
 
     # check the parameters combination calculated
@@ -61,37 +62,19 @@ def _grid_search(training_set):
             total=len(param_combinations),
             desc="🔍 Grid Search Progress"
     ) as pbar:
-        for hidden_size, num_layers, dropout, learning_rate in param_combinations:
+        for params in param_combinations:
 
             # perform the time series CV
             avg_loss = _time_series_cv(
                 training_set,
-                hidden_size,
-                num_layers,
-                dropout,
-                learning_rate
+                **params
             )
-
-            # group current parameters together
-            curr_params = {
-                "model":
-                    {
-                        "hidden_size": hidden_size,
-                        "num_layers": num_layers,
-                        "dropout": dropout,
-                    },
-                "training":
-                    {
-                        "learning_rate": learning_rate
-                    }
-
-            }
 
             # check the loss and eventually update the best parameters
             best_avg_loss, best_params = _check_and_update_best_params(
                 avg_loss,
                 best_avg_loss,
-                curr_params,
+                params,
                 best_params
             )
 
