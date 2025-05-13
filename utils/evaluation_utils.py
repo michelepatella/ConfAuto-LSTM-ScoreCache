@@ -146,7 +146,7 @@ def _compute_metrics(targets, predictions, outputs):
         "f1": f1,
         "top_k_accuracy": top_k_accuracy,
     }
-    print(metrics)
+
     # show results
     logging.info(f"📊 Metrics: {metrics}")
 
@@ -194,9 +194,9 @@ def _evaluate_model(
 
         # show a successful message
         logging.info("🟢 Model's evaluation completed.")
-        print(avg_loss)
+
         return avg_loss, metrics
-    print(avg_loss)
+
     # show a successful message
     logging.info("🟢 Model's evaluation completed.")
 

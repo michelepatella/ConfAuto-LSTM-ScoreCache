@@ -20,3 +20,24 @@ def _remove_duplicates(df):
     logging.info("🟢 Dataset deduplicated.")
 
     return df
+
+
+def _remove_missing_values(df):
+    """
+    Method to remove missing values from a dataframe.
+    :param df: The dataframe to remove missing values from.
+    :return: The dataframe with missing values removed.
+    """
+    # initial message
+    logging.info("🔄 Missing values remotion started...")
+
+    try:
+        # remove rows with missing values
+        df = df.dropna(axis=0, how='any')
+    except Exception as e:
+        raise Exception(f"❌ Error while removing missing values from the dataset: {e}")
+
+    # print a successful message
+    logging.info("🟢 Missing values removed.")
+
+    return df

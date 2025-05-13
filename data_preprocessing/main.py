@@ -1,5 +1,5 @@
 import logging
-from data_preprocessing.cleaner import _remove_duplicates
+from data_preprocessing.cleaner import _remove_duplicates, _remove_missing_values
 from data_preprocessing.normalizer import _normalize_timestamps
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _save_dataset, _load_dataset, _get_dataset_path_type
@@ -22,8 +22,11 @@ def data_preprocessing():
     # remove duplicates from the dataset
     df_deduplicated = _remove_duplicates(df)
 
+    # remove missing values
+    df_no_missing_values = _remove_missing_values(df_deduplicated)
+
     # normalize timestamps
-    df_normalized = _normalize_timestamps(df_deduplicated)
+    df_normalized = _normalize_timestamps(df_no_missing_values)
 
     # save the preprocessed dataset
     _save_dataset(
