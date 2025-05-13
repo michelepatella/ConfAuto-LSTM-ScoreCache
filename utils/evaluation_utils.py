@@ -139,7 +139,7 @@ def _compute_metrics(targets, predictions):
         "f1": f1,
         "top_k_accuracy": top_k_accuracy,
     }
-
+    print(metrics)
     # show results
     logging.info(f"📊 Metrics: {metrics}")
 
