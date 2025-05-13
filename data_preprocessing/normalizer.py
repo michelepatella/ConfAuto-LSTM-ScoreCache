@@ -1,16 +1,16 @@
 import logging
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 from utils.config_utils import _get_config_value
 
 
-def _normalize_timestamps(df):
+def _standardize_timestamps(df):
     """
-    Method to normalize the timestamps of dataset.
-    :param df: The dataframe to normalize.
-    :return: The normalized dataframe.
+    Method to standardize the timestamps of dataset.
+    :param df: The dataframe to standardize.
+    :return: The standardized dataframe.
     """
     # initial message
-    logging.info("🔄 Dataset normalization started...")
+    logging.info("🔄 Dataset standardization started...")
 
     # load training percentage
     training_perc = _get_config_value("data.training_perc")
@@ -20,22 +20,22 @@ def _normalize_timestamps(df):
     train_end_idx = int(training_perc * total_len)
 
     # initialize the scaler
-    scaler = MinMaxScaler()
+    scaler = StandardScaler()
 
     try:
-        # normalize timestamps of training set
+        # standardize timestamps of training set
         train_timestamps = (df.loc[:train_end_idx - 1, "timestamp"]
                             .values.reshape(-1, 1))
         scaler.fit(train_timestamps)
 
-        # normalize the whole timestamp column using the fitted scaler
+        # standardize the whole timestamp column using the fitted scaler
         df["timestamp"] = scaler.transform(
             df["timestamp"].values.reshape(-1, 1)
         )
     except Exception as e:
-        raise Exception(f"❌ Error while normalizing the dataset: {e}")
+        raise Exception(f"❌ Error while standardizing the dataset: {e}")
 
     # print a successful message
-    logging.info("🟢 Dataset normalized.")
+    logging.info("🟢 Dataset standardized.")
 
     return df
