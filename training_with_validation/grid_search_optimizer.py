@@ -8,7 +8,7 @@ from training_with_validation.time_series_cv import _time_series_cv
 
 def _get_parameter_combination():
     """
-    Method to combine the parameters of each fold iteration.
+    Method to combine the parameters.
     :return: The parameters' combination.
     """
     # initial message

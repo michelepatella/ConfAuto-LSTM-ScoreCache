@@ -81,8 +81,7 @@ def _time_series_cv(training_set, params):
             model,
             validation_loader,
             criterion,
-            device,
-            compute_metrics=True
+            device
         )
         fold_losses.append(avg_loss)
 

@@ -4,35 +4,33 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from utils.feedforward_utils import _compute_forward
 
 
-def _compute_avg_loss_and_predictions(
+def _collect_predictions(
         model,
         loader,
         criterion,
-        device,
-        compute_metrics
+        device
 ):
     """
-    Method to compute the average loss and collect predictions.
+    Method to collect predictions and get the average loss.
     :param model: The model to be evaluated.
     :param loader: The data loader.
     :param criterion: The loss function.
     :param device: The device to be used.
-    :param compute_metrics: Specifies whether to compute metrics or not.
-    :return: The average loss and metrics (if requested).
+    :return: The predictions (along with the outputs), the targets
+    and the average loss.
     """
     # initial message
-    logging.info("🔄 Average loss calculation and prediction generation started...")
+    logging.info("🔄 Prediction collection started...")
 
     model.eval()
 
     # initialize data
     total_loss = 0.0
-    all_preds, all_targets = [], []
-    all_outputs = []
+    all_preds, all_targets, all_outputs = [], [], []
 
     # check the length of the loader
     if len(loader) == 0:
-        raise Exception("❌ Error while computing average loss due to empty loader.")
+        raise Exception("❌ Error while collecting predictions due to empty loader.")
 
     try:
         with torch.no_grad():
@@ -53,36 +51,38 @@ def _compute_avg_loss_and_predictions(
                 # update the total loss
                 total_loss += loss.item()
 
-                # store predictions and target for metrics (if needed)
-                if compute_metrics:
-                    preds = torch.argmax(outputs, dim=1)
-                    all_preds.extend(preds.cpu().numpy())
-                    all_targets.extend(y.cpu().numpy())
-                    all_outputs.extend(outputs.cpu())
+                # store predictions and target for metrics
+                preds = torch.argmax(outputs, dim=1)
+
+                all_preds.extend(preds.cpu().numpy())
+                all_targets.extend(y.cpu().numpy())
+                all_outputs.extend(outputs.cpu())
 
     except Exception as e:
-        raise Exception(f"❌ Error while computing avg loss and predictions: {e}")
+        raise Exception(f"❌ Error while collecting predictions: {e}")
 
     # compute the average loss
     avg_loss = total_loss / len(loader)
 
-    # show results
-    logging.info(f"📉 Average Loss: {avg_loss}")
-
     # show a successful message
-    logging.info("🟢 Average loss calculated and predictions generated.")
+    logging.info("🟢 Predictions collected.")
 
     return avg_loss, all_preds, all_targets, all_outputs
 
 
-def _top_k_accuracy(targets, predictions, k=3):
+def _top_k_accuracy(targets, outputs, k=3):
     """
-    To calculate the top k accuracy of the predictions.
+    To calculate the top-k accuracy of the predictions.
     :param targets: The targets.
-    :param predictions: The predictions of the model.
+    :param outputs: The outputs of the model.
     :param k: The value of k for the accuracy.
     :return: The k-accuracy of the predictions.
     """
+    # prepare data
+    outputs_tensor = torch.stack(outputs)
+    top_k_preds = (torch.topk(outputs_tensor, k=3, dim=1)
+                   .indices.cpu().numpy())
+
     # initialize the no. of correct predictions
     correct = 0
 
@@ -90,11 +90,11 @@ def _top_k_accuracy(targets, predictions, k=3):
     for i in range(len(targets)):
 
         # get the top-k predictions
-        top_k_preds = predictions[i][:k]
+        top_k_i = top_k_preds[i][:k]
 
         # check if the target is contained into the
         # top-k predictions
-        if targets[i] in top_k_preds:
+        if targets[i] in top_k_i:
             correct += 1
 
     return correct / len(targets)
@@ -110,10 +110,6 @@ def _compute_metrics(targets, predictions, outputs):
     """
     # initial message
     logging.info("🔄 Metrics computation started...")
-
-    outputs_tensor = torch.stack(outputs)
-    top_k_preds = (torch.topk(outputs_tensor, k=3, dim=1)
-                   .indices.cpu().numpy())
 
     try:
         # compute the metrics
@@ -134,7 +130,7 @@ def _compute_metrics(targets, predictions, outputs):
         )
         top_k_accuracy = _top_k_accuracy(
             targets,
-            top_k_preds
+            outputs
         )
     except Exception as e:
         raise Exception(f"❌ Error while computing metrics: {e}")
@@ -147,9 +143,6 @@ def _compute_metrics(targets, predictions, outputs):
         "top_k_accuracy": top_k_accuracy,
     }
 
-    # show results
-    logging.info(f"📊 Metrics: {metrics}")
-
     # show a successful message
     logging.info("🟢 Metrics computed.")
 
@@ -160,44 +153,40 @@ def _evaluate_model(
         model,
         loader,
         criterion,
-        device,
-        compute_metrics=False
+        device
 ):
     """
-    Method to orchestrate the model evaluation on a dataset.
+    Method to orchestrate the model evaluation on a loader.
     :param model: The model to evaluate.
     :param loader: The loader on which to evaluate the model.
     :param criterion: The loss function.
     :param device: Device to use.
-    :param compute_metrics: Specifies whether to compute metrics or not.
-    :return: The average loss.
+    :return: The average loss and the metrics.
     """
     # initial message
     logging.info("🔄 Model's evaluation started...")
 
-    # perform the model evaluation
-    avg_loss, all_preds, all_targets, all_outputs = _compute_avg_loss_and_predictions(
+    # collect predictions to get them along with
+    # targets and average loss
+    avg_loss, all_preds, all_targets, all_outputs = _collect_predictions(
         model,
         loader,
         criterion,
-        device,
-        compute_metrics
+        device
     )
 
-    # if metrics are requested, compute them
-    if compute_metrics:
-        metrics = _compute_metrics(
-            all_targets,
-            all_preds,
-            all_outputs
-        )
+    # compute metrics
+    metrics = _compute_metrics(
+        all_targets,
+        all_preds,
+        all_outputs
+    )
 
-        # show a successful message
-        logging.info("🟢 Model's evaluation completed.")
-
-        return avg_loss, metrics
+    # show results
+    logging.info(f"📉 Average Loss: {avg_loss}")
+    logging.info(f"📊 Metrics: {metrics}")
 
     # show a successful message
     logging.info("🟢 Model's evaluation completed.")
 
-    return avg_loss, None
+    return avg_loss, metrics
