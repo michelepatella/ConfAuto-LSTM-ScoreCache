@@ -1,5 +1,6 @@
 from tqdm import tqdm
 import logging
+import torch
 from utils.feedforward_utils import _compute_forward, _compute_backward
 
 
@@ -57,3 +58,22 @@ def _train_one_epoch(
 
     # show a successful message
     logging.info("🟢 Epoch training completed.")
+
+
+def _build_optimizer(model, learning_rate):
+    """
+    Method to build the optimizer.
+    :param model: Model for which the optimizer will be built.
+    :param learning_rate: Learning rate.
+    :return: The created optimizer.
+    """
+    try:
+        # define the optimizer
+        optimizer = torch.optim.Adam(
+            model.parameters(),
+            lr=learning_rate
+        )
+    except Exception as e:
+        raise Exception(f"❌ Error while building optimizer: {e}")
+
+    return optimizer

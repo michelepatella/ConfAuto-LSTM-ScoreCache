@@ -5,7 +5,7 @@ from training_with_validation.best_params_updater import _check_and_update_best_
 from training_with_validation.time_series_cv import _time_series_cv
 
 
-def _parameter_combination():
+def _get_parameter_combination():
     """
     Method to combine the parameters of each fold iteration.
     :return: The parameters' combination.
@@ -54,7 +54,7 @@ def _grid_search(training_set):
     best_avg_loss = float("inf")
 
     # get the parameters combination
-    param_combinations = _parameter_combination()
+    param_combinations = _get_parameter_combination()
 
     # grid search
     with tqdm(

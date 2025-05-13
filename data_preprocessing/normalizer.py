@@ -3,9 +3,9 @@ from sklearn.preprocessing import StandardScaler
 from utils.config_utils import _get_config_value
 
 
-def _standardize_timestamps(df, columns):
+def _standardize(df, columns):
     """
-    Method to standardize the timestamps of dataset.
+    Method to standardize the specified columns of dataset.
     :param df: The dataframe to standardize.
     :param columns: The columns to standardize.
     :return: The standardized dataframe.

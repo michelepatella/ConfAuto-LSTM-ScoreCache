@@ -12,7 +12,7 @@ def _remove_duplicates(df, column):
     logging.info("🔄 Dataset deduplication started...")
 
     try:
-        # clear the dataset removing duplicated columns
+        # clear the dataset removing duplicated rows
         df.drop_duplicates(subset=[column], inplace=True)
     except Exception as e:
         raise Exception(f"❌ Error while deduplicating the dataset: {e}")

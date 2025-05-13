@@ -1,5 +1,5 @@
 import torch.nn as nn
-from utils.config_utils import _load_config, _get_config_value
+from utils.config_utils import _get_config_value
 
 
 class LSTM(nn.Module):
@@ -27,9 +27,6 @@ class LSTM(nn.Module):
         :param num_keys: Number of cache keys.
         """
         super(LSTM, self).__init__()
-
-        # load model and data configs
-        config = _load_config()
 
         # define the model's config (+ num_keys)
         self.hidden_size = hidden_size \
@@ -63,7 +60,7 @@ class LSTM(nn.Module):
         try:
             # instantiate the LSTM model
             self.lstm = nn.LSTM(
-                input_size=5+self.num_keys,
+                input_size=5+self.nfum_keys,
                 hidden_size=self.hidden_size,
                 num_layers=self.num_layers,
                 bias=self.bias,

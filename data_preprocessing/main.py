@@ -1,6 +1,6 @@
 import logging
 from data_preprocessing.cleaner import _remove_duplicates, _remove_missing_values
-from data_preprocessing.normalizer import _standardize_timestamps
+from data_preprocessing.normalizer import _standardize
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _save_dataset, _load_dataset, _get_dataset_path_type
 
@@ -25,8 +25,8 @@ def data_preprocessing():
     # remove missing values
     df_no_missing_values = _remove_missing_values(df_deduplicated)
 
-    # standardize timestamps
-    df_standardized = _standardize_timestamps(
+    # standardize timestamp column
+    df_standardized = _standardize(
         df_no_missing_values,
         ["timestamp"]
     )

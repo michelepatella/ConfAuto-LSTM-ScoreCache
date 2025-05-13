@@ -1,5 +1,4 @@
 import logging
-import numpy as np
 
 
 def _check_and_update_best_params(
@@ -20,8 +19,6 @@ def _check_and_update_best_params(
     # initial message
     logging.info("🔄 Best parameters check and update started...")
 
-    best_params = best_params
-
     # if the average loss is less than the best one,
     # update it and the best parameters
     if best_avg_loss is not None and best_avg_loss >= 0\
@@ -30,27 +27,12 @@ def _check_and_update_best_params(
             # update the best loss
             best_avg_loss = avg_loss
 
-            try:
-                # update the best parameters
-                best_params = {
-                    "model":
-                        {
-                            "hidden_size": curr_params["model"]["hidden_size"],
-                            "num_layers": curr_params["model"]["num_layers"],
-                            "dropout": curr_params["model"]["dropout"]
-                        },
-                    "training":
-                        {
-                            "learning_rate": curr_params["training"]["learning_rate"]
-                        }
-                }
+            # update the best parameters
+            best_params = curr_params
 
-                # print updated parameters and best average loss
-                logging.info(f"🆕 Updated best parameters: {best_params['model']} {best_params['training']}")
-                logging.info(f"🆕 Updated best average loss: {best_avg_loss}")
-
-            except Exception as e:
-                raise Exception(f"❌ Error while updating the best parameters: {e}")
+            # print updated parameters and best average loss
+            logging.info(f"🆕 Updated best parameters: {best_params['model']} {best_params['training']}")
+            logging.info(f"🆕 Updated best average loss: {best_avg_loss}")
     else:
         raise Exception(f"❌ Invalid best average loss ({avg_loss}) or loss ({avg_loss}).")
 

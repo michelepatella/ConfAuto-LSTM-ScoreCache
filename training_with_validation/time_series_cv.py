@@ -7,7 +7,7 @@ from model.LSTM import LSTM
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _create_data_loader
 from utils.evaluation_utils import _evaluate_model
-from utils.training_utils import _train_one_epoch
+from utils.training_utils import _train_one_epoch, _build_optimizer
 
 
 def _time_series_cv(
@@ -74,14 +74,8 @@ def _time_series_cv(
             dropout=dropout
         ).to(device)
 
-        try:
-            # define the optimizer
-            optimizer = torch.optim.Adam(
-                model.parameters(),
-                lr=learning_rate
-            )
-        except Exception as e:
-            raise Exception(f"❌ Error while instantiating optimizer: {e}")
+        # get the optimizer
+        optimizer = _build_optimizer(model, learning_rate)
 
         # train the model
         for epoch in range(_get_config_value("validation.epochs")):
