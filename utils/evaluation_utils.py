@@ -28,6 +28,7 @@ def _compute_avg_loss_and_predictions(
     # initialize data
     total_loss = 0.0
     all_preds, all_targets = [], []
+    all_outputs = []
 
     # check the length of the loader
     if len(loader) == 0:
@@ -57,6 +58,7 @@ def _compute_avg_loss_and_predictions(
                     preds = torch.argmax(outputs, dim=1)
                     all_preds.extend(preds.cpu().numpy())
                     all_targets.extend(y.cpu().numpy())
+                    all_outputs.extend(outputs.cpu())
 
     except Exception as e:
         raise Exception(f"❌ Error while computing avg loss and predictions: {e}")
@@ -70,7 +72,7 @@ def _compute_avg_loss_and_predictions(
     # show a successful message
     logging.info("🟢 Average loss calculated and predictions generated.")
 
-    return avg_loss, all_preds, all_targets
+    return avg_loss, all_preds, all_targets, all_outputs
 
 
 def _top_k_accuracy(targets, predictions, k=3):
@@ -98,15 +100,20 @@ def _top_k_accuracy(targets, predictions, k=3):
     return correct / len(targets)
 
 
-def _compute_metrics(targets, predictions):
+def _compute_metrics(targets, predictions, outputs):
     """
     Method to compute metrics based on predictions and targets.
     :param targets: Targets.
     :param predictions: Predictions from model.
+    :param outputs: Probabilities from model.
     :return: The computed metrics.
     """
     # initial message
     logging.info("🔄 Metrics computation started...")
+
+    outputs_tensor = torch.stack(outputs)
+    top_k_preds = (torch.topk(outputs_tensor, k=3, dim=1)
+                   .indices.cpu().numpy())
 
     try:
         # compute the metrics
@@ -127,7 +134,7 @@ def _compute_metrics(targets, predictions):
         )
         top_k_accuracy = _top_k_accuracy(
             targets,
-            predictions
+            top_k_preds
         )
     except Exception as e:
         raise Exception(f"❌ Error while computing metrics: {e}")
@@ -169,7 +176,7 @@ def _evaluate_model(
     logging.info("🔄 Model's evaluation started...")
 
     # perform the model evaluation
-    avg_loss, all_preds, all_targets = _compute_avg_loss_and_predictions(
+    avg_loss, all_preds, all_targets, all_outputs = _compute_avg_loss_and_predictions(
         model,
         loader,
         criterion,
@@ -179,13 +186,17 @@ def _evaluate_model(
 
     # if metrics are requested, compute them
     if compute_metrics:
-        metrics = _compute_metrics(all_preds, all_targets)
+        metrics = _compute_metrics(
+            all_targets,
+            all_preds,
+            all_outputs
+        )
 
         # show a successful message
         logging.info("🟢 Model's evaluation completed.")
-
+        print(avg_loss)
         return avg_loss, metrics
-
+    print(avg_loss)
     # show a successful message
     logging.info("🟢 Model's evaluation completed.")
 
