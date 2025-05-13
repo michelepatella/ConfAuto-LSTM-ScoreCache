@@ -31,17 +31,17 @@ class LSTM(nn.Module):
                     _get_config_value("model.num_layers")
             ) > 1:
                 # apply dropout
-                if params[param] is not None:
-                    setattr(self, param, float(params[param]))
+                if params["dropout"] is not None:
+                    setattr(self, param, float(params["dropout"]))
                 else:
                     setattr(
                         self,
                         param,
-                        float(_get_config_value(f"model.{param}"))
+                        float(_get_config_value("model.dropout"))
                     )
             else:
                 # dropout cannot be applied
-                setattr(self, param, 0.0)
+                setattr(self, "dropout", 0.0)
 
             # set the no. of keys
             self.num_keys = _get_config_value(f"data.num_keys")
