@@ -1,4 +1,5 @@
 import logging
+import itertools
 from tqdm import tqdm
 from utils.config_utils import _get_config_value
 from training_with_validation.best_params_updater import _check_and_update_best_params
@@ -13,23 +14,28 @@ def _get_parameter_combination():
     # initial message
     logging.info("🔄 Parameters' combination started...")
 
-    # define the parameters combination
-    param_combinations = [
-        {
-            "model": {
-                "hidden_size": hidden_size,
-                "num_layers": num_layers,
-                "dropout": dropout
-            },
-            "training": {
-                "learning_rate": learning_rate
-            }
-        }
-        for hidden_size in _get_config_value("validation.hidden_size_range")
-        for num_layers in _get_config_value("validation.num_layers_range")
-        for dropout in _get_config_value("validation.dropout_range")
-        for learning_rate in _get_config_value("validation.learning_rate_range")
-    ]
+    # get the search space
+    search_space = _get_config_value("validation.search_space")
+
+    # use a dictionary
+    flat_params = {
+        (section, param): values
+        for section, section_values in search_space.items()
+        for param, values in section_values.items()
+    }
+
+    # generate all possible combinations
+    combinations = list(itertools.product(
+        *flat_params.values()
+    ))
+
+    # reconstruct combinations back to nested dicts
+    param_combinations = []
+    for combo in combinations:
+        combo_dict = {}
+        for (section, param), value in zip(flat_params.keys(), combo):
+            combo_dict.setdefault(section, {})[param] = value
+        param_combinations.append(combo_dict)
 
     # check the parameters combination calculated
     if not param_combinations:

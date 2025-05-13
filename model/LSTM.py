@@ -10,41 +10,37 @@ class LSTM(nn.Module):
         :param params: The model's parameters.
         :return:
         """
-        # define the model's config (+ num_keys)
-        self.hidden_size = params["hidden_size"] \
-            if params["hidden_size"] is not None \
-            else _get_config_value("model.hidden_size")
+        # define the model's parameters (+ num_keys)
+        for key, value in params.items():
 
-        self.num_layers = params["num_layers"] \
-            if params["num_layers"] is not None \
-            else _get_config_value("model.num_layers")
+            # handle dropout separately
+            if key == "dropout":
 
-        self.bias = params["bias"] \
-            if params["bias"] is not None \
-            else _get_config_value("model.bias")
+                # check if dropout can be applied
+                if params.get(
+                        "num_layers",
+                        _get_config_value("model.num_layers")
+                ) > 1:
+                    # apply dropout
+                    if value is not None:
+                        setattr(self, key, float(value))
+                    else:
+                        setattr(self, key, float(_get_config_value(f"model.{key}")))
+                else:
+                    # dropout cannot be applied
+                    setattr(self, key, 0.0)
 
-        self.batch_first = params["batch_first"] \
-            if params["batch_first"] is not None \
-            else _get_config_value("model.batch_first")
+            else:
 
-        if params["dropout"] is not None:
-            self.dropout = float(params["dropout"])
-        elif self.num_layers > 1:
-            self.dropout = float(_get_config_value("model.dropout"))
-        else:
-            self.dropout = 0.0
-
-        self.bidirectional = params["bidirectional"] \
-            if params["bidirectional"] is not None \
-            else _get_config_value("model.bidirectional")
-
-        self.proj_size = params["proj_size"] \
-            if params["proj_size"] is not None \
-            else _get_config_value("model.proj_size")
-
-        self.num_keys = params["num_keys"] \
-            if params["num_keys"] is not None \
-            else _get_config_value("data.num_keys")
+                # apply all the other parameters, if specified
+                if value is not None:
+                    setattr(self, key, value)
+                else:
+                    # if they are None, read them from config file and set them
+                    config_section = "data" \
+                        if key == "num_keys" \
+                        else "model"
+                    setattr(self, key, _get_config_value(f"{config_section}.{key}"))
 
 
     def __init__(self, params):
@@ -61,7 +57,7 @@ class LSTM(nn.Module):
             # instantiate the LSTM model
             self.lstm = nn.LSTM(
                 input_size=_get_config_value("model.features_dim")
-                           +self.num_keys,
+                           + self.num_keys,
                 hidden_size=self.hidden_size,
                 num_layers=self.num_layers,
                 bias=self.bias,
