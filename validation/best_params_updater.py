@@ -34,7 +34,7 @@ def _check_and_update_best_params(
             logging.info(f"🆕 Updated best parameters: {best_params['model']} {best_params['training']}")
             logging.info(f"🆕 Updated best average loss: {best_avg_loss}")
     else:
-        raise Exception(f"❌ Invalid best average loss ({avg_loss}) or loss ({avg_loss}).")
+        raise Exception(f"❌ Invalid best average loss ({best_avg_loss}) or average loss ({avg_loss}).")
 
     # print a successful message
     logging.info("🟢 Best parameters check and update completed.")

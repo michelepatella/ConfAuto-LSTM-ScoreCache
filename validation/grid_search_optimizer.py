@@ -2,8 +2,8 @@ import logging
 import itertools
 from tqdm import tqdm
 from utils.config_utils import _get_config_value
-from training_with_validation.best_params_updater import _check_and_update_best_params
-from training_with_validation.time_series_cv import _time_series_cv
+from validation.best_params_updater import _check_and_update_best_params
+from validation.time_series_cv import _time_series_cv
 
 
 def _get_parameter_combination():
@@ -19,10 +19,13 @@ def _get_parameter_combination():
 
     # use a dictionary
     flat_params = {
-        (section, param): values
+        (section, param.replace("_range", "")): values
         for section, section_values in search_space.items()
         for param, values in section_values.items()
     }
+
+    # get all the keys
+    keys = flat_params.keys()
 
     # generate all possible combinations
     combinations = list(itertools.product(
@@ -31,9 +34,9 @@ def _get_parameter_combination():
 
     # reconstruct combinations back to nested dicts
     param_combinations = []
-    for combo in combinations:
+    for values in combinations:
         combo_dict = {}
-        for (section, param), value in zip(flat_params.keys(), combo):
+        for (section, param), value in zip(keys, values):
             combo_dict.setdefault(section, {})[param] = value
         param_combinations.append(combo_dict)
 
@@ -73,7 +76,7 @@ def _grid_search(training_set):
             # perform the time series CV
             avg_loss = _time_series_cv(
                 training_set,
-                **params
+                params
             )
 
             # check the loss and eventually update the best parameters

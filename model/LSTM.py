@@ -10,38 +10,42 @@ class LSTM(nn.Module):
         :param params: The model's parameters.
         :return:
         """
-        # define the model's parameters (+ num_keys)
-        for key, value in params.items():
-
-            # handle dropout separately
-            if key == "dropout":
-
-                # check if dropout can be applied
-                if params.get(
-                        "num_layers",
-                        _get_config_value("model.num_layers")
-                ) > 1:
-                    # apply dropout
-                    if value is not None:
-                        setattr(self, key, float(value))
+        # for each required parameter
+        for param in self.required_parameters:
+            #check if the parameter has been passed
+            if param in params:
+                # handle dropout separately
+                if param == "dropout":
+                    # check if dropout can be applied
+                    if params.get(
+                            "num_layers",
+                            _get_config_value("model.num_layers")
+                    ) > 1:
+                        # apply dropout
+                        if params[param] is not None:
+                            setattr(self, param, float(params[param]))
+                        else:
+                            setattr(
+                                self,
+                                param,
+                                float(_get_config_value(f"model.{param}"))
+                            )
                     else:
-                        setattr(self, key, float(_get_config_value(f"model.{key}")))
+                        # dropout cannot be applied
+                        setattr(self, param, 0.0)
                 else:
-                    # dropout cannot be applied
-                    setattr(self, key, 0.0)
-
+                    # apply all the other parameters, if specified
+                    if params[param] is not None:
+                        setattr(self, param, params[param])
+                    else:
+                        # if they are None, read them from config file and set them
+                        setattr(self, param, _get_config_value(f"model.{param}"))
             else:
+                # read the required parameter from config
+                setattr(self, param, _get_config_value(f"model.{param}"))
 
-                # apply all the other parameters, if specified
-                if value is not None:
-                    setattr(self, key, value)
-                else:
-                    # if they are None, read them from config file and set them
-                    config_section = "data" \
-                        if key == "num_keys" \
-                        else "model"
-                    setattr(self, key, _get_config_value(f"{config_section}.{key}"))
-
+            # set the no. of keys
+            self.num_keys = _get_config_value(f"data.num_keys")
 
     def __init__(self, params):
         """
@@ -50,14 +54,24 @@ class LSTM(nn.Module):
         """
         super(LSTM, self).__init__()
 
+        # definition of the required parameters
+        self.required_parameters = [
+            "hidden_size",
+            "num_layers",
+            "bias",
+            "batch_first",
+            "dropout",
+            "bidirectional",
+            "proj_size"
+        ]
+
         # set model's parameters
         self._set_fields(params)
-
+        print(self.hidden_size)
         try:
             # instantiate the LSTM model
             self.lstm = nn.LSTM(
-                input_size=_get_config_value("model.features_dim")
-                           + self.num_keys,
+                input_size=_get_config_value("model.features_dim"),
                 hidden_size=self.hidden_size,
                 num_layers=self.num_layers,
                 bias=self.bias,

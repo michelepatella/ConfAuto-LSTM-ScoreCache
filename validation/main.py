@@ -1,14 +1,14 @@
 import logging
 from utils.AccessLogsDataset import AccessLogsDataset
-from training_with_validation.best_params_saver import _save_best_params
-from training_with_validation.grid_search_optimizer import _grid_search
+from validation.best_params_saver import _save_best_params
+from validation.grid_search_optimizer import _grid_search
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _get_dataset_path_type
 
 
-def training_with_validation():
+def validation():
     """
-    Method to orchestrate training with validation of the model.
+    Method to orchestrate the validation of the model.
     :return:
     """
     # initial message

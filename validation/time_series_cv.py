@@ -58,7 +58,7 @@ def _time_series_cv(training_set, params):
         )
 
         # define the LSTM model
-        model = LSTM(**params).to(device)
+        model = LSTM(params["model"]).to(device)
 
         # get the optimizer
         optimizer = _build_optimizer(
