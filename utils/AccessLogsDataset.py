@@ -167,7 +167,4 @@ class AccessLogsDataset(Dataset):
         except Exception as e:
             raise Exception(f"❌ Error while reading the next value in the sequence (y): {e}")
 
-        print("Features: ", x_features)
-        print("Key: ", y_key)
-
         return x_features, y_key
