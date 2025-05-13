@@ -73,11 +73,36 @@ def _compute_avg_loss_and_predictions(
     return avg_loss, all_preds, all_targets
 
 
-def _compute_metrics(predictions, targets):
+def _top_k_accuracy(targets, predictions, k=3):
+    """
+    To calculate the top k accuracy of the predictions.
+    :param targets: The targets.
+    :param predictions: The predictions of the model.
+    :param k: The value of k for the accuracy.
+    :return: The k-accuracy of the predictions.
+    """
+    # initialize the no. of correct predictions
+    correct = 0
+
+    # count the correct predictions
+    for i in range(len(targets)):
+
+        # get the top-k predictions
+        top_k_preds = predictions[i][:k]
+
+        # check if the target is contained into the
+        # top-k predictions
+        if targets[i] in top_k_preds:
+            correct += 1
+
+    return correct / len(targets)
+
+
+def _compute_metrics(targets, predictions):
     """
     Method to compute metrics based on predictions and targets.
-    :param predictions: Predictions from model.
     :param targets: Targets.
+    :param predictions: Predictions from model.
     :return: The computed metrics.
     """
     # initial message
@@ -100,6 +125,10 @@ def _compute_metrics(predictions, targets):
             predictions,
             average="macro"
         )
+        top_k_accuracy = _top_k_accuracy(
+            targets,
+            predictions
+        )
     except Exception as e:
         raise Exception(f"❌ Error while computing metrics: {e}")
 
@@ -107,7 +136,8 @@ def _compute_metrics(predictions, targets):
     metrics = {
         "precision": precision,
         "recall": recall,
-        "f1": f1
+        "f1": f1,
+        "top_k_accuracy": top_k_accuracy,
     }
 
     # show results
