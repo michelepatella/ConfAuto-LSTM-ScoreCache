@@ -63,7 +63,7 @@ class LSTM(nn.Module):
         try:
             # instantiate the LSTM model
             self.lstm = nn.LSTM(
-                input_size=5,
+                input_size=5+self.num_keys,
                 hidden_size=self.hidden_size,
                 num_layers=self.num_layers,
                 bias=self.bias,

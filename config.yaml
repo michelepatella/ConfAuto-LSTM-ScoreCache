@@ -13,10 +13,10 @@ data:
   dynamic_dataset_path: data/dynamic_access_logs.csv
 model:
   hidden_size: 256
-  num_layers: 2
+  num_layers: 3
   bias: false
   batch_first: true
-  dropout: 0.1
+  dropout: 0.5
   bidirectional: false
   proj_size: 0
   model_save_path: model/trained_lstm_model.pt
@@ -26,7 +26,7 @@ training:
   learning_rate: 0.003
 validation:
   num_folds: 3
-  epochs: 3
+  epochs: 1
   hidden_size_range:
   - 64
   - 128

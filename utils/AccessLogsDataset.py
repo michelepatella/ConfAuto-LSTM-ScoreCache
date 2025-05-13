@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import Dataset
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _load_dataset
+from sklearn.preprocessing import OneHotEncoder
 
 
 class AccessLogsDataset(Dataset):
@@ -22,6 +23,7 @@ class AccessLogsDataset(Dataset):
         try:
             # split the dataset
             if dataset_type == "training":
+                self.targets = self.requests_int[:split_idx]
                 self.data = list(
                     zip(
                         self.requests[:split_idx],
@@ -33,6 +35,7 @@ class AccessLogsDataset(Dataset):
                     )
                 )
             elif dataset_type == "testing":
+                self.targets = self.requests_int[split_idx:]
                 self.data = list(
                     zip(
                         self.requests[split_idx:],
@@ -65,11 +68,14 @@ class AccessLogsDataset(Dataset):
             self.hour_of_day_cos = df["hour_of_day_cos"].values
             self.day_of_week_sin = df["day_of_week_sin"].values
             self.day_of_week_cos = df["day_of_week_cos"].values
-            self.requests = df["request"].values
+            self.requests_int = df["request"].values
             self.seq_len = _get_config_value("data.seq_len")
         except Exception as e:
             raise Exception(f"❌ Error while reading the dataset fields: {e}")
 
+        # instantiate the encoder
+        self.encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore")
+        self.requests = self.encoder.fit_transform(df[["request"]])
 
         # split the dataset to assign data properly
         self._split_dataset(dataset_type)
@@ -115,6 +121,11 @@ class AccessLogsDataset(Dataset):
                 [item[5] for item in self.data[idx:idx + self.seq_len]],
                 dtype=torch.float
             ).unsqueeze(-1)
+
+            x_requests = torch.tensor(
+                [item[0] for item in self.data[idx:idx + self.seq_len]],
+                dtype=torch.float
+            )
         except Exception as e:
             raise Exception(f"❌ Error while reading the sequence (x): {e}")
 
@@ -125,9 +136,9 @@ class AccessLogsDataset(Dataset):
                 x_hour_of_day_cos,
                 x_hour_of_day_sin,
                 x_day_of_week_cos,
-                x_day_of_week_sin],
-                dim=-1
-            )
+                x_day_of_week_sin,
+                x_requests
+            ], dim=-1)
         except Exception as e:
             raise Exception(f"❌ Error while combining features: {e}")
 
@@ -150,10 +161,13 @@ class AccessLogsDataset(Dataset):
         try:
             # the next value in the sequence (y)
             y_key = torch.tensor(
-                [self.data[idx + self.seq_len][0]],
+                self.targets[idx + self.seq_len],
                 dtype=torch.long
-            ).squeeze()
+            )
         except Exception as e:
             raise Exception(f"❌ Error while reading the next value in the sequence (y): {e}")
+
+        print("Features: ", x_features)
+        print("Key: ", y_key)
 
         return x_features, y_key
