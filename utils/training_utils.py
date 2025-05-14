@@ -1,8 +1,10 @@
 from tqdm import tqdm
 import logging
 import torch
-from model.LSTM import LSTM
+from utils.LSTM import LSTM
+from utils.EarlyStopping import EarlyStopping
 from utils.config_utils import _get_config_value
+from utils.evaluation_utils import _evaluate_model
 from utils.feedforward_utils import _compute_forward, _compute_backward
 
 
@@ -65,34 +67,60 @@ def _train_one_epoch(
 def _train_n_epochs(
         epochs,
         model,
-        loader,
+        training_loader,
         optimizer,
         criterion,
-        device
+        device,
+        early_stopping=False,
+        validation_loader=None,
 ):
     """
     Method to train the model a specified number of epochs.
     :param epochs: Number of epochs.
     :param model: The model to be trained.
-    :param loader: The data loader.
+    :param training_loader: The training loader.
     :param optimizer: The optimizer to be used.
     :param criterion: The loss function.
     :param device: The device to be used.
+    :param early_stopping: whether to apply early stopping or not.
+    :param validation_loader: Validation data loader.
     :return:
     """
+    es = None
+    # instantiate early stopping object (if needed)
+    if early_stopping:
+        es = EarlyStopping()
+
     # n-epochs learning
-    for epoch in epochs:
+    for epoch in range(epochs):
         logging.info(f"⏳ Epoch {epoch + 1}/{epochs}")
 
         # train the model
         _train_one_epoch(
             model,
-            loader,
+            training_loader,
             optimizer,
             criterion,
             device
         )
 
+        if early_stopping:
+            # get the validation loss
+            val_loss = None
+            if validation_loader:
+                val_loss, _ = _evaluate_model(
+                    model,
+                    validation_loader,
+                    criterion,
+                    device
+                )
+
+            # early stopping logic
+            if early_stopping and val_loss is not None:
+                es(val_loss)
+                # check whether to stop
+                if es.early_stop:
+                    break
 
 
 def _build_optimizer(model, learning_rate):

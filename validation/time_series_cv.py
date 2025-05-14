@@ -62,7 +62,9 @@ def _time_series_cv(training_set, params):
             training_loader,
             optimizer,
             criterion,
-            device
+            device,
+            validation_loader=validation_loader,
+            early_stopping=True
         )
 
         # evaluate the model (by only average loss, no metrics)

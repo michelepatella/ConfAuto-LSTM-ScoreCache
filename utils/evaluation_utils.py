@@ -121,17 +121,20 @@ def _compute_metrics(targets, predictions, outputs):
         precision = precision_score(
             targets,
             predictions,
-            average=average
+            average=average,
+            zero_division=0
         )
         recall = recall_score(
             targets,
             predictions,
-            average=average
+            average=average,
+            zero_division = 0
         )
         f1 = f1_score(
             targets,
             predictions,
-            average=average
+            average=average,
+            zero_division=0
         )
         top_k_accuracy = _top_k_accuracy(
             targets,

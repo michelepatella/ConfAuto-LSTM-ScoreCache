@@ -1,57 +1,63 @@
 data:
-  distribution_type: static                               # type of Zipf data distribution ("static" or "dynamic")
-  num_requests: 1000                                      # total no. of requests to generate (integer > 0)
-  num_keys: 2                                             # number of unique keys/classes in the dataset (integer > 0)
-  alpha: 1.3                                              # Zipf distribution parameter for static data (float > 0)
-  alpha_start: 1.3                                        # initial Zipf distribution parameter for dynamic data (float > 0)
-  alpha_end: 1.8                                          # final Zipf distribution parameter for dynamic data (float > 0)
-  time_steps: 100                                         # total number of time steps for dynamic data distribution (integer > 0)
-  seq_len: 50                                             # input sequence length used by the model (integer > 0)
-  freq_timestamp: 5                                       # average interval between timestamps for dynamic data (integer >= 0)
-  training_perc: 0.7                                      # percentage of dataset used as training set (float within [0.0, 1.0])
-  static_dataset_path: data/static_access_logs.csv        # file path to save the generated static dataset
-  dynamic_dataset_path: data/dynamic_access_logs.csv      # file path to save the generated dynamic dataset
+  distribution_type: static
+  num_requests: 100
+  num_keys: 2
+  alpha: 1.3
+  alpha_start: 1.3
+  alpha_end: 1.8
+  time_steps: 100
+  seq_len: 50
+  freq_timestamp: 5
+  training_perc: 0.7
+  static_dataset_path: data/static_access_logs.csv
+  dynamic_dataset_path: data/dynamic_access_logs.csv
 model:
-  params:                                                 # LSTM model parameters
-    hidden_size: 64                                       # number of hidden units per LSTM layer (integer > 0)
-    num_layers: 3                                         # number of hidden layers (integer > 0)
-    bias: false                                           # whether to include bias terms in LSTM layers (boolean)
-    batch_first: true                                     # Whether batch dimension comes first in input tensors (boolean)
-    dropout: 0.5                                          # dropout rate between LSTM layers (float within [0.0, 1.0])
-    bidirectional: false                                  # whether to use bidirectional LSTM layers (boolean)
-    proj_size: 0                                          # output projection size (integer >= 0)
-  features_dim: 5                                         # number of input features per time step (integer > 0)
-  model_save_path: model/trained_lstm_model.pt            # file path to save the trained model
+  params:
+    hidden_size: 64
+    num_layers: 3
+    bias: false
+    batch_first: true
+    dropout: 0.5
+    bidirectional: false
+    proj_size: 0
+  features_dim: 5
+  model_save_path: model/trained_lstm_model.pt
+  hidden_size: 64
+  num_layers: 1
+  dropout: 0.5
 training:
-  epochs: 5                                               # number of training epochs (integer > 0)
-  batch_size: 128                                         # number of samples per training batch (integer > 0)
-  learning_rate: 0.0005                                   # initial learning rate for the optimizer (float > 0)
-  optimizer: adam                                         # optimizer to use ("adam", "adamw", "sgd", or "rmsprop")
-  weight_decay: 1e-2                                      # weight decay applied to optimizer (float > 0)
-  momentum: 0.9                                           # momentum factor (float >= 0)
+  epochs: 5
+  batch_size: 128
+  learning_rate: 0.001
+  optimizer: adam
+  weight_decay: 1e-2
+  momentum: 0.9
 validation:
-  num_folds: 3                                            # number of folds for time series cross-validation (integer > 0)
-  epochs: 3                                               # number of validation epochs (integer > 0)
-  search_space:                                           # parameter search space for grid search
+  num_folds: 3
+  epochs: 1
+  search_space:
     model:
-      hidden_size_range:                                  # values to search for hidden_size (list of integers > 0)
+      hidden_size_range:
       - 64
       - 128
       - 256
-      num_layers_range:                                   # values to search for num_layers (list of integers > 0)
+      num_layers_range:
       - 1
       - 2
       - 3
-      dropout_range:                                      # values to search for dropout (list of floats within [0.0, 0.1])
+      dropout_range:
       - 0.0
       - 0.1
       - 0.3
       - 0.5
     training:
-      learning_rate_range:                                # values to search for learning_rate (list of floats > 0)
+      learning_rate_range:
       - 0.0005
       - 0.001
       - 0.003
 evaluation:
-  top_k: 3                                                # number of 'k' for top-k accuracy (integer > 0)
-  average: macro                                          # averaging method for metrics ("micro" or "macro")
+  top_k: 3
+  average: macro
+early_stopping:
+  patience: 5
+  delta: 0.0

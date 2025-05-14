@@ -1,6 +1,7 @@
 import logging
 from data_generation import data_generation
 from data_preprocessing.main import data_preprocessing
+from training import training
 from validation import validation
 
 logging.basicConfig(
@@ -13,3 +14,5 @@ data_generation()
 data_preprocessing()
 
 validation()
+
+training()

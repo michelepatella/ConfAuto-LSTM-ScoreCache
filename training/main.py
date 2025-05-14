@@ -32,7 +32,7 @@ def training():
     device, criterion, model, optimizer = (
         _training_setup(
             _get_config_value("model.params"),
-            _get_config_value("model.params.learning_rate"),
+            _get_config_value("training.learning_rate"),
         )
     )
 
