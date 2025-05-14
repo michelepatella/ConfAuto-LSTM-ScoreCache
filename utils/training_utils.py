@@ -1,7 +1,6 @@
 from tqdm import tqdm
 import logging
 import torch
-from utils.LSTM import LSTM
 from utils.EarlyStopping import EarlyStopping
 from utils.config_utils import _get_config_value
 from utils.evaluation_utils import _evaluate_model
