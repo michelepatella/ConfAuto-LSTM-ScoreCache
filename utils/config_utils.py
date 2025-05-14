@@ -8,9 +8,12 @@ def _get_config_abs_path():
     Method to get the absolute path of the config file.
     :return: The absolute path of the config file.
     """
-    # define the absolute path of the config file
-    path = os.path.join(os.path.dirname(__file__), '..', 'config.yaml')
-    abs_path = os.path.abspath(path)
+    try:
+        # define the absolute path of the config file
+        path = os.path.join(os.path.dirname(__file__), '..', 'config.yaml')
+        abs_path = os.path.abspath(path)
+    except Exception as e:
+        raise Exception(f"❌ Error while getting the config absolute path: {e}")
 
     return abs_path
 
@@ -46,6 +49,9 @@ def _merge_config(config, updates):
     :param updates: The updated config object.
     :return: The merged config object.
     """
+    # initial message
+    logging.info("🔄 Config merging started...")
+
     #check if the config is None
     if config is None:
         config = {}
@@ -63,6 +69,10 @@ def _merge_config(config, updates):
                 config[key] = value
     except Exception as e:
         raise Exception(f"❌ Error while merging config file: {e}")
+
+    # show a successful message
+    logging.info("🟢 Config merged.")
+
     return config
 
 

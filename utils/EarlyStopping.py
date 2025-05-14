@@ -41,4 +41,4 @@ class EarlyStopping:
                     # early stopping is triggered
                     self.early_stop = True
         except Exception as e:
-            raise Exception(f"❌ Error while calling Early Stopping object: {e}")
+            raise Exception(f"❌ Error while calling Early Stopping's object: {e}")

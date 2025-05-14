@@ -41,7 +41,7 @@ def _train_one_epoch(
             # reset the gradients
             optimizer.zero_grad()
         except Exception as e:
-            raise Exception(f"❌ Error resetting the gradients: {e}")
+            raise Exception(f"❌ Error while resetting the gradients: {e}")
 
         # forward pass
         loss, _ = _compute_forward(
@@ -106,9 +106,9 @@ def _train_n_epochs(
 
         if early_stopping:
             # get the validation loss
-            val_loss = None
+            loss = None
             if validation_loader:
-                val_loss, _ = _evaluate_model(
+                loss, _ = _evaluate_model(
                     model,
                     validation_loader,
                     criterion,
@@ -116,10 +116,11 @@ def _train_n_epochs(
                 )
 
             # early stopping logic
-            if early_stopping and val_loss is not None:
-                es(val_loss)
+            if early_stopping and loss is not None:
+                es(loss)
                 # check whether to stop
                 if es.early_stop:
+                    logging.info("🛑 Early stopping triggered.")
                     break
 
 

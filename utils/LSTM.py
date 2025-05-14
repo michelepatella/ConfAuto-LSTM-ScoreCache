@@ -10,50 +10,54 @@ class LSTM(nn.Module):
         :param params: The model's parameters.
         :return:
         """
-        # for each required parameter
-        for param in self.required_parameters:
-            #check if the parameter has been passed
-            if param in params:
-                # apply all the other parameters (except dropout), if specified
-                if (params[param] is not None and
-                    params[param] is not "dropout"):
-                    setattr(self, param, params[param])
+        try:
+            # for each required parameter
+            for param in self.required_parameters:
+                #check if the parameter has been passed
+                if param in params:
+                    # apply all the other parameters (except dropout), if specified
+                    if (params[param] is not None and
+                        params[param] is not "dropout"):
+                        setattr(self, param, params[param])
+                    else:
+                        # if they are None, read them from config file and set them
+                        setattr(
+                            self,
+                            param,
+                            _get_config_value(f"model.params.{param}")
+                        )
                 else:
-                    # if they are None, read them from config file and set them
+                    # read the required parameter from config
                     setattr(
                         self,
                         param,
                         _get_config_value(f"model.params.{param}")
                     )
+
+
+            # check if dropout can be applied
+            if params.get(
+                    "num_layers",
+                    _get_config_value("model.params.num_layers")
+            ) > 1:
+                # apply dropout
+                if params["dropout"] is not None:
+                    setattr(self, "dropout", float(params["dropout"]))
+                else:
+                    setattr(
+                        self,
+                        "dropout",
+                        float(_get_config_value("model.params.dropout"))
+                    )
             else:
-                # read the required parameter from config
-                setattr(
-                    self,
-                    param,
-                    _get_config_value(f"model.params.{param}")
-                )
+                # dropout cannot be applied
+                setattr(self, "dropout", 0.0)
 
+            # set the no. of keys
+            self.num_keys = _get_config_value(f"data.num_keys")
 
-        # check if dropout can be applied
-        if params.get(
-                "num_layers",
-                _get_config_value("model.params.num_layers")
-        ) > 1:
-            # apply dropout
-            if params["dropout"] is not None:
-                setattr(self, "dropout", float(params["dropout"]))
-            else:
-                setattr(
-                    self,
-                    "dropout",
-                    float(_get_config_value("model.params.dropout"))
-                )
-        else:
-            # dropout cannot be applied
-            setattr(self, "dropout", 0.0)
-
-        # set the no. of keys
-        self.num_keys = _get_config_value(f"data.num_keys")
+        except Exception as e:
+            raise Exception(f"❌ Error while setting LSTM fields: {e}")
 
 
     def __init__(self, params):

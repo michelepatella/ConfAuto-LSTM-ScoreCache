@@ -79,6 +79,7 @@ def _top_k_accuracy(targets, outputs, k):
     :param k: The value of k for the accuracy.
     :return: The k-accuracy of the predictions.
     """
+
     # prepare data
     outputs_tensor = torch.stack(outputs)
     top_k_preds = (torch.topk(outputs_tensor, k=k, dim=1)

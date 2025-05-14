@@ -65,7 +65,7 @@ def _compute_backward(loss, optimizer):
         # optimize backward pass
         optimizer.step()
     except Exception as e:
-        raise Exception(f"❌ Error while optimizing backpropagation: {e}")
+        raise Exception(f"❌ Error while optimizing: {e}")
 
     # show a successful message
     logging.info("🟢 Backward pass computed.")
