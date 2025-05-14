@@ -1,9 +1,48 @@
+import copy
 import logging
 import itertools
 from tqdm import tqdm
 from utils.config_utils import _get_config_value
 from validation.best_params_updater import _check_and_update_best_params
 from validation.time_series_cv import _time_series_cv
+
+
+def _flatten_search_space(d, parent_key=()):
+    """
+    Method to make the search space flatten recursively.
+    :param d: The search space dictionary.
+    :param parent_key: The key path accumulated so far.
+    :return: A list of tuples where each tuple contains
+    a key path and its associated list of values.
+    """
+    items = []
+    for k, v in d.items():
+        clean_key = k.replace("_range", "")
+        new_key = parent_key + (clean_key,)
+        if isinstance(v, dict):
+            items.extend(_flatten_search_space(v, new_key))
+        else:
+            values = v if isinstance(v, list) else [v]
+            items.append((new_key, values))
+    return items
+
+
+def _set_nested_dict(d, keys, value):
+    """
+    Method to set a value in a nested dictionary
+    given a list of keys.
+    :param d: The dictionary to update.
+    :param keys: The list of nested keys.
+    :param value: The value to set.
+    :return:
+    """
+    current = d
+    for k in keys[:-1]:
+        if (k not in current or not
+        isinstance(current[k], dict)):
+            current[k] = {}
+        current = current[k]
+    current[keys[-1]] = value
 
 
 def _get_parameter_combination():
@@ -17,28 +56,40 @@ def _get_parameter_combination():
     # get the search space
     search_space = _get_config_value("validation.search_space")
 
-    # use a dictionary
-    flat_params = {
-        (section, param.replace("_range", "")): values
-        for section, section_values in search_space.items()
-        for param, values in section_values.items()
-    }
+    section_combinations = []
+    # iterate over all the sections in the search space
+    for section, params_dict in search_space.items():
+        # make the sections flatten
+        flat_params = _flatten_search_space(params_dict)
 
-    # get all the keys
-    keys = flat_params.keys()
+        keys = [key for key, _ in flat_params]
+        value_lists = [v for _, v in flat_params]
 
-    # generate all possible combinations
-    combinations = list(itertools.product(
-        *flat_params.values()
+        # get the combinations
+        combinations = list(itertools.product(*value_lists))
+        section_values = []
+        for values in combinations:
+            combo = {}
+            for key_path, value in zip(keys, values):
+                _set_nested_dict(combo, key_path, value)
+            section_values.append(combo)
+
+        # store the combinations
+        section_combinations.append((section, section_values))
+
+    # get the final combinations
+    all_combos = list(itertools.product(
+        *[vals for _, vals in section_combinations]
     ))
 
-    # reconstruct combinations back to nested dicts
+    # reconstruct nested dictionaries
     param_combinations = []
-    for values in combinations:
-        combo_dict = {}
-        for (section, param), value in zip(keys, values):
-            combo_dict.setdefault(section, {})[param] = value
-        param_combinations.append(combo_dict)
+    for combo in all_combos:
+        full_dict = {}
+        for (section, _), section_dict in zip(section_combinations, combo):
+            full_dict[section] = copy.deepcopy(section_dict)
+
+        param_combinations.append(full_dict)
 
     # check the parameters combination calculated
     if not param_combinations:
@@ -72,7 +123,7 @@ def _grid_search(training_set):
             desc="🔍 Grid Search Progress"
     ) as pbar:
         for params in param_combinations:
-   
+
             # perform the time series CV
             avg_loss = _time_series_cv(
                 training_set,

@@ -51,7 +51,7 @@ def _time_series_cv(training_set, params):
 
         # setup for training
         device, criterion, model, optimizer = _training_setup(
-            params["model"],
+            params["model"]["params"],
             params["training"]["learning_rate"]
         )
 

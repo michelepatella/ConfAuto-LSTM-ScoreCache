@@ -1,12 +1,12 @@
 data:
   distribution_type: static
-  num_requests: 100
+  num_requests: 200
   num_keys: 2
   alpha: 1.3
   alpha_start: 1.3
   alpha_end: 1.8
   time_steps: 100
-  seq_len: 50
+  seq_len: 100
   freq_timestamp: 5
   training_perc: 0.7
   static_dataset_path: data/static_access_logs.csv
@@ -22,13 +22,10 @@ model:
     proj_size: 0
   features_dim: 5
   model_save_path: model/trained_lstm_model.pt
-  hidden_size: 64
-  num_layers: 1
-  dropout: 0.5
 training:
   epochs: 5
   batch_size: 128
-  learning_rate: 0.001
+  learning_rate: 0.003
   optimizer: adam
   weight_decay: 1e-2
   momentum: 0.9
@@ -37,19 +34,20 @@ validation:
   epochs: 1
   search_space:
     model:
-      hidden_size_range:
-      - 64
-      - 128
-      - 256
-      num_layers_range:
-      - 1
-      - 2
-      - 3
-      dropout_range:
-      - 0.0
-      - 0.1
-      - 0.3
-      - 0.5
+      params:
+        hidden_size_range:
+        - 64
+        - 128
+        - 256
+        num_layers_range:
+        - 1
+        - 2
+        - 3
+        dropout_range:
+        - 0.0
+        - 0.1
+        - 0.3
+        - 0.5
     training:
       learning_rate_range:
       - 0.0005
