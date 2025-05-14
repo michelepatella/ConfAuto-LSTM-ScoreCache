@@ -5,7 +5,8 @@ from sklearn.model_selection import TimeSeriesSplit
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _create_data_loader
 from utils.evaluation_utils import _evaluate_model
-from utils.training_utils import _training_setup, _train_n_epochs
+from utils.setup_utils import _training_testing_setup
+from utils.training_utils import _train_n_epochs
 
 
 def _time_series_cv(training_set, params):
@@ -50,7 +51,7 @@ def _time_series_cv(training_set, params):
         )
 
         # setup for training
-        device, criterion, model, optimizer = _training_setup(
+        device, criterion, model, optimizer = _training_testing_setup(
             params["model"]["params"],
             params["training"]["learning_rate"]
         )

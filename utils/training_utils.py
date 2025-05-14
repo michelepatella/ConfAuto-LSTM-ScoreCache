@@ -173,41 +173,6 @@ def _build_optimizer(model, learning_rate):
     return optimizer
 
 
-def _training_setup(model_params, learning_rate):
-    """
-    Method to set up the training process.
-    :param model_params: The model parameters.
-    :param learning_rate: The learning rate.
-    :return: The device to use, the loss function, the model and the optimizer.
-    """
-    # initial message
-    logging.info("🔄 Model setup started...")
-
-    try:
-        # define the device to use
-        device = torch.device("cuda" if torch.cuda.is_available()
-                              else "cpu")
-
-        # define the loss function
-        criterion = torch.nn.CrossEntropyLoss()
-
-        # define the LSTM model
-        model = LSTM(model_params).to(device)
-
-        # define the optimizer
-        optimizer = _build_optimizer(
-            model,
-            learning_rate
-        )
-    except Exception as e:
-        raise Exception(f"❌ Error while setting up the training process: {e}")
-
-    # show a successful message
-    logging.info("🟢 Model setup completed.")
-
-    return device, criterion, model, optimizer
-
-
 def _save_trained_model(model):
     """
     Method to save the trained model.

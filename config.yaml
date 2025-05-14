@@ -24,7 +24,7 @@ model:
   model_save_path: model/trained_lstm_model.pt
 training:
   epochs: 5
-  batch_size: 128
+  batch_size: 256
   learning_rate: 0.003
   optimizer: adam
   weight_decay: 1e-2
@@ -59,3 +59,5 @@ evaluation:
 early_stopping:
   patience: 5
   delta: 0.0
+testing:
+  batch_size: 256
