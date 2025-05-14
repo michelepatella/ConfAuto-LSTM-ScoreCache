@@ -57,7 +57,7 @@ def _train_one_epoch(
         # backward pass
         _compute_backward(loss, optimizer)
 
-        training_loader.set_postfix(loss=loss.item())
+        # training_loader.set_postfix(loss=loss.item())
 
     # show a successful message
     logging.info("🟢 Epoch training completed.")
