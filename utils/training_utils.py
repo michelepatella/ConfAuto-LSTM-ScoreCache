@@ -29,12 +29,12 @@ def _train_one_epoch(
     model.train()
 
     # to show the progress bar
-    training_loader = tqdm(
+    """training_loader = tqdm(
         training_loader,
         desc="🧠 Training Progress",
         leave=False
     )
-
+    """
     for x, y in training_loader:
         try:
             # reset the gradients
