@@ -13,11 +13,11 @@ class LSTM(nn.Module):
         try:
             # for each required parameter
             for param in self.required_parameters:
-                #check if the parameter has been passed
+                # check if the parameter has been passed
                 if param in params:
                     # apply all the other parameters (except dropout), if specified
                     if (params[param] is not None and
-                        params[param] is not "dropout"):
+                            params[param] is not "dropout"):
                         setattr(self, param, params[param])
                     else:
                         # if they are None, read them from config file and set them
@@ -33,7 +33,6 @@ class LSTM(nn.Module):
                         param,
                         _get_config_value(f"model.params.{param}")
                     )
-
 
             # check if dropout can be applied
             if params.get(

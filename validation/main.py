@@ -2,7 +2,6 @@ import logging
 from utils.setup_utils import _loader_setup
 from validation.best_params_saver import _save_best_params
 from validation.grid_search_optimizer import _grid_search
-from utils.dataset_utils import _get_dataset_path_type
 
 
 def validation():
