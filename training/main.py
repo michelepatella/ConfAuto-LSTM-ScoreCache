@@ -1,11 +1,8 @@
-import torch
-import torch.nn as nn
 import logging
-from model.LSTM import LSTM
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _create_data_loader, _get_dataset_path_type
-from utils.training_utils import _train_one_epoch, _build_optimizer
+from utils.training_utils import _training_setup, _save_trained_model, _train_n_epochs
 
 
 def training():
@@ -13,10 +10,13 @@ def training():
     Method to train the LSTM model.
     :return:
     """
+    # initial message
+    logging.info("🔄 Training started...")
+
     # get the dataset path
     dataset_path, _ = _get_dataset_path_type()
 
-    # load the dataset
+    # load the training set
     dataset = AccessLogsDataset(
         _get_config_value(dataset_path),
     "training"
@@ -28,37 +28,26 @@ def training():
         _get_config_value("training.batch_size")
     )
 
-    # select the device to use
-    device = torch.device("cuda" if torch.cuda.is_available()
-                          else "cpu")
-
-    # define the LSTM model
-    model = LSTM(_get_config_value("model.params")).to(device)
-
-    # definition of the loss function
-    criterion = nn.CrossEntropyLoss()
-
-    optimizer = _build_optimizer(
-        model,
-        _get_config_value("training.learning_rate")
+    # setup for training
+    device, criterion, model, optimizer = (
+        _training_setup(
+            _get_config_value("model.params"),
+            _get_config_value("model.params.learning_rate"),
+        )
     )
 
     # train the model
-    for epoch in range(_get_config_value("training.epochs")):
-
-        logging.info(f"Epoch {epoch + 1}/{_get_config_value('training.epochs')}")
-
-        # train the model
-        _train_one_epoch(
-            model,
-            training_loader,
-            optimizer,
-            criterion,
-            device
-        )
+    _train_n_epochs(
+        _get_config_value("training.epochs"),
+        model,
+        training_loader,
+        optimizer,
+        criterion,
+        device
+    )
 
     # save the trained model
-    torch.save(
-        model.state_dict(),
-        _get_config_value("model.model_save_path")
-    )
+    _save_trained_model(model)
+
+    # print a successful message
+    logging.info("✅ Training successfully completed.")

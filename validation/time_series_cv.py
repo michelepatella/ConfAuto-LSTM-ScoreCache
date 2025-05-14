@@ -1,13 +1,11 @@
 import numpy as np
 import logging
-import torch
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
-from model.LSTM import LSTM
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _create_data_loader
 from utils.evaluation_utils import _evaluate_model
-from utils.training_utils import _train_one_epoch, _build_optimizer
+from utils.training_utils import _training_setup, _train_n_epochs
 
 
 def _time_series_cv(training_set, params):
@@ -30,13 +28,6 @@ def _time_series_cv(training_set, params):
     except Exception as e:
         raise Exception(f"❌ Error while instantiating Time Series Split: {e}")
 
-    # define the device to use
-    device = torch.device("cuda" if torch.cuda.is_available()
-                          else "cpu")
-
-    # define the loss function
-    criterion = torch.nn.CrossEntropyLoss()
-
     fold_losses = []
     # iterate over the training set
     for train_idx, val_idx in tscv.split(np.arange(n_samples)):
@@ -58,24 +49,21 @@ def _time_series_cv(training_set, params):
             _get_config_value("training.batch_size")
         )
 
-        # define the LSTM model
-        model = LSTM(params["model"]).to(device)
-
-        # get the optimizer
-        optimizer = _build_optimizer(
-            model,
+        # setup for training
+        device, criterion, model, optimizer = _training_setup(
+            params["model"],
             params["training"]["learning_rate"]
         )
 
         # train the model
-        for epoch in range(_get_config_value("validation.epochs")):
-            _train_one_epoch(
-                model,
-                training_loader,
-                optimizer,
-                criterion,
-                device
-            )
+        _train_n_epochs(
+            _get_config_value("validation.epochs"),
+            model,
+            training_loader,
+            optimizer,
+            criterion,
+            device
+        )
 
         # evaluate the model (by only average loss, no metrics)
         avg_loss, _ = _evaluate_model(

@@ -12,7 +12,7 @@ def validation():
     :return:
     """
     # initial message
-    logging.info("🔄 Training with validation started...")
+    logging.info("🔄 Validation started...")
 
     # get the dataset path
     dataset_path,_ = _get_dataset_path_type()
@@ -30,4 +30,4 @@ def validation():
     _save_best_params(best_params)
 
     # print a successful message
-    logging.info("✅ Training with validation successfully completed.")
+    logging.info("✅ Validation successfully completed.")

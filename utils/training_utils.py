@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import logging
 import torch
+from model.LSTM import LSTM
 from utils.config_utils import _get_config_value
 from utils.feedforward_utils import _compute_forward, _compute_backward
 
@@ -61,6 +62,39 @@ def _train_one_epoch(
     logging.info("🟢 Epoch training completed.")
 
 
+def _train_n_epochs(
+        epochs,
+        model,
+        loader,
+        optimizer,
+        criterion,
+        device
+):
+    """
+    Method to train the model a specified number of epochs.
+    :param epochs: Number of epochs.
+    :param model: The model to be trained.
+    :param loader: The data loader.
+    :param optimizer: The optimizer to be used.
+    :param criterion: The loss function.
+    :param device: The device to be used.
+    :return:
+    """
+    # n-epochs learning
+    for epoch in epochs:
+        logging.info(f"⏳ Epoch {epoch + 1}/{epochs}")
+
+        # train the model
+        _train_one_epoch(
+            model,
+            loader,
+            optimizer,
+            criterion,
+            device
+        )
+
+
+
 def _build_optimizer(model, learning_rate):
     """
     Method to build the optimizer.
@@ -68,35 +102,103 @@ def _build_optimizer(model, learning_rate):
     :param learning_rate: Learning rate.
     :return: The created optimizer.
     """
+    # initial message
+    logging.info("🔄 Optimizer building started...")
+
     # read the optimizer
-    optimizer = _get_config_value("training.optimizer")
+    optimizer_type = _get_config_value("training.optimizer")
 
     try:
         # define the optimizer
-        if optimizer == "adam":
-            return torch.optim.Adam(
+        if optimizer_type == "adam":
+            optimizer = torch.optim.Adam(
                 model.parameters(),
                 lr=learning_rate
             )
-        elif optimizer == "adamw":
-            return torch.optim.AdamW(
+        elif optimizer_type == "adamw":
+            optimizer = torch.optim.AdamW(
                 model.parameters(),
                 lr=learning_rate,
                 weight_decay=_get_config_value("training.weight_decay")
             )
-        elif optimizer == "rmsprop":
-            return torch.optim.RMSprop(
+        elif optimizer_type == "rmsprop":
+            optimizer = torch.optim.RMSprop(
                 model.parameters(),
                 lr=learning_rate,
                 momentum=_get_config_value("training.momentum")
             )
-        elif optimizer == "sgd":
-            return torch.optim.SGD(
+        elif optimizer_type == "sgd":
+            optimizer = torch.optim.SGD(
                 model.parameters(),
                 lr=learning_rate,
                 momentum=_get_config_value("training.momentum")
             )
         else:
-            raise Exception(f"❌ Invalid optimizer: {optimizer}")
+            raise Exception(f"❌ Invalid optimizer: {optimizer_type}")
     except Exception as e:
         raise Exception(f"❌ Error while building optimizer: {e}")
+
+    # show a successful message
+    logging.info("🟢 Optimizer building completed.")
+
+    return optimizer
+
+
+def _training_setup(model_params, learning_rate):
+    """
+    Method to set up the training process.
+    :param model_params: The model parameters.
+    :param learning_rate: The learning rate.
+    :return: The device to use, the loss function, the model and the optimizer.
+    """
+    # initial message
+    logging.info("🔄 Model setup started...")
+
+    try:
+        # define the device to use
+        device = torch.device("cuda" if torch.cuda.is_available()
+                              else "cpu")
+
+        # define the loss function
+        criterion = torch.nn.CrossEntropyLoss()
+
+        # define the LSTM model
+        model = LSTM(model_params).to(device)
+
+        # define the optimizer
+        optimizer = _build_optimizer(
+            model,
+            learning_rate
+        )
+    except Exception as e:
+        raise Exception(f"❌ Error while setting up the training process: {e}")
+
+    # show a successful message
+    logging.info("🟢 Model setup completed.")
+
+    return device, criterion, model, optimizer
+
+
+def _save_trained_model(model):
+    """
+    Method to save the trained model.
+    :param model: The model to be saved.
+    :return:
+    """
+    # initial message
+    logging.info("🔄 Trained model saving started...")
+
+    try:
+        # get the model path
+        model_path = _get_config_value("model.model_save_path")
+
+        # save the trained model
+        torch.save(
+            model.state_dict(),
+            model_path
+        )
+    except Exception as e:
+        raise Exception(f"❌ Error while saving the trained model: {e}")
+
+    # show a successful message
+    logging.info(f"🟢 Trained model save to '{model_path}'.")
