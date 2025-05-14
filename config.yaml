@@ -58,6 +58,6 @@ evaluation:
   average: macro
 early_stopping:
   patience: 5
-  delta: 1e-4
+  delta: 0.0001
 testing:
   batch_size: 128

@@ -13,7 +13,7 @@ def testing():
     logging.info("🔄 Testing started...")
 
     # dataloader setup
-    testing_loader = _loader_setup("testing")
+    _, testing_loader = _loader_setup("testing")
 
     # setup for testing
     device, criterion, model, _ = (

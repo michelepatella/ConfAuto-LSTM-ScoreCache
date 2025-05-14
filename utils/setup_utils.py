@@ -46,7 +46,7 @@ def _loader_setup(loader_type):
     """
     Method to prepare the data loader for the training and testing.
     :param loader_type: The loader type ("training" or "testing").
-    :return: The created data loader.
+    :return: The created data loader and the corresponding dataset.
     """
     # get the dataset type
     dataset_path, _ = _get_dataset_path_type()
@@ -63,4 +63,4 @@ def _loader_setup(loader_type):
         _get_config_value(f"{loader_type}.batch_size")
     )
 
-    return loader
+    return dataset, loader

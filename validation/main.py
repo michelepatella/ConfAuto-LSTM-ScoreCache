@@ -13,7 +13,7 @@ def validation():
     logging.info("🔄 Validation started...")
 
     # load the training set
-    training_set = _loader_setup("training")
+    training_set, _ = _loader_setup("training")
 
     # grid search for best parameters
     best_params = _grid_search(training_set)

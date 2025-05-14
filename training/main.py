@@ -13,7 +13,7 @@ def training():
     logging.info("🔄 Training started...")
 
     # dataloader setup
-    training_loader = _loader_setup("training")
+    _, training_loader = _loader_setup("training")
 
     # setup for training
     device, criterion, model, optimizer = (
