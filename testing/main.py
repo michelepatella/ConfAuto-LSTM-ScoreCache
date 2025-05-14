@@ -16,7 +16,7 @@ def testing():
     testing_loader = _loader_setup("testing")
 
     # setup for testing
-    device, criterion, model, optimizer = (
+    device, criterion, model, _ = (
         _training_testing_setup(
             _get_config_value("model.params"),
             _get_config_value("training.learning_rate")
