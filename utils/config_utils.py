@@ -39,6 +39,33 @@ def _load_config():
     return config
 
 
+def _merge_config(config, updates):
+    """
+    Method merge an update config with the original config.
+    :param config: The config object.
+    :param updates: The updated config object.
+    :return: The merged config object.
+    """
+    #check if the config is None
+    if config is None:
+        config = {}
+
+    # check if there is something to update
+    if not isinstance(updates, dict):
+        return config
+
+    try:
+        # apply merge recursively
+        for key, value in updates.items():
+            if isinstance(value, dict) and isinstance(config.get(key), dict):
+                _merge_config(config[key], value)
+            else:
+                config[key] = value
+    except Exception as e:
+        raise Exception(f"❌ Error while merging config file: {e}")
+    return config
+
+
 def _update_config(updated_config):
     """
     Method to update the config file.
@@ -51,11 +78,17 @@ def _update_config(updated_config):
     # get the abs path of the config file
     config_path = _get_config_abs_path()
 
+    # load config file
+    config = _load_config()
+
+    # merge update configs with config file
+    merged_config = _merge_config(config, updated_config)
+
     try:
         # update the config file
         with open(config_path, "w") as config_file:
             yaml.dump(
-                updated_config,
+                merged_config,
                 config_file,
                 default_flow_style=False,
                 sort_keys=False,
