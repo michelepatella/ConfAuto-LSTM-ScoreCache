@@ -31,7 +31,8 @@ def _time_series_cv(training_set, params):
         raise Exception(f"❌ Error while instantiating Time Series Split: {e}")
 
     # define the device to use
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available()
+                          else "cpu")
 
     # define the loss function
     criterion = torch.nn.CrossEntropyLoss()

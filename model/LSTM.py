@@ -20,31 +20,40 @@ class LSTM(nn.Module):
                     setattr(self, param, params[param])
                 else:
                     # if they are None, read them from config file and set them
-                    setattr(self, param, _get_config_value(f"model.{param}"))
-            else:
-                # read the required parameter from config
-                setattr(self, param, _get_config_value(f"model.{param}"))
-
-            # check if dropout can be applied
-            if params.get(
-                    "num_layers",
-                    _get_config_value("model.num_layers")
-            ) > 1:
-                # apply dropout
-                if params["dropout"] is not None:
-                    setattr(self, param, float(params["dropout"]))
-                else:
                     setattr(
                         self,
                         param,
-                        float(_get_config_value("model.dropout"))
+                        _get_config_value(f"model.params.{param}")
                     )
             else:
-                # dropout cannot be applied
-                setattr(self, "dropout", 0.0)
+                # read the required parameter from config
+                setattr(
+                    self,
+                    param,
+                    _get_config_value(f"model.params.{param}")
+                )
 
-            # set the no. of keys
-            self.num_keys = _get_config_value(f"data.num_keys")
+
+        # check if dropout can be applied
+        if params.get(
+                "num_layers",
+                _get_config_value("model.params.num_layers")
+        ) > 1:
+            # apply dropout
+            if params["dropout"] is not None:
+                setattr(self, "dropout", float(params["dropout"]))
+            else:
+                setattr(
+                    self,
+                    "dropout",
+                    float(_get_config_value("model.params.dropout"))
+                )
+        else:
+            # dropout cannot be applied
+            setattr(self, "dropout", 0.0)
+
+        # set the no. of keys
+        self.num_keys = _get_config_value(f"data.num_keys")
 
 
     def __init__(self, params):

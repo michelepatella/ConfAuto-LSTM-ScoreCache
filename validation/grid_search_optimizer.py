@@ -72,7 +72,7 @@ def _grid_search(training_set):
             desc="🔍 Grid Search Progress"
     ) as pbar:
         for params in param_combinations:
-
+   
             # perform the time series CV
             avg_loss = _time_series_cv(
                 training_set,

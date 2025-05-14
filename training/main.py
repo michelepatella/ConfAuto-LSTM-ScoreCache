@@ -3,22 +3,22 @@ import torch.nn as nn
 import logging
 from model.LSTM import LSTM
 from utils.AccessLogsDataset import AccessLogsDataset
-from utils.config_utils import _load_config, _get_config_value
-from utils.dataset_utils import _create_data_loader
-from utils.training_utils import _train_one_epoch
+from utils.config_utils import _get_config_value
+from utils.dataset_utils import _create_data_loader, _get_dataset_path_type
+from utils.training_utils import _train_one_epoch, _build_optimizer
 
 
-def train_model():
+def training():
     """
     Method to train the LSTM model.
     :return:
     """
-    # load config file
-    config = _load_config()
+    # get the dataset path
+    dataset_path, _ = _get_dataset_path_type()
 
     # load the dataset
     dataset = AccessLogsDataset(
-        _get_config_value("data.static_dataset_path"),
+        _get_config_value(dataset_path),
     "training"
     )
 
@@ -29,22 +29,19 @@ def train_model():
     )
 
     # select the device to use
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available()
+                          else "cpu")
 
     # define the LSTM model
-    model = LSTM().to(device)
+    model = LSTM(_get_config_value("model.params")).to(device)
 
     # definition of the loss function
     criterion = nn.CrossEntropyLoss()
 
-    try:
-        # define optimizer
-        optimizer = torch.optim.Adam(
-            model.parameters(),
-            lr=_get_config_value("training.learning_rate")
-        )
-    except Exception as e:
-        raise Exception("Error while defining the optimizer.")
+    optimizer = _build_optimizer(
+        model,
+        _get_config_value("training.learning_rate")
+    )
 
     # train the model
     for epoch in range(_get_config_value("training.epochs")):
