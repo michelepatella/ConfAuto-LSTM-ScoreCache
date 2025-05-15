@@ -149,12 +149,6 @@ def _build_optimizer(model, learning_rate):
                 lr=learning_rate,
                 weight_decay=_get_config_value("training.weight_decay")
             )
-        elif optimizer_type == "rmsprop":
-            optimizer = torch.optim.RMSprop(
-                model.parameters(),
-                lr=learning_rate,
-                momentum=_get_config_value("training.momentum")
-            )
         elif optimizer_type == "sgd":
             optimizer = torch.optim.SGD(
                 model.parameters(),
