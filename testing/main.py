@@ -1,19 +1,24 @@
 import logging
 from utils.config_utils import _get_config_value
 from utils.evaluation_utils import _evaluate_model
-from utils.setup_utils import _training_testing_setup, _loader_setup, _extract_targets_from_loader, _load_trained_model
+from utils.setup_utils import _training_testing_setup, _loader_setup, _extract_targets_from_loader
+from utils.model_utils import _load_model
 
 
 def testing():
     """
     Method to test the model.
-    :return: The average loss and metrics computed.
+    :return: The average loss, the average loss per class
+    and metrics computed.
     """
     # initial message
     logging.info("🔄 Testing started...")
 
     # dataloader setup
-    _, testing_loader = _loader_setup("testing", False)
+    _, testing_loader = _loader_setup(
+        "testing",
+        False
+    )
 
     # setup for testing
     device, criterion, model, _ = (
@@ -24,8 +29,8 @@ def testing():
         )
     )
 
-    # load the pretrained model
-    model = _load_trained_model(
+    # load the trained model
+    model = _load_model(
         model,
         _get_config_value("model.model_save_path"),
         device

@@ -5,35 +5,30 @@ from sklearn.metrics import classification_report
 from utils.config_utils import _get_config_value
 from utils.feedforward_utils import _compute_forward
 
-
-def _collect_predictions(
+def _infer_batch(
         model,
         loader,
         criterion,
         device
 ):
     """
-    Method to collect predictions and get the average loss.
-    :param model: The model to be evaluated.
-    :param loader: The data loader.
+    Method to infer the batch.
+    :param model: The model to be used.
+    :param loader: The dataloader.
     :param criterion: The loss function.
     :param device: The device to be used.
-    :return: The predictions (along with the outputs), the targets
-    and the both the global and class average loss.
+    :return: The total loss, the loss per class, all the predictions,
+     all the targets, and all the outputs returned by the model.
     """
     # initial message
-    logging.info("🔄 Prediction collection started...")
-
-    model.eval()
+    logging.info("🔄 Batch inference started...")
 
     # initialize data
     total_loss = 0.0
     all_preds, all_targets, all_outputs = [], [], []
     loss_per_class = defaultdict(list)
 
-    # check the length of the loader
-    if len(loader) == 0:
-        raise Exception("❌ Error while collecting predictions due to empty loader.")
+    model.eval()
 
     try:
         with torch.no_grad():
@@ -69,15 +64,87 @@ def _collect_predictions(
                         loss_per_class[int(class_id.item())].append(class_loss.item())
 
     except Exception as e:
-        raise Exception(f"❌ Error while collecting predictions: {e}")
+        raise Exception(f"❌ Error while inferring the batch: {e}")
 
-    # compute the average loss
-    avg_loss = total_loss / len(loader)
+    # show a successful message
+    logging.info("🟢 Batch inferred.")
 
-    # compute the average loss per class
-    avg_loss_per_class = {
-        cls: sum(losses) / len(losses) for cls, losses in loss_per_class.items()
-    }
+    return total_loss, loss_per_class, all_preds, all_targets, all_outputs
+
+
+def _calculate_average_losses(
+        total_loss,
+        loss_per_class,
+        num_batches
+):
+    """
+    Method to calculate average losses (global and per class).
+    :param total_loss: The total global loss.
+    :param loss_per_class: The total loss per class.
+    :param num_batches: The number of batches.
+    :return: The average global loss and the average loss per class.
+    """
+    # initial message
+    logging.info("🔄 Average losses calculation started...")
+
+    try:
+        # compute the average loss
+        avg_loss = total_loss / num_batches
+
+        # compute the average loss per class
+        avg_loss_per_class = {
+            cls: sum(losses) / len(losses)
+            for cls, losses in loss_per_class.items()
+        }
+
+    except Exception as e:
+        raise Exception(f"❌ Error while calculating average losses: {e}")
+
+    # show a successful message
+    logging.info("🟢 Average losses calculated.")
+
+    return avg_loss, avg_loss_per_class
+
+
+def _collect_predictions(
+        model,
+        loader,
+        criterion,
+        device
+):
+    """
+    Method to collect predictions and get related information.
+    :param model: The model from which prediction will be collected.
+    :param loader: The data loader.
+    :param criterion: The loss function.
+    :param device: The device to be used.
+    :return: The predictions (along with the outputs), the targets
+    and the both the global and class average loss.
+    """
+    # initial message
+    logging.info("🔄 Prediction collection started...")
+
+    # check the length of the loader
+    if len(loader) == 0:
+        raise Exception("❌ Error while collecting predictions due to empty loader.")
+
+    # infer the batch
+    (total_loss, loss_per_class,
+    all_preds, all_targets, all_outputs) = _infer_batch(
+        model,
+        loader,
+        criterion,
+        device
+    )
+
+    # calculate the average of losses
+    avg_loss, avg_loss_per_class = (
+        _calculate_average_losses(
+            total_loss,
+            loss_per_class,
+            len(loader)
+        )
+    )
 
     # show a successful message
     logging.info("🟢 Predictions collected.")
@@ -93,7 +160,6 @@ def _top_k_accuracy(targets, outputs, k):
     :param k: The value of k for the accuracy.
     :return: The k-accuracy of the predictions.
     """
-
     # prepare data
     outputs_tensor = torch.stack(outputs)
     top_k_preds = (torch.topk(outputs_tensor, k=k, dim=1)
@@ -132,7 +198,7 @@ def _compute_metrics(targets, predictions, outputs):
     top_k = _get_config_value("evaluation.top_k")
 
     try:
-        # class wise metrics
+        # class-wise metrics
         class_report = classification_report(
             targets,
             predictions,
@@ -198,6 +264,7 @@ def _evaluate_model(
 
     # show results
     logging.info(f"📉 Average Loss: {avg_loss}")
+    logging.info(f"📉 Average Loss per Class: {avg_loss_per_class}")
     logging.info(f"📊 Metrics: {metrics}")
 
     # show a successful message

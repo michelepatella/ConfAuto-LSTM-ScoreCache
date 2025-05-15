@@ -21,8 +21,9 @@ def _check_and_update_best_params(
 
     # if the average top-k accuracy is greater than the best one,
     # update it and the best parameters
-    if best_avg_top_k_accuracy is not None and best_avg_top_k_accuracy >= 0\
-            and avg_top_k_accuracy is not None:
+    if (best_avg_top_k_accuracy is not None
+            and best_avg_top_k_accuracy >= 0
+            and avg_top_k_accuracy is not None):
         if avg_top_k_accuracy > best_avg_top_k_accuracy:
             # update the best avg top-k accuracy
             best_avg_top_k_accuracy = avg_top_k_accuracy
@@ -34,7 +35,8 @@ def _check_and_update_best_params(
             logging.info(f"🆕 Updated best parameters: {best_params['model']} {best_params['training']}")
             logging.info(f"🆕 Updated best top-k accuracy: {best_avg_top_k_accuracy}")
     else:
-        raise Exception(f"❌ Invalid best average top-k accuracy ({best_avg_top_k_accuracy}) or average top-k accuracy ({avg_top_k_accuracy}).")
+        raise Exception(f"❌ Invalid best average top-k accuracy ({best_avg_top_k_accuracy}) "
+                        f"or average top-k accuracy ({avg_top_k_accuracy}).")
 
     # print a successful message
     logging.info("🟢 Best parameters check and update completed.")

@@ -1,4 +1,3 @@
-from tqdm import tqdm
 import logging
 import torch
 from utils.EarlyStopping import EarlyStopping
@@ -104,7 +103,7 @@ def _train_n_epochs(
         )
 
         if early_stopping:
-            # get the validation loss
+            # get the validation average top-k accuracy
             avg_top_k_accuracy = None
             if validation_loader:
 
@@ -168,28 +167,3 @@ def _build_optimizer(model, learning_rate):
     logging.info("🟢 Optimizer building completed.")
 
     return optimizer
-
-
-def _save_trained_model(model):
-    """
-    Method to save the trained model.
-    :param model: The model to be saved.
-    :return:
-    """
-    # initial message
-    logging.info("🔄 Trained model saving started...")
-
-    try:
-        # get the model path
-        model_path = _get_config_value("model.model_save_path")
-
-        # save the trained model
-        torch.save(
-            model.state_dict(),
-            model_path
-        )
-    except Exception as e:
-        raise Exception(f"❌ Error while saving the trained model: {e}")
-
-    # show a successful message
-    logging.info(f"🟢 Trained model save to '{model_path}'.")

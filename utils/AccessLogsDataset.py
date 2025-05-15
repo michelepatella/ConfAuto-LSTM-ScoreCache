@@ -9,7 +9,8 @@ class AccessLogsDataset(Dataset):
     def _split_dataset(self, dataset_type):
         """
         Method to split the dataset based on the requested type.
-        :param dataset_type: The dataset type requested ("training" or "testing").
+        :param dataset_type: The dataset type requested
+        ("training" or "testing").
         :return:
         """
         try:

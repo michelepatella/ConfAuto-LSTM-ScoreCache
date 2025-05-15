@@ -25,7 +25,7 @@ def data_preprocessing():
     # remove missing values
     df_no_missing_values = _remove_missing_values(df_deduplicated)
 
-    # standardize timestamp column
+    # standardize 'timestamp' column
     df_standardized = _standardize(
         df_no_missing_values,
         ["timestamp"]

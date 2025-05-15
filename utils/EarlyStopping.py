@@ -26,11 +26,11 @@ class EarlyStopping:
         :return: 
         """
         try:
-            # check whether the new avg top-k accuracy is greater
+            # check whether the avg top-k accuracy is greater
             # than the current best one
             if avg_top_k_accuracy > self.best_avg_top_k_accuracy + self.delta:
-                # update the new best avg top-k accuracy
-                # and reset the counter to trigger early stopping
+                # update the best avg top-k accuracy
+                # and reset the counter used to trigger early stopping
                 self.best_avg_top_k_accuracy = avg_top_k_accuracy
                 self.counter = 0
             else:

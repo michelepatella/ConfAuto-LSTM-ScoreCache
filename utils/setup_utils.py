@@ -91,9 +91,7 @@ def _extract_targets_from_loader(data_loader):
     logging.info("🔄 Target extraction from loader started...")
 
     try:
-
         all_targets = []
-
         # extract targets from data loader
         for _, targets in data_loader:
             all_targets.append(targets)
@@ -149,25 +147,3 @@ def _calculate_class_weights(targets):
     logging.info("🟢 Class weights calculated.")
 
     return class_weights
-
-
-def _load_trained_model(model, model_path, device):
-    """
-    Method to load the trained model.
-    :param model: The initialization of the model.
-    :param model_path: The path of the trained model.
-    :param device: The device to use.
-    :return: The trained model.
-    """
-    # initial message
-    logging.info("🔄 Trained model loading started...")
-
-    try:
-        model.load_state_dict(torch.load(model_path, map_location=device))
-    except Exception as e:
-        raise Exception(f"❌ Error while loading the trained model: {e}")
-
-    # show a successful message
-    logging.info("🟢 Trained model loaded.")
-
-    return model

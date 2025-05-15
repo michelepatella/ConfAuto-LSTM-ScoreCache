@@ -1,7 +1,8 @@
 import logging
 from utils.config_utils import _get_config_value
 from utils.setup_utils import _training_testing_setup, _loader_setup, _extract_targets_from_loader
-from utils.training_utils import _save_trained_model, _train_n_epochs
+from utils.training_utils import _train_n_epochs
+from utils.model_utils import _save_model
 
 
 def training():
@@ -13,7 +14,10 @@ def training():
     logging.info("🔄 Training started...")
 
     # dataloader setup
-    _, training_loader = _loader_setup("training", True)
+    _, training_loader = _loader_setup(
+        "training",
+        True
+    )
 
     # setup for training
     device, criterion, model, optimizer = (
@@ -35,7 +39,7 @@ def training():
     )
 
     # save the trained model
-    _save_trained_model(model)
+    _save_model(model)
 
     # print a successful message
     logging.info("✅ Training successfully completed.")

@@ -4,21 +4,21 @@ from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
 from utils.config_utils import _get_config_value
 
 
-def _generate_requests_with_timestamps(
-        num_keys,
-        num_requests,
-        probs
-):
+def _generate_requests_with_timestamps(probs, size=None):
     """
     Method to generate requests with timestamps.
-    :param num_keys: Number of keys.
-    :param num_requests: Number of requests to generate.
     :param probs: Zipf's probabilities.
     :return: Requests and timestamps generated.
     """
+    # read configurations
+    min = _get_config_value("data.first_key")
+    max = _get_config_value("data.last_key")
+    num_requests = _get_config_value("data.num_requests") \
+        if size is None else size
+
     # generate requests
     requests = np.random.choice(
-        np.arange(1, num_keys + 1),
+        np.arange(min, max),
         size=num_requests,
         p=probs
     )
@@ -45,6 +45,8 @@ def _generate_static_requests():
     num_requests = _get_config_value("data.num_requests")
     num_keys = _get_config_value("data.num_keys")
     alpha = _get_config_value("data.alpha")
+    min = _get_config_value("data.first_key")
+    max = _get_config_value("data.last_key")
 
     # check the validity of the parameters
     if num_requests <= 0 or num_keys <= 0:
@@ -54,16 +56,12 @@ def _generate_static_requests():
 
     # calculate the probabilities
     probs = _calculate_zipf_distribution_probs(
-        np.arange(1, num_keys + 1),
+        np.arange(min, max),
         alpha
     )
 
     # generate requests with timestamps
-    requests, timestamps = _generate_requests_with_timestamps(
-        num_keys,
-        num_requests,
-        probs
-    )
+    requests, timestamps = _generate_requests_with_timestamps(probs)
 
     # show a successful message
     logging.info("🟢 Static requests and timestamps generated.")
@@ -85,6 +83,8 @@ def _generate_dynamic_requests():
     alpha_start = _get_config_value("data.alpha_start")
     alpha_end = _get_config_value("data.alpha_end")
     time_steps = _get_config_value("data.time_steps")
+    min = _get_config_value("data.first_key")
+    max = _get_config_value("data.last_key")
 
     # generate the Zipf distribution's parameter values
     alpha_values = np.linspace(alpha_start, alpha_end, time_steps)
@@ -112,15 +112,14 @@ def _generate_dynamic_requests():
     for t, alpha in enumerate(alpha_values):
         # calculate the probabilities
         probs = _calculate_zipf_distribution_probs(
-            np.arange(1, num_keys + 1),
+            np.arange(min, max),
             alpha
         )
 
         # generate requests with timestamps
         reqs, ts = _generate_requests_with_timestamps(
-            num_keys,
-            time_step_duration,
-            probs
+            probs,
+            time_step_duration
         )
 
         if timestamps:
