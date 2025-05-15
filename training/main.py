@@ -1,6 +1,6 @@
 import logging
 from utils.config_utils import _get_config_value
-from utils.setup_utils import _training_testing_setup, _loader_setup
+from utils.setup_utils import _training_testing_setup, _loader_setup, _extract_targets_from_loader
 from utils.training_utils import _save_trained_model, _train_n_epochs
 
 
@@ -19,7 +19,8 @@ def training():
     device, criterion, model, optimizer = (
         _training_testing_setup(
             _get_config_value("model.params"),
-            _get_config_value("training.learning_rate")
+            _get_config_value("training.learning_rate"),
+            _extract_targets_from_loader(training_loader)
         )
     )
 

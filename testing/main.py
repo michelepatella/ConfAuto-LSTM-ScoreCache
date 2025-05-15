@@ -1,7 +1,7 @@
 import logging
 from utils.config_utils import _get_config_value
 from utils.evaluation_utils import _evaluate_model
-from utils.setup_utils import _training_testing_setup, _loader_setup
+from utils.setup_utils import _training_testing_setup, _loader_setup, _extract_targets_from_loader
 
 
 def testing():
@@ -19,7 +19,8 @@ def testing():
     device, criterion, model, _ = (
         _training_testing_setup(
             _get_config_value("model.params"),
-            _get_config_value("training.learning_rate")
+            _get_config_value("training.learning_rate"),
+            _extract_targets_from_loader(testing_loader)
         )
     )
 
