@@ -35,7 +35,7 @@ def testing():
 
     model.eval()
 
-    # evaluate the model (by only average loss, no metrics)
+    # evaluate the model
     avg_loss, avg_loss_per_class, metrics = _evaluate_model(
         model,
         testing_loader,
