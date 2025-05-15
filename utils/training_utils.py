@@ -81,7 +81,7 @@ def _train_n_epochs(
     :param optimizer: The optimizer to be used.
     :param criterion: The loss function.
     :param device: The device to be used.
-    :param early_stopping: whether to apply early stopping or not.
+    :param early_stopping: Whether to apply early stopping or not.
     :param validation_loader: Validation data loader.
     :return:
     """
@@ -105,18 +105,22 @@ def _train_n_epochs(
 
         if early_stopping:
             # get the validation loss
-            loss = None
+            avg_top_k_accuracy = None
             if validation_loader:
-                loss, _, _ = _evaluate_model(
+
+                _, _,  metrics = _evaluate_model(
                     model,
                     validation_loader,
                     criterion,
                     device
                 )
 
+                # extract the top-k accuracy
+                avg_top_k_accuracy = metrics["top_k_accuracy"]
+
             # early stopping logic
-            if early_stopping and loss is not None:
-                es(loss)
+            if early_stopping and avg_top_k_accuracy is not None:
+                es(avg_top_k_accuracy)
                 # check whether to stop
                 if es.early_stop:
                     logging.info("🛑 Early stopping triggered.")
