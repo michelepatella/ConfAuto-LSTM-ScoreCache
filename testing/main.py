@@ -36,7 +36,7 @@ def testing():
     model.eval()
 
     # evaluate the model (by only average loss, no metrics)
-    avg_loss, metrics = _evaluate_model(
+    avg_loss, avg_loss_per_class, metrics = _evaluate_model(
         model,
         testing_loader,
         criterion,
@@ -46,4 +46,4 @@ def testing():
     # print a successful message
     logging.info("✅ Testing completed.")
 
-    return avg_loss, metrics
+    return avg_loss, avg_loss_per_class, metrics

@@ -107,7 +107,7 @@ def _train_n_epochs(
             # get the validation loss
             loss = None
             if validation_loader:
-                loss, _ = _evaluate_model(
+                loss, _, _ = _evaluate_model(
                     model,
                     validation_loader,
                     criterion,

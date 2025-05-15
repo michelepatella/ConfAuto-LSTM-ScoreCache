@@ -72,7 +72,7 @@ def _time_series_cv(training_set, params):
         )
 
         # evaluate the model (by only average loss, no metrics)
-        avg_loss, _ = _evaluate_model(
+        avg_loss, _, _ = _evaluate_model(
             model,
             validation_loader,
             criterion,

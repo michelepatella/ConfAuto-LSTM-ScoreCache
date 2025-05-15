@@ -20,8 +20,9 @@ data_preprocessing()
 
 training()
 
-avg_loss, metrics = testing()
+avg_loss, avg_loss_per_class, metrics = testing()
 
 print("----------------------------------------------------------------------------------------")
 print(f"Average loss: {avg_loss}")
+print(f"Average loss per class: {avg_loss_per_class}")
 print(f"Metrics: {metrics}")
