@@ -24,11 +24,16 @@ def _save_dataset(df, dataset_path):
         raise Exception(f"❌ Error while saving the dataset: {e}")
 
 
-def _create_data_loader(dataset, batch_size):
+def _create_data_loader(
+        dataset,
+        batch_size,
+        shuffle=False
+):
     """
     Method to create data loader from a dataset.
     :param dataset: The dataset to load.
     :param batch_size: The batch size to use.
+    :param shuffle: Whether to shuffle the dataset.
     :return: The data loader.
     """
     # initial message
@@ -39,7 +44,7 @@ def _create_data_loader(dataset, batch_size):
         loader = DataLoader(
             dataset,
             batch_size=batch_size,
-            shuffle=False
+            shuffle=shuffle
         )
     except Exception as e:
         raise Exception(f"❌ Error while creating data loader: {e}")

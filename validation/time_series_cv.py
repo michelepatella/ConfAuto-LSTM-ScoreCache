@@ -43,11 +43,13 @@ def _time_series_cv(training_set, params):
         # create training and validation loaders
         training_loader = _create_data_loader(
             training_dataset,
-            _get_config_value("training.batch_size")
+            _get_config_value("training.batch_size"),
+            True
         )
         validation_loader = _create_data_loader(
             validation_dataset,
-            _get_config_value("training.batch_size")
+            _get_config_value("training.batch_size"),
+            False
         )
 
         # setup for training

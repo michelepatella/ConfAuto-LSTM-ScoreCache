@@ -55,10 +55,11 @@ def _training_testing_setup(
     return device, criterion, model, optimizer
 
 
-def _loader_setup(loader_type):
+def _loader_setup(loader_type, shuffle):
     """
     Method to prepare the data loader for the training and testing.
     :param loader_type: The loader type ("training" or "testing").
+    :param shuffle: Whether to shuffle the data.
     :return: The created data loader and the corresponding dataset.
     """
     # get the dataset type
@@ -73,7 +74,8 @@ def _loader_setup(loader_type):
     # create the data loader starting from the dataset
     loader = _create_data_loader(
         dataset,
-        _get_config_value(f"{loader_type}.batch_size")
+        _get_config_value(f"{loader_type}.batch_size"),
+        shuffle
     )
 
     return dataset, loader
