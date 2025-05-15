@@ -27,7 +27,7 @@ def testing():
     # load the pretrained model
     model = _load_trained_model(
         model,
-        _get_config_value("model/trained_lstm_model.pt"),
+        _get_config_value("model.model_save_path"),
         device
     )
 
