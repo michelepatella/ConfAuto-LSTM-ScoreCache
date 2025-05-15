@@ -1,7 +1,7 @@
 import logging
 from utils.config_utils import _get_config_value
 from utils.evaluation_utils import _evaluate_model
-from utils.setup_utils import _training_testing_setup, _loader_setup, _extract_targets_from_loader
+from utils.setup_utils import _training_testing_setup, _loader_setup, _extract_targets_from_loader, _load_trained_model
 
 
 def testing():
@@ -23,6 +23,15 @@ def testing():
             _extract_targets_from_loader(testing_loader)
         )
     )
+
+    # load the pretrained model
+    model = _load_trained_model(
+        model,
+        _get_config_value("model/trained_lstm_model.pt"),
+        device
+    )
+
+    model.to(device)
 
     model.eval()
 

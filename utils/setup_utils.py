@@ -87,11 +87,22 @@ def _extract_targets_from_loader(data_loader):
     :param data_loader: The data loader from which to extract the targets.
     :return: All the extracted targets.
     """
-    all_targets = []
+    # initial message
+    logging.info("🔄 Target extraction from loader started...")
 
-    # extract targets from data loader
-    for _, targets in data_loader:
-        all_targets.append(targets)
+    try:
+
+        all_targets = []
+
+        # extract targets from data loader
+        for _, targets in data_loader:
+            all_targets.append(targets)
+
+    except Exception as e:
+        raise Exception(f"❌ Error while extracting targets from loader: {e}")
+
+    # show a successful message
+    logging.info("🟢 Target extracted from loader.")
 
     return torch.cat(all_targets)
 
@@ -102,29 +113,61 @@ def _calculate_class_weights(targets):
     :param targets: The targets for which to calculate the class weights.
     :return: The class weights calculated.
     """
-    # get the tot. no. of classes
-    num_classes = _get_config_value("data.num_keys") + 1
+    # initial message
+    logging.info("🔄 Class weights calculation started...")
 
-    # be sure targets is a numpy array and shift them
-    targets = targets.cpu().numpy() if (
-        isinstance(targets, torch.Tensor)) \
-        else targets
+    try:
+        # get the tot. no. of classes
+        num_classes = _get_config_value("data.num_keys") + 1
 
-    # get the classes appearing in target list
-    present_classes = np.unique(targets)
+        # be sure targets is a numpy array and shift them
+        targets = targets.cpu().numpy() if (
+            isinstance(targets, torch.Tensor)) \
+            else targets
 
-    # compute the class weights
-    computed_weights = compute_class_weight(
-        class_weight="balanced",
-        classes=present_classes,
-        y=targets
-    )
+        # get the classes appearing in target list
+        present_classes = np.unique(targets)
 
-    # initialize weights to 1.0
-    class_weights = np.ones(num_classes, dtype=np.float32)
+        # compute the class weights
+        computed_weights = compute_class_weight(
+            class_weight="balanced",
+            classes=present_classes,
+            y=targets
+        )
 
-    # update weights for appearing classes
-    for cls, weight in zip(present_classes, computed_weights):
-        class_weights[cls] = weight
+        # initialize weights to 1.0
+        class_weights = np.ones(num_classes, dtype=np.float32)
+
+        # update weights for appearing classes
+        for cls, weight in zip(present_classes, computed_weights):
+            class_weights[cls] = weight
+
+    except Exception as e:
+        raise Exception(f"❌ Error while calculating the class weights: {e}")
+
+    # show a successful message
+    logging.info("🟢 Class weights calculated.")
 
     return class_weights
+
+
+def _load_trained_model(model, model_path, device):
+    """
+    Method to load the trained model.
+    :param model: The initialization of the model.
+    :param model_path: The path of the trained model.
+    :param device: The device to use.
+    :return: The trained model.
+    """
+    # initial message
+    logging.info("🔄 Trained model loading started...")
+
+    try:
+        model.load_state_dict(torch.load(model_path, map_location=device))
+    except Exception as e:
+        raise Exception(f"❌ Error while loading the trained model: {e}")
+
+    # show a successful message
+    logging.info("🟢 Trained model loaded.")
+
+    return model
