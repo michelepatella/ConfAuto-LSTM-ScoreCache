@@ -20,7 +20,7 @@ model:
     dropout: 0.1
     bidirectional: false
     proj_size: 0
-  features_dim: 5
+  features_dim: 1
   model_save_path: model/trained_lstm_model.pt
 training:
   epochs: 50
