@@ -15,6 +15,9 @@ def _get_config_abs_path():
     except Exception as e:
         raise Exception(f"❌ Error while getting the config absolute path: {e}")
 
+    # debugging
+    logging.debug(f"⚙️ Absolute path of config file: {abs_path}.")
+
     return abs_path
 
 
@@ -63,6 +66,9 @@ def _merge_config(config, updates):
     try:
         # apply merge recursively
         for key, value in updates.items():
+            # debugging
+            logging.debug(f"⚙️ Merging (key-value): ({key} - {value}).")
+
             if isinstance(value, dict) and isinstance(config.get(key), dict):
                 _merge_config(config[key], value)
             else:
@@ -90,6 +96,9 @@ def _update_config(updated_config):
 
     # load config file
     config = _load_config()
+
+    # debugging
+    logging.debug(f"⚙️ Updated config to be saved: {updated_config}.")
 
     # merge update configs with config file
     merged_config = _merge_config(config, updated_config)
@@ -131,6 +140,9 @@ def _get_config_value(keys):
         # find the requested key
         for key in keys:
             value = value[key]
+
+        # debugging
+        logging.debug(f"⚙️ Config value (key-value): ({'.'.join(keys)} - {value}).")
 
         # show a successful message
         logging.info(f"🟢 {keys} read.")

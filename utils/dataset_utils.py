@@ -14,6 +14,9 @@ def _save_dataset(df, dataset_path):
     # initial message
     logging.info("🔄 Dataset saving started...")
 
+    # debugging
+    logging.debug(f"⚙️ Dataset shape to save: {df.shape}.")
+
     try:
         # convert dataframe to CSV file
         df.to_csv(dataset_path, index=False)
@@ -38,6 +41,10 @@ def _create_data_loader(
     """
     # initial message
     logging.info("🔄 Data loader creation started...")
+
+    # debugging
+    logging.debug(f"⚙️ Batch size: {batch_size}.")
+    logging.debug(f"⚙️ Shuffle: {shuffle}.")
 
     try:
         # define the loader
@@ -64,11 +71,17 @@ def _load_dataset(dataset_path):
     # initial message
     logging.info("🔄 Dataset loading started...")
 
+    # debugging
+    logging.debug(f"⚙️ Path of the dataset to be loaded: {dataset_path}.")
+
     try:
         # load the dataset
         df = pd.read_csv(dataset_path)
     except Exception as e:
         raise Exception(f"❌ Error while loading dataset: {e}")
+
+    # debugging
+    logging.debug(f"⚙️ Shape of the dataset loaded: {df.shape}.")
 
     # show a successful message
     logging.info("🟢 Dataset loaded.")
@@ -87,6 +100,9 @@ def _get_dataset_path_type():
     # read the dataset type
     dataset_type = _get_config_value("data.distribution_type")
 
+    # debugging
+    logging.debug(f"⚙️ Dataset distribution type from config: {dataset_type}.")
+
     # keep track of the dataset path
     if dataset_type == "static":
         dataset_path = "data.static_dataset_path"
@@ -94,6 +110,9 @@ def _get_dataset_path_type():
         dataset_path = "data.dynamic_dataset_path"
     else:
         raise Exception(f"❌ Invalid dataset type: {dataset_type}")
+
+    # debugging
+    logging.debug(f"⚙️ Dataset path found: {dataset_path}.")
 
     # show a successful message
     logging.info("🟢 Dataset path and type retrieved.")

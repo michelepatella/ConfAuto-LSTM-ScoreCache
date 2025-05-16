@@ -1,4 +1,5 @@
 import torch
+import logging
 from torch.utils.data import Dataset
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _load_dataset
@@ -13,6 +14,9 @@ class AccessLogsDataset(Dataset):
         ("training" or "testing").
         :return:
         """
+        # debugging
+        logging.debug(f"⚙️ Splitting type: {dataset_type}.")
+
         try:
             # define the splitting's index
             split_idx = int(
@@ -20,6 +24,9 @@ class AccessLogsDataset(Dataset):
             )
         except Exception as e:
             raise Exception(f"❌ Error while defining the dataset splitting's index: {e}")
+
+        # debugging
+        logging.debug(f"⚙️ Split index: {split_idx}.")
 
         try:
             # split the dataset
@@ -46,6 +53,11 @@ class AccessLogsDataset(Dataset):
             self.features = self.columns[:-1]
             self.target = self.columns[-1]
 
+            # debugging
+            logging.debug(f"⚙️ Dataset columns: {self.columns}.")
+            logging.debug(f"⚙️ Feature(s): {self.features}.")
+            logging.debug(f"⚙️ Target: {self.target}.")
+
             # set all the fields dynamically
             for column in data.columns:
                 setattr(self, column, data[column].values)
@@ -56,6 +68,9 @@ class AccessLogsDataset(Dataset):
         # set the sequence length
         self.seq_len = _get_config_value("data.seq_len")
 
+        # debugging
+        logging.debug(f"⚙️ Sequence length: {self.seq_len}.")
+
 
     def __init__(self, dataset_path, dataset_type):
         """
@@ -65,6 +80,9 @@ class AccessLogsDataset(Dataset):
         """
         # load the dataset
         df = _load_dataset(dataset_path)
+
+        # debugging
+        logging.debug(f"⚙️ Dataset shape: {df.shape}.")
 
         # set data
         self.data = df.copy()
@@ -81,6 +99,9 @@ class AccessLogsDataset(Dataset):
         Method to return the length of the access logs dataset.
         :return: The length of the access logs dataset.
         """
+        # debugging
+        logging.debug(f"⚙️ Dataset length for sequences: {len(self)}.")
+
         return (len(getattr(self, self.features[0]))
                 - self.seq_len)
 
@@ -116,6 +137,10 @@ class AccessLogsDataset(Dataset):
         except Exception as e:
             raise Exception(f"❌ Error while combining features: {e}")
 
+        # debugging
+        logging.debug(f"⚙️ Feature tensors shapes: {[x.shape for x in x_features_list]}.")
+        logging.debug(f"⚙️ Combined features shape: {x_features.shape}.")
+
         return x_features
 
 
@@ -131,6 +156,9 @@ class AccessLogsDataset(Dataset):
                 getattr(self, self.target)[idx + self.seq_len] - 1,
                 dtype=torch.long
             )
+
+            # debugging
+            logging.debug(f"⚙️ Next sequence value (target): {y_key.item()}.")
         except Exception as e:
             raise Exception(f"❌ Error while reading the next value in the sequence (y): {e}")
 
@@ -143,6 +171,9 @@ class AccessLogsDataset(Dataset):
         :param idx: The index of the access logs dataset.
         :return: Access logs dataset.
         """
+        # debugging
+        logging.debug(f"⚙️ Getting item at index: {idx}.")
+
         # check idx + seq_len does not exceed bounds
         if idx + self.seq_len >= len(self.data):
             raise IndexError(f"❌ Index {idx} out of bounds for sequence length {self.seq_len}.")
