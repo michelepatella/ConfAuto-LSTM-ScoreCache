@@ -17,13 +17,13 @@ data:
   dynamic_dataset_path: data/dynamic_access_logs.csv
 model:
   params:
-    hidden_size: 128
-    num_layers: 2
-    bias: false
-    batch_first: true
-    dropout: 0.1
-    bidirectional: false
-    proj_size: 0
+      hidden_size: 128
+      num_layers: 3
+      bias: false
+      batch_first: true
+      dropout: 0.1
+      bidirectional: false
+      proj_size: 0
   num_features: 4
   model_save_path: model/trained_lstm_model.pt
 training:
