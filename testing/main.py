@@ -1,7 +1,4 @@
-import logging
-
-from main import phase_var
-from utils.log_utils import _info
+from utils.log_utils import _info, phase_var
 from utils.config_utils import _get_config_value
 from utils.evaluation_utils import _evaluate_model
 from utils.setup_utils import _training_testing_setup, _loader_setup, _extract_targets_from_loader

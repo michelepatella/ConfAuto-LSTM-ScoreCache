@@ -1,5 +1,4 @@
 import numpy as np
-import logging
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
 from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
@@ -7,12 +6,15 @@ from utils.config_utils import _get_config_value
 
 def _show_freq_table(requests):
     """
-    Method to show the frequency table of the keys in the dataset created.
+    Method to show the frequency table of the keys in the dataset.
     :param requests: Requests created.
     :return:
     """
     # get the number of requests per key
-    unique, counts = np.unique(requests, return_counts=True)
+    unique, counts = np.unique(
+        requests,
+        return_counts=True
+    )
 
     # calculate the percentages
     percentages = counts / len(requests) * 100
@@ -25,7 +27,7 @@ def _show_freq_table(requests):
     table_str = "\n".join(table_lines)
 
     # show the created table
-    _info("📊 Dataset generated info:\n%s", table_str)
+    _info("📊 Frequency table:\n%s", table_str)
 
 
 def _generate_requests_with_delta_times(probs, size=None):
@@ -35,8 +37,8 @@ def _generate_requests_with_delta_times(probs, size=None):
     :return: Requests and delta times between generated events.
     """
     # read configurations
-    min = _get_config_value("data.first_key")
-    max = _get_config_value("data.last_key") + 1
+    min_key = _get_config_value("data.first_key")
+    max_key = _get_config_value("data.last_key") + 1
     num_requests = _get_config_value("data.num_requests") \
         if size is None else size
 
@@ -44,7 +46,7 @@ def _generate_requests_with_delta_times(probs, size=None):
 
     # generate requests
     requests = np.random.choice(
-        np.arange(min, max),
+        np.arange(min_key, max_key),
         size=num_requests,
         p=probs
     )
@@ -74,13 +76,13 @@ def _generate_static_requests():
     num_requests = _get_config_value("data.num_requests")
     num_keys = _get_config_value("data.num_keys")
     alpha = _get_config_value("data.alpha")
-    min = _get_config_value("data.first_key")
-    max = _get_config_value("data.last_key") + 1
+    min_key = _get_config_value("data.first_key")
+    max_key = _get_config_value("data.last_key") + 1
 
     # debugging
     _debug(f"⚙️Zipf parameter: {alpha}.")
     _debug(f"⚙️Number of keys: {num_keys}.")
-    _debug(f"⚙️Requests range: ({min}, {max - 1}).")
+    _debug(f"⚙️Requests range: ({min_key}, {max_key - 1}).")
 
     # check the validity of the parameters
     if num_requests <= 0 or num_keys <= 0:
@@ -90,7 +92,7 @@ def _generate_static_requests():
 
     # calculate the probabilities
     probs = _calculate_zipf_distribution_probs(
-        np.arange(min, max),
+        np.arange(min_key, max_key),
         alpha
     )
 

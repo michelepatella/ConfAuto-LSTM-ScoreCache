@@ -1,6 +1,4 @@
-import logging
 from sklearn.preprocessing import StandardScaler
-
 from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 

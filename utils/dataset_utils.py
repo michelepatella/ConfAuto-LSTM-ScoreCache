@@ -1,87 +1,21 @@
-import logging
-from collections import Counter
 import pandas as pd
 from torch.utils.data import DataLoader
-
 from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 
 
-def _compute_frequency(sequence, window):
-    """
-    Method to compute the frequency of a specific sequence in a given window.
-    :param sequence: The sequence to compute the frequency of.
-    :param window: The window within to compute the frequency.
-    :return: The frequency of the sequence.
-    """
-    # initial message
-    _info("🔄 Frequency sequence counting started...")
-
-    # debugging
-    _debug(f"⚙️ Sequence for which to count the frequency: {sequence}.")
-    _debug(f"⚙️ Window: {window}.")
-
-    try:
-        # initialize frequency
-        freq = []
-
-        # count the frequency of the sequence
-        # within the given temporal window
-        for i in range(len(sequence)):
-            if i < window:
-                recent = sequence[:i]
-            else:
-                recent = sequence[i - window:i]
-            count = Counter(recent)
-            freq.append(count[sequence[i]])
-
-    except Exception as e:
-        raise Exception(f"❌ Error while computing the frequency of sequence: {e}")
-
-    # debugging
-    _debug(f"⚙️ Frequency computed (sequence-frequency): ({sequence} - {freq}).")
-
-    # show a successful message
-    _info(f"🟢 Frequency of the sequence counted.")
-
-    return freq
-
-
-def _create_dataframe(
-        columns,
-        use_frequency,
-        sequence_column,
-):
+def _create_dataframe(columns):
     """
     Method to create a dataframe.
     :param columns: The columns to create the dataframe from.
-    :param use_frequency: Whether to compute the frequency or not.
-    :param sequence_column: The column used to count the frequency in the windows.
     :return: The dataframe created.
     """
     # initial message
     _info("🔄 Dataset creation started...")
 
-    # read configuration
-    windows = _get_config_value("data.freq_windows")
-
     try:
-
         # create the dataframe
-        df = pd.DataFrame()
-
-        if use_frequency and sequence_column in columns:
-            # add further columns to the dataframe
-            for w in windows:
-                col_name = f"freq_last_{w}"
-                df[col_name] = _compute_frequency(
-                    list(columns[sequence_column]),
-                    window=w
-                )
-
-        for col_name, col_values in columns.items():
-            df[col_name] = col_values
-
+        df = pd.DataFrame(columns)
     except Exception as e:
         raise Exception(f"❌ Error while creating the dataframe: {e}")
 

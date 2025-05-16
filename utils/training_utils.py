@@ -1,6 +1,5 @@
 import logging
 import torch
-
 from utils.log_utils import _info, _debug
 from utils.EarlyStopping import EarlyStopping
 from utils.config_utils import _get_config_value
@@ -139,14 +138,14 @@ def _build_optimizer(model, learning_rate):
     :return: The created optimizer.
     """
     # initial message
-    logging.info("🔄 Optimizer building started...")
+    _info("🔄 Optimizer building started...")
 
     # read the optimizer
     optimizer_type = _get_config_value("training.optimizer")
 
     # debugging
-    logging.debug(f"⚙️ Learning rate: {learning_rate}.")
-    logging.debug(f"⚙️ Optimizer type: {optimizer_type}.")
+    _debug(f"⚙️ Learning rate: {learning_rate}.")
+    _debug(f"⚙️ Optimizer type: {optimizer_type}.")
 
     try:
         # define the optimizer
@@ -173,6 +172,6 @@ def _build_optimizer(model, learning_rate):
         raise Exception(f"❌ Error while building optimizer: {e}")
 
     # show a successful message
-    logging.info("🟢 Optimizer building completed.")
+    _info("🟢 Optimizer building completed.")
 
     return optimizer

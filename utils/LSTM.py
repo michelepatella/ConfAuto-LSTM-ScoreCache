@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import logging
 from utils.log_utils import _debug
 from utils.config_utils import _get_config_value
 
@@ -108,36 +107,6 @@ class LSTM(nn.Module):
         except Exception as e:
             raise Exception(f"❌ Error while instantiating the FC layer: {e}")
 
-    def _get_input(self, x_features):
-        """
-        Method to get the input features from the model.
-        :param x_features: The features of the model.
-        :return: The input for the model.
-        """
-        try:
-            # frequencies
-            freq_1 = x_features[:, :, 0].unsqueeze(-1)
-            freq_2 = x_features[:, :, 1].unsqueeze(-1)
-            freq_3 = x_features[:, :, 2].unsqueeze(-1)
-
-            # delta_time
-            delta_time = x_features[:, :, 3].unsqueeze(-1)
-
-            # concatenate all together
-            lstm_input = torch.cat(
-                [
-                    delta_time,
-                    freq_1,
-                    freq_2,
-                    freq_3
-                ],
-                dim=-1
-            )
-        except Exception as e:
-            raise ValueError(f"❌ Error while getting the input for the LSTM: {e}")
-
-        return lstm_input
-
 
     def forward(self, x_features):
         """
@@ -153,7 +122,7 @@ class LSTM(nn.Module):
         _debug(f"⚙️ Input shape: {x_features.shape}.")
 
         # get the input for the LSTM
-        lstm_input = self._get_input(x_features)
+        lstm_input = x_features[:, :, :-1]
 
         try:
             # pass the features to the LSTM

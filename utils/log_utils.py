@@ -1,5 +1,5 @@
+import contextvars
 import logging
-from main import phase_var
 
 
 def _info(msg, *args, **kwargs):
@@ -32,3 +32,7 @@ def _debug(msg, *args, **kwargs):
         extra={"phase": phase_var.get()},
         **kwargs
     )
+
+# contextual variable indicating the phase
+# in which the logging message is located in
+phase_var = contextvars.ContextVar("phase", default="unknown")

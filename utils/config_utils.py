@@ -1,6 +1,6 @@
 import yaml
 import os
-import logging
+
 
 from utils.log_utils import _info, _debug
 
@@ -147,7 +147,7 @@ def _get_config_value(keys):
         _debug(f"⚙️ Config value (key-value): ({'.'.join(keys)} - {value}).")
 
         # show a successful message
-        logging.info(f"🟢 {keys} read.")
+        _info(f"🟢 {keys} read.")
 
         return value
     except Exception as e:

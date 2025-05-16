@@ -1,8 +1,6 @@
-import logging
 from data_preprocessing.cleaner import _remove_missing_values
 from data_preprocessing.normalizer import _standardize
-from main import phase_var
-from utils.log_utils import _info
+from utils.log_utils import _info, phase_var
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _save_dataset, _load_dataset, _get_dataset_path_type
 

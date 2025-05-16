@@ -1,8 +1,6 @@
 from collections import defaultdict
 import torch
-import logging
 from sklearn.metrics import classification_report
-
 from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 from utils.feedforward_utils import _compute_forward
@@ -41,7 +39,7 @@ def _infer_batch(
 
                 # debugging
                 _debug(f"⚙️ Batch x shape: {x.shape}.")
-                logging.debug(f"⚙️ Batch y shape: {y.shape}.")
+                _debug(f"⚙️ Batch y shape: {y.shape}.")
 
                 x = x.to(device)
                 y = y.to(device)
@@ -55,8 +53,8 @@ def _infer_batch(
                 )
 
                 # debugging
-                logging.debug(f"⚙️ Loss computed: {loss}.")
-                logging.debug(f"⚙️ Outputs shape: {outputs.shape}.")
+                _debug(f"⚙️ Loss computed: {loss}.")
+                _debug(f"⚙️ Outputs shape: {outputs.shape}.")
 
                 # check the loss
                 if loss is None:
@@ -83,13 +81,13 @@ def _infer_batch(
                         loss_per_class[int(class_id.item())].append(class_loss.item())
 
                         # debugging
-                        logging.debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
+                        _debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
 
     except Exception as e:
         raise Exception(f"❌ Error while inferring the batch: {e}")
 
     # show a successful message
-    logging.info("🟢 Batch inferred.")
+    _info("🟢 Batch inferred.")
 
     return total_loss, loss_per_class, all_preds, all_targets, all_outputs
 
@@ -107,11 +105,11 @@ def _calculate_average_losses(
     :return: The average global loss and the average loss per class.
     """
     # initial message
-    logging.info("🔄 Average losses calculation started...")
+    _info("🔄 Average losses calculation started...")
 
     # debugging
-    logging.debug(f"⚙️ Total loss: {total_loss}.")
-    logging.debug(f"⚙️ Number of batches: {num_batches}.")
+    _debug(f"⚙️ Total loss: {total_loss}.")
+    _debug(f"⚙️ Number of batches: {num_batches}.")
 
     try:
         # compute the average loss
@@ -127,7 +125,7 @@ def _calculate_average_losses(
         raise Exception(f"❌ Error while calculating average losses: {e}")
 
     # show a successful message
-    logging.info("🟢 Average losses calculated.")
+    _info("🟢 Average losses calculated.")
 
     return avg_loss, avg_loss_per_class
 
@@ -148,7 +146,7 @@ def _collect_predictions(
     and the both the global and class average loss.
     """
     # initial message
-    logging.info("🔄 Prediction collection started...")
+    _info("🔄 Prediction collection started...")
 
     # check the length of the loader
     if len(loader) == 0:
@@ -164,9 +162,9 @@ def _collect_predictions(
     )
 
     # debugging
-    logging.debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
-    logging.debug(f"⚙️ Predictions: {all_preds}.")
-    logging.debug(f"⚙️ Targets: {all_targets}.")
+    _debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
+    _debug(f"⚙️ Predictions: {all_preds}.")
+    _debug(f"⚙️ Targets: {all_targets}.")
 
     # calculate the average of losses
     avg_loss, avg_loss_per_class = (
@@ -178,7 +176,7 @@ def _collect_predictions(
     )
 
     # show a successful message
-    logging.info("🟢 Predictions collected.")
+    _info("🟢 Predictions collected.")
 
     return avg_loss, avg_loss_per_class, all_preds, all_targets, all_outputs
 
@@ -222,7 +220,7 @@ def _compute_metrics(targets, predictions, outputs):
     :return: The computed metrics.
     """
     # initial message
-    logging.info("🔄 Metrics computation started...")
+    _info("🔄 Metrics computation started...")
 
     # load some configurations
     top_k = _get_config_value("evaluation.top_k")
@@ -253,11 +251,11 @@ def _compute_metrics(targets, predictions, outputs):
     }
 
     # debugging
-    logging.debug(f"⚙️ Classification report keys: {list(class_report.keys())}.")
-    logging.debug(f"⚙️ Top-k accuracy: {top_k_accuracy}.")
+    _debug(f"⚙️ Classification report keys: {list(class_report.keys())}.")
+    _debug(f"⚙️ Top-k accuracy: {top_k_accuracy}.")
 
     # show a successful message
-    logging.info("🟢 Metrics computed.")
+    _info("🟢 Metrics computed.")
 
     return metrics
 
@@ -277,7 +275,7 @@ def _evaluate_model(
     :return: The average loss and the metrics.
     """
     # initial message
-    logging.info("🔄 Model's evaluation started...")
+    _info("🔄 Model's evaluation started...")
 
     # collect predictions to get them along with
     # targets and average loss
@@ -297,11 +295,11 @@ def _evaluate_model(
     )
 
     # show results
-    logging.info(f"📉 Average Loss: {avg_loss}")
-    logging.info(f"📉 Average Loss per Class: {avg_loss_per_class}")
-    logging.info(f"📊 Metrics: {metrics}")
+    _info(f"📉 Average Loss: {avg_loss}")
+    _info(f"📉 Average Loss per Class: {avg_loss_per_class}")
+    _info(f"📊 Metrics: {metrics}")
 
     # show a successful message
-    logging.info("🟢 Model's evaluation completed.")
+    _info("🟢 Model's evaluation completed.")
 
     return avg_loss, avg_loss_per_class, metrics

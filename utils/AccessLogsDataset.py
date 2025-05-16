@@ -1,7 +1,5 @@
 import torch
-import logging
 from torch.utils.data import Dataset
-
 from utils.log_utils import _debug
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _load_dataset
@@ -113,7 +111,7 @@ class AccessLogsDataset(Dataset):
                 dtype=torch.float
             )
 
-            # extract target (assuming class indices start from 1 → convert to 0-based)
+            # extract target
             target_row = self.data.iloc[idx + self.seq_len]
             y_key = torch.tensor(
                 int(target_row[self.target]) - 1,
@@ -122,7 +120,7 @@ class AccessLogsDataset(Dataset):
 
             # debugging
             _debug(f"⚙️ Feature vector shape: {x.shape}.")
-            _debug(f"⚙️ Target (key id): {y_key.item()}.")
+            _debug(f"⚙️ Target: {y_key.item()}.")
 
         except Exception as e:
             raise Exception(f"❌ Error retrieving item at index {idx}: {e}")

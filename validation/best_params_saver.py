@@ -1,5 +1,3 @@
-import logging
-
 from utils.log_utils import _info, _debug
 from utils.config_utils import _load_config, _update_config
 

@@ -1,7 +1,6 @@
-import logging
+from data_generation.features_generator import _generate_last_freq
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
-from main import phase_var
-from utils.log_utils import _info, _debug
+from utils.log_utils import _info, _debug, phase_var
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _save_dataset, _get_dataset_path_type, _create_dataframe
 
@@ -30,14 +29,16 @@ def data_generation():
     else:
         raise ValueError(f"❌ Invalid distribution type: {distribution_type}")
 
+    # generate features (last freq w.r.t. requests)
+    freq_columns = _generate_last_freq(requests)
+
     # create dataframe
     df = _create_dataframe(
         {
             "delta_time": delta_times,
+            **freq_columns,
             "request": requests,
-        },
-        True,
-       "request"
+        }
     )
 
     # save the dataset

@@ -1,7 +1,5 @@
-import logging
 import torch
 import numpy as np
-
 from utils.log_utils import _info, _debug
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.LSTM import LSTM
