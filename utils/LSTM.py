@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import logging
 from utils.config_utils import _get_config_value
@@ -56,6 +57,12 @@ class LSTM(nn.Module):
             # set the no. of keys
             self.num_keys = _get_config_value(f"data.num_keys")
 
+            # embed the keys
+            self.key_embedding = nn.Embedding(
+                self.num_keys,
+                embedding_dim=_get_config_value("model.embedding_dim")
+            )
+
         except Exception as e:
             raise Exception(f"❌ Error while setting LSTM fields: {e}")
 
@@ -88,7 +95,7 @@ class LSTM(nn.Module):
         try:
             # instantiate the LSTM model
             self.lstm = nn.LSTM(
-                input_size=_get_config_value("model.features_dim"),
+                input_size=1+_get_config_value("model.embedding_dim"),
                 hidden_size=self.hidden_size,
                 num_layers=self.num_layers,
                 bias=self.bias,
@@ -120,9 +127,18 @@ class LSTM(nn.Module):
         # debugging
         logging.debug(f"⚙️ Input shape: {x_features.shape}.")
 
+        # composition of the input for LSTM
+        delta_time = x_features[:, :, 0].unsqueeze(-1)
+        key_id = x_features[:, :, 1].long()
+        key_emb = self.key_embedding(key_id)
+        lstm_input = torch.cat(
+            [delta_time, key_emb],
+            dim=-1
+        )
+
         try:
             # pass the features to the LSTM
-            lstm_out, _ = self.lstm(x_features)
+            lstm_out, _ = self.lstm(lstm_input)
         except Exception as e:
             raise Exception(f"❌ Error while passing data through LSTM: {e}")
 

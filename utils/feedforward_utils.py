@@ -20,7 +20,6 @@ def _compute_forward(batch, model, criterion, device):
 
         # debugging
         logging.debug(f"⚙️ Target batch: {y_key}.")
-
     except Exception as e:
         raise Exception(f"❌ Error while error unpacking data: {e}")
 

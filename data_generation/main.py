@@ -1,8 +1,7 @@
 import logging
-import pandas as pd
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
 from utils.config_utils import _get_config_value
-from utils.dataset_utils import _save_dataset, _get_dataset_path_type
+from utils.dataset_utils import _save_dataset, _get_dataset_path_type, _create_dataframe
 
 
 def data_generation():
@@ -29,11 +28,13 @@ def data_generation():
         raise ValueError(f"❌ Invalid distribution type: {distribution_type}")
 
     # create dataframe
-    df = pd.DataFrame(
+    df = _create_dataframe(
         {
             "delta_time": delta_times,
             "request": requests,
-        }
+        },
+        True,
+       "request"
     )
 
     # save the dataset

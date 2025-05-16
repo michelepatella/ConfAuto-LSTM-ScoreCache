@@ -50,7 +50,7 @@ class AccessLogsDataset(Dataset):
             # assuming all the columns are features
             # while the last one is the target to predict
             self.columns = data.columns.tolist()
-            self.features = self.columns[:-1]
+            self.features = self.columns[:-1]  # tutte tranne target
             self.target = self.columns[-1]
 
             # debugging
@@ -58,18 +58,8 @@ class AccessLogsDataset(Dataset):
             logging.debug(f"⚙️ Feature(s): {self.features}.")
             logging.debug(f"⚙️ Target: {self.target}.")
 
-            # set all the fields dynamically
-            for column in data.columns:
-                setattr(self, column, data[column].values)
-
         except Exception as e:
             raise Exception(f"❌ Error while reading the dataset columns: {e}")
-
-        # set the sequence length
-        self.seq_len = _get_config_value("data.seq_len")
-
-        # debugging
-        logging.debug(f"⚙️ Sequence length: {self.seq_len}.")
 
 
     def __init__(self, dataset_path, dataset_type):
@@ -99,86 +89,33 @@ class AccessLogsDataset(Dataset):
         Method to return the length of the access logs dataset.
         :return: The length of the access logs dataset.
         """
-        return (len(getattr(self, self.features[0]))
-                - self.seq_len)
-
-
-    def _get_features(self, idx):
-        """
-        Method to get the features from the access logs dataset.
-        :param idx: Index of the access logs dataset.
-        :return: The features of the access logs dataset.
-        """
-        try:
-            x_features_list = []
-
-            # for all the features of the dataset
-            for feature in self.features:
-
-                # get the feature in the sequence
-                feature_data = torch.tensor(
-                    [getattr(self, feature)[i] for i
-                     in range(idx, idx + self.seq_len)],
-                    dtype=torch.float
-                ).unsqueeze(-1)
-
-                # add the feature to the features list
-                x_features_list.append(feature_data)
-
-        except Exception as e:
-            raise Exception(f"❌ Error while reading the sequence (x): {e}")
-
-        try:
-            # combine all features
-            x_features = torch.cat(x_features_list, dim=-1)
-        except Exception as e:
-            raise Exception(f"❌ Error while combining features: {e}")
-
-        # debugging
-        logging.debug(f"⚙️ Feature tensors shapes: {[x.shape for x in x_features_list]}.")
-        logging.debug(f"⚙️ Combined features shape: {x_features.shape}.")
-
-        return x_features
-
-
-    def _get_next_seq_value(self, idx):
-        """
-        Method to get the next sequence value from the access logs dataset.
-        :param idx: Index of the access logs dataset.
-        :return:
-        """
-        try:
-            # the next value in the sequence (y)
-            y_key = torch.tensor(
-                getattr(self, self.target)[idx + self.seq_len] - 1,
-                dtype=torch.long
-            )
-
-            # debugging
-            logging.debug(f"⚙️ Next sequence value (target): {y_key.item()}.")
-        except Exception as e:
-            raise Exception(f"❌ Error while reading the next value in the sequence (y): {e}")
-
-        return y_key
+        return len(self.data)
 
 
     def __getitem__(self, idx):
         """
-        Method to return a sequence and the next value in the sequence.
+        Method to return features and the next value in the sequence.
         :param idx: The index of the access logs dataset.
         :return: Access logs dataset.
         """
         # debugging
         logging.debug(f"⚙️ Getting item at index: {idx}.")
 
-        # check idx + seq_len does not exceed bounds
-        if idx + self.seq_len >= len(self.data):
-            raise IndexError(f"❌ Index {idx} out of bounds for sequence length {self.seq_len}.")
+        try:
+            # get the row from the dataframe
+            row = self.data.iloc[idx]
 
-        # get the features
-        x_features = self._get_features(idx)
+            # extract features
+            x = torch.tensor(row[self.features].values.astype(float), dtype=torch.float)
 
-        # get the next value in the sequence
-        y_key = self._get_next_seq_value(idx)
+            # extract target (assuming class indices start from 1 → convert to 0-based)
+            y_key = torch.tensor(int(row[self.target]) - 1, dtype=torch.long)
 
-        return x_features, y_key
+            # debugging
+            logging.debug(f"⚙️ Feature vector shape: {x.shape}.")
+            logging.debug(f"⚙️ Target (key id): {y_key.item()}.")
+
+        except Exception as e:
+            raise Exception(f"❌ Error retrieving item at index {idx}: {e}")
+
+        return x, y_key
