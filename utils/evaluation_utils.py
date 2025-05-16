@@ -223,7 +223,6 @@ def _compute_metrics(targets, predictions, outputs):
     logging.info("🔄 Metrics computation started...")
 
     # load some configurations
-    average = _get_config_value("evaluation.average")
     top_k = _get_config_value("evaluation.top_k")
 
     try:
