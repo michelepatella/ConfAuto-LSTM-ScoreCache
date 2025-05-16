@@ -137,9 +137,9 @@ def _grid_search(training_set):
     # initial message
     logging.info("🔄 Grid Search started...")
 
-    # initialize the best parameters and average top-k accuracy
+    # initialize the best parameters and average loss
     best_params = {}
-    best_avg_top_k_accuracy = float("-inf")
+    best_avg_loss = float("inf")
 
     # get the parameters combination
     param_combinations = _get_parameter_combination()
@@ -152,15 +152,15 @@ def _grid_search(training_set):
         for params in param_combinations:
 
             # perform the time series CV
-            avg_top_k_accuracy = _time_series_cv(
+            avg_loss = _time_series_cv(
                 training_set,
                 params
             )
 
-            # check the avg top k-accuracy and eventually update the best parameters
-            best_avg_top_k_accuracy, best_params = _check_and_update_best_params(
-                avg_top_k_accuracy,
-                best_avg_top_k_accuracy,
+            # check the avg loss and eventually update the best parameters
+            best_avg_loss, best_params = _check_and_update_best_params(
+                avg_loss,
+                best_avg_loss,
                 params,
                 best_params
             )
@@ -171,8 +171,8 @@ def _grid_search(training_set):
     # print the best parameters found
     logging.info(f"🏆 Best parameters found: {best_params}")
 
-    # print the best average top-k accuracy
-    logging.info(f"🏆 Best avg top-k accuracy found: {best_avg_top_k_accuracy}")
+    # print the best average loss
+    logging.info(f"🏆 Best avg loss found: {best_avg_loss}")
 
     # show a successful message
     logging.info("🟢 Grid Search completed.")

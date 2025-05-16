@@ -13,7 +13,7 @@ def _time_series_cv(training_set, params):
     """
     Method to perform Time Series cross-validation.
     :param params: The hyperparameters of the model.
-    :return: The final average top-k accuracy.
+    :return: The final average loss.
     """
     # initial message
     logging.info("🔄 Time Series started...")
@@ -29,7 +29,7 @@ def _time_series_cv(training_set, params):
     except Exception as e:
         raise Exception(f"❌ Error while instantiating Time Series Split: {e}")
 
-    top_k_accuracy_acc = []
+    fold_losses = []
     # iterate over the training set
     for train_idx, val_idx in tscv.split(np.arange(n_samples)):
 
@@ -72,17 +72,17 @@ def _time_series_cv(training_set, params):
         )
 
         # evaluate the model
-        avg_loss, _, metrics = _evaluate_model(
+        avg_loss, _, _ = _evaluate_model(
             model,
             validation_loader,
             criterion,
             device
         )
-        top_k_accuracy_acc.append(metrics["top_k_accuracy"])
+        fold_losses.append(avg_loss)
 
     logging.info("🟢 Time Series CV completed.")
 
-    # calculate the average of the top-k accuracy
-    avg_top_k_accuracy = np.mean(top_k_accuracy_acc)
+    # calculate the average of loss
+    final_avg_loss = np.mean(fold_losses)
 
-    return avg_top_k_accuracy
+    return final_avg_loss

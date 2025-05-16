@@ -103,23 +103,21 @@ def _train_n_epochs(
         )
 
         if early_stopping:
-            # get the validation average top-k accuracy
-            avg_top_k_accuracy = None
+
+            avg_loss = None
             if validation_loader:
 
-                _, _,  metrics = _evaluate_model(
+                # get the validation average loss
+                avg_loss, _,  _ = _evaluate_model(
                     model,
                     validation_loader,
                     criterion,
                     device
                 )
 
-                # extract the top-k accuracy
-                avg_top_k_accuracy = metrics["top_k_accuracy"]
-
             # early stopping logic
-            if early_stopping and avg_top_k_accuracy is not None:
-                es(avg_top_k_accuracy)
+            if early_stopping and avg_loss is not None:
+                es(avg_loss)
                 # check whether to stop
                 if es.early_stop:
                     logging.info("🛑 Early stopping triggered.")

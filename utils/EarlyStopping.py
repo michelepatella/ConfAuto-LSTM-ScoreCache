@@ -12,26 +12,26 @@ class EarlyStopping:
             # set the fields
             self.patience = _get_config_value("early_stopping.patience")
             self.delta = _get_config_value("early_stopping.delta")
-            self.best_avg_top_k_accuracy = -np.inf
+            self.best_avg_loss = np.inf
             self.counter = 0
             self.early_stop = False
         except Exception as e:
             raise Exception(f"❌ Error while setting Early Stopping object's fields: {e}")
 
 
-    def __call__(self, avg_top_k_accuracy):
+    def __call__(self, avg_loss):
         """
         Method called whenever Early Stopping object is invoked.
-        :param avg_top_k_accuracy: The average top-k accuracy value.
+        :param avg_loss: The average loss value.
         :return: 
         """
         try:
-            # check whether the avg top-k accuracy is greater
+            # check whether the avg loss is less
             # than the current best one
-            if avg_top_k_accuracy > self.best_avg_top_k_accuracy + self.delta:
-                # update the best avg top-k accuracy
+            if avg_loss < self.best_avg_loss - self.delta:
+                # update the best avg loss
                 # and reset the counter used to trigger early stopping
-                self.best_avg_top_k_accuracy = avg_top_k_accuracy
+                self.best_avg_loss = avg_loss
                 self.counter = 0
             else:
                 # increment the counter to trigger early stopping
