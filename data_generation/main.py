@@ -17,18 +17,18 @@ def data_generation():
     dataset_path, distribution_type = _get_dataset_path_type()
 
     if distribution_type == "static":
-        # generate static requests and timestamps
-        requests, timestamps = _generate_static_requests()
+        # generate static requests and delta times
+        requests, delta_times = _generate_static_requests()
     elif distribution_type == "dynamic":
-        # generate dynamic requests and timestamps
-        requests, timestamps = _generate_dynamic_requests()
+        # generate dynamic requests and delta times
+        requests, delta_times = _generate_dynamic_requests()
     else:
         raise ValueError(f"❌ Invalid distribution type: {distribution_type}")
 
     # create dataframe
     df = pd.DataFrame(
         {
-            "timestamp": timestamps,
+            "delta_time": delta_times,
             "request": requests,
         }
     )

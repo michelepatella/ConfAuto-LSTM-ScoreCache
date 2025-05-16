@@ -25,15 +25,15 @@ def data_preprocessing():
     # remove missing values
     df_no_missing_values = _remove_missing_values(df_deduplicated)
 
-    # standardize 'timestamp' column
-    """df_standardized = _standardize(
+    # standardize 'delta_time' column
+    df_standardized = _standardize(
         df_no_missing_values,
-        ["timestamp"]
+        ["delta_time"]
     )
-    """
+
     # save the preprocessed dataset
     _save_dataset(
-        df_no_missing_values,
+        df_standardized,
         _get_config_value(dataset_path)
     )
 

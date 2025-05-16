@@ -33,34 +33,28 @@ class AccessLogsDataset(Dataset):
             raise Exception(f"❌ Error while splitting the dataset: {e}")
 
 
-    def _set_fields(self, df):
+    def _set_fields(self, data):
         """
         Method to set the fields of the dataset.
-        :param df: The dataframe from which the fields are extracted.
+        :param data: The data from which the fields are extracted.
         :return:
         """
         try:
             # assuming all the columns are features
             # while the last one is the target to predict
-            self.columns = df.columns.tolist()
+            self.columns = data.columns.tolist()
             self.features = self.columns[:-1]
             self.target = self.columns[-1]
 
             # set all the fields dynamically
-            for column in df.columns:
-                setattr(self, column, df[column].values)
+            for column in data.columns:
+                setattr(self, column, data[column].values)
 
         except Exception as e:
             raise Exception(f"❌ Error while reading the dataset columns: {e}")
 
         # set the sequence length
         self.seq_len = _get_config_value("data.seq_len")
-
-        # set data equals created fields
-        self.data = list(zip(*[
-            getattr(self, column)
-            for column in self.columns
-        ]))
 
 
     def __init__(self, dataset_path, dataset_type):
@@ -72,11 +66,14 @@ class AccessLogsDataset(Dataset):
         # load the dataset
         df = _load_dataset(dataset_path)
 
-        # set the fields of the dataset
-        self._set_fields(df)
+        # set data
+        self.data = df.copy()
 
         # split the dataset to assign data properly
         self._split_dataset(dataset_type)
+
+        # set the fields of the dataset
+        self._set_fields(self.data)
 
 
     def __len__(self):
@@ -84,7 +81,8 @@ class AccessLogsDataset(Dataset):
         Method to return the length of the access logs dataset.
         :return: The length of the access logs dataset.
         """
-        return len(self.data) - self.seq_len
+        return (len(getattr(self, self.features[0]))
+                - self.seq_len)
 
 
     def _get_features(self, idx):
@@ -130,7 +128,7 @@ class AccessLogsDataset(Dataset):
         try:
             # the next value in the sequence (y)
             y_key = torch.tensor(
-                getattr(self, self.target)[idx + self.seq_len],
+                getattr(self, self.target)[idx + self.seq_len] - 1,
                 dtype=torch.long
             )
         except Exception as e:

@@ -116,7 +116,7 @@ def _calculate_class_weights(targets):
 
     try:
         # get the tot. no. of classes
-        num_classes = _get_config_value("data.num_keys") + 1
+        num_classes = _get_config_value("data.num_keys")
 
         # be sure targets is a numpy array and shift them
         targets = targets.cpu().numpy() if (

@@ -17,7 +17,7 @@ class LSTM(nn.Module):
                 if param in params:
                     # apply all the other parameters (except dropout), if specified
                     if (params[param] is not None and
-                            params[param] is not "dropout"):
+                            params[param] != "dropout"):
                         setattr(self, param, params[param])
                     else:
                         # if they are None, read them from config file and set them
@@ -97,7 +97,7 @@ class LSTM(nn.Module):
 
         try:
             # fully-connected layer (linear)
-            self.fc = nn.Linear(self.hidden_size, self.num_keys + 1)
+            self.fc = nn.Linear(self.hidden_size, self.num_keys)
         except Exception as e:
             raise Exception(f"❌ Error while instantiating the FC layer: {e}")
 

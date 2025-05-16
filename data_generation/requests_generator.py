@@ -4,11 +4,11 @@ from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
 from utils.config_utils import _get_config_value
 
 
-def _generate_requests_with_timestamps(probs, size=None):
+def _generate_requests_with_delta_times(probs, size=None):
     """
-    Method to generate requests with timestamps.
+    Method to generate requests with delta times between events.
     :param probs: Zipf's probabilities.
-    :return: Requests and timestamps generated.
+    :return: Requests and delta times between generated events.
     """
     # read configurations
     min = _get_config_value("data.first_key")
@@ -32,13 +32,16 @@ def _generate_requests_with_timestamps(probs, size=None):
     )
     timestamps = np.cumsum(freq).astype(int)
 
-    return requests, timestamps
+    # calculate the temporal difference between events
+    delta_times = np.diff(timestamps, prepend=timestamps[0])
+
+    return requests, delta_times
 
 
 def _generate_static_requests():
     """
-    Method to orchestrate the static requests and timestamps generation.
-    :return: Static requests and timestamps generated.
+    Method to orchestrate the static requests' generation.
+    :return: Static requests and delta times generated.
     """
     # initial message
     logging.info("🔄 Static requests generation started...")
@@ -62,19 +65,19 @@ def _generate_static_requests():
         alpha
     )
 
-    # generate requests with timestamps
-    requests, timestamps = _generate_requests_with_timestamps(probs)
+    # generate requests
+    requests, delta_times = _generate_requests_with_delta_times(probs)
 
     # show a successful message
-    logging.info("🟢 Static requests and timestamps generated.")
+    logging.info("🟢 Static requests generated.")
 
-    return requests, timestamps
+    return requests, delta_times
 
 
 def _generate_dynamic_requests():
     """
-    Method to orchestrate the dynamic requests and timestamps generation.
-    :return: Dynamic requests and timestamps generated.
+    Method to orchestrate the dynamic requests' generation.
+    :return: Dynamic requests and delta times generated.
     """
     # initial message
     logging.info("🔄 Dynamic requests generation started...")
@@ -108,7 +111,7 @@ def _generate_dynamic_requests():
     if remainder > 0:
         logging.warning(f"⚠️{remainder} requests will be ignored due to uneven split.")
 
-    requests, timestamps = [], []
+    requests, delta_times = [], []
 
     # for each alpha value
     for t, alpha in enumerate(alpha_values):
@@ -118,19 +121,16 @@ def _generate_dynamic_requests():
             alpha
         )
 
-        # generate requests with timestamps
-        reqs, ts = _generate_requests_with_timestamps(
+        # generate requests
+        reqs, dt = _generate_requests_with_delta_times(
             probs,
             time_step_duration
         )
 
-        if timestamps:
-            ts += timestamps[-1] + 1
-
         requests.extend(reqs)
-        timestamps.extend(ts)
+        delta_times.extend(dt)
 
     # show a successful message
-    logging.info("🟢 Dynamic requests and timestamps generated.")
+    logging.info("🟢 Dynamic requests generated.")
 
-    return requests, timestamps
+    return requests, delta_times
