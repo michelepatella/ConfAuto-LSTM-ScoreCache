@@ -16,6 +16,8 @@ def _generate_requests_with_timestamps(probs, size=None):
     num_requests = _get_config_value("data.num_requests") \
         if size is None else size
 
+    np.random.seed(_get_config_value("data.seed"))
+
     # generate requests
     requests = np.random.choice(
         np.arange(min, max),
