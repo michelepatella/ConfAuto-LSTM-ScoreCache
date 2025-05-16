@@ -79,7 +79,7 @@ def _generate_static_requests():
     # debugging
     logging.debug(f"⚙️Zipf parameter: {alpha}.")
     logging.debug(f"⚙️Number of keys: {num_keys}.")
-    logging.debug(f"⚙️Requests range: ({min}, {max}).")
+    logging.debug(f"⚙️Requests range: ({min}, {max-1}).")
 
     # check the validity of the parameters
     if num_requests <= 0 or num_keys <= 0:
@@ -129,7 +129,7 @@ def _generate_dynamic_requests():
     # debugging
     logging.debug(f"⚙️Zipf parameters (from-to): ({alpha_start} - {alpha_end}).")
     logging.debug(f"⚙️Number of keys: {num_keys}.")
-    logging.debug(f"⚙️Requests range: ({min}, {max}).")
+    logging.debug(f"⚙️Requests range: ({min}, {max-1}).")
     logging.debug(f"⚙️Total time steps: {time_steps}.")
 
     # generate the Zipf distribution's parameter values

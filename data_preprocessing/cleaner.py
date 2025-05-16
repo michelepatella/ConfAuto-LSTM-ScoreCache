@@ -1,36 +1,6 @@
 import logging
 
 
-def _remove_duplicates(df):
-    """
-    Method to remove duplicated rows from a dataframe.
-    :param df: Dataframe to remove duplicated rows from.
-    :return: The dataframe with duplicate rows removed.
-    """
-    # initial message
-    logging.info("🔄 Dataset deduplication started...")
-
-    # size of the original dataset
-    initial_len = len(df)
-
-    try:
-        # clear the dataset removing duplicated rows
-        df = df.drop_duplicates()
-    except Exception as e:
-        raise Exception(f"❌ Error while deduplicating the dataset: {e}")
-
-    # size of the deduplicated dataset
-    final_len = len(df)
-
-    # debugging
-    logging.debug(f"⚙️Number of duplicated rows: {initial_len - final_len}.")
-
-    # print a successful message
-    logging.info("🟢 Dataset deduplicated.")
-
-    return df
-
-
 def _remove_missing_values(df):
     """
     Method to remove missing values from a dataframe.

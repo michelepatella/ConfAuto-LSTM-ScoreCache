@@ -7,13 +7,13 @@ from validation import validation
 
 
 logging.basicConfig(
-   level=logging.INFO,
+   level=logging.DEBUG,
    format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
 data_generation()
 
-#data_preprocessing()
+data_preprocessing()
 
 #validation()
 
