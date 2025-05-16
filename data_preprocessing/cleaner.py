@@ -1,11 +1,10 @@
 import logging
 
 
-def _remove_duplicates(df, column):
+def _remove_duplicates(df):
     """
     Method to remove duplicated rows from a dataframe.
     :param df: Dataframe to remove duplicated rows from.
-    :param column: Column for which duplicates will be removed.
     :return: The dataframe with duplicate rows removed.
     """
     # initial message
@@ -13,7 +12,7 @@ def _remove_duplicates(df, column):
 
     try:
         # clear the dataset removing duplicated rows
-        df.drop_duplicates(subset=[column], inplace=True)
+        df.drop_duplicates()
     except Exception as e:
         raise Exception(f"❌ Error while deduplicating the dataset: {e}")
 
