@@ -5,20 +5,19 @@ from testing import testing
 from training import training
 from validation import validation
 
-"""
+
 logging.basicConfig(
    level=logging.INFO,
    format="%(asctime)s - %(levelname)s - %(message)s"
 )
-"""
 
 data_generation()
 
-data_preprocessing()
+#data_preprocessing()
 
-validation()
+#validation()
 
-training()
+#training()
 
 avg_loss, avg_loss_per_class, metrics = testing()
 

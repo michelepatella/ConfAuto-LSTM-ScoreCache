@@ -4,6 +4,29 @@ from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
 from utils.config_utils import _get_config_value
 
 
+def _show_freq_table(requests):
+    """
+    Method to show the frequency table of the keys in the dataset created.
+    :param requests: Requests created.
+    :return:
+    """
+    # get the number of requests per key
+    unique, counts = np.unique(requests, return_counts=True)
+
+    # calculate the percentages
+    percentages = counts / len(requests) * 100
+
+    # create a table
+    table_lines = ["Key | Occurrences | %", "-" * 30]
+
+    for u, c, p in zip(unique, counts, percentages):
+        table_lines.append(f"{u:6} | {c:10} | {p:10.2f}%")
+    table_str = "\n".join(table_lines)
+
+    # show the created table
+    logging.info("📊 Dataset generated info:\n%s", table_str)
+
+
 def _generate_requests_with_delta_times(probs, size=None):
     """
     Method to generate requests with delta times between events.
@@ -53,6 +76,11 @@ def _generate_static_requests():
     min = _get_config_value("data.first_key")
     max = _get_config_value("data.last_key")
 
+    # debugging
+    logging.debug(f"⚙️Zipf parameter: {alpha}.")
+    logging.debug(f"⚙️Number of keys: {num_keys}.")
+    logging.debug(f"⚙️Requests range: ({min}, {max}).")
+
     # check the validity of the parameters
     if num_requests <= 0 or num_keys <= 0:
         raise ValueError("❌ num_requests and num_keys must be positive integers.")
@@ -67,6 +95,13 @@ def _generate_static_requests():
 
     # generate requests
     requests, delta_times = _generate_requests_with_delta_times(probs)
+
+    # debugging
+    logging.debug(f"⚙️Requests generated: {len(requests)}.")
+    logging.debug(f"⚙️Delta times shape: {delta_times.shape}.")
+
+    # show a frequency table of the keys
+    _show_freq_table(requests)
 
     # show a successful message
     logging.info("🟢 Static requests generated.")
@@ -90,6 +125,12 @@ def _generate_dynamic_requests():
     time_steps = _get_config_value("data.time_steps")
     min = _get_config_value("data.first_key")
     max = _get_config_value("data.last_key")
+
+    # debugging
+    logging.debug(f"⚙️Zipf parameters (from-to): ({alpha_start} - {alpha_end}).")
+    logging.debug(f"⚙️Number of keys: {num_keys}.")
+    logging.debug(f"⚙️Requests range: ({min}, {max}).")
+    logging.debug(f"⚙️Total time steps: {time_steps}.")
 
     # generate the Zipf distribution's parameter values
     alpha_values = np.linspace(alpha_start, alpha_end, time_steps)
@@ -129,6 +170,9 @@ def _generate_dynamic_requests():
 
         requests.extend(reqs)
         delta_times.extend(dt)
+
+    # show a frequency table of the keys
+    _show_freq_table(requests)
 
     # show a successful message
     logging.info("🟢 Dynamic requests generated.")

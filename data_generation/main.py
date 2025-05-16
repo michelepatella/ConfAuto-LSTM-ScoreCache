@@ -16,6 +16,9 @@ def data_generation():
     # get the dataset path
     dataset_path, distribution_type = _get_dataset_path_type()
 
+    # debugging
+    logging.debug(f"⚙️Type of distribution: {distribution_type}.")
+
     if distribution_type == "static":
         # generate static requests and delta times
         requests, delta_times = _generate_static_requests()
