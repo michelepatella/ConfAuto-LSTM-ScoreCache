@@ -1,5 +1,7 @@
 import pandas as pd
+import torch
 from torch.utils.data import DataLoader
+from utils.AccessLogsDataset import AccessLogsDataset
 from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 
@@ -139,3 +141,60 @@ def _get_dataset_path_type():
     _info("🟢 Dataset path and type retrieved.")
 
     return dataset_path, dataset_type
+
+
+def _loader_setup(loader_type, shuffle):
+    """
+    Method to prepare the data loader for the training and testing.
+    :param loader_type: The loader type ("training" or "testing").
+    :param shuffle: Whether to shuffle the data.
+    :return: The created data loader and the corresponding dataset.
+    """
+    # get the dataset type
+    dataset_path, _ = _get_dataset_path_type()
+
+    # debugging
+    _debug(f"⚙️ Loader type: {loader_type}.")
+    _debug(f"⚙️ Shuffle: {shuffle}.")
+
+    # get the dataset
+    dataset = AccessLogsDataset(
+        _get_config_value(dataset_path),
+        loader_type
+    )
+
+    # create the data loader starting from the dataset
+    loader = _create_data_loader(
+        dataset,
+        _get_config_value(f"{loader_type}.batch_size"),
+        shuffle
+    )
+
+    return dataset, loader
+
+
+def _extract_targets_from_loader(data_loader):
+    """
+    Method to extract the targets from the data loader.
+    :param data_loader: The data loader from which to extract the targets.
+    :return: All the extracted targets.
+    """
+    # initial message
+    _info("🔄 Target extraction from loader started...")
+
+    try:
+        all_targets = []
+        # extract targets from data loader
+        for _, targets in data_loader:
+            all_targets.append(targets - 1)
+
+    except Exception as e:
+        raise Exception(f"❌ Error while extracting targets from loader: {e}")
+
+    # debugging
+    _debug(f"⚙️ Target extracted: {all_targets}.")
+
+    # show a successful message
+    _info("🟢 Target extracted from loader.")
+
+    return torch.cat(all_targets)

@@ -2,7 +2,7 @@ from data_preprocessing.cleaner import _remove_missing_values
 from data_preprocessing.normalizer import _standardize
 from utils.log_utils import _info, phase_var
 from utils.config_utils import _get_config_value
-from utils.dataset_utils import _save_dataset, _load_dataset, _get_dataset_path_type
+from utils.data_utils import _save_dataset, _load_dataset, _get_dataset_path_type
 
 
 def data_preprocessing():

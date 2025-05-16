@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import Dataset
 from utils.log_utils import _debug
 from utils.config_utils import _get_config_value
-from utils.dataset_utils import _load_dataset
+from utils.data_utils import _load_dataset
 
 
 class AccessLogsDataset(Dataset):

@@ -1,4 +1,3 @@
-import logging
 import torch
 from utils.log_utils import _info, _debug
 from utils.EarlyStopping import EarlyStopping

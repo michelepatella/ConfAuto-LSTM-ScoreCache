@@ -1,5 +1,4 @@
 import numpy as np
-import logging
 from utils.config_utils import _get_config_value
 from utils.log_utils import _debug
 

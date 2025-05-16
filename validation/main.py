@@ -1,5 +1,5 @@
 from utils.log_utils import _info, phase_var
-from utils.setup_utils import _loader_setup
+from utils.data_utils import _loader_setup
 from validation.best_params_saver import _save_best_params
 from validation.grid_search_optimizer import _grid_search
 

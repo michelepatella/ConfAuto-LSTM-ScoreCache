@@ -1,8 +1,8 @@
 from utils.log_utils import _info, phase_var
 from utils.config_utils import _get_config_value
-from utils.setup_utils import _training_testing_setup, _loader_setup, _extract_targets_from_loader
+from utils.data_utils import _loader_setup, _extract_targets_from_loader
 from utils.training_utils import _train_n_epochs
-from utils.model_utils import _save_model
+from utils.model_utils import _save_model, _model_setup
 
 
 def training():
@@ -22,7 +22,7 @@ def training():
 
     # setup for training
     device, criterion, model, optimizer = (
-        _training_testing_setup(
+        _model_setup(
             _get_config_value("model.params"),
             _get_config_value("training.learning_rate"),
             _extract_targets_from_loader(training_loader)

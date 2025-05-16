@@ -24,10 +24,14 @@ def _generate_last_freq(sequence):
                     sequence,
                     window=w
                 )
-    except Exception as e:
-        raise Exception(f"❌ Error while generating features: {e}")
 
-    return freq_columns
+            return freq_columns
+
+        else:
+            raise Exception(f"❌ Error while generating frequencies due to None sequence.")
+
+    except Exception as e:
+        raise Exception(f"❌ Error while generating frequencies: {e}")
 
 
 def _compute_frequency(sequence, window):
