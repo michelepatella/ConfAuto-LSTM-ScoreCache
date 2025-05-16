@@ -106,7 +106,7 @@ def _extract_targets_from_loader(data_loader):
         all_targets = []
         # extract targets from data loader
         for _, targets in data_loader:
-            all_targets.append(targets)
+            all_targets.append(targets - 1)
 
     except Exception as e:
         raise Exception(f"❌ Error while extracting targets from loader: {e}")
@@ -159,7 +159,7 @@ def _calculate_class_weights(targets):
 
         # update weights for appearing classes
         for cls, weight in zip(present_classes, computed_weights):
-            class_weights[cls-1] = weight
+            class_weights[cls] = weight
 
     except Exception as e:
         raise Exception(f"❌ Error while calculating the class weights: {e}")
