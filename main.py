@@ -4,11 +4,11 @@ from data_preprocessing.main import data_preprocessing
 from testing import testing
 from training import training
 
-logging.basicConfig(
+"""logging.basicConfig(
     level=logging.DEBUG,
     format='[%(phase)s] %(levelname)s: %(message)s'
 )
-
+"""
 data_generation()
 
 data_preprocessing()
