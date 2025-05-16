@@ -139,6 +139,9 @@ def _calculate_class_weights(targets):
             isinstance(targets, torch.Tensor)) \
             else targets
 
+        # shift
+        targets = targets + 1
+
         # get the classes appearing in target list
         present_classes = np.unique(targets)
 

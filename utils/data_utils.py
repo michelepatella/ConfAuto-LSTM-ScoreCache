@@ -1,7 +1,6 @@
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader
-from utils.AccessLogsDataset import AccessLogsDataset
 from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 
@@ -150,6 +149,8 @@ def _loader_setup(loader_type, shuffle):
     :param shuffle: Whether to shuffle the data.
     :return: The created data loader and the corresponding dataset.
     """
+    from utils.AccessLogsDataset import AccessLogsDataset
+
     # get the dataset type
     dataset_path, _ = _get_dataset_path_type()
 

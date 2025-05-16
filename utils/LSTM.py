@@ -121,12 +121,9 @@ class LSTM(nn.Module):
         # debugging
         _debug(f"⚙️ Input shape: {x_features.shape}.")
 
-        # get the input for the LSTM
-        lstm_input = x_features[:, :, :-1]
-
         try:
             # pass the features to the LSTM
-            lstm_out, _ = self.lstm(lstm_input)
+            lstm_out, _ = self.lstm(x_features)
         except Exception as e:
             raise Exception(f"❌ Error while passing data through LSTM: {e}")
 
