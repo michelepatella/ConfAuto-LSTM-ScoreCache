@@ -16,6 +16,9 @@ def _save_model(model):
         # get the model path
         model_path = _get_config_value("model.model_save_path")
 
+        # debugging
+        logging.debug(f"⚙️ Path to save the model: {model_path}.")
+
         # save the model
         torch.save(
             model.state_dict(),
@@ -38,6 +41,9 @@ def _load_model(model, model_path, device):
     """
     # initial message
     logging.info("🔄 Model loading started...")
+
+    # debugging
+    logging.debug(f"⚙️ Path to load the model: {model_path}.")
 
     try:
         # load the model

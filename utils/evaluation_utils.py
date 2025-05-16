@@ -23,6 +23,9 @@ def _infer_batch(
     # initial message
     logging.info("🔄 Batch inference started...")
 
+    # debugging
+    logging.debug(f"⚙️ Input loader batch size: {len(loader)}.")
+
     # initialize data
     total_loss = 0.0
     all_preds, all_targets, all_outputs = [], [], []
@@ -33,6 +36,10 @@ def _infer_batch(
     try:
         with torch.no_grad():
             for x, y in loader:
+
+                # debugging
+                logging.debug(f"⚙️ Batch x shape: {x.shape}.")
+                logging.debug(f"⚙️ Batch y shape: {y.shape}.")
 
                 x = x.to(device)
                 y = y.to(device)
@@ -45,6 +52,10 @@ def _infer_batch(
                     device
                 )
 
+                # debugging
+                logging.debug(f"⚙️ Loss computed: {loss}.")
+                logging.debug(f"⚙️ Outputs shape: {outputs.shape}.")
+
                 # check the loss
                 if loss is None:
                     raise Exception("❌ Error while computing average loss due to loss equals None.")
@@ -54,6 +65,9 @@ def _infer_batch(
 
                 # store predictions and target for metrics
                 preds = torch.argmax(outputs, dim=1)
+
+                # debugging
+                logging.debug(f"⚙️ Predictions: {preds}.")
 
                 all_preds.extend(preds.cpu().numpy())
                 all_targets.extend(y.cpu().numpy())
@@ -65,6 +79,9 @@ def _infer_batch(
                     if mask.sum() > 0:
                         class_loss = criterion(outputs[mask], y[mask])
                         loss_per_class[int(class_id.item())].append(class_loss.item())
+
+                        # debugging
+                        logging.debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
 
     except Exception as e:
         raise Exception(f"❌ Error while inferring the batch: {e}")
@@ -89,6 +106,10 @@ def _calculate_average_losses(
     """
     # initial message
     logging.info("🔄 Average losses calculation started...")
+
+    # debugging
+    logging.debug(f"⚙️ Total loss: {total_loss}.")
+    logging.debug(f"⚙️ Number of batches: {num_batches}.")
 
     try:
         # compute the average loss
@@ -139,6 +160,11 @@ def _collect_predictions(
         criterion,
         device
     )
+
+    # debugging
+    logging.debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
+    logging.debug(f"⚙️ Predictions: {all_preds}.")
+    logging.debug(f"⚙️ Targets: {all_targets}.")
 
     # calculate the average of losses
     avg_loss, avg_loss_per_class = (
@@ -224,6 +250,10 @@ def _compute_metrics(targets, predictions, outputs):
         "class_metrics": class_report,
         "top_k_accuracy": top_k_accuracy,
     }
+
+    # debugging
+    logging.debug(f"⚙️ Classification report keys: {list(class_report.keys())}.")
+    logging.debug(f"⚙️ Top-k accuracy: {top_k_accuracy}.")
 
     # show a successful message
     logging.info("🟢 Metrics computed.")

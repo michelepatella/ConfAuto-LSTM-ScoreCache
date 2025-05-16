@@ -17,6 +17,10 @@ def _compute_forward(batch, model, criterion, device):
     try:
         # unpack data
         x_features, y_key = batch
+
+        # debugging
+        logging.debug(f"⚙️ Target batch: {y_key}.")
+
     except Exception as e:
         raise Exception(f"❌ Error while error unpacking data: {e}")
 
@@ -30,12 +34,20 @@ def _compute_forward(batch, model, criterion, device):
     try:
         # calculate the outputs
         outputs = model(x_features)
+
+        # debugging
+        logging.debug(f"⚙️ Input batch shape: {x_features.shape}.")
+        logging.debug(f"⚙️ Model output shape: {outputs.shape}.")
+
     except Exception as e:
         raise Exception(f"❌ Error during model inference: {e}")
 
     try:
         # calculate the loss and update the total one
         loss = criterion(outputs, y_key)
+
+        # debugging
+        logging.debug(f"⚙️ Loss: {loss.item()}.")
     except Exception as e:
         raise Exception(f"❌ Error while calculating loss: {e}")
 

@@ -24,6 +24,11 @@ def _training_testing_setup(
     # initial message
     logging.info("🔄 Training/Testing setup started...")
 
+    # debugging
+    logging.debug(f"⚙️ Model params: {model_params}.")
+    logging.debug(f"⚙️ Learning rate: {learning_rate}.")
+    logging.debug(f"⚙️ Targets: {targets}.")
+
     try:
         # define the device to use
         device = torch.device("cuda" if torch.cuda.is_available()
@@ -31,6 +36,9 @@ def _training_testing_setup(
 
         # get the class weights
         class_weights = _calculate_class_weights(targets)
+
+        # debugging
+        logging.debug(f"⚙️ Class weights: {class_weights}.")
 
         # define the loss function
         criterion = torch.nn.CrossEntropyLoss(
@@ -64,6 +72,10 @@ def _loader_setup(loader_type, shuffle):
     """
     # get the dataset type
     dataset_path, _ = _get_dataset_path_type()
+
+    # debugging
+    logging.debug(f"⚙️ Loader type: {loader_type}.")
+    logging.debug(f"⚙️ Shuffle: {shuffle}.")
 
     # get the dataset
     dataset = AccessLogsDataset(
@@ -99,6 +111,9 @@ def _extract_targets_from_loader(data_loader):
     except Exception as e:
         raise Exception(f"❌ Error while extracting targets from loader: {e}")
 
+    # debugging
+    logging.debug(f"⚙️ Target extracted: {all_targets}.")
+
     # show a successful message
     logging.info("🟢 Target extracted from loader.")
 
@@ -118,6 +133,9 @@ def _calculate_class_weights(targets):
         # get the tot. no. of classes
         num_classes = _get_config_value("data.num_keys")
 
+        # debugging
+        logging.debug(f"⚙️ Number of classes: {num_classes}.")
+
         # be sure targets is a numpy array and shift them
         targets = targets.cpu().numpy() if (
             isinstance(targets, torch.Tensor)) \
@@ -125,6 +143,9 @@ def _calculate_class_weights(targets):
 
         # get the classes appearing in target list
         present_classes = np.unique(targets)
+
+        # debugging
+        logging.debug(f"⚙️ Present classes: {present_classes}.")
 
         # compute the class weights
         computed_weights = compute_class_weight(
@@ -138,7 +159,7 @@ def _calculate_class_weights(targets):
 
         # update weights for appearing classes
         for cls, weight in zip(present_classes, computed_weights):
-            class_weights[cls] = weight
+            class_weights[cls-1] = weight
 
     except Exception as e:
         raise Exception(f"❌ Error while calculating the class weights: {e}")

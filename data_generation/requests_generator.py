@@ -35,7 +35,7 @@ def _generate_requests_with_delta_times(probs, size=None):
     """
     # read configurations
     min = _get_config_value("data.first_key")
-    max = _get_config_value("data.last_key")
+    max = _get_config_value("data.last_key") + 1
     num_requests = _get_config_value("data.num_requests") \
         if size is None else size
 
@@ -74,7 +74,7 @@ def _generate_static_requests():
     num_keys = _get_config_value("data.num_keys")
     alpha = _get_config_value("data.alpha")
     min = _get_config_value("data.first_key")
-    max = _get_config_value("data.last_key")
+    max = _get_config_value("data.last_key") + 1
 
     # debugging
     logging.debug(f"⚙️Zipf parameter: {alpha}.")
@@ -124,7 +124,7 @@ def _generate_dynamic_requests():
     alpha_end = _get_config_value("data.alpha_end")
     time_steps = _get_config_value("data.time_steps")
     min = _get_config_value("data.first_key")
-    max = _get_config_value("data.last_key")
+    max = _get_config_value("data.last_key") + 1
 
     # debugging
     logging.debug(f"⚙️Zipf parameters (from-to): ({alpha_start} - {alpha_end}).")

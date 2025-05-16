@@ -1,5 +1,6 @@
-from utils.config_utils import _get_config_value
 import numpy as np
+import logging
+from utils.config_utils import _get_config_value
 
 
 class EarlyStopping:
@@ -18,6 +19,9 @@ class EarlyStopping:
         except Exception as e:
             raise Exception(f"❌ Error while setting Early Stopping object's fields: {e}")
 
+        # debugging
+        logging.debug(f"⚙️ Patience for Early Stopping: {self.patience}.")
+        logging.debug(f"⚙️ Delta for Early Stopping: {self.delta}.")
 
     def __call__(self, avg_loss):
         """
@@ -33,9 +37,16 @@ class EarlyStopping:
                 # and reset the counter used to trigger early stopping
                 self.best_avg_loss = avg_loss
                 self.counter = 0
+
+                # debugging
+                logging.debug(f"⚙️ New best average loss: {self.best_avg_loss}.")
+
             else:
                 # increment the counter to trigger early stopping
                 self.counter += 1
+
+                # debugging
+                logging.debug(f"⚙️ Counter value: {self.counter}.")
 
                 # check whether the counter exceeds the patience
                 if self.counter >= self.patience:
