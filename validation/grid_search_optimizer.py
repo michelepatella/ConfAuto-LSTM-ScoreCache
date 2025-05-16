@@ -122,6 +122,9 @@ def _get_parameter_combination():
     if not param_combinations:
         raise Exception("❌ No parameters combination found.")
 
+    # debugging
+    logging.debug(f"⚙️ Combinations found: {param_combinations}.")
+
     # show a successful message
     logging.info("🟢 Parameters combined together.")
 
@@ -136,6 +139,9 @@ def _grid_search(training_set):
     """
     # initial message
     logging.info("🔄 Grid Search started...")
+
+    # debugging
+    logging.debug(f"⚙️ Training set size: {len(training_set)}.")
 
     # initialize the best parameters and average loss
     best_params = {}

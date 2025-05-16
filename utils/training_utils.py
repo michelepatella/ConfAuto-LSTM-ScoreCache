@@ -84,6 +84,12 @@ def _train_n_epochs(
     :param validation_loader: Validation data loader.
     :return:
     """
+    # debugging
+    logging.debug(f"⚙️ Number of epochs: {epochs}.")
+    logging.debug(f"⚙️ Early Stopping: {early_stopping}.")
+    logging.debug(f"⚙️ Validation loader: {"Received" if validation_loader is not None
+    else "Not received"}.")
+
     es = None
     # instantiate early stopping object (if needed)
     if early_stopping:
@@ -136,6 +142,10 @@ def _build_optimizer(model, learning_rate):
 
     # read the optimizer
     optimizer_type = _get_config_value("training.optimizer")
+
+    # debugging
+    logging.debug(f"⚙️ Learning rate: {learning_rate}.")
+    logging.debug(f"⚙️ Optimizer type: {optimizer_type}.")
 
     try:
         # define the optimizer

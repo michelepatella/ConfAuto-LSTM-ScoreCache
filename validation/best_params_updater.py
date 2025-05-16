@@ -19,6 +19,10 @@ def _check_and_update_best_params(
     # initial message
     logging.info("🔄 Best parameters check and update started...")
 
+    # debugging
+    logging.debug(f"⚙️ Avg loss: {avg_loss}.")
+    logging.debug(f"⚙️ Best avg loss: {best_avg_loss}.")
+
     # if the average loss is less than the best one,
     # update it and the best parameters
     if (best_avg_loss is not None

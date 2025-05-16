@@ -21,6 +21,9 @@ def _time_series_cv(training_set, params):
     # get the no. of samples in the dataset
     n_samples = len(training_set)
 
+    # debugging
+    logging.debug(f"⚙️ No. of samples in the training set: {n_samples}.")
+
     try:
         # setup for Time Series Split
         tscv = TimeSeriesSplit(n_splits=_get_config_value(

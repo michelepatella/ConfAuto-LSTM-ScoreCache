@@ -8,9 +8,11 @@ def _save_best_params(best_params):
     :param best_params: Best parameters found.
     :return:
     """
-    print(best_params)
     # initial message
     logging.info("🔄 Best parameter saving started...")
+
+    # debugging
+    logging.debug(f"⚙️ Best params to save: {best_params}.")
 
     # load config file
     config = _load_config()
