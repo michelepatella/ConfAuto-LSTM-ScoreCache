@@ -87,8 +87,8 @@ def _train_n_epochs(
     # debugging
     logging.debug(f"⚙️ Number of epochs: {epochs}.")
     logging.debug(f"⚙️ Early Stopping: {early_stopping}.")
-    logging.debug(f"⚙️ Validation loader: {"Received" if validation_loader is not None
-    else "Not received"}.")
+    logging.debug(f"⚙️ Validation loader: {True if validation_loader is not None
+    else False}.")
 
     es = None
     # instantiate early stopping object (if needed)
