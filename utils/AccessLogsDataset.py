@@ -99,9 +99,6 @@ class AccessLogsDataset(Dataset):
         Method to return the length of the access logs dataset.
         :return: The length of the access logs dataset.
         """
-        # debugging
-        logging.debug(f"⚙️ Dataset length for sequences: {len(self)}.")
-
         return (len(getattr(self, self.features[0]))
                 - self.seq_len)
 
