@@ -34,6 +34,9 @@ def _infer_batch(
         with torch.no_grad():
             for x, y in loader:
 
+                x = x.to(device)
+                y = y.to(device)
+
                 # calculate loss and outputs through forward pass
                 loss, outputs = _compute_forward(
                     (x, y),
