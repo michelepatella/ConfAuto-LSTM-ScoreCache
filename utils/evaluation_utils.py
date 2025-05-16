@@ -266,9 +266,9 @@ def _evaluate_model(
     )
 
     # show results
-    logging.info(f"📉 Average Loss: {avg_loss}")
-    logging.info(f"📉 Average Loss per Class: {avg_loss_per_class}")
-    logging.info(f"📊 Metrics: {metrics}")
+    print(f"📉 Average Loss: {avg_loss}")
+    print(f"📉 Average Loss per Class: {avg_loss_per_class}")
+    print(f"📊 Metrics: {metrics}")
 
     # show a successful message
     logging.info("🟢 Model's evaluation completed.")
