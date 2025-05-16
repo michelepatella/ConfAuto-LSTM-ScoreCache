@@ -1,6 +1,8 @@
 import numpy as np
 import logging
 
+from utils.log_utils import _info
+
 
 def _calculate_zipf_distribution_probs(keys, alpha):
     """
@@ -10,7 +12,7 @@ def _calculate_zipf_distribution_probs(keys, alpha):
     :return: Zipf distribution's probabilities calculated.
     """
     # initial message
-    logging.info("🔄 Zipf distribution's probabilities calculation started...")
+    _info("🔄 Zipf distribution's probabilities calculation started...")
 
     # convert keys to a numpy array for safety
     keys = np.array(keys, dtype=np.float64)
@@ -29,6 +31,6 @@ def _calculate_zipf_distribution_probs(keys, alpha):
     probs = probs / np.sum(probs)
 
     # show a successful message
-    logging.info("🟢 Zipf distribution's probabilities calculated.")
+    _info("🟢 Zipf distribution's probabilities calculated.")
 
     return probs

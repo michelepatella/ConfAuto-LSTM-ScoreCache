@@ -1,4 +1,7 @@
 import logging
+
+from main import phase_var
+from utils.log_utils import _info
 from utils.config_utils import _get_config_value
 from utils.evaluation_utils import _evaluate_model
 from utils.setup_utils import _training_testing_setup, _loader_setup, _extract_targets_from_loader
@@ -12,7 +15,8 @@ def testing():
     and metrics computed.
     """
     # initial message
-    logging.info("🔄 Testing started...")
+    _info("🔄 Testing started...")
+    phase_var.set("testing")
 
     # dataloader setup
     _, testing_loader = _loader_setup(
@@ -49,6 +53,6 @@ def testing():
     )
 
     # print a successful message
-    logging.info("✅ Testing completed.")
+    _info("✅ Testing completed.")
 
     return avg_loss, avg_loss_per_class, metrics

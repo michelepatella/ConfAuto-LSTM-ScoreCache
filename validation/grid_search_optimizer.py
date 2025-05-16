@@ -2,6 +2,8 @@ import copy
 import logging
 import itertools
 from tqdm import tqdm
+
+from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 from validation.best_params_updater import _check_and_update_best_params
 from validation.time_series_cv import _time_series_cv
@@ -73,7 +75,7 @@ def _get_parameter_combination():
     :return: The parameters' combination.
     """
     # initial message
-    logging.info("🔄 Parameters' combination started...")
+    _info("🔄 Parameters' combination started...")
 
     # get the search space
     search_space = _get_config_value("validation.search_space")
@@ -123,10 +125,10 @@ def _get_parameter_combination():
         raise Exception("❌ No parameters combination found.")
 
     # debugging
-    logging.debug(f"⚙️ Combinations found: {param_combinations}.")
+    _debug(f"⚙️ Combinations found: {param_combinations}.")
 
     # show a successful message
-    logging.info("🟢 Parameters combined together.")
+    _info("🟢 Parameters combined together.")
 
     return param_combinations
 
@@ -138,10 +140,10 @@ def _grid_search(training_set):
     :return: The best parameters.
     """
     # initial message
-    logging.info("🔄 Grid Search started...")
+    _info("🔄 Grid Search started...")
 
     # debugging
-    logging.debug(f"⚙️ Training set size: {len(training_set)}.")
+    _debug(f"⚙️ Training set size: {len(training_set)}.")
 
     # initialize the best parameters and average loss
     best_params = {}
@@ -175,12 +177,12 @@ def _grid_search(training_set):
             pbar.update(1)
 
     # print the best parameters found
-    logging.info(f"🏆 Best parameters found: {best_params}")
+    _info(f"🏆 Best parameters found: {best_params}")
 
     # print the best average loss
-    logging.info(f"🏆 Best avg loss found: {best_avg_loss}")
+    _info(f"🏆 Best avg loss found: {best_avg_loss}")
 
     # show a successful message
-    logging.info("🟢 Grid Search completed.")
+    _info("🟢 Grid Search completed.")
 
     return best_params

@@ -1,5 +1,7 @@
 import logging
 
+from utils.log_utils import _info, _debug
+
 
 def _check_and_update_best_params(
         avg_loss,
@@ -17,11 +19,11 @@ def _check_and_update_best_params(
     :return: The best average loss and the best parameters.
     """
     # initial message
-    logging.info("🔄 Best parameters check and update started...")
+    _info("🔄 Best parameters check and update started...")
 
     # debugging
-    logging.debug(f"⚙️ Avg loss: {avg_loss}.")
-    logging.debug(f"⚙️ Best avg loss: {best_avg_loss}.")
+    _debug(f"⚙️ Avg loss: {avg_loss}.")
+    _debug(f"⚙️ Best avg loss: {best_avg_loss}.")
 
     # if the average loss is less than the best one,
     # update it and the best parameters
@@ -36,12 +38,12 @@ def _check_and_update_best_params(
             best_params = curr_params
 
             # print updated parameters and best average loss
-            logging.info(f"🆕 Updated best parameters: {best_params['model']} {best_params['training']}")
-            logging.info(f"🆕 Updated best average loss: {best_avg_loss}")
+            _info(f"🆕 Updated best parameters: {best_params['model']} {best_params['training']}")
+            _info(f"🆕 Updated best average loss: {best_avg_loss}")
     else:
         raise Exception(f"❌ Invalid best average loss ({best_avg_loss}) or average loss ({avg_loss}).")
 
     # print a successful message
-    logging.info("🟢 Best parameters check and update completed.")
+    _info("🟢 Best parameters check and update completed.")
 
     return best_avg_loss, best_params

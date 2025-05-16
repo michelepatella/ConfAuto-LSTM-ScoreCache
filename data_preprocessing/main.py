@@ -1,6 +1,8 @@
 import logging
 from data_preprocessing.cleaner import _remove_missing_values
 from data_preprocessing.normalizer import _standardize
+from main import phase_var
+from utils.log_utils import _info
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _save_dataset, _load_dataset, _get_dataset_path_type
 
@@ -11,7 +13,8 @@ def data_preprocessing():
     :return:
     """
     # initial message
-    logging.info("🔄 Data preprocessing started...")
+    _info("🔄 Data preprocessing started...")
+    phase_var.set("data_preprocessing")
 
     # get the dataset path
     dataset_path,_ = _get_dataset_path_type()
@@ -35,4 +38,4 @@ def data_preprocessing():
     )
 
     # print a successful message
-    logging.info("✅ Data preprocessing successfully completed.")
+    _info("✅ Data preprocessing successfully completed.")

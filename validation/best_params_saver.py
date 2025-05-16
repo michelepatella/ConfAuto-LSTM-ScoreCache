@@ -1,4 +1,6 @@
 import logging
+
+from utils.log_utils import _info, _debug
 from utils.config_utils import _load_config, _update_config
 
 
@@ -9,10 +11,10 @@ def _save_best_params(best_params):
     :return:
     """
     # initial message
-    logging.info("🔄 Best parameter saving started...")
+    _info("🔄 Best parameter saving started...")
 
     # debugging
-    logging.debug(f"⚙️ Best params to save: {best_params}.")
+    _debug(f"⚙️ Best params to save: {best_params}.")
 
     # load config file
     config = _load_config()
@@ -29,4 +31,4 @@ def _save_best_params(best_params):
     _update_config(config)
 
     # show a successful message
-    logging.info("🟢 Best parameters saved.")
+    _info("🟢 Best parameters saved.")

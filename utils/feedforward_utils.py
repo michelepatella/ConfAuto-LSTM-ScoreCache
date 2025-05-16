@@ -1,5 +1,7 @@
 import logging
 
+from utils.log_utils import _info, _debug
+
 
 def _compute_forward(batch, model, criterion, device):
     """
@@ -11,7 +13,7 @@ def _compute_forward(batch, model, criterion, device):
     :return: The loss function for the batch.
     """
     # initial message
-    logging.info("🔄 Forward pass started...")
+    _info("🔄 Forward pass started...")
 
     # try unpack data
     try:
@@ -19,7 +21,7 @@ def _compute_forward(batch, model, criterion, device):
         x_features, y_key = batch
 
         # debugging
-        logging.debug(f"⚙️ Target batch: {y_key}.")
+        _debug(f"⚙️ Target batch: {y_key}.")
     except Exception as e:
         raise Exception(f"❌ Error while error unpacking data: {e}")
 
@@ -35,8 +37,8 @@ def _compute_forward(batch, model, criterion, device):
         outputs = model(x_features)
 
         # debugging
-        logging.debug(f"⚙️ Input batch shape: {x_features.shape}.")
-        logging.debug(f"⚙️ Model output shape: {outputs.shape}.")
+        _debug(f"⚙️ Input batch shape: {x_features.shape}.")
+        _debug(f"⚙️ Model output shape: {outputs.shape}.")
 
     except Exception as e:
         raise Exception(f"❌ Error during model inference: {e}")
@@ -46,12 +48,12 @@ def _compute_forward(batch, model, criterion, device):
         loss = criterion(outputs, y_key)
 
         # debugging
-        logging.debug(f"⚙️ Loss: {loss.item()}.")
+        _debug(f"⚙️ Loss: {loss.item()}.")
     except Exception as e:
         raise Exception(f"❌ Error while calculating loss: {e}")
 
     # show a successful message
-    logging.info("🟢 Forward pass computed.")
+    _info("🟢 Forward pass computed.")
 
     return loss, outputs
 
@@ -64,7 +66,7 @@ def _compute_backward(loss, optimizer):
     :return:
     """
     # initial message
-    logging.info("🔄 Backward pass started...")
+    _info("🔄 Backward pass started...")
 
     try:
         # backward pass
@@ -79,4 +81,4 @@ def _compute_backward(loss, optimizer):
         raise Exception(f"❌ Error while optimizing: {e}")
 
     # show a successful message
-    logging.info("🟢 Backward pass computed.")
+    _info("🟢 Backward pass computed.")

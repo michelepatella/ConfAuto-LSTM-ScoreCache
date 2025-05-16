@@ -2,6 +2,8 @@ import logging
 from collections import Counter
 import pandas as pd
 from torch.utils.data import DataLoader
+
+from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 
 
@@ -13,11 +15,11 @@ def _compute_frequency(sequence, window):
     :return: The frequency of the sequence.
     """
     # initial message
-    logging.info("🔄 Frequency sequence counting started...")
+    _info("🔄 Frequency sequence counting started...")
 
     # debugging
-    logging.debug(f"⚙️ Sequence for which to count the frequency: {sequence}.")
-    logging.debug(f"⚙️ Window: {window}.")
+    _debug(f"⚙️ Sequence for which to count the frequency: {sequence}.")
+    _debug(f"⚙️ Window: {window}.")
 
     try:
         # initialize frequency
@@ -37,10 +39,10 @@ def _compute_frequency(sequence, window):
         raise Exception(f"❌ Error while computing the frequency of sequence: {e}")
 
     # debugging
-    logging.debug(f"⚙️ Frequency computed (sequence-frequency): ({sequence} - {freq}).")
+    _debug(f"⚙️ Frequency computed (sequence-frequency): ({sequence} - {freq}).")
 
     # show a successful message
-    logging.info(f"🟢 Frequency of the sequence counted.")
+    _info(f"🟢 Frequency of the sequence counted.")
 
     return freq
 
@@ -58,7 +60,7 @@ def _create_dataframe(
     :return: The dataframe created.
     """
     # initial message
-    logging.info("🔄 Dataset creation started...")
+    _info("🔄 Dataset creation started...")
 
     # read configuration
     windows = _get_config_value("data.freq_windows")
@@ -84,7 +86,7 @@ def _create_dataframe(
         raise Exception(f"❌ Error while creating the dataframe: {e}")
 
     # show a successful message
-    logging.info(f"🟢 Dataframe created.")
+    _info(f"🟢 Dataframe created.")
 
     return df
 
@@ -97,17 +99,17 @@ def _save_dataset(df, dataset_path):
     :return:
     """
     # initial message
-    logging.info("🔄 Dataset saving started...")
+    _info("🔄 Dataset saving started...")
 
     # debugging
-    logging.debug(f"⚙️ Dataset shape to save: {df.shape}.")
+    _debug(f"⚙️ Dataset shape to save: {df.shape}.")
 
     try:
         # convert dataframe to CSV file
         df.to_csv(dataset_path, index=False)
 
         # show a successful message
-        logging.info(f"🟢 Dataset saved to '{dataset_path}'.")
+        _info(f"🟢 Dataset saved to '{dataset_path}'.")
     except Exception as e:
         raise Exception(f"❌ Error while saving the dataset: {e}")
 
@@ -125,11 +127,11 @@ def _create_data_loader(
     :return: The data loader.
     """
     # initial message
-    logging.info("🔄 Data loader creation started...")
+    _info("🔄 Data loader creation started...")
 
     # debugging
-    logging.debug(f"⚙️ Batch size: {batch_size}.")
-    logging.debug(f"⚙️ Shuffle: {shuffle}.")
+    _debug(f"⚙️ Batch size: {batch_size}.")
+    _debug(f"⚙️ Shuffle: {shuffle}.")
 
     try:
         # define the loader
@@ -142,7 +144,7 @@ def _create_data_loader(
         raise Exception(f"❌ Error while creating data loader: {e}")
 
     # show a successful message
-    logging.info("🟢 Data loader created.")
+    _info("🟢 Data loader created.")
 
     return loader
 
@@ -154,10 +156,10 @@ def _load_dataset(dataset_path):
     :return: The dataset read.
     """
     # initial message
-    logging.info("🔄 Dataset loading started...")
+    _info("🔄 Dataset loading started...")
 
     # debugging
-    logging.debug(f"⚙️ Path of the dataset to be loaded: {dataset_path}.")
+    _debug(f"⚙️ Path of the dataset to be loaded: {dataset_path}.")
 
     try:
         # load the dataset
@@ -166,10 +168,10 @@ def _load_dataset(dataset_path):
         raise Exception(f"❌ Error while loading dataset: {e}")
 
     # debugging
-    logging.debug(f"⚙️ Shape of the dataset loaded: {df.shape}.")
+    _debug(f"⚙️ Shape of the dataset loaded: {df.shape}.")
 
     # show a successful message
-    logging.info("🟢 Dataset loaded.")
+    _info("🟢 Dataset loaded.")
 
     return df
 
@@ -180,13 +182,13 @@ def _get_dataset_path_type():
     :return: The dataset path and type.
     """
     # initial message
-    logging.info("🔄 Dataset path and type retrieval started...")
+    _info("🔄 Dataset path and type retrieval started...")
 
     # read the dataset type
     dataset_type = _get_config_value("data.distribution_type")
 
     # debugging
-    logging.debug(f"⚙️ Dataset distribution type from config: {dataset_type}.")
+    _debug(f"⚙️ Dataset distribution type from config: {dataset_type}.")
 
     # keep track of the dataset path
     if dataset_type == "static":
@@ -197,9 +199,9 @@ def _get_dataset_path_type():
         raise Exception(f"❌ Invalid dataset type: {dataset_type}")
 
     # debugging
-    logging.debug(f"⚙️ Dataset path found: {dataset_path}.")
+    _debug(f"⚙️ Dataset path found: {dataset_path}.")
 
     # show a successful message
-    logging.info("🟢 Dataset path and type retrieved.")
+    _info("🟢 Dataset path and type retrieved.")
 
     return dataset_path, dataset_type

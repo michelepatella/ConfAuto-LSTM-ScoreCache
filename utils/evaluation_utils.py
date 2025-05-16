@@ -2,6 +2,8 @@ from collections import defaultdict
 import torch
 import logging
 from sklearn.metrics import classification_report
+
+from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 from utils.feedforward_utils import _compute_forward
 
@@ -21,10 +23,10 @@ def _infer_batch(
      all the targets, and all the outputs returned by the model.
     """
     # initial message
-    logging.info("🔄 Batch inference started...")
+    _info("🔄 Batch inference started...")
 
     # debugging
-    logging.debug(f"⚙️ Input loader batch size: {len(loader)}.")
+    _debug(f"⚙️ Input loader batch size: {len(loader)}.")
 
     # initialize data
     total_loss = 0.0
@@ -38,7 +40,7 @@ def _infer_batch(
             for x, y in loader:
 
                 # debugging
-                logging.debug(f"⚙️ Batch x shape: {x.shape}.")
+                _debug(f"⚙️ Batch x shape: {x.shape}.")
                 logging.debug(f"⚙️ Batch y shape: {y.shape}.")
 
                 x = x.to(device)
@@ -67,7 +69,7 @@ def _infer_batch(
                 preds = torch.argmax(outputs, dim=1)
 
                 # debugging
-                logging.debug(f"⚙️ Predictions: {preds}.")
+                _debug(f"⚙️ Predictions: {preds}.")
 
                 all_preds.extend(preds.cpu().numpy())
                 all_targets.extend(y.cpu().numpy())

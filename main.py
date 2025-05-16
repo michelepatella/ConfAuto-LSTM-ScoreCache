@@ -1,16 +1,16 @@
+import contextvars
 import logging
 from data_generation import data_generation
 from data_preprocessing.main import data_preprocessing
 from testing import testing
 from training import training
-from validation import validation
 
-
-"""logging.basicConfig(
-   level=logging.DEBUG,
-   format="%(asctime)s - %(levelname)s - %(message)s"
+phase_var = contextvars.ContextVar("phase", default="unknown")
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(phase)s] %(levelname)s: %(message)s'
 )
-"""
+
 data_generation()
 
 data_preprocessing()

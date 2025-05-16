@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import logging
+from utils.log_utils import _debug
 from utils.config_utils import _get_config_value
 
 
@@ -84,7 +85,7 @@ class LSTM(nn.Module):
 
         # debugging
         for param in self.required_parameters:
-            logging.debug(f"⚙️ {param} = {getattr(self, param)}.")
+            _debug(f"⚙️ {param} = {getattr(self, param)}.")
 
         try:
             # instantiate the LSTM model
@@ -149,7 +150,7 @@ class LSTM(nn.Module):
             raise ValueError("❌ Input features cannot be None.")
 
         # debugging
-        logging.debug(f"⚙️ Input shape: {x_features.shape}.")
+        _debug(f"⚙️ Input shape: {x_features.shape}.")
 
         # get the input for the LSTM
         lstm_input = self._get_input(x_features)
@@ -161,7 +162,7 @@ class LSTM(nn.Module):
             raise Exception(f"❌ Error while passing data through LSTM: {e}")
 
         # debugging
-        logging.debug(f"⚙️ Output shape: {lstm_out.shape}.")
+        _debug(f"⚙️ Output shape: {lstm_out.shape}.")
 
         try:
             # get the logits from the LSTM output
@@ -170,6 +171,6 @@ class LSTM(nn.Module):
             raise Exception(f"❌ Error while processing LSTM output: {e}")
 
         # debugging
-        logging.debug(f"⚙️ Logits shape: {logits.shape}.")
+        _debug(f"⚙️ Logits shape: {logits.shape}.")
 
         return logits

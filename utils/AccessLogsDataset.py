@@ -1,6 +1,8 @@
 import torch
 import logging
 from torch.utils.data import Dataset
+
+from utils.log_utils import _debug
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _load_dataset
 
@@ -15,7 +17,7 @@ class AccessLogsDataset(Dataset):
         :return:
         """
         # debugging
-        logging.debug(f"⚙️ Splitting type: {dataset_type}.")
+        _debug(f"⚙️ Splitting type: {dataset_type}.")
 
         try:
             # define the splitting's index
@@ -26,7 +28,7 @@ class AccessLogsDataset(Dataset):
             raise Exception(f"❌ Error while defining the dataset splitting's index: {e}")
 
         # debugging
-        logging.debug(f"⚙️ Split index: {split_idx}.")
+        _debug(f"⚙️ Split index: {split_idx}.")
 
         try:
             # split the dataset
@@ -56,9 +58,9 @@ class AccessLogsDataset(Dataset):
             self.seq_len = _get_config_value("data.seq_len")
 
             # debugging
-            logging.debug(f"⚙️ Dataset columns: {self.columns}.")
-            logging.debug(f"⚙️ Feature(s): {self.features}.")
-            logging.debug(f"⚙️ Target: {self.target}.")
+            _debug(f"⚙️ Dataset columns: {self.columns}.")
+            _debug(f"⚙️ Feature(s): {self.features}.")
+            _debug(f"⚙️ Target: {self.target}.")
 
         except Exception as e:
             raise Exception(f"❌ Error while reading the dataset columns: {e}")
@@ -74,7 +76,7 @@ class AccessLogsDataset(Dataset):
         df = _load_dataset(dataset_path)
 
         # debugging
-        logging.debug(f"⚙️ Dataset shape: {df.shape}.")
+        _debug(f"⚙️ Dataset shape: {df.shape}.")
 
         # set data
         self.data = df.copy()
@@ -101,7 +103,7 @@ class AccessLogsDataset(Dataset):
         :return: Access logs dataset.
         """
         # debugging
-        logging.debug(f"⚙️ Getting item at index: {idx}.")
+        _debug(f"⚙️ Getting item at index: {idx}.")
 
         try:
             # get the feature sequence of length seq_len
@@ -119,8 +121,8 @@ class AccessLogsDataset(Dataset):
             )
 
             # debugging
-            logging.debug(f"⚙️ Feature vector shape: {x.shape}.")
-            logging.debug(f"⚙️ Target (key id): {y_key.item()}.")
+            _debug(f"⚙️ Feature vector shape: {x.shape}.")
+            _debug(f"⚙️ Target (key id): {y_key.item()}.")
 
         except Exception as e:
             raise Exception(f"❌ Error retrieving item at index {idx}: {e}")

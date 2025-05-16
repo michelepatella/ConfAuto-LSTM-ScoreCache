@@ -1,5 +1,7 @@
 import logging
 import torch
+
+from utils.log_utils import _info, _debug
 from utils.EarlyStopping import EarlyStopping
 from utils.config_utils import _get_config_value
 from utils.evaluation_utils import _evaluate_model
@@ -23,7 +25,7 @@ def _train_one_epoch(
     :return:
     """
     # initial message
-    logging.info("🔄 Epoch training started...")
+    _info("🔄 Epoch training started...")
 
     model.train()
 
@@ -59,7 +61,7 @@ def _train_one_epoch(
         # training_loader.set_postfix(loss=loss.item())
 
     # show a successful message
-    logging.info("🟢 Epoch training completed.")
+    _info("🟢 Epoch training completed.")
 
 
 def _train_n_epochs(
@@ -85,9 +87,9 @@ def _train_n_epochs(
     :return:
     """
     # debugging
-    logging.debug(f"⚙️ Number of epochs: {epochs}.")
-    logging.debug(f"⚙️ Early Stopping: {early_stopping}.")
-    logging.debug(f"⚙️ Validation loader: {'Received' if validation_loader is not None else 'Not received'}.")
+    _debug(f"⚙️ Number of epochs: {epochs}.")
+    _debug(f"⚙️ Early Stopping: {early_stopping}.")
+    _debug(f"⚙️ Validation loader: {'Received' if validation_loader is not None else 'Not received'}.")
 
     es = None
     # instantiate early stopping object (if needed)
@@ -96,7 +98,7 @@ def _train_n_epochs(
 
     # n-epochs learning
     for epoch in range(epochs):
-        logging.info(f"⏳ Epoch {epoch + 1}/{epochs}")
+        _info(f"⏳ Epoch {epoch + 1}/{epochs}")
 
         # train the model
         _train_one_epoch(
@@ -125,7 +127,7 @@ def _train_n_epochs(
                 es(avg_loss)
                 # check whether to stop
                 if es.early_stop:
-                    logging.info("🛑 Early stopping triggered.")
+                    _info("🛑 Early stopping triggered.")
                     break
 
 

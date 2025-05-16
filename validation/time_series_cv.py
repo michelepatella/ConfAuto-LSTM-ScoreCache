@@ -2,6 +2,8 @@ import numpy as np
 import logging
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
+
+from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _create_data_loader
 from utils.evaluation_utils import _evaluate_model
@@ -16,13 +18,13 @@ def _time_series_cv(training_set, params):
     :return: The final average loss.
     """
     # initial message
-    logging.info("🔄 Time Series started...")
+    _info("🔄 Time Series started...")
 
     # get the no. of samples in the dataset
     n_samples = len(training_set)
 
     # debugging
-    logging.debug(f"⚙️ No. of samples in the training set: {n_samples}.")
+    _debug(f"⚙️ No. of samples in the training set: {n_samples}.")
 
     try:
         # setup for Time Series Split
@@ -83,7 +85,7 @@ def _time_series_cv(training_set, params):
         )
         fold_losses.append(avg_loss)
 
-    logging.info("🟢 Time Series CV completed.")
+    _info("🟢 Time Series CV completed.")
 
     # calculate the average of loss
     final_avg_loss = np.mean(fold_losses)

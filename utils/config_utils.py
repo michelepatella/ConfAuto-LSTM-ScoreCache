@@ -2,6 +2,8 @@ import yaml
 import os
 import logging
 
+from utils.log_utils import _info, _debug
+
 
 def _get_config_abs_path():
     """
@@ -16,7 +18,7 @@ def _get_config_abs_path():
         raise Exception(f"❌ Error while getting the config absolute path: {e}")
 
     # debugging
-    logging.debug(f"⚙️ Absolute path of config file: {abs_path}.")
+    _debug(f"⚙️ Absolute path of config file: {abs_path}.")
 
     return abs_path
 
@@ -27,7 +29,7 @@ def _load_config():
     :return: The configuration object.
     """
     # initial message
-    logging.info("🔄 Config file loading started...")
+    _info("🔄 Config file loading started...")
 
     # get the abs path of the config file
     config_path = _get_config_abs_path()
@@ -40,7 +42,7 @@ def _load_config():
         raise Exception(f"❌ Error while loading config file: {e}")
 
     # show a successful message
-    logging.info("🟢 Config file loaded.")
+    _info("🟢 Config file loaded.")
 
     return config
 
@@ -53,7 +55,7 @@ def _merge_config(config, updates):
     :return: The merged config object.
     """
     # initial message
-    logging.info("🔄 Config merging started...")
+    _info("🔄 Config merging started...")
 
     #check if the config is None
     if config is None:
@@ -67,7 +69,7 @@ def _merge_config(config, updates):
         # apply merge recursively
         for key, value in updates.items():
             # debugging
-            logging.debug(f"⚙️ Merging (key-value): ({key} - {value}).")
+            _debug(f"⚙️ Merging (key-value): ({key} - {value}).")
 
             if isinstance(value, dict) and isinstance(config.get(key), dict):
                 _merge_config(config[key], value)
@@ -77,7 +79,7 @@ def _merge_config(config, updates):
         raise Exception(f"❌ Error while merging config file: {e}")
 
     # show a successful message
-    logging.info("🟢 Config merged.")
+    _info("🟢 Config merged.")
 
     return config
 
@@ -89,7 +91,7 @@ def _update_config(updated_config):
     :return:
     """
     # initial message
-    logging.info("🔄 Config file updating started...")
+    _info("🔄 Config file updating started...")
 
     # get the abs path of the config file
     config_path = _get_config_abs_path()
@@ -98,7 +100,7 @@ def _update_config(updated_config):
     config = _load_config()
 
     # debugging
-    logging.debug(f"⚙️ Updated config to be saved: {updated_config}.")
+    _debug(f"⚙️ Updated config to be saved: {updated_config}.")
 
     # merge update configs with config file
     merged_config = _merge_config(config, updated_config)
@@ -117,7 +119,7 @@ def _update_config(updated_config):
         raise Exception(f"❌ Error while updating the config file: {e}")
 
     # show a successful message
-    logging.info("🟢 Config file updated.")
+    _info("🟢 Config file updated.")
 
 
 def _get_config_value(keys):
@@ -127,7 +129,7 @@ def _get_config_value(keys):
     :return: The config value required.
     """
     # initial message
-    logging.info("🔄 Config file reading started...")
+    _info("🔄 Config file reading started...")
 
     if isinstance(keys, str):
         keys = keys.split(".")
@@ -142,7 +144,7 @@ def _get_config_value(keys):
             value = value[key]
 
         # debugging
-        logging.debug(f"⚙️ Config value (key-value): ({'.'.join(keys)} - {value}).")
+        _debug(f"⚙️ Config value (key-value): ({'.'.join(keys)} - {value}).")
 
         # show a successful message
         logging.info(f"🟢 {keys} read.")

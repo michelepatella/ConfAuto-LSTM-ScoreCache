@@ -1,5 +1,7 @@
 import logging
 
+from utils.log_utils import _info, _debug
+
 
 def _remove_missing_values(df):
     """
@@ -8,7 +10,7 @@ def _remove_missing_values(df):
     :return: The dataframe with missing values removed.
     """
     # initial message
-    logging.info("🔄 Missing values remotion started...")
+    _info("🔄 Missing values remotion started...")
 
     # size of the original dataset
     initial_len = len(df)
@@ -23,9 +25,9 @@ def _remove_missing_values(df):
     final_len = len(df)
 
     # debugging
-    logging.debug(f"⚙️Number of rows with missing values: {initial_len - final_len}.")
+    _debug(f"⚙️Number of rows with missing values: {initial_len - final_len}.")
 
     # print a successful message
-    logging.info("🟢 Missing values removed.")
+    _info("🟢 Missing values removed.")
 
     return df

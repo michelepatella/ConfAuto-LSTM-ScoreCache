@@ -1,6 +1,8 @@
 import logging
 import torch
 import numpy as np
+
+from utils.log_utils import _info, _debug
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.LSTM import LSTM
 from utils.config_utils import _get_config_value
@@ -22,12 +24,12 @@ def _training_testing_setup(
     :return: The device to use, the loss function, the model and the optimizer.
     """
     # initial message
-    logging.info("🔄 Training/Testing setup started...")
+    _info("🔄 Training/Testing setup started...")
 
     # debugging
-    logging.debug(f"⚙️ Model params: {model_params}.")
-    logging.debug(f"⚙️ Learning rate: {learning_rate}.")
-    logging.debug(f"⚙️ Targets: {targets}.")
+    _debug(f"⚙️ Model params: {model_params}.")
+    _debug(f"⚙️ Learning rate: {learning_rate}.")
+    _debug(f"⚙️ Targets: {targets}.")
 
     try:
         # define the device to use
@@ -38,7 +40,7 @@ def _training_testing_setup(
         class_weights = _calculate_class_weights(targets)
 
         # debugging
-        logging.debug(f"⚙️ Class weights: {class_weights}.")
+        _debug(f"⚙️ Class weights: {class_weights}.")
 
         # define the loss function
         criterion = torch.nn.CrossEntropyLoss(
@@ -58,7 +60,7 @@ def _training_testing_setup(
         raise Exception(f"❌ Error while setting up the training/testing process: {e}")
 
     # show a successful message
-    logging.info("🟢 Training/Testing setup completed.")
+    _info("🟢 Training/Testing setup completed.")
 
     return device, criterion, model, optimizer
 
@@ -74,8 +76,8 @@ def _loader_setup(loader_type, shuffle):
     dataset_path, _ = _get_dataset_path_type()
 
     # debugging
-    logging.debug(f"⚙️ Loader type: {loader_type}.")
-    logging.debug(f"⚙️ Shuffle: {shuffle}.")
+    _debug(f"⚙️ Loader type: {loader_type}.")
+    _debug(f"⚙️ Shuffle: {shuffle}.")
 
     # get the dataset
     dataset = AccessLogsDataset(
@@ -100,7 +102,7 @@ def _extract_targets_from_loader(data_loader):
     :return: All the extracted targets.
     """
     # initial message
-    logging.info("🔄 Target extraction from loader started...")
+    _info("🔄 Target extraction from loader started...")
 
     try:
         all_targets = []
@@ -112,10 +114,10 @@ def _extract_targets_from_loader(data_loader):
         raise Exception(f"❌ Error while extracting targets from loader: {e}")
 
     # debugging
-    logging.debug(f"⚙️ Target extracted: {all_targets}.")
+    _debug(f"⚙️ Target extracted: {all_targets}.")
 
     # show a successful message
-    logging.info("🟢 Target extracted from loader.")
+    _info("🟢 Target extracted from loader.")
 
     return torch.cat(all_targets)
 
@@ -127,14 +129,14 @@ def _calculate_class_weights(targets):
     :return: The class weights calculated.
     """
     # initial message
-    logging.info("🔄 Class weights calculation started...")
+    _info("🔄 Class weights calculation started...")
 
     try:
         # get the tot. no. of classes
         num_classes = _get_config_value("data.num_keys")
 
         # debugging
-        logging.debug(f"⚙️ Number of classes: {num_classes}.")
+        _debug(f"⚙️ Number of classes: {num_classes}.")
 
         # be sure targets is a numpy array and shift them
         targets = targets.cpu().numpy() if (
@@ -145,7 +147,7 @@ def _calculate_class_weights(targets):
         present_classes = np.unique(targets)
 
         # debugging
-        logging.debug(f"⚙️ Present classes: {present_classes}.")
+        _debug(f"⚙️ Present classes: {present_classes}.")
 
         # compute the class weights
         computed_weights = compute_class_weight(
@@ -165,6 +167,6 @@ def _calculate_class_weights(targets):
         raise Exception(f"❌ Error while calculating the class weights: {e}")
 
     # show a successful message
-    logging.info("🟢 Class weights calculated.")
+    _info("🟢 Class weights calculated.")
 
     return class_weights

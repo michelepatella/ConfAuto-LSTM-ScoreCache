@@ -1,5 +1,7 @@
 import logging
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
+from main import phase_var
+from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 from utils.dataset_utils import _save_dataset, _get_dataset_path_type, _create_dataframe
 
@@ -10,13 +12,14 @@ def data_generation():
     :return:
     """
     # initial message
-    logging.info("🔄 Data generation started...")
+    _info("🔄 Data generation started...")
+    phase_var.set("data_generation")
 
     # get the dataset path
     dataset_path, distribution_type = _get_dataset_path_type()
 
     # debugging
-    logging.debug(f"⚙️Type of distribution: {distribution_type}.")
+    _debug(f"⚙️Type of distribution: {distribution_type}.")
 
     if distribution_type == "static":
         # generate static requests and delta times
@@ -44,4 +47,4 @@ def data_generation():
     )
 
     # show a successful message
-    logging.info("✅ Data generation successfully completed.")
+    _info("✅ Data generation successfully completed.")

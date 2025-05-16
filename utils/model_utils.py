@@ -1,5 +1,7 @@
 import logging
 import torch
+
+from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 
 
@@ -10,14 +12,14 @@ def _save_model(model):
     :return:
     """
     # initial message
-    logging.info("🔄 Model saving started...")
+    _info("🔄 Model saving started...")
 
     try:
         # get the model path
         model_path = _get_config_value("model.model_save_path")
 
         # debugging
-        logging.debug(f"⚙️ Path to save the model: {model_path}.")
+        _debug(f"⚙️ Path to save the model: {model_path}.")
 
         # save the model
         torch.save(
@@ -28,7 +30,7 @@ def _save_model(model):
         raise Exception(f"❌ Error while saving the model: {e}")
 
     # show a successful message
-    logging.info(f"🟢 Model save to '{model_path}'.")
+    _info(f"🟢 Model save to '{model_path}'.")
 
 
 def _load_model(model, model_path, device):
@@ -40,10 +42,10 @@ def _load_model(model, model_path, device):
     :return: The model loaded.
     """
     # initial message
-    logging.info("🔄 Model loading started...")
+    _info("🔄 Model loading started...")
 
     # debugging
-    logging.debug(f"⚙️ Path to load the model: {model_path}.")
+    _debug(f"⚙️ Path to load the model: {model_path}.")
 
     try:
         # load the model
@@ -55,6 +57,6 @@ def _load_model(model, model_path, device):
         raise Exception(f"❌ Error while loading the model: {e}")
 
     # show a successful message
-    logging.info("🟢 Model loaded.")
+    _info("🟢 Model loaded.")
 
     return model

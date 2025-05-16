@@ -1,6 +1,7 @@
 import numpy as np
 import logging
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
+from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 
 
@@ -24,7 +25,7 @@ def _show_freq_table(requests):
     table_str = "\n".join(table_lines)
 
     # show the created table
-    logging.info("📊 Dataset generated info:\n%s", table_str)
+    _info("📊 Dataset generated info:\n%s", table_str)
 
 
 def _generate_requests_with_delta_times(probs, size=None):
@@ -67,7 +68,7 @@ def _generate_static_requests():
     :return: Static requests and delta times generated.
     """
     # initial message
-    logging.info("🔄 Static requests generation started...")
+    _info("🔄 Static requests generation started...")
 
     # read configurations
     num_requests = _get_config_value("data.num_requests")
@@ -77,9 +78,9 @@ def _generate_static_requests():
     max = _get_config_value("data.last_key") + 1
 
     # debugging
-    logging.debug(f"⚙️Zipf parameter: {alpha}.")
-    logging.debug(f"⚙️Number of keys: {num_keys}.")
-    logging.debug(f"⚙️Requests range: ({min}, {max-1}).")
+    _debug(f"⚙️Zipf parameter: {alpha}.")
+    _debug(f"⚙️Number of keys: {num_keys}.")
+    _debug(f"⚙️Requests range: ({min}, {max - 1}).")
 
     # check the validity of the parameters
     if num_requests <= 0 or num_keys <= 0:
@@ -97,14 +98,14 @@ def _generate_static_requests():
     requests, delta_times = _generate_requests_with_delta_times(probs)
 
     # debugging
-    logging.debug(f"⚙️Requests generated: {len(requests)}.")
-    logging.debug(f"⚙️Delta times shape: {delta_times.shape}.")
+    _debug(f"⚙️Requests generated: {len(requests)}.")
+    _debug(f"⚙️Delta times shape: {delta_times.shape}.")
 
     # show a frequency table of the keys
     _show_freq_table(requests)
 
     # show a successful message
-    logging.info("🟢 Static requests generated.")
+    _info("🟢 Static requests generated.")
 
     return requests, delta_times
 
@@ -115,7 +116,7 @@ def _generate_dynamic_requests():
     :return: Dynamic requests and delta times generated.
     """
     # initial message
-    logging.info("🔄 Dynamic requests generation started...")
+    _info("🔄 Dynamic requests generation started...")
 
     # read configurations
     num_requests = _get_config_value("data.num_requests")
@@ -127,10 +128,10 @@ def _generate_dynamic_requests():
     max = _get_config_value("data.last_key") + 1
 
     # debugging
-    logging.debug(f"⚙️Zipf parameters (from-to): ({alpha_start} - {alpha_end}).")
-    logging.debug(f"⚙️Number of keys: {num_keys}.")
-    logging.debug(f"⚙️Requests range: ({min}, {max-1}).")
-    logging.debug(f"⚙️Total time steps: {time_steps}.")
+    _debug(f"⚙️Zipf parameters (from-to): ({alpha_start} - {alpha_end}).")
+    _debug(f"⚙️Number of keys: {num_keys}.")
+    _debug(f"⚙️Requests range: ({min}, {max - 1}).")
+    _debug(f"⚙️Total time steps: {time_steps}.")
 
     # generate the Zipf distribution's parameter values
     alpha_values = np.linspace(alpha_start, alpha_end, time_steps)
@@ -145,12 +146,6 @@ def _generate_dynamic_requests():
 
     # calculate the time step duration
     time_step_duration = num_requests // time_steps
-
-    # check if some requests are ignored
-    remainder = num_requests % time_steps
-    # show a warning message if some requests are ignored
-    if remainder > 0:
-        logging.warning(f"⚠️{remainder} requests will be ignored due to uneven split.")
 
     requests, delta_times = [], []
 
@@ -175,6 +170,6 @@ def _generate_dynamic_requests():
     _show_freq_table(requests)
 
     # show a successful message
-    logging.info("🟢 Dynamic requests generated.")
+    _info("🟢 Dynamic requests generated.")
 
     return requests, delta_times
