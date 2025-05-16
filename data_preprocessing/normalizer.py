@@ -20,6 +20,11 @@ def _standardize(df, columns):
     # calculate the final index of the training set
     train_end_idx = int(training_perc * total_len)
 
+    # debugging
+    logging.debug(f"⚙️Total rows: {total_len}.")
+    logging.debug(f"⚙️Training %: {training_perc}.")
+    logging.debug(f"⚙️Training dataset range (from-to): (0 - {train_end_idx-1}).")
+
     # initialize the scaler
     scaler = StandardScaler()
 
@@ -36,6 +41,9 @@ def _standardize(df, columns):
             )
     except Exception as e:
         raise Exception(f"❌ Error while standardizing the dataset: {e}")
+
+    # debugging
+    logging.debug(f"⚙️Normalized columns: {columns}.")
 
     # print a successful message
     logging.info("🟢 Dataset standardized.")

@@ -10,11 +10,20 @@ def _remove_duplicates(df):
     # initial message
     logging.info("🔄 Dataset deduplication started...")
 
+    # size of the original dataset
+    initial_len = len(df)
+
     try:
         # clear the dataset removing duplicated rows
-        df.drop_duplicates()
+        df = df.drop_duplicates()
     except Exception as e:
         raise Exception(f"❌ Error while deduplicating the dataset: {e}")
+
+    # size of the deduplicated dataset
+    final_len = len(df)
+
+    # debugging
+    logging.debug(f"⚙️Number of duplicated rows: {initial_len - final_len}.")
 
     # print a successful message
     logging.info("🟢 Dataset deduplicated.")
@@ -31,11 +40,20 @@ def _remove_missing_values(df):
     # initial message
     logging.info("🔄 Missing values remotion started...")
 
+    # size of the original dataset
+    initial_len = len(df)
+
     try:
         # remove rows with missing values
         df = df.dropna(axis=0, how='any')
     except Exception as e:
         raise Exception(f"❌ Error while removing missing values from the dataset: {e}")
+
+    # size of the dataset without missing values
+    final_len = len(df)
+
+    # debugging
+    logging.debug(f"⚙️Number of rows with missing values: {initial_len - final_len}.")
 
     # print a successful message
     logging.info("🟢 Missing values removed.")
