@@ -64,17 +64,21 @@ def _create_dataframe(
     windows = _get_config_value("data.freq_windows")
 
     try:
-        # create dataframe
-        df = pd.DataFrame(columns)
+
+        # create the dataframe
+        df = pd.DataFrame()
 
         if use_frequency and sequence_column in columns:
             # add further columns to the dataframe
             for w in windows:
                 col_name = f"freq_last_{w}"
                 df[col_name] = _compute_frequency(
-                    list(df[sequence_column]),
+                    list(columns[sequence_column]),
                     window=w
                 )
+
+        for col_name, col_values in columns.items():
+            df[col_name] = col_values
 
     except Exception as e:
         raise Exception(f"❌ Error while creating the dataframe: {e}")

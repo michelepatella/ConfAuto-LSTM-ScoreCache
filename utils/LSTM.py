@@ -57,12 +57,6 @@ class LSTM(nn.Module):
             # set the no. of keys
             self.num_keys = _get_config_value(f"data.num_keys")
 
-            # embed the keys
-            self.key_embedding = nn.Embedding(
-                self.num_keys,
-                embedding_dim=_get_config_value("model.embedding_dim")
-            )
-
         except Exception as e:
             raise Exception(f"❌ Error while setting LSTM fields: {e}")
 
@@ -95,7 +89,7 @@ class LSTM(nn.Module):
         try:
             # instantiate the LSTM model
             self.lstm = nn.LSTM(
-                input_size=1+_get_config_value("model.embedding_dim"),
+                input_size=_get_config_value("model.num_features"),
                 hidden_size=self.hidden_size,
                 num_layers=self.num_layers,
                 bias=self.bias,
@@ -113,6 +107,36 @@ class LSTM(nn.Module):
         except Exception as e:
             raise Exception(f"❌ Error while instantiating the FC layer: {e}")
 
+    def _get_input(self, x_features):
+        """
+        Method to get the input features from the model.
+        :param x_features: The features of the model.
+        :return: The input for the model.
+        """
+        try:
+            # frequencies
+            freq_1 = x_features[:, :, 0].unsqueeze(-1)
+            freq_2 = x_features[:, :, 1].unsqueeze(-1)
+            freq_3 = x_features[:, :, 2].unsqueeze(-1)
+
+            # delta_time
+            delta_time = x_features[:, :, 3].unsqueeze(-1)
+
+            # concatenate all together
+            lstm_input = torch.cat(
+                [
+                    delta_time,
+                    freq_1,
+                    freq_2,
+                    freq_3
+                ],
+                dim=-1
+            )
+        except Exception as e:
+            raise ValueError(f"❌ Error while getting the input for the LSTM: {e}")
+
+        return lstm_input
+
 
     def forward(self, x_features):
         """
@@ -127,14 +151,8 @@ class LSTM(nn.Module):
         # debugging
         logging.debug(f"⚙️ Input shape: {x_features.shape}.")
 
-        # composition of the input for LSTM
-        delta_time = x_features[:, :, 0].unsqueeze(-1)
-        key_id = x_features[:, :, 1].long()
-        key_emb = self.key_embedding(key_id)
-        lstm_input = torch.cat(
-            [delta_time, key_emb],
-            dim=-1
-        )
+        # get the input for the LSTM
+        lstm_input = self._get_input(x_features)
 
         try:
             # pass the features to the LSTM

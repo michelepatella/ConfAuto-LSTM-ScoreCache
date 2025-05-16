@@ -47,11 +47,13 @@ class AccessLogsDataset(Dataset):
         :return:
         """
         try:
-            # assuming all the columns are features
-            # while the last one is the target to predict
             self.columns = data.columns.tolist()
-            self.features = self.columns[:-1]  # tutte tranne target
+
+            # assuming target is the last column
+            self.features = self.columns[:-1]
             self.target = self.columns[-1]
+
+            self.seq_len = _get_config_value("data.seq_len")
 
             # debugging
             logging.debug(f"⚙️ Dataset columns: {self.columns}.")
@@ -89,7 +91,7 @@ class AccessLogsDataset(Dataset):
         Method to return the length of the access logs dataset.
         :return: The length of the access logs dataset.
         """
-        return len(self.data)
+        return len(self.data) - self.seq_len
 
 
     def __getitem__(self, idx):
@@ -102,14 +104,19 @@ class AccessLogsDataset(Dataset):
         logging.debug(f"⚙️ Getting item at index: {idx}.")
 
         try:
-            # get the row from the dataframe
-            row = self.data.iloc[idx]
-
-            # extract features
-            x = torch.tensor(row[self.features].values.astype(float), dtype=torch.float)
+            # get the feature sequence of length seq_len
+            seq_data = self.data.iloc[idx: idx + self.seq_len]
+            x = torch.tensor(
+                seq_data[self.features].values.astype(float),
+                dtype=torch.float
+            )
 
             # extract target (assuming class indices start from 1 → convert to 0-based)
-            y_key = torch.tensor(int(row[self.target]) - 1, dtype=torch.long)
+            target_row = self.data.iloc[idx + self.seq_len]
+            y_key = torch.tensor(
+                int(target_row[self.target]) - 1,
+                dtype=torch.long
+            )
 
             # debugging
             logging.debug(f"⚙️ Feature vector shape: {x.shape}.")
