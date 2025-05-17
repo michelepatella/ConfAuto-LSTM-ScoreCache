@@ -15,7 +15,7 @@ data_preprocessing()
 
 #validation()
 
-training()
+#training()
 
 avg_loss, avg_loss_per_class, metrics = testing()
 

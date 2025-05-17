@@ -35,18 +35,19 @@ def _infer_batch(
 
     try:
         with torch.no_grad():
-            for x, y in loader:
+            for x_features, x_keys, y_key in loader:
 
                 # debugging
-                _debug(f"⚙️ Batch x shape: {x.shape}.")
-                _debug(f"⚙️ Batch y shape: {y.shape}.")
+                _debug(f"⚙️ Batch x_features shape: {x_features.shape}.")
+                _debug(f"⚙️ Batch x_keys shape: {x_keys.shape}.")
+                _debug(f"⚙️ Batch y_key shape: {y_key.shape}.")
 
-                x = x.to(device)
-                y = y.to(device)
+                x_features = x_features.to(device)
+                y_key = y_key.to(device)
 
                 # calculate loss and outputs through forward pass
                 loss, outputs = _compute_forward(
-                    (x, y),
+                    (x_features, x_keys, y_key),
                     model,
                     criterion,
                     device
@@ -65,19 +66,15 @@ def _infer_batch(
 
                 # store predictions and target for metrics
                 preds = torch.argmax(outputs, dim=1)
-
-                # debugging
-                _debug(f"⚙️ Predictions: {preds}.")
-
                 all_preds.extend(preds.cpu().numpy())
-                all_targets.extend(y.cpu().numpy())
+                all_targets.extend(y_key.cpu().numpy())
                 all_outputs.extend(outputs.cpu())
 
                 # calculate loss per class
-                for class_id in torch.unique(y):
-                    mask = y == class_id
+                for class_id in torch.unique(y_key):  # e qui
+                    mask = y_key == class_id
                     if mask.sum() > 0:
-                        class_loss = criterion(outputs[mask], y[mask])
+                        class_loss = criterion(outputs[mask], y_key[mask])
                         loss_per_class[int(class_id.item())].append(class_loss.item())
 
                         # debugging
