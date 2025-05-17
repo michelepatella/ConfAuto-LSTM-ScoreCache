@@ -16,7 +16,7 @@ def _compute_forward(batch, model, criterion, device):
     # try unpack data
     try:
         # unpack data
-        x_features, y_key = batch
+        x_features, x_keys, y_key = batch
 
         # debugging
         _debug(f"⚙️ Target batch: {y_key}.")
@@ -26,16 +26,18 @@ def _compute_forward(batch, model, criterion, device):
     try:
         # move data to the device
         x_features = x_features.to(device)
+        x_keys = x_keys.to(device)
         y_key = y_key.to(device)
     except Exception as e:
         raise Exception(f"❌ Error while moving data to device: {e}")
 
     try:
         # calculate the outputs
-        outputs = model(x_features)
+        outputs = model(x_features, x_keys)
 
         # debugging
         _debug(f"⚙️ Input batch shape: {x_features.shape}.")
+        _debug(f"⚙️ Input keys shape: {x_keys.shape}")
         _debug(f"⚙️ Model output shape: {outputs.shape}.")
 
     except Exception as e:

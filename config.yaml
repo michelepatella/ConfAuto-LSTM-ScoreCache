@@ -10,6 +10,7 @@ data:
   alpha_end: 0.8
   time_steps: 100
   seq_len: 25
+  embedding_dim: 10
   freq_timestamp: 5
   freq_windows: [10, 100, 1000]
   training_perc: 0.7

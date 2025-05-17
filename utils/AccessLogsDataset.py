@@ -98,7 +98,7 @@ class AccessLogsDataset(Dataset):
         """
         Method to return features and the next value in the sequence.
         :param idx: The index of the access logs dataset.
-        :return: Access logs dataset.
+        :return: The numerical features and the key.
         """
         # debugging
         _debug(f"⚙️ Getting item at index: {idx}.")
@@ -106,9 +106,17 @@ class AccessLogsDataset(Dataset):
         try:
             # get the feature sequence of length seq_len
             seq_data = self.data.iloc[idx: idx + self.seq_len]
-            x = torch.tensor(
+
+            # Extract numerical features
+            x_features = torch.tensor(
                 seq_data[self.features].values.astype(float),
                 dtype=torch.float
+            )
+
+            # Extract key IDs (request IDs)
+            x_keys = torch.tensor(
+                seq_data[self.target].values.astype(int) - 1,
+                dtype=torch.long
             )
 
             # extract target
@@ -119,10 +127,11 @@ class AccessLogsDataset(Dataset):
             )
 
             # debugging
-            _debug(f"⚙️ Feature vector shape: {x.shape}.")
+            _debug(f"⚙️ Feature vector shape: {x_features.shape}.")
+            _debug(f"⚙️ Key IDs shape: {x_keys.shape}")
             _debug(f"⚙️ Target: {y_key.item()}.")
 
         except Exception as e:
             raise Exception(f"❌ Error retrieving item at index {idx}: {e}")
 
-        return x, y_key
+        return x_features, x_keys, y_key

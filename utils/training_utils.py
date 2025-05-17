@@ -34,7 +34,7 @@ def _train_one_epoch(
         leave=False
     )
     """
-    for x, y in training_loader:
+    for x_features, x_keys, y_key in training_loader:
         try:
             # reset the gradients
             optimizer.zero_grad()
@@ -43,7 +43,7 @@ def _train_one_epoch(
 
         # forward pass
         loss, _ = _compute_forward(
-            (x, y),
+            (x_features, x_keys, y_key),
             model,
             criterion,
             device

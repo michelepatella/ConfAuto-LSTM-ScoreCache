@@ -186,7 +186,7 @@ def _extract_targets_from_loader(data_loader):
     try:
         all_targets = []
         # extract targets from data loader
-        for _, targets in data_loader:
+        for _, _, targets in data_loader:
             all_targets.append(targets - 1)
 
     except Exception as e:
