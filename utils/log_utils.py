@@ -10,12 +10,15 @@ def _info(msg, *args, **kwargs):
     :param kwargs: The keyword arguments to print.
     :return:
     """
-    logging.info(
-        msg,
-        *args,
-        extra={"phase": phase_var.get()},
-        **kwargs
-    )
+    try:
+        logging.info(
+            msg,
+            *args,
+            extra={"phase": phase_var.get()},
+            **kwargs
+        )
+    except (KeyError, ValueError, LookupError, TypeError, AttributeError) as e:
+        raise RuntimeError(f"❌ Error while logging info message: {e}")
 
 
 def _debug(msg, *args, **kwargs):
@@ -26,12 +29,15 @@ def _debug(msg, *args, **kwargs):
     :param kwargs: The keyword arguments to print.
     :return:
     """
-    logging.debug(
-        msg,
-        *args,
-        extra={"phase": phase_var.get()},
-        **kwargs
-    )
+    try:
+        logging.debug(
+            msg,
+            *args,
+            extra={"phase": phase_var.get()},
+            **kwargs
+        )
+    except (KeyError, ValueError, LookupError, TypeError, AttributeError) as e:
+        raise RuntimeError(f"❌ Error while logging debug message: {e}")
 
 # contextual variable indicating the phase
 # in which the logging message is located in
