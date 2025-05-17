@@ -1,31 +1,48 @@
 import numpy as np
-from config.main import first_key, last_key, periodic_amplitude, burst_every, burst_peak, \
-    burst_high, burst_low, periodic_base_scale
+from config.main import first_key, last_key, burst_every, burst_peak, \
+    burst_high, burst_low, seed, p_local, periodic_base_scale, periodic_amplitude
 from utils.log_utils import _debug, _info
 
 
 def _generate_key_relationships(first_key, last_key):
+    """
+    Method to generate key relationships between two keys.
+    :param first_key: The first key.
+    :param last_key: The last key.
+    :return: The key relationships.
+    """
+    # initial message
+    _info("🔄 Pattern generation started...")
+
+    # initialize data
     key_relationships = {}
     keys = list(range(first_key, last_key))
 
+    # for each key
     for i, key in enumerate(keys):
+
+        # initialize related keys to the current one
         related = []
 
+        # relations between the previous and next key
         if i - 1 >= 0:
             related.append(keys[i - 1])
         if i + 1 < len(keys):
             related.append(keys[i + 1])
 
+        # store the related keys
         key_relationships[key] = related
+
+    # show a successful message
+    _info(f"🟢 Key relationships generated.")
 
     return key_relationships
 
 
 def _generate_pattern(probs, num_requests, timestamps):
     """
-    Generates requests and delta times based on a combination of bursty and periodic pattern,
+    Method to generate requests and delta times based on a combination of bursty and periodic pattern,
     with added key relationship logic.
-
     :param probs: The Zipf probabilities.
     :param num_requests: The number of requests.
     :param timestamps: The list of timestamps.
@@ -42,7 +59,10 @@ def _generate_pattern(probs, num_requests, timestamps):
     # initialize data
     requests = []
     delta_times = []
-    period = 24 * 60 * 60  # Define the day as period (24(h) * 60 (min) * 60(s))
+    last_accessed_key = None
+
+    # define the day as period (24(h) * 60 (min) * 60(s))
+    period = 24 * 60 * 60
 
     # debugging
     _debug(f"⚙️ Period: {period}.")
@@ -54,41 +74,58 @@ def _generate_pattern(probs, num_requests, timestamps):
         raise ValueError("❌ probs must be a numpy array summing to 1.")
 
     # define key relationships using a dictionary
-    key_relationships = _generate_key_relationships(first_key, last_key)
+    key_relationships = _generate_key_relationships(
+        first_key,
+        last_key
+    )
 
-    last_accessed_key = None
+    # to make the process deterministic
+    np.random.seed(seed)
 
     try:
+        # for each request
         for i in range(num_requests):
-            if last_accessed_key is None:
-                # generate the first request
+
+            # for the first request or the p_local %
+            # of all the other times use a Zipf distribution
+            if (last_accessed_key is None
+                    or np.random.rand() > p_local):
+
+                # generate the request following Zipf distribution
                 request = np.random.choice(
                     np.arange(first_key, last_key),
                     p=probs
                 )
+
             else:
-                 #next request based on relations
-                related_keys = key_relationships.get(last_accessed_key, [])
+
+                # get the related keys
+                related_keys = key_relationships.get(
+                    last_accessed_key,
+                    []
+                )
+
                 if related_keys:
+                    # generate a request following the relation among keys
                     request = np.random.choice(related_keys)
                 else:
+                    # generate the request following Zipf distribution
                     request = np.random.choice(
                         np.arange(first_key, last_key),
                         p=probs
                     )
 
             # calculate periodic component for frequency scaling
-            periodic_scale = (
-                5 + 5 * np.cos(2 * np.pi * timestamps[-1] / period)
-            )
+            periodic_scale = (periodic_base_scale + periodic_amplitude
+                              * np.cos(2 * np.pi * timestamps[-1] / period))
 
-            # Introduce burstiness
+            # introduce burstiness
             if i % burst_every < burst_peak:
                 bursty_scale = burst_high
             else:
                 bursty_scale = burst_low
 
-            # Combine periodic and bursty scales
+            # combine periodic and bursty scales
             freq_scale = periodic_scale * bursty_scale
 
             # Calculate delta time

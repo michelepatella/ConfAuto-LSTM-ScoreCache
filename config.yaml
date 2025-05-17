@@ -7,6 +7,7 @@ data:
   first_key: 1
   last_key: 50
   freq_windows: [10, 100, 1000]
+  p_local: 0.7
 
   alpha: 0.8
   alpha_start: 0.8

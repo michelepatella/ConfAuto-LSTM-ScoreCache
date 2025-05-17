@@ -20,6 +20,8 @@ alpha = _get_config_value("data.alpha")
 alpha_start = _get_config_value("data.alpha_start")
 alpha_end = _get_config_value("data.alpha_end")
 time_steps = _get_config_value("data.time_steps")
+seed = _get_config_value("data.seed")
+p_local = _get_config_value("data.p_local")
 
 # pattern config
 burst_high = _get_config_value("data.burst_high")
