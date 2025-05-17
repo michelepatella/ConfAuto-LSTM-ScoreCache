@@ -26,7 +26,12 @@ def data_preprocessing():
     # standardize 'delta_time' column
     df_standardized = _standardize(
         df_no_missing_values,
-        ["delta_time"]
+        [
+            "delta_time",
+            "freq_last_10",
+            "freq_last_100",
+            "freq_last_1000"
+        ]
     )
 
     # save the preprocessed dataset
