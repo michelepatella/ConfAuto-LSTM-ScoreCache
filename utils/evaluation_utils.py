@@ -1,9 +1,10 @@
 from collections import defaultdict
 import torch
 from sklearn.metrics import classification_report
+from config.main import top_k
 from utils.log_utils import _info, _debug
-from utils.config_utils import _get_config_value
 from utils.feedforward_utils import _compute_forward
+
 
 def _infer_batch(
         model,
@@ -59,7 +60,7 @@ def _infer_batch(
 
                 # check the loss
                 if loss is None:
-                    raise Exception("❌ Error while computing average loss due to loss equals None.")
+                    raise ValueError("❌ Error while computing average loss due to loss equals None.")
 
                 # update the total loss
                 total_loss += loss.item()
@@ -80,8 +81,8 @@ def _infer_batch(
                         # debugging
                         _debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
 
-    except Exception as e:
-        raise Exception(f"❌ Error while inferring the batch: {e}")
+    except (IndexError, IndexError, KeyError, AttributeError, TypeError) as e:
+        raise RuntimeError(f"❌ Error while inferring the batch: {e}")
 
     # show a successful message
     _info("🟢 Batch inferred.")
@@ -117,9 +118,8 @@ def _calculate_average_losses(
             cls: sum(losses) / len(losses)
             for cls, losses in loss_per_class.items()
         }
-
-    except Exception as e:
-        raise Exception(f"❌ Error while calculating average losses: {e}")
+    except (ZeroDivisionError, TypeError, AttributeError, KeyError) as e:
+        raise RuntimeError(f"❌ Error while calculating average losses: {e}")
 
     # show a successful message
     _info("🟢 Average losses calculated.")
@@ -147,7 +147,7 @@ def _collect_predictions(
 
     # check the length of the loader
     if len(loader) == 0:
-        raise Exception("❌ Error while collecting predictions due to empty loader.")
+        raise ValueError("❌ Error while collecting predictions due to empty loader.")
 
     # infer the batch
     (total_loss, loss_per_class,
@@ -160,8 +160,7 @@ def _collect_predictions(
 
     # debugging
     _debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
-    _debug(f"⚙️ Predictions: {all_preds}.")
-    _debug(f"⚙️ Targets: {all_targets}.")
+    _debug(f"⚙️ Total targets: {len(all_targets)}.")
 
     # calculate the average of losses
     avg_loss, avg_loss_per_class = (
@@ -186,26 +185,33 @@ def _top_k_accuracy(targets, outputs, k):
     :param k: The value of k for the accuracy.
     :return: The k-accuracy of the predictions.
     """
-    # prepare data
-    outputs_tensor = torch.stack(outputs)
-    top_k_preds = (torch.topk(outputs_tensor, k=k, dim=1)
-                   .indices.cpu().numpy())
+    try:
+        # prepare data
+        outputs_tensor = torch.stack(outputs)
+        top_k_preds = (torch.topk(outputs_tensor, k=k, dim=1)
+                       .indices.cpu().numpy())
 
-    # initialize the no. of correct predictions
-    correct = 0
+        # initialize the no. of correct predictions
+        correct = 0
 
-    # count the correct predictions
-    for i in range(len(targets)):
+        # count the correct predictions
+        for i in range(len(targets)):
 
-        # get the top-k predictions
-        top_k_i = top_k_preds[i][:k]
+            # get the top-k predictions
+            top_k_i = top_k_preds[i][:k]
 
-        # check if the target is contained into the
-        # top-k predictions
-        if targets[i] in top_k_i:
-            correct += 1
+            # check if the target is contained into the
+            # top-k predictions
+            if targets[i] in top_k_i:
+                correct += 1
 
-    return correct / len(targets)
+        # calculate the accuracy
+        accuracy = correct / len(targets)
+
+    except (RuntimeError, IndexError, TypeError, ZeroDivisionError, ValueError) as e:
+        raise RuntimeError(f"❌ Error while computing top-k accuracy: {e}")
+
+    return accuracy
 
 
 def _compute_metrics(targets, predictions, outputs):
@@ -218,9 +224,6 @@ def _compute_metrics(targets, predictions, outputs):
     """
     # initial message
     _info("🔄 Metrics computation started...")
-
-    # load some configurations
-    top_k = _get_config_value("evaluation.top_k")
 
     try:
         # class-wise metrics
@@ -237,19 +240,14 @@ def _compute_metrics(targets, predictions, outputs):
             outputs,
             top_k
         )
-
-    except Exception as e:
-        raise Exception(f"❌ Error while computing metrics: {e}")
+    except (ValueError, TypeError) as e:
+        raise RuntimeError(f"❌ Error while computing metrics: {e}")
 
     # collect metrics
     metrics = {
         "class_metrics": class_report,
         "top_k_accuracy": top_k_accuracy,
     }
-
-    # debugging
-    _debug(f"⚙️ Classification report keys: {list(class_report.keys())}.")
-    _debug(f"⚙️ Top-k accuracy: {top_k_accuracy}.")
 
     # show a successful message
     _info("🟢 Metrics computed.")
