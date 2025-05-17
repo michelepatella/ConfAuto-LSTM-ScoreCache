@@ -17,10 +17,10 @@ def data_preprocessing():
     phase_var.set("data_preprocessing")
 
     # get the dataset path
-    dataset_path,_ = _get_dataset_path_type()
+    dataset_path, _ = _get_dataset_path_type()
 
     # load the dataset
-    df = _load_dataset(_get_config_value(dataset_path))
+    df = _load_dataset(dataset_path)
 
     # remove missing values
     df_no_missing_values = _remove_missing_values(df)
@@ -40,7 +40,7 @@ def data_preprocessing():
     # save the preprocessed dataset
     _save_dataset(
         df_standardized,
-        _get_config_value(dataset_path)
+        dataset_path
     )
 
     # print a successful message

@@ -47,7 +47,7 @@ def data_generation():
     # save the dataset
     _save_dataset(
         df,
-        _get_config_value(dataset_path)
+        dataset_path
     )
 
     # show a successful message

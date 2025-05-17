@@ -1,6 +1,9 @@
 import pandas as pd
+import numpy as np
 import torch
+from pandas.errors import EmptyDataError, ParserError
 from torch.utils.data import DataLoader
+from config.main import dataset_type, dynamic_dataset_path, static_dataset_path
 from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 
@@ -15,10 +18,15 @@ def _create_dataframe(columns):
     _info("🔄 Dataset creation started...")
 
     try:
+        # check the columns
+        if any(col is None for col in columns):
+            raise ValueError("❌ One or more elements in 'columns' are None.")
+
         # create the dataframe
         df = pd.DataFrame(columns)
-    except Exception as e:
-        raise Exception(f"❌ Error while creating the dataframe: {e}")
+
+    except (ValueError, TypeError) as e:
+        raise RuntimeError(f"❌ Error while creating the dataframe: {e}")
 
     # show a successful message
     _info(f"🟢 Dataframe created.")
@@ -38,6 +46,7 @@ def _save_dataset(df, dataset_path):
 
     # debugging
     _debug(f"⚙️ Dataset shape to save: {df.shape}.")
+    _debug(f"⚙️ Dataset path: {dataset_path}.")
 
     try:
         # convert dataframe to CSV file
@@ -45,8 +54,8 @@ def _save_dataset(df, dataset_path):
 
         # show a successful message
         _info(f"🟢 Dataset saved to '{dataset_path}'.")
-    except Exception as e:
-        raise Exception(f"❌ Error while saving the dataset: {e}")
+    except (OSError, PermissionError, FileNotFoundError, ValueError, TypeError) as e:
+        raise RuntimeError(f"❌ Error while saving the dataset: {e}")
 
 
 def _create_data_loader(
@@ -75,8 +84,8 @@ def _create_data_loader(
             batch_size=batch_size,
             shuffle=shuffle
         )
-    except Exception as e:
-        raise Exception(f"❌ Error while creating data loader: {e}")
+    except (TypeError, ValueError, AttributeError) as e:
+        raise RuntimeError(f"❌ Error while creating data loader: {e}")
 
     # show a successful message
     _info("🟢 Data loader created.")
@@ -99,8 +108,8 @@ def _load_dataset(dataset_path):
     try:
         # load the dataset
         df = pd.read_csv(dataset_path)
-    except Exception as e:
-        raise Exception(f"❌ Error while loading dataset: {e}")
+    except (ValueError, EmptyDataError, ParserError, UnicodeDecodeError) as e:
+        raise RuntimeError(f"❌ Error while loading dataset: {e}")
 
     # debugging
     _debug(f"⚙️ Shape of the dataset loaded: {df.shape}.")
@@ -119,19 +128,14 @@ def _get_dataset_path_type():
     # initial message
     _info("🔄 Dataset path and type retrieval started...")
 
-    # read the dataset type
-    dataset_type = _get_config_value("data.distribution_type")
-
     # debugging
     _debug(f"⚙️ Dataset distribution type from config: {dataset_type}.")
 
     # keep track of the dataset path
     if dataset_type == "static":
-        dataset_path = "data.static_dataset_path"
-    elif dataset_type == "dynamic":
-        dataset_path = "data.dynamic_dataset_path"
+        dataset_path = static_dataset_path
     else:
-        raise Exception(f"❌ Invalid dataset type: {dataset_type}")
+        dataset_path = dynamic_dataset_path
 
     # debugging
     _debug(f"⚙️ Dataset path found: {dataset_path}.")
@@ -158,18 +162,21 @@ def _loader_setup(loader_type, shuffle):
     _debug(f"⚙️ Loader type: {loader_type}.")
     _debug(f"⚙️ Shuffle: {shuffle}.")
 
-    # get the dataset
-    dataset = AccessLogsDataset(
-        _get_config_value(dataset_path),
-        loader_type
-    )
+    try:
+        # get the dataset
+        dataset = AccessLogsDataset(
+            dataset_path,
+            loader_type
+        )
 
-    # create the data loader starting from the dataset
-    loader = _create_data_loader(
-        dataset,
-        _get_config_value(f"{loader_type}.batch_size"),
-        shuffle
-    )
+        # create the data loader starting from the dataset
+        loader = _create_data_loader(
+            dataset,
+            _get_config_value(f"{loader_type}.batch_size"),
+            shuffle
+        )
+    except (FileNotFoundError, IOError, OSError, ValueError, TypeError, AttributeError) as e:
+        raise RuntimeError(f"❌ Error while set upping the loader: {e}")
 
     return dataset, loader
 
@@ -188,9 +195,8 @@ def _extract_targets_from_loader(data_loader):
         # extract targets from data loader
         for _, _, targets in data_loader:
             all_targets.append(targets - 1)
-
-    except Exception as e:
-        raise Exception(f"❌ Error while extracting targets from loader: {e}")
+    except (TypeError, ValueError, IndexError) as e:
+        raise RuntimeError(f"❌ Error while extracting targets from loader: {e}")
 
     # debugging
     _debug(f"⚙️ Target extracted: {all_targets}.")

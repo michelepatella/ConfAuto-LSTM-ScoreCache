@@ -2,7 +2,12 @@ from utils.config_utils import _get_config_value
 
 # data configuration
 
-# general data config
+# dataset
+dataset_type = _get_config_value("data.distribution_type")
+static_dataset_path = _get_config_value("data.static_dataset_path")
+dynamic_dataset_path = _get_config_value("data.dynamic_dataset_path")
+
+# data
 num_requests = _get_config_value("data.num_requests")
 num_keys = _get_config_value("data.num_keys")
 first_key = _get_config_value("data.first_key")
