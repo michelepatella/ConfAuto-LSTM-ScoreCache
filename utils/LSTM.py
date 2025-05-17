@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from config.main import num_layers, dropout, num_keys, embedding_dim, num_features
 from utils.log_utils import _debug
 from utils.config_utils import _get_config_value
 
@@ -32,8 +33,16 @@ class LSTM(nn.Module):
                     # apply all the other parameters (except dropout), if specified
                     if (params[param] is not None and
                             params[param] != "dropout"):
+
+                        # debugging
+                        _debug(f"⚙️ '{param}' found. Using the specified value ({params[param]}).")
+
+                        # set the value
                         setattr(self, param, params[param])
                     else:
+                        # debugging
+                        _debug(f"⚙️ '{param}' not found. Using the default value.")
+
                         # if they are None, read them from config file and set them
                         setattr(
                             self,
@@ -41,6 +50,9 @@ class LSTM(nn.Module):
                             _get_config_value(f"model.params.{param}")
                         )
                 else:
+                    # debugging
+                    _debug(f"⚙️ '{param}' not found. Using the default value.")
+
                     # read the required parameter from config
                     setattr(
                         self,
@@ -49,28 +61,36 @@ class LSTM(nn.Module):
                     )
 
             # check if dropout can be applied
-            if params.get(
-                    "num_layers",
-                    _get_config_value("model.params.num_layers")
-            ) > 1:
+            if params.get("num_layers", num_layers) > 1:
+
+                # debugging
+                _debug(f"⚙️ 'dropout' can be applied.")
+
                 # apply dropout
                 if params["dropout"] is not None:
+                    # debugging
+                    _debug(f"⚙️ 'dropout' found. Using the specified value ({float(params['dropout'])}).")
+
+                    # set the value
                     setattr(self, "dropout", float(params["dropout"]))
                 else:
-                    setattr(
-                        self,
-                        "dropout",
-                        float(_get_config_value("model.params.dropout"))
-                    )
+                    # debugging
+                    _debug(f"⚙️ 'dropout' not found. Using the default value.")
+
+                    # set the value
+                    setattr(self, "dropout", float(dropout))
             else:
+                # debugging
+                _debug(f"⚙️ 'dropout' cannot be applied.")
+
                 # dropout cannot be applied
                 setattr(self, "dropout", 0.0)
 
             # set the no. of keys
-            self.num_keys = _get_config_value("data.num_keys")
+            self.num_keys = num_keys
 
             # apply embedding
-            self.embedding_dim = _get_config_value("data.embedding_dim")
+            self.embedding_dim = embedding_dim
 
             # instantiate the embedding layer
             self.embedding = nn.Embedding(
@@ -78,8 +98,8 @@ class LSTM(nn.Module):
                 self.embedding_dim
             )
 
-        except Exception as e:
-            raise Exception(f"❌ Error while setting LSTM fields: {e}")
+        except (AttributeError, KeyError, TypeError, ValueError) as e:
+            raise RuntimeError(f"❌ Error while setting class fields: {e}")
 
 
     def __init__(self, params):
@@ -99,8 +119,7 @@ class LSTM(nn.Module):
         try:
             # instantiate the LSTM model
             self.lstm = nn.LSTM(
-                input_size=_get_config_value("model.num_features")
-                           + self.embedding_dim,
+                input_size=num_features+self.embedding_dim,
                 hidden_size=self.hidden_size,
                 num_layers=self.num_layers,
                 bias=self.bias,
@@ -109,14 +128,14 @@ class LSTM(nn.Module):
                 bidirectional=self.bidirectional,
                 proj_size=self.proj_size
             )
-        except Exception as e:
-            raise Exception(f"❌ Error while instantiating LSTM model: {e}")
+        except (TypeError, ValueError, KeyError) as e:
+            raise RuntimeError(f"❌ Error while instantiating LSTM model: {e}")
 
         try:
             # fully-connected layer (linear)
             self.fc = nn.Linear(self.hidden_size, self.num_keys)
-        except Exception as e:
-            raise Exception(f"❌ Error while instantiating the FC layer: {e}")
+        except (TypeError, ValueError) as e:
+            raise RuntimeError(f"❌ Error while instantiating the FC layer: {e}")
 
 
     def _get_lstm_input(self, x_features, x_keys):
@@ -136,13 +155,18 @@ class LSTM(nn.Module):
 
         # pass the key through the embedding layer
         embedded_keys = self.embedding(x_keys)
+
+        # debugging
         _debug(f"⚙️ Embedded keys shape: {embedded_keys.shape}.")
 
-        # concatenate embedding layer with the other features
-        x = torch.cat(
-            (x_features, embedded_keys),
-            dim=-1
-        )
+        try:
+            # concatenate embedding layer with the other features
+            x = torch.cat(
+                (x_features, embedded_keys),
+                dim=-1
+            )
+        except (RuntimeError, TypeError) as e:
+            raise RuntimeError(f"❌ Error while constructing the LSTM input: {e}.")
 
         return x
 
@@ -160,8 +184,8 @@ class LSTM(nn.Module):
 
             # pass the features to the LSTM
             lstm_out, _ = self.lstm(x)
-        except Exception as e:
-            raise Exception(f"❌ Error while passing data through LSTM: {e}")
+        except (AttributeError, TypeError, ValueError) as e:
+            raise RuntimeError(f"❌ Error while passing data through LSTM: {e}")
 
         # debugging
         _debug(f"⚙️ Output shape: {lstm_out.shape}.")
@@ -169,8 +193,8 @@ class LSTM(nn.Module):
         try:
             # get the logits from the LSTM output
             logits = self.fc(lstm_out[:, -1, :])
-        except Exception as e:
-            raise Exception(f"❌ Error while processing LSTM output: {e}")
+        except (IndexError, AttributeError) as e:
+            raise RuntimeError(f"❌ Error while processing LSTM output: {e}")
 
         # debugging
         _debug(f"⚙️ Logits shape: {logits.shape}.")

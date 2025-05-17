@@ -8,6 +8,7 @@ num_keys = _get_config_value("data.num_keys")
 first_key = _get_config_value("data.first_key")
 last_key = _get_config_value("data.last_key") + 1
 freq_windows = _get_config_value("data.freq_windows")
+embedding_dim = _get_config_value("data.embedding_dim")
 
 # zipf config
 alpha = _get_config_value("data.alpha")
@@ -34,6 +35,9 @@ training_epochs = _get_config_value("training.epochs")
 
 # model
 model_params = _get_config_value("model.params")
+num_layers = _get_config_value("model.params.num_layers")
+dropout = _get_config_value("model.params.dropout")
+num_features = _get_config_value("model.num_features")
 model_save_path = _get_config_value("model.model_save_path")
 
 # validation
