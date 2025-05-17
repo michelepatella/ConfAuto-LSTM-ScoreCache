@@ -4,6 +4,23 @@ from config.main import first_key, last_key, periodic_amplitude, burst_every, bu
 from utils.log_utils import _debug, _info
 
 
+def _generate_key_relationships(first_key, last_key):
+    key_relationships = {}
+    keys = list(range(first_key, last_key + 1))
+
+    for i, key in enumerate(keys):
+        related = []
+
+        if i - 1 >= 0:
+            related.append(keys[i - 1])
+        if i + 1 < len(keys):
+            related.append(keys[i + 1])
+
+        key_relationships[key] = related
+
+    return key_relationships
+
+
 def _generate_pattern(probs, num_requests, timestamps):
     """
     Generates requests and delta times based on a combination of bursty and periodic pattern,
@@ -26,7 +43,6 @@ def _generate_pattern(probs, num_requests, timestamps):
     requests = []
     delta_times = []
     period = 24 * 60 * 60  # Define the day as period (24(h) * 60 (min) * 60(s))
-    num_keys = last_key - first_key + 1
 
     # debugging
     _debug(f"⚙️ Period: {period}.")
@@ -37,62 +53,10 @@ def _generate_pattern(probs, num_requests, timestamps):
     if not isinstance(probs, np.ndarray) or not np.isclose(np.sum(probs), 1.0):
         raise ValueError("❌ probs must be a numpy array summing to 1.")
 
-    # Define key relationships using a dictionary
-    key_relationships = {
-        first_key + 0: [first_key + 1, first_key + 2],  # Example: 1 -> 2 or 3
-        first_key + 1: [first_key + 0, first_key + 3],  # Example: 2 -> 1 or 4
-        first_key + 2: [first_key + 0, first_key + 4],  # Example: 3 -> 1 or 5
-        first_key + 3: [first_key + 1, first_key + 5],
-        first_key + 4: [first_key + 2, first_key + 6],
-        first_key + 5: [first_key + 3, first_key + 7],
-        first_key + 6: [first_key + 4, first_key + 8],
-        first_key + 7: [first_key + 5, first_key + 9],
-        first_key + 8: [first_key + 6, first_key + 10],
-        first_key + 9: [first_key + 7, first_key + 11],
-        first_key + 10: [first_key + 8, first_key + 12],
-        first_key + 11: [first_key + 9, first_key + 13],
-        first_key + 12: [first_key + 10, first_key + 14],
-        first_key + 13: [first_key + 11, first_key + 15],
-        first_key + 14: [first_key + 12, first_key + 16],
-        first_key + 15: [first_key + 13, first_key + 17],
-        first_key + 16: [first_key + 14, first_key + 18],
-        first_key + 17: [first_key + 15, first_key + 19],
-        first_key + 18: [first_key + 16, first_key + 20],
-        first_key + 19: [first_key + 17, first_key + 21],
-        first_key + 20: [first_key + 18, first_key + 22],
-        first_key + 21: [first_key + 19, first_key + 23],
-        first_key + 22: [first_key + 20, first_key + 24],
-        first_key + 23: [first_key + 21, first_key + 25],
-        first_key + 24: [first_key + 22, first_key + 26],
-        first_key + 25: [first_key + 23, first_key + 27],
-        first_key + 26: [first_key + 24, first_key + 28],
-        first_key + 27: [first_key + 25, first_key + 29],
-        first_key + 28: [first_key + 26, first_key + 30],
-        first_key + 29: [first_key + 27, first_key + 31],
-        first_key + 30: [first_key + 28, first_key + 32],
-        first_key + 31: [first_key + 29, first_key + 33],
-        first_key + 32: [first_key + 30, first_key + 34],
-        first_key + 33: [first_key + 31, first_key + 35],
-        first_key + 34: [first_key + 32, first_key + 36],
-        first_key + 35: [first_key + 33, first_key + 37],
-        first_key + 36: [first_key + 34, first_key + 38],
-        first_key + 37: [first_key + 35, first_key + 39],
-        first_key + 38: [first_key + 36, first_key + 40],
-        first_key + 39: [first_key + 37, first_key + 41],
-        first_key + 40: [first_key + 38, first_key + 42],
-        first_key + 41: [first_key + 39, first_key + 43],
-        first_key + 42: [first_key + 40, first_key + 44],
-        first_key + 43: [first_key + 41, first_key + 45],
-        first_key + 44: [first_key + 42, first_key + 46],
-        first_key + 45: [first_key + 43, first_key + 47],
-        first_key + 46: [first_key + 44, first_key + 48],
-        first_key + 47: [first_key + 45, first_key + 49],
-        first_key + 48: [first_key + 46, first_key + 50],
-        first_key + 49: [first_key + 47, first_key + 1],
-        first_key + 50: [first_key + 48, first_key + 2],
-    }
+    # define key relationships using a dictionary
+    key_relationships = _generate_key_relationships(first_key, last_key)
 
-    last_accessed_key = None # Keep track of the last accessed key
+    last_accessed_key = None
 
     try:
         for i in range(num_requests):
@@ -113,7 +77,7 @@ def _generate_pattern(probs, num_requests, timestamps):
                         p=probs
                     )
 
-            # Calculate periodic component for frequency scaling
+            # calculate periodic component for frequency scaling
             periodic_scale = (
                 5 + 5 * np.cos(2 * np.pi * timestamps[-1] / period)
             )
