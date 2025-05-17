@@ -6,7 +6,7 @@ from utils.log_utils import _debug, _info
 
 def _generate_key_relationships(first_key, last_key):
     key_relationships = {}
-    keys = list(range(first_key, last_key + 1))
+    keys = list(range(first_key, last_key))
 
     for i, key in enumerate(keys):
         related = []
@@ -57,14 +57,13 @@ def _generate_pattern(probs, num_requests, timestamps):
     key_relationships = _generate_key_relationships(first_key, last_key)
 
     last_accessed_key = None
-    print(len(probs))
-    print(len(np.arange(first_key, last_key + 1)))
+
     try:
         for i in range(num_requests):
             if last_accessed_key is None:
                 # generate the first request
                 request = np.random.choice(
-                    np.arange(first_key, last_key + 1),
+                    np.arange(first_key, last_key),
                     p=probs
                 )
             else:
@@ -74,7 +73,7 @@ def _generate_pattern(probs, num_requests, timestamps):
                     request = np.random.choice(related_keys)
                 else:
                     request = np.random.choice(
-                        np.arange(first_key, last_key + 1),
+                        np.arange(first_key, last_key),
                         p=probs
                     )
 
