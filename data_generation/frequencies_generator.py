@@ -57,12 +57,6 @@ def _generate_last_freq(sequence):
     # initial message
     _info("🔄 Frequencies generation started...")
 
-    # check the sequence
-    if sequence is None:
-        raise ValueError("❌ Sequence is None.")
-    if not hasattr(sequence, '__iter__'):
-        raise TypeError("❌ Sequence must be iterable.")
-
     try:
         # freq columns dictionary initialization
         freq_columns = {}

@@ -14,12 +14,6 @@ def _show_freq_table(requests):
     # initial message
     _info("🔄 Requests frequency table building started...")
 
-    # check requests
-    if not isinstance(requests, (list, np.ndarray)):
-        raise TypeError("❌ Requests must be a list or numpy array.")
-    if len(requests) == 0:
-        raise ValueError("❌ Requests is empty.")
-
     try:
         # get the number of requests per key
         unique, counts = np.unique(

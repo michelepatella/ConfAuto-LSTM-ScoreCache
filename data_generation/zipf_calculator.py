@@ -18,8 +18,6 @@ def _calculate_zipf_distribution_probs(keys, alpha):
 
     # check the keys
     keys = np.array(keys, dtype=np.float64)
-    if keys.ndim != 1:
-        raise ValueError("❌ Keys must be a 1D array or list.")
     if keys.size == 0:
         raise ValueError("❌ Keys must be non-empty.")
     if np.any(keys <= 0):

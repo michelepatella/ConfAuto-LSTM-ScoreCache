@@ -34,9 +34,6 @@ def _generate_pattern(probs, num_requests, timestamps):
     # check timestamps and probabilities
     if len(timestamps) == 0:
         raise ValueError("❌ timestamps list cannot be empty.")
-    if (not isinstance(probs, np.ndarray) or
-            not np.isclose(np.sum(probs), 1.0)):
-        raise ValueError("❌ probs must be a numpy array summing to 1.")
 
     try:
         for i in range(num_requests):
