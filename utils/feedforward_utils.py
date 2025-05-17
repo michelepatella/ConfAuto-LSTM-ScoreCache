@@ -20,16 +20,16 @@ def _compute_forward(batch, model, criterion, device):
 
         # debugging
         _debug(f"⚙️ Target batch: {y_key}.")
-    except Exception as e:
-        raise Exception(f"❌ Error while error unpacking data: {e}")
+    except (ValueError, TypeError) as e:
+        raise RuntimeError(f"❌ Error while error unpacking data: {e}")
 
     try:
         # move data to the device
         x_features = x_features.to(device)
         x_keys = x_keys.to(device)
         y_key = y_key.to(device)
-    except Exception as e:
-        raise Exception(f"❌ Error while moving data to device: {e}")
+    except (AttributeError, TypeError) as e:
+        raise RuntimeError(f"❌ Error while moving data to device: {e}")
 
     try:
         # calculate the outputs
@@ -40,8 +40,8 @@ def _compute_forward(batch, model, criterion, device):
         _debug(f"⚙️ Input keys shape: {x_keys.shape}")
         _debug(f"⚙️ Model output shape: {outputs.shape}.")
 
-    except Exception as e:
-        raise Exception(f"❌ Error during model inference: {e}")
+    except (TypeError, AttributeError) as e:
+        raise RuntimeError(f"❌ Error during model inference: {e}")
 
     try:
         # calculate the loss and update the total one
@@ -49,8 +49,8 @@ def _compute_forward(batch, model, criterion, device):
 
         # debugging
         _debug(f"⚙️ Loss: {loss.item()}.")
-    except Exception as e:
-        raise Exception(f"❌ Error while calculating loss: {e}")
+    except (TypeError, ValueError) as e:
+        raise RuntimeError(f"❌ Error while calculating loss: {e}")
 
     # show a successful message
     _info("🟢 Forward pass computed.")
@@ -71,14 +71,11 @@ def _compute_backward(loss, optimizer):
     try:
         # backward pass
         loss.backward()
-    except Exception as e:
-        raise Exception(f"❌ Error during backpropagation: {e}")
 
-    try:
         # optimize backward pass
         optimizer.step()
-    except Exception as e:
-        raise Exception(f"❌ Error while optimizing: {e}")
+    except (AttributeError, TypeError) as e:
+        raise RuntimeError(f"❌ Error during backpropagation: {e}")
 
     # show a successful message
     _info("🟢 Backward pass computed.")

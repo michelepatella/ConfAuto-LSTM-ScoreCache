@@ -155,6 +155,9 @@ def _loader_setup(loader_type, shuffle):
     """
     from utils.AccessLogsDataset import AccessLogsDataset
 
+    # initial message
+    _info("🔄 Load setup started...")
+
     # get the dataset type
     dataset_path, _ = _get_dataset_path_type()
 
@@ -177,6 +180,9 @@ def _loader_setup(loader_type, shuffle):
         )
     except (FileNotFoundError, IOError, OSError, ValueError, TypeError, AttributeError) as e:
         raise RuntimeError(f"❌ Error while set upping the loader: {e}")
+
+    # show a successful message
+    _info("🟢 Loader setup completed.")
 
     return dataset, loader
 
