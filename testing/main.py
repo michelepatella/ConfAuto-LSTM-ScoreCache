@@ -35,7 +35,6 @@ def testing():
     # load the trained model
     model = _load_model(
         model,
-        model_save_path,
         device
     )
 
