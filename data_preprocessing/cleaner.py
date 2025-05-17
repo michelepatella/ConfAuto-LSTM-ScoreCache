@@ -16,8 +16,8 @@ def _remove_missing_values(df):
     try:
         # remove rows with missing values
         df = df.dropna(axis=0, how='any')
-    except Exception as e:
-        raise Exception(f"❌ Error while removing missing values from the dataset: {e}")
+    except (AttributeError, TypeError, ValueError, KeyError) as e:
+        raise RuntimeError(f"❌ Error while removing missing values from the dataset: {e}")
 
     # size of the dataset without missing values
     final_len = len(df)

@@ -12,6 +12,8 @@ def data_preprocessing():
     """
     # initial message
     _info("🔄 Data preprocessing started...")
+
+    # set the variable indicating the state of the process
     phase_var.set("data_preprocessing")
 
     # get the dataset path

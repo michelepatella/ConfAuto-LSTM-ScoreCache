@@ -2,7 +2,7 @@ data:
 
   distribution_type: static
 
-  num_requests: 10000
+  num_requests: 50000
   num_keys: 10
   first_key: 1
   last_key: 10
@@ -40,7 +40,7 @@ model:
   num_features: 5
   model_save_path: model/trained_lstm_model.pt
 training:
-  epochs: 20
+  epochs: 5
   batch_size: 64
   learning_rate: 0.001
   optimizer: adamw
