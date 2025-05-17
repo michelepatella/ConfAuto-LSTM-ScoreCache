@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import torch
 from pandas.errors import EmptyDataError, ParserError
 from torch.utils.data import DataLoader
@@ -34,15 +33,17 @@ def _create_dataframe(columns):
     return df
 
 
-def _save_dataset(df, dataset_path):
+def _save_dataset(df):
     """
     Method to save the dataset.
     :param df: Dataframe to save.
-    :param dataset_path: The path of the dataset to save.
     :return:
     """
     # initial message
     _info("🔄 Dataset saving started...")
+
+    # get the dataset path
+    dataset_path, _ = _get_dataset_path_type()
 
     # debugging
     _debug(f"⚙️ Dataset shape to save: {df.shape}.")
@@ -93,14 +94,16 @@ def _create_data_loader(
     return loader
 
 
-def _load_dataset(dataset_path):
+def _load_dataset():
     """
     Method to load the dataset.
-    :param dataset_path: Path of the dataset to load.
     :return: The dataset read.
     """
     # initial message
     _info("🔄 Dataset loading started...")
+
+    # get the dataset path
+    dataset_path, _ = _get_dataset_path_type()
 
     # debugging
     _debug(f"⚙️ Path of the dataset to be loaded: {dataset_path}.")
@@ -167,10 +170,7 @@ def _loader_setup(loader_type, shuffle):
 
     try:
         # get the dataset
-        dataset = AccessLogsDataset(
-            dataset_path,
-            loader_type
-        )
+        dataset = AccessLogsDataset(dataset_path)
 
         # create the data loader starting from the dataset
         loader = _create_data_loader(

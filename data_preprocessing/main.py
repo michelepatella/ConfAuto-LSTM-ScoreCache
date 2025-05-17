@@ -16,11 +16,8 @@ def data_preprocessing():
     # set the variable indicating the state of the process
     phase_var.set("data_preprocessing")
 
-    # get the dataset path
-    dataset_path, _ = _get_dataset_path_type()
-
     # load the dataset
-    df = _load_dataset(dataset_path)
+    df = _load_dataset()
 
     # remove missing values
     df_no_missing_values = _remove_missing_values(df)
@@ -38,10 +35,7 @@ def data_preprocessing():
     )
 
     # save the preprocessed dataset
-    _save_dataset(
-        df_standardized,
-        dataset_path
-    )
+    _save_dataset(df_standardized)
 
     # print a successful message
     _info("✅ Data preprocessing successfully completed.")

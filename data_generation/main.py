@@ -18,11 +18,10 @@ def data_generation():
     phase_var.set("data_generation")
 
     # get the dataset path
-    dataset_path, distribution_type = _get_dataset_path_type()
+    _, distribution_type = _get_dataset_path_type()
 
     # debugging
     _debug(f"⚙️Type of distribution: {distribution_type}.")
-    _debug(f"⚙️Dataset config value path: {dataset_path}.")
 
     if distribution_type == "static":
         # generate static requests and delta times
@@ -45,10 +44,7 @@ def data_generation():
     )
 
     # save the dataset
-    _save_dataset(
-        df,
-        dataset_path
-    )
+    _save_dataset(df)
 
     # show a successful message
     _info("✅ Data generation successfully completed.")

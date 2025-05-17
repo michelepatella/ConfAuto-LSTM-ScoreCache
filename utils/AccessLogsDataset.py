@@ -60,14 +60,13 @@ class AccessLogsDataset(Dataset):
             raise RuntimeError(f"❌ Error setting the class fields: {e}")
 
 
-    def __init__(self, dataset_path, dataset_type):
+    def __init__(self, dataset_type):
         """
         Method to instantiate the access logs dataset.
-        :param dataset_path: The path of the access logs dataset.
         :param dataset_type: The type of dataset requested ("training" or "testing").
         """
         # load the dataset
-        df = _load_dataset(dataset_path)
+        df = _load_dataset()
 
         # debugging
         _debug(f"⚙️ Dataset shape: {df.shape}.")
