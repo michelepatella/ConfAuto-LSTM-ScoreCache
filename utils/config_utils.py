@@ -14,7 +14,7 @@ def _get_config_abs_path():
         path = os.path.join(os.path.dirname(__file__), '..', 'config.yaml')
         abs_path = os.path.abspath(path)
     except (NameError, TypeError, AttributeError, OSError) as e:
-        raise RuntimeError(f"❌ Error while getting the config absolute path: {e}")
+        raise RuntimeError(f"❌ Error while getting the config absolute path: {e}.")
 
     # debugging
     _debug(f"⚙️ Absolute path of config file: {abs_path}.")
@@ -38,7 +38,7 @@ def _load_config():
         with open(config_path, "r") as f:
             config = yaml.safe_load(f)
     except (FileNotFoundError, PermissionError, IsADirectoryError, OSError, YAMLError) as e:
-        raise RuntimeError(f"❌ Error while loading config file: {e}")
+        raise RuntimeError(f"❌ Error while loading config file: {e}.")
 
     # show a successful message
     _info("🟢 Config file loaded.")
@@ -75,7 +75,7 @@ def _merge_config(config, updates):
             else:
                 config[key] = value
     except (AttributeError, TypeError, KeyError, RecursionError) as e:
-        raise RuntimeError(f"❌ Error while merging config file: {e}")
+        raise RuntimeError(f"❌ Error while merging config file: {e}.")
 
     # show a successful message
     _info("🟢 Config merged.")
@@ -115,7 +115,7 @@ def _update_config(updated_config):
                 allow_unicode=True
             )
     except (FileNotFoundError, PermissionError, IsADirectoryError, OSError) as e:
-        raise RuntimeError(f"❌ Error while updating the config file: {e}")
+        raise RuntimeError(f"❌ Error while updating the config file: {e}.")
 
     # show a successful message
     _info("🟢 Config file updated.")
@@ -150,7 +150,7 @@ def _get_config_value(keys):
 
         return value
     except (KeyError, TypeError, IndexError, AttributeError, ValueError) as e:
-        raise RuntimeError(f"❌ Error while reading config file: {e}")
+        raise RuntimeError(f"❌ Error while reading config file: {e}.")
 
 
 def _flatten_search_space(d, parent_key=()):
@@ -181,7 +181,7 @@ def _flatten_search_space(d, parent_key=()):
                 # add the couple (key, values) to the final list
                 items.append((new_key, values))
     except (TypeError, RecursionError, AttributeError) as e:
-        raise RuntimeError(f"❌ Error while making flatten the search space: {e}")
+        raise RuntimeError(f"❌ Error while making flatten the search space: {e}.")
 
     return items
 
@@ -218,4 +218,4 @@ def _set_nested_dict(d, keys, value):
         current[keys[-1]] = value
 
     except (TypeError, IndexError, KeyError) as e:
-        raise RuntimeError(f"❌ Error while setting a value in a nested dictionary: {e}")
+        raise RuntimeError(f"❌ Error while setting a value in a nested dictionary: {e}.")

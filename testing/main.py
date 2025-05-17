@@ -1,4 +1,4 @@
-from config.main import model_params, learning_rate, model_save_path
+from config.main import model_params, learning_rate
 from utils.log_utils import _info, phase_var
 from utils.evaluation_utils import _evaluate_model
 from utils.data_utils import _loader_setup, _extract_targets_from_loader

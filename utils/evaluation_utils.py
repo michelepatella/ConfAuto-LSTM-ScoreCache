@@ -82,7 +82,7 @@ def _infer_batch(
                         _debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
 
     except (IndexError, IndexError, KeyError, AttributeError, TypeError) as e:
-        raise RuntimeError(f"❌ Error while inferring the batch: {e}")
+        raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
     # show a successful message
     _info("🟢 Batch inferred.")
@@ -119,7 +119,7 @@ def _calculate_average_losses(
             for cls, losses in loss_per_class.items()
         }
     except (ZeroDivisionError, TypeError, AttributeError, KeyError) as e:
-        raise RuntimeError(f"❌ Error while calculating average losses: {e}")
+        raise RuntimeError(f"❌ Error while calculating average losses: {e}.")
 
     # show a successful message
     _info("🟢 Average losses calculated.")
@@ -209,7 +209,7 @@ def _top_k_accuracy(targets, outputs, k):
         accuracy = correct / len(targets)
 
     except (RuntimeError, IndexError, TypeError, ZeroDivisionError, ValueError) as e:
-        raise RuntimeError(f"❌ Error while computing top-k accuracy: {e}")
+        raise RuntimeError(f"❌ Error while computing top-k accuracy: {e}.")
 
     return accuracy
 
@@ -241,7 +241,7 @@ def _compute_metrics(targets, predictions, outputs):
             top_k
         )
     except (ValueError, TypeError) as e:
-        raise RuntimeError(f"❌ Error while computing metrics: {e}")
+        raise RuntimeError(f"❌ Error while computing metrics: {e}.")
 
     # collect metrics
     metrics = {

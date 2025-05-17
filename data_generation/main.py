@@ -1,7 +1,6 @@
 from data_generation.frequencies_generator import _generate_last_freq
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
 from utils.log_utils import _info, _debug, phase_var
-from utils.config_utils import _get_config_value
 from utils.data_utils import _save_dataset, _get_dataset_path_type, _create_dataframe
 import numpy as np
 

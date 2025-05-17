@@ -17,7 +17,7 @@ class EarlyStopping:
             self.counter = 0
             self.early_stop = False
         except (NameError, AttributeError, TypeError) as e:
-            raise RuntimeError(f"❌ Error setting the class fields: {e}")
+            raise RuntimeError(f"❌ Error setting the class fields: {e}.")
 
         # debugging
         _debug(f"⚙️ Patience for Early Stopping: {self.patience}.")
@@ -58,4 +58,4 @@ class EarlyStopping:
                     self.early_stop = True
 
         except (AttributeError, TypeError, NameError) as e:
-            raise RuntimeError(f"❌ Error while calling Early Stopping's object: {e}")
+            raise RuntimeError(f"❌ Error while calling Early Stopping's object: {e}.")

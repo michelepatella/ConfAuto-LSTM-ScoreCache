@@ -18,7 +18,7 @@ def _info(msg, *args, **kwargs):
             **kwargs
         )
     except (KeyError, ValueError, LookupError, TypeError, AttributeError) as e:
-        raise RuntimeError(f"❌ Error while logging info message: {e}")
+        raise RuntimeError(f"❌ Error while logging info message: {e}.")
 
 
 def _debug(msg, *args, **kwargs):
@@ -37,7 +37,7 @@ def _debug(msg, *args, **kwargs):
             **kwargs
         )
     except (KeyError, ValueError, LookupError, TypeError, AttributeError) as e:
-        raise RuntimeError(f"❌ Error while logging debug message: {e}")
+        raise RuntimeError(f"❌ Error while logging debug message: {e}.")
 
 # contextual variable indicating the phase
 # in which the logging message is located in

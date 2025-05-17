@@ -26,7 +26,7 @@ def _save_model(model):
             model_save_path
         )
     except (KeyError, TypeError, ValueError, AttributeError, FileNotFoundError, PermissionError) as e:
-        raise RuntimeError(f"❌ Error while saving the model: {e}")
+        raise RuntimeError(f"❌ Error while saving the model: {e}.")
 
     # show a successful message
     _info(f"🟢 Model save to '{model_save_path}'.")
@@ -52,7 +52,7 @@ def _load_model(model, device):
             map_location=device
         ))
     except (FileNotFoundError, PermissionError, AttributeError, ValueError, TypeError) as e:
-        raise RuntimeError(f"❌ Error while loading the model: {e}")
+        raise RuntimeError(f"❌ Error while loading the model: {e}.")
 
     # show a successful message
     _info("🟢 Model loaded.")
@@ -106,7 +106,7 @@ def _model_setup(
             learning_rate
         )
     except (TypeError, ValueError, KeyError) as e:
-        raise RuntimeError(f"❌ Error while setting up the model: {e}")
+        raise RuntimeError(f"❌ Error while setting up the model: {e}.")
 
     # show a successful message
     _info("🟢 Model setup completed.")
@@ -156,7 +156,7 @@ def _calculate_class_weights(targets):
             class_weights[cls] = weight
 
     except (ValueError, TypeError, IndexError) as e:
-        raise Exception(f"❌ Error while calculating the class weights: {e}")
+        raise RuntimeError(f"❌ Error while calculating the class weights: {e}.")
 
     # show a successful message
     _info("🟢 Class weights calculated.")

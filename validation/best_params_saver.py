@@ -33,7 +33,7 @@ def _save_best_params(best_params):
             config[section].update(params)
 
     except (KeyError, TypeError, ValueError) as e:
-        raise RuntimeError(f"❌ Error while saving the best parameters: {e}")
+        raise RuntimeError(f"❌ Error while saving the best parameters: {e}.")
 
     # update the best parameters on the config file
     _update_config(config)

@@ -71,7 +71,7 @@ def _get_parameters_combination():
         return param_combinations
 
     except (KeyError, TypeError, ValueError) as e:
-        raise RuntimeError(f"❌ Error while generating parameter combinations: {e}")
+        raise RuntimeError(f"❌ Error while generating parameter combinations: {e}.")
 
 
 def _grid_search(training_set):

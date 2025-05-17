@@ -78,4 +78,4 @@ def _generate_last_freq(sequence):
         return freq_columns
 
     except (ValueError, TypeError, NameError, RuntimeError) as e:
-        raise RuntimeError(f"❌ Error while generating frequencies: {e}")
+        raise RuntimeError(f"❌ Error while generating frequencies: {e}.")

@@ -20,7 +20,7 @@ class AccessLogsDataset(Dataset):
             # define the splitting's index
             split_idx = int(len(self.data) * training_perc)
         except (AttributeError, TypeError, ValueError) as e:
-            raise RuntimeError(f"❌ Error while defining the dataset splitting's index: {e}")
+            raise RuntimeError(f"❌ Error while defining the dataset splitting's index: {e}.")
 
         # debugging
         _debug(f"⚙️ Split index: {split_idx}.")
@@ -32,7 +32,7 @@ class AccessLogsDataset(Dataset):
             else:
                 self.data = self.data[split_idx:]
         except (TypeError, IndexError, AttributeError) as e:
-            raise RuntimeError(f"❌ Error while splitting the dataset: {e}")
+            raise RuntimeError(f"❌ Error while splitting the dataset: {e}.")
 
 
     def _set_fields(self, data):
@@ -57,7 +57,7 @@ class AccessLogsDataset(Dataset):
             _debug(f"⚙️ Sequence length: {self.seq_len}.")
 
         except (AttributeError, TypeError, IndexError) as e:
-            raise RuntimeError(f"❌ Error setting the class fields: {e}")
+            raise RuntimeError(f"❌ Error setting the class fields: {e}.")
 
 
     def __init__(self, dataset_type):
@@ -75,7 +75,7 @@ class AccessLogsDataset(Dataset):
             # set data
             self.data = df.copy()
         except (AttributeError, TypeError, MemoryError) as e:
-            raise RuntimeError(f"❌ Error setting data of the dataset by copying it: {e}")
+            raise RuntimeError(f"❌ Error setting data of the dataset by copying it: {e}.")
 
         # split the dataset to assign data properly
         self._split_dataset(dataset_type)
@@ -130,6 +130,6 @@ class AccessLogsDataset(Dataset):
             _debug(f"⚙️ Target: {y_key.item()}.")
 
         except (IndexError, KeyError, ValueError, TypeError, AttributeError) as e:
-            raise Exception(f"❌ Error retrieving item at index {idx}: {e}")
+            raise RuntimeError(f"❌ Error retrieving item at index {idx}: {e}.")
 
         return x_features, x_keys, y_key

@@ -33,7 +33,7 @@ def _show_freq_table(requests):
         table_str = "\n".join(table_lines)
 
     except (TypeError, ValueError, ZeroDivisionError) as e:
-        raise RuntimeError(f"❌ Error while building the requests frequency table: {e}")
+        raise RuntimeError(f"❌ Error while building the requests frequency table: {e}.")
 
     # show a successful message
     _info("🟢 Requests frequency table built.")

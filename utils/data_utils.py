@@ -25,7 +25,7 @@ def _create_dataframe(columns):
         df = pd.DataFrame(columns)
 
     except (ValueError, TypeError) as e:
-        raise RuntimeError(f"❌ Error while creating the dataframe: {e}")
+        raise RuntimeError(f"❌ Error while creating the dataframe: {e}.")
 
     # show a successful message
     _info(f"🟢 Dataframe created.")
@@ -56,7 +56,7 @@ def _save_dataset(df):
         # show a successful message
         _info(f"🟢 Dataset saved to '{dataset_path}'.")
     except (OSError, PermissionError, FileNotFoundError, ValueError, TypeError) as e:
-        raise RuntimeError(f"❌ Error while saving the dataset: {e}")
+        raise RuntimeError(f"❌ Error while saving the dataset: {e}.")
 
 
 def _create_data_loader(
@@ -86,7 +86,7 @@ def _create_data_loader(
             shuffle=shuffle
         )
     except (TypeError, ValueError, AttributeError) as e:
-        raise RuntimeError(f"❌ Error while creating data loader: {e}")
+        raise RuntimeError(f"❌ Error while creating data loader: {e}.")
 
     # show a successful message
     _info("🟢 Data loader created.")
@@ -112,7 +112,7 @@ def _load_dataset():
         # load the dataset
         df = pd.read_csv(dataset_path)
     except (ValueError, EmptyDataError, ParserError, UnicodeDecodeError) as e:
-        raise RuntimeError(f"❌ Error while loading dataset: {e}")
+        raise RuntimeError(f"❌ Error while loading dataset: {e}.")
 
     # debugging
     _debug(f"⚙️ Shape of the dataset loaded: {df.shape}.")
@@ -179,7 +179,7 @@ def _loader_setup(loader_type, shuffle):
             shuffle
         )
     except (FileNotFoundError, IOError, OSError, ValueError, TypeError, AttributeError) as e:
-        raise RuntimeError(f"❌ Error while set upping the loader: {e}")
+        raise RuntimeError(f"❌ Error while set upping the loader: {e}.")
 
     # show a successful message
     _info("🟢 Loader setup completed.")
@@ -202,7 +202,7 @@ def _extract_targets_from_loader(data_loader):
         for _, _, targets in data_loader:
             all_targets.append(targets - 1)
     except (TypeError, ValueError, IndexError) as e:
-        raise RuntimeError(f"❌ Error while extracting targets from loader: {e}")
+        raise RuntimeError(f"❌ Error while extracting targets from loader: {e}.")
 
     # debugging
     _debug(f"⚙️ Target extracted: {all_targets}.")

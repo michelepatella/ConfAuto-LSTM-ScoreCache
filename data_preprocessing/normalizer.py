@@ -38,7 +38,7 @@ def _standardize(df, columns):
                 df[column].values.reshape(-1, 1)
             )
     except (KeyError, AttributeError, TypeError, ValueError, IndexError) as e:
-        raise RuntimeError(f"❌ Error while standardizing the dataset: {e}")
+        raise RuntimeError(f"❌ Error while standardizing the dataset: {e}.")
 
     # debugging
     _debug(f"⚙️Normalized columns: {columns}.")

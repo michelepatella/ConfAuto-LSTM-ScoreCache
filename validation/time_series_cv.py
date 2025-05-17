@@ -28,7 +28,7 @@ def _time_series_cv(training_set, params):
         # setup for Time Series Split
         tscv = TimeSeriesSplit(n_splits=num_folds)
     except (ValueError, TypeError) as e:
-        raise RuntimeError(f"❌ Error while instantiating Time Series Split: {e}")
+        raise RuntimeError(f"❌ Error while instantiating Time Series Split: {e}.")
 
     fold_losses = []
     # iterate over the training set
@@ -43,7 +43,7 @@ def _time_series_cv(training_set, params):
             training_dataset = Subset(training_set, train_idx)
             validation_dataset = Subset(training_set, val_idx)
         except (TypeError, IndexError, ValueError, AttributeError) as e:
-            raise RuntimeError(f"❌ Error while defining training and validation sets: {e}")
+            raise RuntimeError(f"❌ Error while defining training and validation sets: {e}.")
 
         # debugging
         _debug(f"⚙️ Training size (Time series CV): {len(training_dataset)}.")

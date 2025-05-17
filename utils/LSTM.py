@@ -99,7 +99,7 @@ class LSTM(nn.Module):
             )
 
         except (AttributeError, KeyError, TypeError, ValueError) as e:
-            raise RuntimeError(f"❌ Error while setting class fields: {e}")
+            raise RuntimeError(f"❌ Error while setting class fields: {e}.")
 
 
     def __init__(self, params):
@@ -129,13 +129,13 @@ class LSTM(nn.Module):
                 proj_size=self.proj_size
             )
         except (TypeError, ValueError, KeyError) as e:
-            raise RuntimeError(f"❌ Error while instantiating LSTM model: {e}")
+            raise RuntimeError(f"❌ Error while instantiating LSTM model: {e}.")
 
         try:
             # fully-connected layer (linear)
             self.fc = nn.Linear(self.hidden_size, self.num_keys)
         except (TypeError, ValueError) as e:
-            raise RuntimeError(f"❌ Error while instantiating the FC layer: {e}")
+            raise RuntimeError(f"❌ Error while instantiating the FC layer: {e}.")
 
 
     def _get_lstm_input(self, x_features, x_keys):
@@ -185,7 +185,7 @@ class LSTM(nn.Module):
             # pass the features to the LSTM
             lstm_out, _ = self.lstm(x)
         except (AttributeError, TypeError, ValueError) as e:
-            raise RuntimeError(f"❌ Error while passing data through LSTM: {e}")
+            raise RuntimeError(f"❌ Error while passing data through LSTM: {e}.")
 
         # debugging
         _debug(f"⚙️ Output shape: {lstm_out.shape}.")
@@ -194,7 +194,7 @@ class LSTM(nn.Module):
             # get the logits from the LSTM output
             logits = self.fc(lstm_out[:, -1, :])
         except (IndexError, AttributeError) as e:
-            raise RuntimeError(f"❌ Error while processing LSTM output: {e}")
+            raise RuntimeError(f"❌ Error while processing LSTM output: {e}.")
 
         # debugging
         _debug(f"⚙️ Logits shape: {logits.shape}.")
