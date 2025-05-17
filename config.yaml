@@ -1,15 +1,15 @@
 data:
   distribution_type: static
   seed: 42
-  num_requests: 80000
-  num_keys: 50
+  num_requests: 20000
+  num_keys: 10
   first_key: 1
-  last_key: 50
+  last_key: 10
   alpha: 0.3
   alpha_start: 0.3
   alpha_end: 0.8
   time_steps: 100
-  seq_len: 50
+  seq_len: 25
   freq_timestamp: 5
   freq_windows: [10, 100, 1000]
   training_perc: 0.7

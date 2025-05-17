@@ -50,7 +50,7 @@ def _compute_frequency(sequence, window):
 
     try:
         # initialize frequency
-        freq = []
+        freqs = []
 
         # count the frequency of the sequence
         # within the given temporal window
@@ -59,8 +59,13 @@ def _compute_frequency(sequence, window):
                 recent = sequence[:i]
             else:
                 recent = sequence[i - window:i]
+
+            # calculate the relative frequency
             count = Counter(recent)
-            freq.append(count[sequence[i]])
+            freq = count[sequence[i]] / len(recent) \
+                if len(recent) > 0 \
+                else 0.0
+            freqs.append(freq)
 
     except Exception as e:
         raise Exception(f"❌ Error while computing the frequency of sequence: {e}")
@@ -71,4 +76,4 @@ def _compute_frequency(sequence, window):
     # show a successful message
     _info(f"🟢 Frequency of the sequence counted.")
 
-    return freq
+    return freqs
