@@ -57,7 +57,7 @@ def _generate_pattern(probs, num_requests, timestamps):
     key_relationships = _generate_key_relationships(first_key, last_key)
 
     last_accessed_key = None
-
+    print(len(probs))
     try:
         for i in range(num_requests):
             if last_accessed_key is None:
