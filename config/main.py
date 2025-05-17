@@ -25,7 +25,7 @@ periodic_amplitude = _get_config_value("data.periodic_amplitude")
 
 # other information
 training_perc = _get_config_value("data.training_perc")
-
+seq_len = _get_config_value("data.seq_len")
 
 # training
 learning_rate = _get_config_value("training.learning_rate")

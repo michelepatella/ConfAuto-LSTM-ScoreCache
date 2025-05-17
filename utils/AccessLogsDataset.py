@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import Dataset
+from config.main import training_perc, seq_len
 from utils.log_utils import _debug
-from utils.config_utils import _get_config_value
 from utils.data_utils import _load_dataset
 
 
@@ -9,9 +9,8 @@ class AccessLogsDataset(Dataset):
 
     def _split_dataset(self, dataset_type):
         """
-        Method to split the dataset based on the requested type.
-        :param dataset_type: The dataset type requested
-        ("training" or "testing").
+        Method to split the dataset based on the dataset type requested.
+        :param dataset_type: The dataset type requested ("training" or "testing").
         :return:
         """
         # debugging
@@ -19,25 +18,21 @@ class AccessLogsDataset(Dataset):
 
         try:
             # define the splitting's index
-            split_idx = int(
-                len(self.data) * _get_config_value("data.training_perc")
-            )
-        except Exception as e:
-            raise Exception(f"❌ Error while defining the dataset splitting's index: {e}")
+            split_idx = int(len(self.data) * training_perc)
+        except (AttributeError, TypeError, ValueError) as e:
+            raise RuntimeError(f"❌ Error while defining the dataset splitting's index: {e}")
 
         # debugging
         _debug(f"⚙️ Split index: {split_idx}.")
 
+        # split the dataset
         try:
-            # split the dataset
             if dataset_type == "training":
                 self.data = self.data[:split_idx]
-            elif dataset_type == "testing":
-                self.data = self.data[split_idx:]
             else:
-                raise ValueError(f"❌ Invalid split type: {dataset_type}")
-        except Exception as e:
-            raise Exception(f"❌ Error while splitting the dataset: {e}")
+                self.data = self.data[split_idx:]
+        except (TypeError, IndexError, AttributeError) as e:
+            raise RuntimeError(f"❌ Error while splitting the dataset: {e}")
 
 
     def _set_fields(self, data):
@@ -53,15 +48,16 @@ class AccessLogsDataset(Dataset):
             self.features = self.columns[:-1]
             self.target = self.columns[-1]
 
-            self.seq_len = _get_config_value("data.seq_len")
+            self.seq_len = seq_len
 
             # debugging
             _debug(f"⚙️ Dataset columns: {self.columns}.")
             _debug(f"⚙️ Feature(s): {self.features}.")
             _debug(f"⚙️ Target: {self.target}.")
+            _debug(f"⚙️ Sequence length: {self.seq_len}.")
 
-        except Exception as e:
-            raise Exception(f"❌ Error while reading the dataset columns: {e}")
+        except (AttributeError, TypeError, IndexError) as e:
+            raise RuntimeError(f"❌ Error setting the class fields: {e}")
 
 
     def __init__(self, dataset_path, dataset_type):
@@ -76,8 +72,11 @@ class AccessLogsDataset(Dataset):
         # debugging
         _debug(f"⚙️ Dataset shape: {df.shape}.")
 
-        # set data
-        self.data = df.copy()
+        try:
+            # set data
+            self.data = df.copy()
+        except (AttributeError, TypeError, MemoryError) as e:
+            raise RuntimeError(f"❌ Error setting data of the dataset by copying it: {e}")
 
         # split the dataset to assign data properly
         self._split_dataset(dataset_type)
@@ -128,10 +127,10 @@ class AccessLogsDataset(Dataset):
 
             # debugging
             _debug(f"⚙️ Feature vector shape: {x_features.shape}.")
-            _debug(f"⚙️ Key IDs shape: {x_keys.shape}")
+            _debug(f"⚙️ Key shape: {x_keys.shape}")
             _debug(f"⚙️ Target: {y_key.item()}.")
 
-        except Exception as e:
+        except (IndexError, KeyError, ValueError, TypeError, AttributeError) as e:
             raise Exception(f"❌ Error retrieving item at index {idx}: {e}")
 
         return x_features, x_keys, y_key
