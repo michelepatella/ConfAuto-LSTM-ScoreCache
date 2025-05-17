@@ -1,5 +1,5 @@
+from config.main import model_params, learning_rate, training_epochs
 from utils.log_utils import _info, phase_var
-from utils.config_utils import _get_config_value
 from utils.data_utils import _loader_setup, _extract_targets_from_loader
 from utils.training_utils import _train_n_epochs
 from utils.model_utils import _save_model, _model_setup
@@ -12,6 +12,8 @@ def training():
     """
     # initial message
     _info("🔄 Training started...")
+
+    # set the variable indicating the state of the process
     phase_var.set("training")
 
     # dataloader setup
@@ -23,15 +25,15 @@ def training():
     # setup for training
     device, criterion, model, optimizer = (
         _model_setup(
-            _get_config_value("model.params"),
-            _get_config_value("training.learning_rate"),
+            model_params,
+            learning_rate,
             _extract_targets_from_loader(training_loader)
         )
     )
 
     # train the model
     _train_n_epochs(
-        _get_config_value("training.epochs"),
+        training_epochs,
         model,
         training_loader,
         optimizer,

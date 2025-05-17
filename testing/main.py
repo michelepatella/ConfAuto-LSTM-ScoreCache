@@ -1,5 +1,5 @@
+from config.main import model_params, learning_rate, model_save_path
 from utils.log_utils import _info, phase_var
-from utils.config_utils import _get_config_value
 from utils.evaluation_utils import _evaluate_model
 from utils.data_utils import _loader_setup, _extract_targets_from_loader
 from utils.model_utils import _load_model, _model_setup
@@ -13,6 +13,8 @@ def testing():
     """
     # initial message
     _info("🔄 Testing started...")
+
+    # set the variable indicating the state of the process
     phase_var.set("testing")
 
     # dataloader setup
@@ -24,8 +26,8 @@ def testing():
     # setup for testing
     device, criterion, model, _ = (
         _model_setup(
-            _get_config_value("model.params"),
-            _get_config_value("training.learning_rate"),
+            model_params,
+            learning_rate,
             _extract_targets_from_loader(testing_loader)
         )
     )
@@ -33,7 +35,7 @@ def testing():
     # load the trained model
     model = _load_model(
         model,
-        _get_config_value("model.model_save_path"),
+        model_save_path,
         device
     )
 

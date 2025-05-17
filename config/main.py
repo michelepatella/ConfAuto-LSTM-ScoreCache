@@ -25,3 +25,12 @@ periodic_amplitude = _get_config_value("data.periodic_amplitude")
 
 # other information
 training_perc = _get_config_value("data.training_perc")
+
+
+# training
+learning_rate = _get_config_value("training.learning_rate")
+training_epochs = _get_config_value("training.epochs")
+
+# model
+model_params = _get_config_value("model.params")
+model_save_path = _get_config_value("model.model_save_path")
