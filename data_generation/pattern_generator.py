@@ -58,6 +58,7 @@ def _generate_pattern(probs, num_requests, timestamps):
 
     last_accessed_key = None
     print(len(probs))
+    print(len(np.arange(first_key, last_key + 1)))
     try:
         for i in range(num_requests):
             if last_accessed_key is None:
