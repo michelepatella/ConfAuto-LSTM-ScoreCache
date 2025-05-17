@@ -29,8 +29,14 @@ training_perc = _get_config_value("data.training_perc")
 
 # training
 learning_rate = _get_config_value("training.learning_rate")
+training_batch_size = _get_config_value("training.batch_size")
 training_epochs = _get_config_value("training.epochs")
 
 # model
 model_params = _get_config_value("model.params")
 model_save_path = _get_config_value("model.model_save_path")
+
+# validation
+search_space = _get_config_value("validation.search_space")
+num_folds = _get_config_value("validation.num_folds")
+validation_epochs = _get_config_value("validation.epochs")

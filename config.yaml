@@ -3,13 +3,13 @@ data:
   distribution_type: static
 
   num_requests: 50000
-  num_keys: 10
+  num_keys: 50
   first_key: 1
-  last_key: 10
+  last_key: 50
   freq_windows: [10, 100, 1000]
 
-  alpha: 0.5
-  alpha_start: 0.5
+  alpha: 0.8
+  alpha_start: 0.8
   alpha_end: 1.0
   time_steps: 10
 

@@ -11,10 +11,15 @@ def validation():
     """
     # initial message
     _info("🔄 Validation started...")
+
+    # set the variable indicating the state of the process
     phase_var.set("validation")
 
     # load the training set
-    training_set, _ = _loader_setup("training", False)
+    training_set, _ = _loader_setup(
+        "training",
+        False
+    )
 
     # grid search for best parameters
     best_params = _grid_search(training_set)
