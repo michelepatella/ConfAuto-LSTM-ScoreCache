@@ -1,5 +1,6 @@
 import yaml
 import os
+from yaml import YAMLError
 from utils.log_utils import _info, _debug
 
 
@@ -12,8 +13,8 @@ def _get_config_abs_path():
         # define the absolute path of the config file
         path = os.path.join(os.path.dirname(__file__), '..', 'config.yaml')
         abs_path = os.path.abspath(path)
-    except Exception as e:
-        raise Exception(f"❌ Error while getting the config absolute path: {e}")
+    except (NameError, TypeError, AttributeError, OSError) as e:
+        raise RuntimeError(f"❌ Error while getting the config absolute path: {e}")
 
     # debugging
     _debug(f"⚙️ Absolute path of config file: {abs_path}.")
@@ -36,8 +37,8 @@ def _load_config():
         # load the file
         with open(config_path, "r") as f:
             config = yaml.safe_load(f)
-    except Exception as e:
-        raise Exception(f"❌ Error while loading config file: {e}")
+    except (FileNotFoundError, PermissionError, IsADirectoryError, OSError, YAMLError) as e:
+        raise RuntimeError(f"❌ Error while loading config file: {e}")
 
     # show a successful message
     _info("🟢 Config file loaded.")
@@ -73,8 +74,8 @@ def _merge_config(config, updates):
                 _merge_config(config[key], value)
             else:
                 config[key] = value
-    except Exception as e:
-        raise Exception(f"❌ Error while merging config file: {e}")
+    except (AttributeError, TypeError, KeyError, RecursionError) as e:
+        raise RuntimeError(f"❌ Error while merging config file: {e}")
 
     # show a successful message
     _info("🟢 Config merged.")
@@ -113,8 +114,8 @@ def _update_config(updated_config):
                 sort_keys=False,
                 allow_unicode=True
             )
-    except Exception as e:
-        raise Exception(f"❌ Error while updating the config file: {e}")
+    except (FileNotFoundError, PermissionError, IsADirectoryError, OSError) as e:
+        raise RuntimeError(f"❌ Error while updating the config file: {e}")
 
     # show a successful message
     _info("🟢 Config file updated.")
@@ -148,8 +149,8 @@ def _get_config_value(keys):
         _info(f"🟢 {keys} read.")
 
         return value
-    except Exception as e:
-        raise Exception(f"❌ Error while reading config file: {e}")
+    except (KeyError, TypeError, IndexError, AttributeError, ValueError) as e:
+        raise RuntimeError(f"❌ Error while reading config file: {e}")
 
 
 def _flatten_search_space(d, parent_key=()):
@@ -160,24 +161,28 @@ def _flatten_search_space(d, parent_key=()):
     :return: A list of tuples where each tuple contains
     a key path and its associated list of values.
     """
-    items = []
-    for k, v in d.items():
-        # extrapolate the name of the parameter
-        clean_key = k.replace("_range", "")
+    try:
+        items = []
+        for k, v in d.items():
+            # extrapolate the name of the parameter
+            clean_key = k.replace("_range", "")
 
-        # build the new key (tuple with the name of the parameter)
-        new_key = parent_key + (clean_key,)
+            # build the new key (tuple with the name of the parameter)
+            new_key = parent_key + (clean_key,)
 
-        # if the new value is another dictionary
-        # apply recursively this method
-        if isinstance(v, dict):
-            items.extend(_flatten_search_space(v, new_key))
-        else:
-            # convert the value to list
-            values = v if isinstance(v, list) else [v]
+            # if the new value is another dictionary
+            # apply recursively this method
+            if isinstance(v, dict):
+                items.extend(_flatten_search_space(v, new_key))
+            else:
+                # convert the value to list
+                values = v if isinstance(v, list) else [v]
 
-            # add the couple (key, values) to the final list
-            items.append((new_key, values))
+                # add the couple (key, values) to the final list
+                items.append((new_key, values))
+    except (TypeError, RecursionError, AttributeError) as e:
+        raise RuntimeError(f"❌ Error while making flatten the search space: {e}")
+
     return items
 
 
@@ -190,23 +195,27 @@ def _set_nested_dict(d, keys, value):
     :param value: The value to set.
     :return:
     """
-    # current dictionary initialized to the
-    # starting dictionary
-    current = d
+    try:
+        # current dictionary initialized to the
+        # starting dictionary
+        current = d
 
-    # iterate over all the keys except the last one
-    # to go down the nested levels
-    for k in keys[:-1]:
+        # iterate over all the keys except the last one
+        # to go down the nested levels
+        for k in keys[:-1]:
 
-        # if there is not the key, or
-        # it is not a dictionary, make it one
-        if (k not in current or not
-        isinstance(current[k], dict)):
-            current[k] = {}
+            # if there is not the key, or
+            # it is not a dictionary, make it one
+            if (k not in current or not
+            isinstance(current[k], dict)):
+                current[k] = {}
 
-        # go down a level more
-        current = current[k]
+            # go down a level more
+            current = current[k]
 
-    # set the desired value in the last position
-    # indicate by the sequence
-    current[keys[-1]] = value
+        # set the desired value in the last position
+        # indicate by the sequence
+        current[keys[-1]] = value
+
+    except (TypeError, IndexError, KeyError) as e:
+        raise RuntimeError(f"❌ Error while setting a value in a nested dictionary: {e}")
