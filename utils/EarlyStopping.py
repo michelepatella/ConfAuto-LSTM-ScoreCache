@@ -1,5 +1,5 @@
 import numpy as np
-from utils.config_utils import _get_config_value
+from config.main import early_stopping_patience, early_stopping_delta
 from utils.log_utils import _debug
 
 
@@ -11,17 +11,19 @@ class EarlyStopping:
         """
         try:
             # set the fields
-            self.patience = _get_config_value("early_stopping.patience")
-            self.delta = _get_config_value("early_stopping.delta")
+            self.patience = early_stopping_patience
+            self.delta = early_stopping_delta
             self.best_avg_loss = np.inf
             self.counter = 0
             self.early_stop = False
-        except Exception as e:
-            raise Exception(f"❌ Error while setting Early Stopping object's fields: {e}")
+        except (NameError, AttributeError, TypeError) as e:
+            raise RuntimeError(f"❌ Error setting the class fields: {e}")
 
         # debugging
         _debug(f"⚙️ Patience for Early Stopping: {self.patience}.")
         _debug(f"⚙️ Delta for Early Stopping: {self.delta}.")
+        _debug(f"⚙️ Best avg loss: {self.best_avg_loss}.")
+
 
     def __call__(self, avg_loss):
         """
@@ -33,6 +35,7 @@ class EarlyStopping:
             # check whether the avg loss is less
             # than the current best one
             if avg_loss < self.best_avg_loss - self.delta:
+
                 # update the best avg loss
                 # and reset the counter used to trigger early stopping
                 self.best_avg_loss = avg_loss
@@ -42,15 +45,17 @@ class EarlyStopping:
                 _debug(f"⚙️ New best average loss: {self.best_avg_loss}.")
 
             else:
+
                 # increment the counter to trigger early stopping
                 self.counter += 1
 
                 # debugging
-                _debug(f"⚙️ Counter value: {self.counter}.")
+                _debug(f"⚙️ Counter value updated: {self.counter}.")
 
                 # check whether the counter exceeds the patience
                 if self.counter >= self.patience:
                     # early stopping is triggered
                     self.early_stop = True
-        except Exception as e:
-            raise Exception(f"❌ Error while calling Early Stopping's object: {e}")
+
+        except (AttributeError, TypeError, NameError) as e:
+            raise RuntimeError(f"❌ Error while calling Early Stopping's object: {e}")
