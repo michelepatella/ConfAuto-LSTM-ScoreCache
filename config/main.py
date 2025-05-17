@@ -22,3 +22,6 @@ burst_every = _get_config_value("data.burst_every")
 burst_peak = _get_config_value("data.burst_peak")
 periodic_base_scale = _get_config_value("data.periodic_base_scale")
 periodic_amplitude = _get_config_value("data.periodic_amplitude")
+
+# other information
+training_perc = _get_config_value("data.training_perc")

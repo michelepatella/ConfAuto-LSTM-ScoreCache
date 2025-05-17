@@ -1,6 +1,6 @@
 from sklearn.preprocessing import StandardScaler
+from config.main import training_perc
 from utils.log_utils import _info, _debug
-from utils.config_utils import _get_config_value
 
 
 def _standardize(df, columns):
@@ -13,8 +13,6 @@ def _standardize(df, columns):
     # initial message
     _info("🔄 Dataset standardization started...")
 
-    # load training percentage
-    training_perc = _get_config_value("data.training_perc")
     total_len = len(df)
 
     # calculate the final index of the training set
@@ -39,8 +37,8 @@ def _standardize(df, columns):
             df[column] = scaler.transform(
                 df[column].values.reshape(-1, 1)
             )
-    except Exception as e:
-        raise Exception(f"❌ Error while standardizing the dataset: {e}")
+    except (KeyError, AttributeError, TypeError, ValueError, IndexError) as e:
+        raise RuntimeError(f"❌ Error while standardizing the dataset: {e}")
 
     # debugging
     _debug(f"⚙️Normalized columns: {columns}.")
