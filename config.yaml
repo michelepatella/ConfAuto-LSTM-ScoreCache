@@ -40,7 +40,7 @@ model:
   num_features: 5
   model_save_path: model/trained_lstm_model.pt
 training:
-  epochs: 10
+  epochs: 20
   batch_size: 64
   learning_rate: 0.001
   optimizer: adamw
@@ -48,7 +48,7 @@ training:
   momentum: 0.9
 validation:
   num_folds: 3
-  epochs: 3
+  epochs: 5
   search_space:
     model:
       params:
