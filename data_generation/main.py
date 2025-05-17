@@ -1,4 +1,4 @@
-from data_generation.features_generator import _generate_last_freq
+from data_generation.frequencies_generator import _generate_last_freq
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
 from utils.log_utils import _info, _debug, phase_var
 from utils.config_utils import _get_config_value
@@ -13,6 +13,8 @@ def data_generation():
     """
     # initial message
     _info("🔄 Data generation started...")
+
+    # set the variable indicating the state of the process
     phase_var.set("data_generation")
 
     # get the dataset path
@@ -20,15 +22,14 @@ def data_generation():
 
     # debugging
     _debug(f"⚙️Type of distribution: {distribution_type}.")
+    _debug(f"⚙️Dataset config value path: {dataset_path}.")
 
     if distribution_type == "static":
         # generate static requests and delta times
         requests, delta_times = _generate_static_requests()
-    elif distribution_type == "dynamic":
+    else:
         # generate dynamic requests and delta times
         requests, delta_times = _generate_dynamic_requests()
-    else:
-        raise ValueError(f"❌ Invalid distribution type: {distribution_type}")
 
     # generate features (last freq w.r.t. requests)
     freq_columns = _generate_last_freq(requests)

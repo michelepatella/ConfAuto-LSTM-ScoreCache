@@ -1,18 +1,30 @@
 data:
+
   distribution_type: static
-  seed: 42
-  num_requests: 200000
+
+  num_requests: 50000
   num_keys: 50
   first_key: 1
   last_key: 50
+  freq_windows: [10, 100, 1000]
+
   alpha: 0.5
   alpha_start: 0.5
   alpha_end: 1.0
   time_steps: 10
+
+  burst_high: 1,0
+  burst_low: 10.0
+  burst_every: 100
+  burst_peak: 20
+  periodic_base_scale: 5
+  periodic_amplitude: 5
+
+  seed: 42
   seq_len: 25
   embedding_dim: 32
   freq_timestamp: 5
-  freq_windows: [10, 100, 1000]
+
   training_perc: 0.7
   static_dataset_path: data/static_access_logs.csv
   dynamic_dataset_path: data/dynamic_access_logs.csv

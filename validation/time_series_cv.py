@@ -83,6 +83,7 @@ def _time_series_cv(training_set, params):
         )
         fold_losses.append(avg_loss)
 
+    # show a successful message
     _info("🟢 Time Series CV completed.")
 
     # calculate the average of loss
