@@ -37,6 +37,9 @@ seq_len = _get_config_value("data.seq_len")
 learning_rate = _get_config_value("training.learning_rate")
 training_batch_size = _get_config_value("training.batch_size")
 training_epochs = _get_config_value("training.epochs")
+optimizer_type = _get_config_value("training.optimizer")
+weight_decay = _get_config_value("training.weight_decay")
+momentum = _get_config_value("training.momentum")
 
 # model
 model_params = _get_config_value("model.params")

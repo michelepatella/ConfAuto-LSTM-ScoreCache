@@ -1,7 +1,9 @@
 import torch
+from sympy.physics.units import momentum
+from torch.cuda import CudaError
+from config.main import optimizer_type, weight_decay
 from utils.log_utils import _info, _debug
 from utils.EarlyStopping import EarlyStopping
-from utils.config_utils import _get_config_value
 from utils.evaluation_utils import _evaluate_model
 from utils.feedforward_utils import _compute_forward, _compute_backward
 
@@ -34,29 +36,30 @@ def _train_one_epoch(
         leave=False
     )
     """
-    for x_features, x_keys, y_key in training_loader:
-        try:
+    try:
+        for x_features, x_keys, y_key in training_loader:
             # reset the gradients
             optimizer.zero_grad()
-        except Exception as e:
-            raise Exception(f"❌ Error while resetting the gradients: {e}")
 
-        # forward pass
-        loss, _ = _compute_forward(
-            (x_features, x_keys, y_key),
-            model,
-            criterion,
-            device
-        )
+            # forward pass
+            loss, _ = _compute_forward(
+                (x_features, x_keys, y_key),
+                model,
+                criterion,
+                device
+            )
 
-        # check loss
-        if loss is None:
-            raise Exception("❌ Error while training the model due to None loss returned.")
+            # check loss
+            if loss is None:
+                raise ValueError("❌ Error while training the model due to None loss returned.")
 
-        # backward pass
-        _compute_backward(loss, optimizer)
+            # backward pass
+            _compute_backward(loss, optimizer)
 
-        # training_loader.set_postfix(loss=loss.item())
+            # training_loader.set_postfix(loss=loss.item())
+
+    except (AttributeError, TypeError, ValueError, StopIteration, CudaError, AssertionError) as e:
+        raise RuntimeError(f"❌ Error while training the model (one-epoch): {e}.")
 
     # show a successful message
     _info("🟢 Epoch training completed.")
@@ -86,47 +89,55 @@ def _train_n_epochs(
     """
     # debugging
     _debug(f"⚙️ Number of epochs: {epochs}.")
-    _debug(f"⚙️ Early Stopping: {early_stopping}.")
+    _debug(f"⚙️ Training loader size: {len(training_loader)}.")
+    _debug(f"⚙️ Optimizer to use: {optimizer}.")
+    _debug(f"⚙️ Criterion to use: {criterion}.")
+    _debug(f"⚙️ Device to use: {device}.")
+    _debug(f"⚙️ Early stopping: {'Enabled' if early_stopping else 'Disabled'}.")
     _debug(f"⚙️ Validation loader: {'Received' if validation_loader is not None else 'Not received'}.")
 
-    es = None
-    # instantiate early stopping object (if needed)
-    if early_stopping:
-        es = EarlyStopping()
-
-    # n-epochs learning
-    for epoch in range(epochs):
-        _info(f"⏳ Epoch {epoch + 1}/{epochs}")
-
-        # train the model
-        _train_one_epoch(
-            model,
-            training_loader,
-            optimizer,
-            criterion,
-            device
-        )
-
+    try:
+        es = None
+        # instantiate early stopping object (if needed)
         if early_stopping:
+            es = EarlyStopping()
 
-            avg_loss = None
-            if validation_loader:
+        # n-epochs learning
+        for epoch in range(epochs):
+            _info(f"⏳ Epoch {epoch + 1}/{epochs}")
 
-                # get the validation average loss
-                avg_loss, _,  _ = _evaluate_model(
-                    model,
-                    validation_loader,
-                    criterion,
-                    device
-                )
+            # train the model
+            _train_one_epoch(
+                model,
+                training_loader,
+                optimizer,
+                criterion,
+                device
+            )
 
-            # early stopping logic
-            if early_stopping and avg_loss is not None:
-                es(avg_loss)
-                # check whether to stop
-                if es.early_stop:
-                    _info("🛑 Early stopping triggered.")
-                    break
+            if early_stopping:
+
+                avg_loss = None
+                if validation_loader:
+
+                    # get the validation average loss
+                    avg_loss, _,  _ = _evaluate_model(
+                        model,
+                        validation_loader,
+                        criterion,
+                        device
+                    )
+
+                # early stopping logic
+                if early_stopping and avg_loss is not None:
+                    es(avg_loss)
+                    # check whether to stop
+                    if es.early_stop:
+                        _info("🛑 Early stopping triggered.")
+                        break
+
+    except (NameError, AttributeError, TypeError, ValueError, CudaError, LookupError) as e:
+        raise RuntimeError(f"❌ Error while training the model (n-epochs): {e}.")
 
 
 def _build_optimizer(model, learning_rate):
@@ -138,9 +149,6 @@ def _build_optimizer(model, learning_rate):
     """
     # initial message
     _info("🔄 Optimizer building started...")
-
-    # read the optimizer
-    optimizer_type = _get_config_value("training.optimizer")
 
     # debugging
     _debug(f"⚙️ Learning rate: {learning_rate}.")
@@ -157,18 +165,16 @@ def _build_optimizer(model, learning_rate):
             optimizer = torch.optim.AdamW(
                 model.parameters(),
                 lr=learning_rate,
-                weight_decay=_get_config_value("training.weight_decay")
+                weight_decay=weight_decay
             )
-        elif optimizer_type == "sgd":
+        else:
             optimizer = torch.optim.SGD(
                 model.parameters(),
                 lr=learning_rate,
-                momentum=_get_config_value("training.momentum")
+                momentum=momentum
             )
-        else:
-            raise Exception(f"❌ Invalid optimizer: {optimizer_type}")
-    except Exception as e:
-        raise Exception(f"❌ Error while building optimizer: {e}")
+    except (ValueError, TypeError, UnboundLocalError, KeyError, AssertionError) as e:
+        raise RuntimeError(f"❌ Error while building optimizer: {e}")
 
     # show a successful message
     _info("🟢 Optimizer building completed.")
