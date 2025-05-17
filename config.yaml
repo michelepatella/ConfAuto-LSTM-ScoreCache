@@ -13,7 +13,7 @@ data:
   alpha_end: 1.0
   time_steps: 10
 
-  burst_high: 1,0
+  burst_high: 1.0
   burst_low: 10.0
   burst_every: 100
   burst_peak: 20
