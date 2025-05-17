@@ -3,6 +3,7 @@ from data_generation.requests_generator import _generate_static_requests, _gener
 from utils.log_utils import _info, _debug, phase_var
 from utils.config_utils import _get_config_value
 from utils.data_utils import _save_dataset, _get_dataset_path_type, _create_dataframe
+import numpy as np
 
 
 def data_generation():
@@ -35,6 +36,7 @@ def data_generation():
     # create dataframe
     df = _create_dataframe(
         {
+            "id": np.arange(len(requests)),
             "delta_time": delta_times,
             **freq_columns,
             "request": requests,

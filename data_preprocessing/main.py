@@ -27,6 +27,7 @@ def data_preprocessing():
     df_standardized = _standardize(
         df_no_missing_values,
         [
+            "id",
             "delta_time",
             "freq_last_10",
             "freq_last_100",
