@@ -45,8 +45,13 @@ model_save_path = _get_config_value("model.general.save_path")
 
 # params
 model_params = _get_config_value("model.params")
+hidden_size = _get_config_value("model.params.hidden_size")
 num_layers = _get_config_value("model.params.num_layers")
+bias = _get_config_value("model.params.bias")
+batch_first = _get_config_value("model.params.batch_first")
 dropout = _get_config_value("model.params.dropout")
+bidirectional = _get_config_value("model.params.bidirectional")
+proj_size = _get_config_value("model.params.proj_size")
 
 # --------------------------------------- training config --------------------------------------- #
 # general
@@ -59,7 +64,6 @@ learning_rate = _get_config_value("training.optimizer.learning_rate")
 weight_decay = _get_config_value("training.optimizer.weight_decay")
 momentum = _get_config_value("training.optimizer.momentum")
 
-
 # --------------------------------------- validation config --------------------------------------- #
 # cross-validation
 cv_num_folds = _get_config_value("validation.cross_validation.num_folds")
@@ -71,6 +75,13 @@ early_stopping_delta = _get_config_value("validation.early_stopping.delta")
 
 # search space
 search_space = _get_config_value("validation.search_space")
+hidden_size_range = _get_config_value("validation.search_space.model.params.hidden_size_range")
+num_layers_range = _get_config_value("validation.search_space.model.params.num_layers_range")
+dropout_range = _get_config_value("validation.search_space.model.params.dropout_range")
+learning_rate_range = _get_config_value("validation.search_space.training.learning_rate_range")
 
 # --------------------------------------- evaluation config --------------------------------------- #
 top_k = _get_config_value("evaluation.top_k")
+
+# --------------------------------------- testing config --------------------------------------- #
+testing_batch_size = _get_config_value("testing.batch_size")
