@@ -1,8 +1,6 @@
 import yaml
 import os
 from yaml import YAMLError
-import config
-from main import config_settings
 from utils.log_utils import _info, _debug
 
 
@@ -91,6 +89,7 @@ def _update_config(updated_config, config_params=None):
     :param updated_config: The updated config to write.
     :return:
     """
+    from main import config_settings
     # initial message
     _info("🔄 Config file updating started...")
 
@@ -123,10 +122,11 @@ def _update_config(updated_config, config_params=None):
     _info("🟢 Config file updated.")
 
 
-def _get_config_value(keys):
+def _get_config_value(config, keys):
     """
     Method to get the config value from the config file.
     :param keys: Requested keys.
+    :param config: The config object.
     :return: The config value required.
     """
     # initial message

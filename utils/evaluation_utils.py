@@ -1,8 +1,6 @@
 from collections import defaultdict
 import torch
 from sklearn.metrics import classification_report
-
-from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.feedforward_utils import _compute_forward
 
@@ -185,6 +183,8 @@ def _top_k_accuracy(targets, outputs):
     :param outputs: The outputs of the model.
     :return: The k-accuracy of the predictions.
     """
+    from main import config_settings
+
     try:
         # prepare data
         outputs_tensor = torch.stack(outputs)

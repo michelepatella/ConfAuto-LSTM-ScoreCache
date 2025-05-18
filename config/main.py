@@ -13,58 +13,58 @@ from utils.config_utils import _load_config
 def prepare_config():
     """
     Method to prepare the config file (loading, configuration, and validation).
-    :return: A config object containing all the configuration settings.
+    :return: A Config object containing all the configuration settings.
     """
     # load config file
     config = _load_config()
 
-    # --------------------------------------- data config --------------------------------------- #
+    # data config
     (seed, distribution_type, num_requests,
      num_keys, first_key, last_key, freq_windows) = (
-        _validate_data_distribution_params())
+        _validate_data_distribution_params(config))
 
     (zipf_alpha, zipf_alpha_start, zipf_alpha_end,
      zipf_time_steps, locality_prob,
      burst_high, burst_low, burst_every, burst_peak,
      periodic_base_scale, periodic_amplitude) = (
-        _validate_data_access_pattern_params())
+        _validate_data_access_pattern_params(config))
 
     seq_len, embedding_dim, num_requests = (
-        _validate_data_sequence_params(num_requests))
+        _validate_data_sequence_params(config, num_requests))
 
     training_perc, static_save_path, dynamic_save_path = (
-        _validate_data_dataset_params())
+        _validate_data_dataset_params(config))
 
-    # --------------------------------------- model config --------------------------------------- #
+    # model config
     num_features, model_save_path = (
-        _validate_model_general_params())
+        _validate_model_general_params(config))
 
     (model_params, hidden_size, num_layers,
      bias, batch_first, dropout, bidirectional, proj_size) = (
-        _validate_model_params())
+        _validate_model_params(config))
 
-    # --------------------------------------- training config --------------------------------------- #
+    # training config
     training_num_epochs, training_batch_size = (
-        _validate_training_general_params())
+        _validate_training_general_params(config))
 
     optimizer_type, learning_rate, weight_decay, momentum = (
-        _validate_training_optimizer_params())
+        _validate_training_optimizer_params(config))
 
-    # --------------------------------------- validation config --------------------------------------- #
+    # validation config
     cv_num_folds, validation_num_epochs = (
-        _validate_cv_params())
+        _validate_cv_params(config))
 
     early_stopping_patience, early_stopping_delta = (
-        _validate_early_stopping_params())
+        _validate_early_stopping_params(config))
 
     (search_space, hidden_size_range, num_layers_range, dropout_range,
-     learning_rate_range) = _validate_search_space_params()
+     learning_rate_range) = _validate_search_space_params(config)
 
-    # --------------------------------------- evaluation config --------------------------------------- #
-    top_k = _validate_evaluation_general_params()
+    # evaluation config
+    top_k = _validate_evaluation_general_params(config)
 
-    # --------------------------------------- testing config --------------------------------------- #
-    testing_batch_size = _validate_testing_general_params()
+    # testing config
+    testing_batch_size = _validate_testing_general_params(config)
 
     return Config(
         config=config,

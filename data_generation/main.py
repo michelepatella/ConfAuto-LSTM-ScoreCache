@@ -1,6 +1,5 @@
 from data_generation.frequencies_generator import _generate_last_freq
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
-from main import config_settings
 from utils.log_utils import _info, _debug, phase_var
 from utils.data_utils import _save_dataset, _create_dataframe
 import numpy as np
@@ -11,6 +10,8 @@ def data_generation():
     Method to orchestrate data generation.
     :return:
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Data generation started...")
 

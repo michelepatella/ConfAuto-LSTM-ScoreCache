@@ -1,4 +1,3 @@
-from main import config_settings
 from utils.log_utils import _info, phase_var
 from utils.evaluation_utils import _evaluate_model
 from utils.data_utils import _loader_setup, _extract_targets_from_loader
@@ -11,6 +10,8 @@ def testing():
     :return: The average loss, the average loss per class
     and metrics computed.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Testing started...")
 
@@ -20,7 +21,8 @@ def testing():
     # dataloader setup
     _, testing_loader = _loader_setup(
         "testing",
-        False
+        False,
+        config_settings.config
     )
 
     # setup for testing

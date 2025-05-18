@@ -1,7 +1,6 @@
 import numpy as np
 from data_generation.pattern_generator import _generate_pattern
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
-from main import config_settings
 from utils.log_utils import _info, _debug
 
 
@@ -47,6 +46,8 @@ def _generate_static_requests():
     Method to orchestrate the static requests' generation.
     :return: Static requests and delta times generated.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Static requests generation started...")
 
@@ -86,6 +87,8 @@ def _generate_dynamic_requests():
     Method to orchestrate the dynamic requests' generation.
     :return: Dynamic requests and delta times generated.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Dynamic requests generation started...")
 

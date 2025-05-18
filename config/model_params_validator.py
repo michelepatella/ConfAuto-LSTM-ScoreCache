@@ -77,14 +77,21 @@ def _check_model_params(
                            " integer in [0, hidden_size].")
 
 
-def _validate_model_general_params():
+def _validate_model_general_params(config):
     """
     Method to validate general model parameters.
+    :param config: The config object.
     :return: All the model general parameters.
     """
     # general
-    num_features = _get_config_value("model.general.num_features")
-    model_save_path = _get_config_value("model.general.save_path")
+    num_features = _get_config_value(
+        config,
+        "model.general.num_features"
+    )
+    model_save_path = _get_config_value(
+        config,
+        "model.general.save_path"
+    )
 
     # check general params
     _check_general_model_params(
@@ -95,20 +102,45 @@ def _validate_model_general_params():
     return num_features, model_save_path
 
 
-def _validate_model_params():
+def _validate_model_params(config):
     """
     Method to validate model parameters.
+    :param config: The config object.
     :return: All the model parameters.
     """
     # params
-    model_params = _get_config_value("model.params")
-    hidden_size = _get_config_value("model.params.hidden_size")
-    num_layers = _get_config_value("model.params.num_layers")
-    bias = _get_config_value("model.params.bias")
-    batch_first = _get_config_value("model.params.batch_first")
-    dropout = _get_config_value("model.params.dropout")
-    bidirectional = _get_config_value("model.params.bidirectional")
-    proj_size = _get_config_value("model.params.proj_size")
+    model_params = _get_config_value(
+        config,
+        "model.params"
+    )
+    hidden_size = _get_config_value(
+        config,
+        "model.params.hidden_size"
+    )
+    num_layers = _get_config_value(
+        config,
+        "model.params.num_layers"
+    )
+    bias = _get_config_value(
+        config,
+        "model.params.bias"
+    )
+    batch_first = _get_config_value(
+        config,
+        "model.params.batch_first"
+    )
+    dropout = _get_config_value(
+        config,
+        "model.params.dropout"
+    )
+    bidirectional = _get_config_value(
+        config,
+        "model.params.bidirectional"
+    )
+    proj_size = _get_config_value(
+        config,
+        "model.params.proj_size"
+    )
 
     # check model params
     _check_model_params(

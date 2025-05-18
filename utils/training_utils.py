@@ -1,8 +1,6 @@
 import torch
 from sympy.physics.units import momentum
 from torch.cuda import CudaError
-
-from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.EarlyStopping import EarlyStopping
 from utils.evaluation_utils import _evaluate_model
@@ -148,6 +146,8 @@ def _build_optimizer(model, learning_rate):
     :param learning_rate: Learning rate.
     :return: The created optimizer.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Optimizer building started...")
 

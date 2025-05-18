@@ -110,14 +110,21 @@ def _check_search_space_params(
                            f" must be a non-empty list of floats > 0.")
 
 
-def _validate_cv_params():
+def _validate_cv_params(config):
     """
     Method to validate cross validation parameters.
+    :param config: Config object.
     :return: All the cross-validation parameters.
     """
     # cross-validation
-    cv_num_folds = _get_config_value("validation.cross_validation.num_folds")
-    validation_num_epochs = _get_config_value("validation.cross_validation.num_epochs")
+    cv_num_folds = _get_config_value(
+        config,
+        "validation.cross_validation.num_folds"
+    )
+    validation_num_epochs = _get_config_value(
+        config,
+        "validation.cross_validation.num_epochs"
+    )
 
     # check cross-validation params
     _check_cv_params(
@@ -128,14 +135,21 @@ def _validate_cv_params():
     return cv_num_folds, validation_num_epochs
 
 
-def _validate_early_stopping_params():
+def _validate_early_stopping_params(config):
     """
     Method to validate early stopping parameters.
+    :param config: Config object.
     :return: All early stopping parameters.
     """
     # early stopping
-    early_stopping_patience = _get_config_value("validation.early_stopping.patience")
-    early_stopping_delta = _get_config_value("validation.early_stopping.delta")
+    early_stopping_patience = _get_config_value(
+        config,
+        "validation.early_stopping.patience"
+    )
+    early_stopping_delta = _get_config_value(
+        config,
+        "validation.early_stopping.delta"
+    )
 
     # check early stopping params
     _check_early_stopping_params(
@@ -146,17 +160,33 @@ def _validate_early_stopping_params():
     return early_stopping_patience, early_stopping_delta
 
 
-def _validate_search_space_params():
+def _validate_search_space_params(config):
     """
     Method to validate search space parameters.
+    :param config: Config object.
     :return: All the search space parameters.
     """
     # search space
-    search_space = _get_config_value("validation.search_space")
-    hidden_size_range = _get_config_value("validation.search_space.model.params.hidden_size_range")
-    num_layers_range = _get_config_value("validation.search_space.model.params.num_layers_range")
-    dropout_range = _get_config_value("validation.search_space.model.params.dropout_range")
-    learning_rate_range = _get_config_value("validation.search_space.training.learning_rate_range")
+    search_space = _get_config_value(
+        config,
+        "validation.search_space"
+    )
+    hidden_size_range = _get_config_value(
+        config,
+        "validation.search_space.model.params.hidden_size_range"
+    )
+    num_layers_range = _get_config_value(
+        config,
+        "validation.search_space.model.params.num_layers_range"
+    )
+    dropout_range = _get_config_value(
+        config,
+        "validation.search_space.model.params.dropout_range"
+    )
+    learning_rate_range = _get_config_value(
+        config,
+        "validation.search_space.training.learning_rate_range"
+    )
 
     # check search space params
     _check_search_space_params(

@@ -72,14 +72,21 @@ def _check_optimizer_params(
                            " a float between 0.0 and 1.0.")
 
 
-def _validate_training_general_params():
+def _validate_training_general_params(config):
     """
     Method to validate general training parameters.
+    :param config: The config object.
     :return: All the general training parameters.
     """
     # general
-    training_num_epochs = _get_config_value("training.general.num_epochs")
-    training_batch_size = _get_config_value("training.general.batch_size")
+    training_num_epochs = _get_config_value(
+        config,
+        "training.general.num_epochs"
+    )
+    training_batch_size = _get_config_value(
+        config,
+        "training.general.batch_size"
+    )
 
     # check general training params
     _check_general_training_params(
@@ -90,16 +97,29 @@ def _validate_training_general_params():
     return training_num_epochs, training_batch_size
 
 
-def _validate_training_optimizer_params():
+def _validate_training_optimizer_params(config):
     """
     Method to validate training optimizer parameters.
+    :param config: The config object.
     :return: All the training optimizer parameters.
     """
     # optimizer
-    optimizer_type = _get_config_value("training.optimizer.type")
-    learning_rate = _get_config_value("training.optimizer.learning_rate")
-    weight_decay = _get_config_value("training.optimizer.weight_decay")
-    momentum = _get_config_value("training.optimizer.momentum")
+    optimizer_type = _get_config_value(
+        config,
+        "training.optimizer.type"
+    )
+    learning_rate = _get_config_value(
+        config,
+        "training.optimizer.learning_rate"
+    )
+    weight_decay = _get_config_value(
+        config,
+        "training.optimizer.weight_decay"
+    )
+    momentum = _get_config_value(
+        config,
+        "training.optimizer.momentum"
+    )
 
     # check optimizer params
     _check_optimizer_params(

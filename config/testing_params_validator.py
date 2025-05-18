@@ -16,12 +16,16 @@ def _check_testing_params(testing_batch_size):
                            "must be an integer > 0.")
 
 
-def _validate_testing_general_params():
+def _validate_testing_general_params(config):
     """
     Method to validate testing general parameters.
+    :param config: The config object.
     :return: All the testing general parameters.
     """
-    testing_batch_size = _get_config_value("testing.general.batch_size")
+    testing_batch_size = _get_config_value(
+        config,
+        "testing.general.batch_size"
+    )
 
     # check testing params
     _check_testing_params(testing_batch_size)

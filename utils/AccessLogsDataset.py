@@ -1,6 +1,5 @@
 import torch
 from torch.utils.data import Dataset
-
 from main import config_settings
 from utils.log_utils import _debug
 from utils.data_utils import _load_dataset

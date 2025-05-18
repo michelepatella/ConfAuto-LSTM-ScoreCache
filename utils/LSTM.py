@@ -1,7 +1,5 @@
 import torch
 import torch.nn as nn
-
-from main import config_settings
 from utils.log_utils import _debug
 from utils.config_utils import _get_config_value
 
@@ -14,6 +12,7 @@ class LSTM(nn.Module):
         :param params: The model's parameters.
         :return:
         """
+        from main import config_settings
 
         # definition of the required parameters
         self.required_parameters = [
@@ -48,7 +47,10 @@ class LSTM(nn.Module):
                         setattr(
                             self,
                             param,
-                            _get_config_value(f"model.params.{param}")
+                            _get_config_value(
+                                config_settings.config,
+                                f"model.params.{param}"
+                            )
                         )
                 else:
                     # debugging
@@ -58,7 +60,10 @@ class LSTM(nn.Module):
                     setattr(
                         self,
                         param,
-                        _get_config_value(f"model.params.{param}")
+                        _get_config_value(
+                            config_settings.config,
+                            f"model.params.{param}"
+                            )
                     )
 
             # check if dropout can be applied
@@ -108,6 +113,8 @@ class LSTM(nn.Module):
         Method to initialize the LSTM model.
         :param params: The hyperparameters of the model.
         """
+        from main import config_settings
+
         super(LSTM, self).__init__()
 
         # set model's parameters

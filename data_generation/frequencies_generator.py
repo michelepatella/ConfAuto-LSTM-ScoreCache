@@ -1,6 +1,4 @@
 from collections import Counter
-
-from main import config_settings
 from utils.log_utils import _info, _debug
 
 
@@ -55,6 +53,8 @@ def _generate_last_freq(sequence):
     :param sequence: The sequence to generate frequencies for.
     :return: The generated frequencies.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Frequencies generation started...")
 

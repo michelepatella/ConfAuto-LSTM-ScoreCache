@@ -1,4 +1,3 @@
-from main import config_settings
 from utils.log_utils import _info, phase_var
 from utils.data_utils import _loader_setup, _extract_targets_from_loader
 from utils.training_utils import _train_n_epochs
@@ -10,6 +9,8 @@ def training():
     Method to train the LSTM model.
     :return:
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Training started...")
 
@@ -19,7 +20,8 @@ def training():
     # dataloader setup
     _, training_loader = _loader_setup(
         "training",
-        True
+        True,
+        config_settings.config
     )
 
     # setup for training

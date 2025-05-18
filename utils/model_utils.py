@@ -1,8 +1,6 @@
 import numpy as np
 import torch
 from sklearn.utils import compute_class_weight
-
-from main import config_settings
 from utils.LSTM import LSTM
 from utils.log_utils import _info, _debug
 from utils.training_utils import _build_optimizer
@@ -14,6 +12,8 @@ def _save_model(model):
     :param model: The model to be saved.
     :return:
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Model saving started...")
 
@@ -40,6 +40,8 @@ def _load_model(model, device):
     :param device: The device to use.
     :return: The model loaded.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Model loading started...")
 
@@ -121,6 +123,8 @@ def _calculate_class_weights(targets):
     :param targets: The targets for which to calculate the class weights.
     :return: The class weights calculated.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Class weights calculation started...")
 

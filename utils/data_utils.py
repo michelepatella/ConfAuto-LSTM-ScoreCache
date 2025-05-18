@@ -2,8 +2,6 @@ import pandas as pd
 import torch
 from pandas.errors import EmptyDataError, ParserError
 from torch.utils.data import DataLoader
-
-from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 
@@ -129,6 +127,8 @@ def _get_dataset_path_type():
     Method to get the dataset path and type from config file.
     :return: The dataset path.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Dataset path and type retrieval started...")
 
@@ -150,11 +150,12 @@ def _get_dataset_path_type():
     return dataset_path
 
 
-def _loader_setup(loader_type, shuffle):
+def _loader_setup(loader_type, shuffle, config):
     """
     Method to prepare the data loader for the training and testing.
     :param loader_type: The loader type ("training" or "testing").
     :param shuffle: Whether to shuffle the data.
+    :param config: The config object.
     :return: The created data loader and the corresponding dataset.
     """
     from utils.AccessLogsDataset import AccessLogsDataset
@@ -176,7 +177,10 @@ def _loader_setup(loader_type, shuffle):
         # create the data loader starting from the dataset
         loader = _create_data_loader(
             dataset,
-            _get_config_value(f"{loader_type}.general.batch_size"),
+            _get_config_value(
+                config,
+                f"{loader_type}.general.batch_size"
+            ),
             shuffle
         )
     except (FileNotFoundError, IOError, OSError, ValueError, TypeError, AttributeError) as e:

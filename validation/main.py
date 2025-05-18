@@ -9,6 +9,8 @@ def validation():
     Method to orchestrate the validation of the model.
     :return:
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Validation started...")
 
@@ -18,7 +20,8 @@ def validation():
     # load the training set
     training_set, _ = _loader_setup(
         "training",
-        False
+        False,
+        config_settings.config
     )
 
     # grid search for best parameters

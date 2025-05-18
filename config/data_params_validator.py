@@ -227,19 +227,41 @@ def _check_dataset_params(
                            "'data.dataset.dynamic_save_path' must be strings.")
 
 
-def _validate_data_distribution_params():
+def _validate_data_distribution_params(config):
     """
     Method to validate data distribution parameters.
+    :param config: The configuration object.
     :return: All the data distribution parameters.
     """
     # distribution
-    seed = _get_config_value("data.distribution.seed")
-    distribution_type = _get_config_value("data.distribution.type")
-    num_requests = _get_config_value("data.distribution.num_requests")
-    num_keys = _get_config_value("data.distribution.num_keys")
-    first_key = _get_config_value("data.distribution.key_range.first_key")
-    last_key = _get_config_value("data.distribution.key_range.last_key") + 1
-    freq_windows = _get_config_value("data.distribution.freq_windows")
+    seed = _get_config_value(
+        config,
+        "data.distribution.seed"
+    )
+    distribution_type = _get_config_value(
+        config,
+        "data.distribution.type"
+    )
+    num_requests = _get_config_value(
+        config,
+        "data.distribution.num_requests"
+    )
+    num_keys = _get_config_value(
+        config,
+        "data.distribution.num_keys"
+    )
+    first_key = _get_config_value(
+        config,
+        "data.distribution.key_range.first_key"
+    )
+    last_key = _get_config_value(
+        config,
+        "data.distribution.key_range.last_key"
+    ) + 1
+    freq_windows = _get_config_value(
+        config,
+        "data.distribution.freq_windows"
+    )
 
     # check distribution params
     _check_distribution_params(
@@ -256,29 +278,63 @@ def _validate_data_distribution_params():
             num_keys, first_key, last_key, freq_windows)
 
 
-def _validate_data_access_pattern_params():
+def _validate_data_access_pattern_params(config):
     """
     Method to validate access pattern parameters.
+    :param config: The configuration object.
     :return: All the data access pattern parameters.
     """
     # access pattern
     # zipf
-    zipf_alpha = _get_config_value("data.access_pattern.zipf.alpha")
-    zipf_alpha_start = _get_config_value("data.access_pattern.zipf.alpha_start")
-    zipf_alpha_end = _get_config_value("data.access_pattern.zipf.alpha_end")
-    zipf_time_steps = _get_config_value("data.access_pattern.zipf.time_steps")
+    zipf_alpha = _get_config_value(
+        config,
+        "data.access_pattern.zipf.alpha"
+    )
+    zipf_alpha_start = _get_config_value(
+        config,
+        "data.access_pattern.zipf.alpha_start"
+    )
+    zipf_alpha_end = _get_config_value(
+        config,
+        "data.access_pattern.zipf.alpha_end"
+    )
+    zipf_time_steps = _get_config_value(
+        config,
+        "data.access_pattern.zipf.time_steps"
+    )
     # locality
-    locality_prob = _get_config_value("data.access_pattern.locality.prob")
+    locality_prob = _get_config_value(
+        config,
+        "data.access_pattern.locality.prob"
+    )
 
     # temporal pattern
     # burstiness
-    burst_high = _get_config_value("data.temporal_pattern.burstiness.burst_high")
-    burst_low = _get_config_value("data.temporal_pattern.burstiness.burst_low")
-    burst_every = _get_config_value("data.temporal_pattern.burstiness.burst_every")
-    burst_peak = _get_config_value("data.temporal_pattern.burstiness.burst_peak")
+    burst_high = _get_config_value(
+        config,
+        "data.temporal_pattern.burstiness.burst_high"
+    )
+    burst_low = _get_config_value(
+        config,
+        "data.temporal_pattern.burstiness.burst_low"
+    )
+    burst_every = _get_config_value(
+        config,
+        "data.temporal_pattern.burstiness.burst_every"
+    )
+    burst_peak = _get_config_value(
+        config,
+        "data.temporal_pattern.burstiness.burst_peak"
+    )
     # periodic
-    periodic_base_scale = _get_config_value("data.temporal_pattern.periodic.base_scale")
-    periodic_amplitude = _get_config_value("data.temporal_pattern.periodic.amplitude")
+    periodic_base_scale = _get_config_value(
+        config,
+        "data.temporal_pattern.periodic.base_scale"
+    )
+    periodic_amplitude = _get_config_value(
+        config,
+        "data.temporal_pattern.periodic.amplitude"
+    )
 
     # check access pattern params
     _check_access_pattern_params(
@@ -300,15 +356,22 @@ def _validate_data_access_pattern_params():
             burst_peak, periodic_base_scale, periodic_amplitude)
 
 
-def _validate_data_sequence_params(num_requests):
+def _validate_data_sequence_params(config, num_requests):
     """
     Method to validate data sequence parameters.
+    :param config: The configuration object.
     :param num_requests: The number of requests.
     :return: All the data sequence parameters.
     """
     # sequence
-    seq_len = _get_config_value("data.sequence.len")
-    embedding_dim = _get_config_value("data.sequence.embedding_dim")
+    seq_len = _get_config_value(
+        config,
+        "data.sequence.len"
+    )
+    embedding_dim = _get_config_value(
+        config,
+        "data.sequence.embedding_dim"
+    )
 
     # check sequence params
     _check_sequence_params(
@@ -320,15 +383,25 @@ def _validate_data_sequence_params(num_requests):
     return seq_len, embedding_dim, num_requests
 
 
-def _validate_data_dataset_params():
+def _validate_data_dataset_params(config):
     """
     Method to validate data dataset parameters.
+    :param config: The configuration object.
     :return: All the data dataset parameters.
     """
     # dataset
-    training_perc = _get_config_value("data.dataset.training_perc")
-    static_save_path = _get_config_value("data.dataset.static_save_path")
-    dynamic_save_path = _get_config_value("data.dataset.dynamic_save_path")
+    training_perc = _get_config_value(
+        config,
+        "data.dataset.training_perc"
+    )
+    static_save_path = _get_config_value(
+        config,
+        "data.dataset.static_save_path"
+    )
+    dynamic_save_path = _get_config_value(
+        config,
+        "data.dataset.dynamic_save_path"
+    )
 
     # check dataset params
     _check_dataset_params(

@@ -1,8 +1,6 @@
 import numpy as np
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
-
-from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.data_utils import _create_data_loader, _extract_targets_from_loader
 from utils.evaluation_utils import _evaluate_model
@@ -16,6 +14,8 @@ def _time_series_cv(training_set, params):
     :param params: The hyperparameters of the model.
     :return: The final average loss.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Time Series Cross-Validation started...")
 

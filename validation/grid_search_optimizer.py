@@ -1,8 +1,6 @@
 import copy
 import itertools
 from tqdm import tqdm
-
-from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.config_utils import _flatten_search_space, _set_nested_dict
 from validation.best_params_updater import _check_and_update_best_params
@@ -14,6 +12,8 @@ def _get_parameters_combination():
     Method to combine the parameters.
     :return: The parameters' combination.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Parameters' combination started...")
 

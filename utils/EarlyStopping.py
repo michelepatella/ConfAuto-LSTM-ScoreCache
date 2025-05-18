@@ -1,6 +1,4 @@
 import numpy as np
-
-from main import config_settings
 from utils.log_utils import _debug
 
 
@@ -10,6 +8,8 @@ class EarlyStopping:
         """
         Method to initialize the class.
         """
+        from main import config_settings
+
         try:
             # set the fields
             self.patience = config_settings.early_stopping_patience

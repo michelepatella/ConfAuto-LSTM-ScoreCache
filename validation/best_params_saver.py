@@ -1,5 +1,4 @@
 import config
-from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.config_utils import _update_config
 
@@ -10,6 +9,8 @@ def _save_best_params(best_params):
     :param best_params: Best parameters found.
     :return:
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Best parameter saving started...")
 

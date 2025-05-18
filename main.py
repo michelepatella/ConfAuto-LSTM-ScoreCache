@@ -12,7 +12,7 @@ data_generation()
 
 data_preprocessing()
 
-validation()
+#validation()
 
 training()
 

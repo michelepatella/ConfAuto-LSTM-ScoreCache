@@ -1,6 +1,4 @@
 import numpy as np
-
-from main import config_settings
 from utils.log_utils import _debug, _info
 
 
@@ -48,6 +46,8 @@ def _generate_pattern(probs, num_requests, timestamps):
     :param timestamps: The list of timestamps.
     :return: A tuple containing the generated requests and delta_times.
     """
+    from main import config_settings
+
     # initial message
     _info("🔄 Pattern generation started...")
 
