@@ -1,7 +1,7 @@
 from config.data_params_checker import _check_distribution_params, _check_access_pattern_params, _check_sequence_params, _check_dataset_params
 from config.model_params_checker import _check_general_model_params, _check_model_params
 from config.training_params_checker import _check_general_training_params, _check_optimizer_params
-from config.validation_params_checker import _check_cv_params, _check_early_stopping_params
+from config.validation_params_checker import _check_cv_params, _check_early_stopping_params, _check_search_space_params
 from utils.config_utils import _get_config_value
 
 # --------------------------------------- data config --------------------------------------- #
@@ -166,6 +166,14 @@ hidden_size_range = _get_config_value("validation.search_space.model.params.hidd
 num_layers_range = _get_config_value("validation.search_space.model.params.num_layers_range")
 dropout_range = _get_config_value("validation.search_space.model.params.dropout_range")
 learning_rate_range = _get_config_value("validation.search_space.training.learning_rate_range")
+
+# check search space params
+_check_search_space_params(
+        hidden_size_range,
+        num_layers_range,
+        dropout_range,
+        learning_rate_range
+)
 
 # --------------------------------------- evaluation config --------------------------------------- #
 top_k = _get_config_value("evaluation.top_k")
