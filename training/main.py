@@ -1,4 +1,4 @@
-from config.main import model_params, learning_rate, training_num_epochs
+from main import config_settings
 from utils.log_utils import _info, phase_var
 from utils.data_utils import _loader_setup, _extract_targets_from_loader
 from utils.training_utils import _train_n_epochs
@@ -25,15 +25,15 @@ def training():
     # setup for training
     device, criterion, model, optimizer = (
         _model_setup(
-            model_params,
-            learning_rate,
+            config_settings["model_params"],
+            config_settings["learning_rate"],
             _extract_targets_from_loader(training_loader)
         )
     )
 
     # train the model
     _train_n_epochs(
-        training_num_epochs,
+        config_settings["training_num_epochs"],
         model,
         training_loader,
         optimizer,

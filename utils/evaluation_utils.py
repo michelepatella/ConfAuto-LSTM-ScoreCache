@@ -1,7 +1,8 @@
 from collections import defaultdict
 import torch
 from sklearn.metrics import classification_report
-from config.main import top_k
+
+from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.feedforward_utils import _compute_forward
 
@@ -177,19 +178,21 @@ def _collect_predictions(
     return avg_loss, avg_loss_per_class, all_preds, all_targets, all_outputs
 
 
-def _top_k_accuracy(targets, outputs, k):
+def _top_k_accuracy(targets, outputs):
     """
     To calculate the top-k accuracy of the predictions.
     :param targets: The targets.
     :param outputs: The outputs of the model.
-    :param k: The value of k for the accuracy.
     :return: The k-accuracy of the predictions.
     """
     try:
         # prepare data
         outputs_tensor = torch.stack(outputs)
-        top_k_preds = (torch.topk(outputs_tensor, k=k, dim=1)
-                       .indices.cpu().numpy())
+        top_k_preds = (torch.topk(
+            outputs_tensor,
+            k=config_settings["top_k"],
+            dim=1
+        ).indices.cpu().numpy())
 
         # initialize the no. of correct predictions
         correct = 0
@@ -198,7 +201,7 @@ def _top_k_accuracy(targets, outputs, k):
         for i in range(len(targets)):
 
             # get the top-k predictions
-            top_k_i = top_k_preds[i][:k]
+            top_k_i = top_k_preds[i][:config_settings["top_k"]]
 
             # check if the target is contained into the
             # top-k predictions
@@ -237,8 +240,7 @@ def _compute_metrics(targets, predictions, outputs):
         # calculate the top-k accuracy
         top_k_accuracy = _top_k_accuracy(
             targets,
-            outputs,
-            top_k
+            outputs
         )
     except (ValueError, TypeError) as e:
         raise RuntimeError(f"❌ Error while computing metrics: {e}.")

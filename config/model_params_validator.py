@@ -1,3 +1,4 @@
+from utils.config_utils import _get_config_value
 from utils.log_utils import _info
 
 
@@ -74,3 +75,51 @@ def _check_model_params(
     ):
         raise RuntimeError("❌ 'model.params.proj_size' must be an"
                            " integer in [0, hidden_size].")
+
+
+def _validate_model_general_params():
+    """
+    Method to validate general model parameters.
+    :return: All the model general parameters.
+    """
+    # general
+    num_features = _get_config_value("model.general.num_features")
+    model_save_path = _get_config_value("model.general.save_path")
+
+    # check general params
+    _check_general_model_params(
+        num_features,
+        model_save_path
+    )
+
+    return num_features, model_save_path
+
+
+def _validate_model_params():
+    """
+    Method to validate model parameters.
+    :return: All the model parameters.
+    """
+    # params
+    model_params = _get_config_value("model.params")
+    hidden_size = _get_config_value("model.params.hidden_size")
+    num_layers = _get_config_value("model.params.num_layers")
+    bias = _get_config_value("model.params.bias")
+    batch_first = _get_config_value("model.params.batch_first")
+    dropout = _get_config_value("model.params.dropout")
+    bidirectional = _get_config_value("model.params.bidirectional")
+    proj_size = _get_config_value("model.params.proj_size")
+
+    # check model params
+    _check_model_params(
+        hidden_size,
+        num_layers,
+        bias,
+        batch_first,
+        dropout,
+        bidirectional,
+        proj_size
+    )
+
+    return (model_params, hidden_size, num_layers, bias,
+            batch_first, dropout, bidirectional, proj_size)

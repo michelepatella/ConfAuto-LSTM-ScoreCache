@@ -1,5 +1,7 @@
+import config
+from main import config_settings
 from utils.log_utils import _info, _debug
-from utils.config_utils import _load_config, _update_config
+from utils.config_utils import _update_config
 
 
 def _save_best_params(best_params):
@@ -14,9 +16,6 @@ def _save_best_params(best_params):
     # debugging
     _debug(f"⚙️ Best params to save: {best_params}.")
 
-    # load config file
-    config = _load_config()
-
     try:
         # update all the parameters
         for section, params in best_params.items():
@@ -26,11 +25,11 @@ def _save_best_params(best_params):
                 raise KeyError(f"❌ Section '{section}' not found in config.")
             if not isinstance(params, dict):
                 raise ValueError(f"❌ Parameters for section '{section}' must be a dict. Received: {type(params)}.")
-            if not isinstance(config[section], dict):
-                raise ValueError(f"❌ Config section '{section}' must be a dict. Found: {type(config[section])}.")
+            if not isinstance(config_settings["config"][section], dict):
+                raise ValueError(f"❌ Config section '{section}' must be a dict. Found: {type(config_settings["config"][section])}.")
 
             # update parameter
-            config[section].update(params)
+            config_settings["config"][section].update(params)
 
     except (KeyError, TypeError, ValueError) as e:
         raise RuntimeError(f"❌ Error while saving the best parameters: {e}.")

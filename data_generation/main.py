@@ -1,7 +1,8 @@
 from data_generation.frequencies_generator import _generate_last_freq
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
+from main import config_settings
 from utils.log_utils import _info, _debug, phase_var
-from utils.data_utils import _save_dataset, _get_dataset_path_type, _create_dataframe
+from utils.data_utils import _save_dataset, _create_dataframe
 import numpy as np
 
 
@@ -16,13 +17,10 @@ def data_generation():
     # set the variable indicating the state of the process
     phase_var.set("data_generation")
 
-    # get the dataset path
-    _, distribution_type = _get_dataset_path_type()
-
     # debugging
-    _debug(f"⚙️Type of distribution: {distribution_type}.")
+    _debug(f"⚙️Type of distribution: {config_settings["distribution_type"]}.")
 
-    if distribution_type == "static":
+    if config_settings["distribution_type"] == "static":
         # generate static requests and delta times
         requests, delta_times = _generate_static_requests()
     else:

@@ -1,5 +1,6 @@
 import numpy as np
-from config.main import early_stopping_patience, early_stopping_delta
+
+from main import config_settings
 from utils.log_utils import _debug
 
 
@@ -11,8 +12,8 @@ class EarlyStopping:
         """
         try:
             # set the fields
-            self.patience = early_stopping_patience
-            self.delta = early_stopping_delta
+            self.patience = config_settings["early_stopping_patience"]
+            self.delta = config_settings["early_stopping_delta"]
             self.best_avg_loss = np.inf
             self.counter = 0
             self.early_stop = False

@@ -1,3 +1,6 @@
+from utils.config_utils import _get_config_value
+
+
 def _check_cv_params(
         cv_num_folds,
         validation_num_epochs
@@ -105,3 +108,63 @@ def _check_search_space_params(
     ):
         raise RuntimeError(f"❌ 'validation.search_space.model.params.learning_rate_range'"
                            f" must be a non-empty list of floats > 0.")
+
+
+def _validate_cv_params():
+    """
+    Method to validate cross validation parameters.
+    :return: All the cross-validation parameters.
+    """
+    # cross-validation
+    cv_num_folds = _get_config_value("validation.cross_validation.num_folds")
+    validation_num_epochs = _get_config_value("validation.cross_validation.num_epochs")
+
+    # check cross-validation params
+    _check_cv_params(
+        cv_num_folds,
+        validation_num_epochs
+    )
+
+    return cv_num_folds, validation_num_epochs
+
+
+def _validate_early_stopping_params():
+    """
+    Method to validate early stopping parameters.
+    :return: All early stopping parameters.
+    """
+    # early stopping
+    early_stopping_patience = _get_config_value("validation.early_stopping.patience")
+    early_stopping_delta = _get_config_value("validation.early_stopping.delta")
+
+    # check early stopping params
+    _check_early_stopping_params(
+        early_stopping_patience,
+        early_stopping_delta
+    )
+
+    return early_stopping_patience, early_stopping_delta
+
+
+def _validate_search_space_params():
+    """
+    Method to validate search space parameters.
+    :return: All the search space parameters.
+    """
+    # search space
+    search_space = _get_config_value("validation.search_space")
+    hidden_size_range = _get_config_value("validation.search_space.model.params.hidden_size_range")
+    num_layers_range = _get_config_value("validation.search_space.model.params.num_layers_range")
+    dropout_range = _get_config_value("validation.search_space.model.params.dropout_range")
+    learning_rate_range = _get_config_value("validation.search_space.training.learning_rate_range")
+
+    # check search space params
+    _check_search_space_params(
+        hidden_size_range,
+        num_layers_range,
+        dropout_range,
+        learning_rate_range
+    )
+
+    return (search_space, hidden_size_range, num_layers_range,
+            dropout_range, learning_rate_range)

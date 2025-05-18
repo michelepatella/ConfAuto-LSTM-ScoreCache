@@ -2,7 +2,8 @@ import pandas as pd
 import torch
 from pandas.errors import EmptyDataError, ParserError
 from torch.utils.data import DataLoader
-from config.main import distribution_type, dynamic_save_path, static_save_path
+
+from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 
@@ -43,7 +44,7 @@ def _save_dataset(df):
     _info("🔄 Dataset saving started...")
 
     # get the dataset path
-    dataset_path, _ = _get_dataset_path_type()
+    dataset_path = _get_dataset_path_type()
 
     # debugging
     _debug(f"⚙️ Dataset shape to save: {df.shape}.")
@@ -103,7 +104,7 @@ def _load_dataset():
     _info("🔄 Dataset loading started...")
 
     # get the dataset path
-    dataset_path, _ = _get_dataset_path_type()
+    dataset_path = _get_dataset_path_type()
 
     # debugging
     _debug(f"⚙️ Path of the dataset to be loaded: {dataset_path}.")
@@ -126,19 +127,19 @@ def _load_dataset():
 def _get_dataset_path_type():
     """
     Method to get the dataset path and type from config file.
-    :return: The dataset path and type.
+    :return: The dataset path.
     """
     # initial message
     _info("🔄 Dataset path and type retrieval started...")
 
     # debugging
-    _debug(f"⚙️ Dataset distribution type from config: {distribution_type}.")
+    _debug(f"⚙️ Dataset distribution type from config: {config_settings["distribution_type"]}.")
 
     # keep track of the dataset path
-    if distribution_type == "static":
-        dataset_path = static_save_path
+    if config_settings["distribution_type"] == "static":
+        dataset_path = config_settings["static_save_path"]
     else:
-        dataset_path = dynamic_save_path
+        dataset_path = config_settings["dynamic_save_path"]
 
     # debugging
     _debug(f"⚙️ Dataset path found: {dataset_path}.")
@@ -146,7 +147,7 @@ def _get_dataset_path_type():
     # show a successful message
     _info("🟢 Dataset path and type retrieved.")
 
-    return dataset_path, distribution_type
+    return dataset_path
 
 
 def _loader_setup(loader_type, shuffle):
@@ -162,7 +163,7 @@ def _loader_setup(loader_type, shuffle):
     _info("🔄 Load setup started...")
 
     # get the dataset type
-    dataset_path, _ = _get_dataset_path_type()
+    dataset_path = _get_dataset_path_type()
 
     # debugging
     _debug(f"⚙️ Loader type: {loader_type}.")

@@ -1,7 +1,8 @@
 import torch
 from sympy.physics.units import momentum
 from torch.cuda import CudaError
-from config.main import optimizer_type, weight_decay
+
+from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.EarlyStopping import EarlyStopping
 from utils.evaluation_utils import _evaluate_model
@@ -152,20 +153,20 @@ def _build_optimizer(model, learning_rate):
 
     # debugging
     _debug(f"⚙️ Learning rate: {learning_rate}.")
-    _debug(f"⚙️ Optimizer type: {optimizer_type}.")
+    _debug(f"⚙️ Optimizer type: {config_settings["optimizer_type"]}.")
 
     try:
         # define the optimizer
-        if optimizer_type == "adam":
+        if config_settings["optimizer_type"] == "adam":
             optimizer = torch.optim.Adam(
                 model.parameters(),
                 lr=learning_rate
             )
-        elif optimizer_type == "adamw":
+        elif config_settings["optimizer_type"] == "adamw":
             optimizer = torch.optim.AdamW(
                 model.parameters(),
                 lr=learning_rate,
-                weight_decay=weight_decay
+                weight_decay=config_settings["weight_decay"]
             )
         else:
             optimizer = torch.optim.SGD(

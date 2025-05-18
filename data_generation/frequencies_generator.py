@@ -1,5 +1,6 @@
 from collections import Counter
-from config.main import freq_windows
+
+from main import config_settings
 from utils.log_utils import _info, _debug
 
 
@@ -62,7 +63,7 @@ def _generate_last_freq(sequence):
         freq_columns = {}
 
         # create a new column
-        for w in freq_windows:
+        for w in config_settings["freq_windows"]:
             col_name = f"freq_last_{w}"
             freq_columns[col_name] = _calculate_rel_frequency(
                 sequence,

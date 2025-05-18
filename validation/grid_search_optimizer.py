@@ -1,7 +1,8 @@
 import copy
 import itertools
 from tqdm import tqdm
-from config.main import search_space
+
+from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.config_utils import _flatten_search_space, _set_nested_dict
 from validation.best_params_updater import _check_and_update_best_params
@@ -20,7 +21,7 @@ def _get_parameters_combination():
 
     try:
         # iterate over all the sections in the search space
-        for section, params_dict in search_space.items():
+        for section, params_dict in config_settings["search_space"].items():
             # make the sections flatten
             flat_params = _flatten_search_space(params_dict)
 

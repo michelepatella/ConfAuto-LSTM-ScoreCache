@@ -1,6 +1,6 @@
 import numpy as np
-from config.main import first_key, last_key, burst_every, burst_peak, \
-    burst_high, burst_low, seed, locality_prob, periodic_base_scale, periodic_amplitude
+
+from main import config_settings
 from utils.log_utils import _debug, _info
 
 
@@ -75,12 +75,12 @@ def _generate_pattern(probs, num_requests, timestamps):
 
     # define key relationships using a dictionary
     key_relationships = _generate_key_relationships(
-        first_key,
-        last_key
+        config_settings["first_key"],
+        config_settings["last_key"]
     )
 
     # to make the process deterministic
-    np.random.seed(seed)
+    np.random.seed(config_settings["seed"])
 
     try:
         # for each request
@@ -89,11 +89,14 @@ def _generate_pattern(probs, num_requests, timestamps):
             # for the first request or the p_local %
             # of all the other times use a Zipf distribution
             if (last_accessed_key is None
-                    or np.random.rand() > locality_prob):
+                    or np.random.rand() > config_settings["locality_prob"]):
 
                 # generate the request following Zipf distribution
                 request = np.random.choice(
-                    np.arange(first_key, last_key),
+                    np.arange(
+                        config_settings["first_key"],
+                        config_settings["last_key"]
+                    ),
                     p=probs
                 )
 
@@ -111,19 +114,22 @@ def _generate_pattern(probs, num_requests, timestamps):
                 else:
                     # generate the request following Zipf distribution
                     request = np.random.choice(
-                        np.arange(first_key, last_key),
+                        np.arange(
+                            config_settings["first_key"],
+                            config_settings["last_key"]
+                        ),
                         p=probs
                     )
 
             # calculate periodic component for frequency scaling
-            periodic_scale = (periodic_base_scale + periodic_amplitude
+            periodic_scale = (config_settings["periodic_base_scale"] + config_settings["periodic_amplitude"]
                               * np.cos(2 * np.pi * timestamps[-1] / period))
 
             # introduce burstiness
-            if i % burst_every < burst_peak:
-                bursty_scale = burst_high
+            if i % config_settings["burst_every"] < config_settings["burst_peak"]:
+                bursty_scale = config_settings["burst_high"]
             else:
-                bursty_scale = burst_low
+                bursty_scale = config_settings["burst_low"]
 
             # combine periodic and bursty scales
             freq_scale = periodic_scale * bursty_scale

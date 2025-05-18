@@ -1,4 +1,4 @@
-from config.main import model_params, learning_rate
+from main import config_settings
 from utils.log_utils import _info, phase_var
 from utils.evaluation_utils import _evaluate_model
 from utils.data_utils import _loader_setup, _extract_targets_from_loader
@@ -26,8 +26,8 @@ def testing():
     # setup for testing
     device, criterion, model, _ = (
         _model_setup(
-            model_params,
-            learning_rate,
+            config_settings["model_params"],
+            config_settings["learning_rate"],
             _extract_targets_from_loader(testing_loader)
         )
     )

@@ -1,9 +1,12 @@
+from config import prepare_config
 from data_generation import data_generation
 from data_preprocessing.main import data_preprocessing
 from testing import testing
 from training import training
 from validation import validation
 
+
+config_settings = prepare_config()
 
 data_generation()
 

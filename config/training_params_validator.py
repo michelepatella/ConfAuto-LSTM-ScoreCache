@@ -1,3 +1,6 @@
+from utils.config_utils import _get_config_value
+
+
 def _check_general_training_params(
         training_num_epochs,
         training_batch_size
@@ -67,3 +70,43 @@ def _check_optimizer_params(
     ):
         raise RuntimeError("❌ 'training.optimizer.momentum' must be"
                            " a float between 0.0 and 1.0.")
+
+
+def _validate_training_general_params():
+    """
+    Method to validate general training parameters.
+    :return: All the general training parameters.
+    """
+    # general
+    training_num_epochs = _get_config_value("training.general.num_epochs")
+    training_batch_size = _get_config_value("training.general.batch_size")
+
+    # check general training params
+    _check_general_training_params(
+        training_num_epochs,
+        training_batch_size
+    )
+
+    return training_num_epochs, training_batch_size
+
+
+def _validate_training_optimizer_params():
+    """
+    Method to validate training optimizer parameters.
+    :return: All the training optimizer parameters.
+    """
+    # optimizer
+    optimizer_type = _get_config_value("training.optimizer.type")
+    learning_rate = _get_config_value("training.optimizer.learning_rate")
+    weight_decay = _get_config_value("training.optimizer.weight_decay")
+    momentum = _get_config_value("training.optimizer.momentum")
+
+    # check optimizer params
+    _check_optimizer_params(
+        optimizer_type,
+        learning_rate,
+        weight_decay,
+        momentum
+    )
+
+    return optimizer_type, learning_rate, weight_decay, momentum

@@ -1,7 +1,8 @@
 import numpy as np
 import torch
 from sklearn.utils import compute_class_weight
-from config.main import model_save_path, num_keys
+
+from main import config_settings
 from utils.LSTM import LSTM
 from utils.log_utils import _info, _debug
 from utils.training_utils import _build_optimizer
@@ -18,18 +19,18 @@ def _save_model(model):
 
     try:
         # debugging
-        _debug(f"⚙️ Path to save the model: {model_save_path}.")
+        _debug(f"⚙️ Path to save the model: {config_settings["model_save_path"]}.")
 
         # save the model
         torch.save(
             model.state_dict(),
-            model_save_path
+            config_settings["model_save_path"]
         )
     except (KeyError, TypeError, ValueError, AttributeError, FileNotFoundError, PermissionError) as e:
         raise RuntimeError(f"❌ Error while saving the model: {e}.")
 
     # show a successful message
-    _info(f"🟢 Model save to '{model_save_path}'.")
+    _info(f"🟢 Model save to '{config_settings["model_save_path"]}'.")
 
 
 def _load_model(model, device):
@@ -43,12 +44,12 @@ def _load_model(model, device):
     _info("🔄 Model loading started...")
 
     # debugging
-    _debug(f"⚙️ Path to load the model: {model_save_path}.")
+    _debug(f"⚙️ Path to load the model: {config_settings["model_save_path"]}.")
 
     try:
         # load the model
         model.load_state_dict(torch.load(
-            model_save_path,
+            config_settings["model_save_path"],
             map_location=device
         ))
     except (FileNotFoundError, PermissionError, AttributeError, ValueError, TypeError) as e:
@@ -125,7 +126,7 @@ def _calculate_class_weights(targets):
 
     try:
         # debugging
-        _debug(f"⚙️ Number of classes: {num_keys}.")
+        _debug(f"⚙️ Number of classes: {config_settings["num_keys"]}.")
 
         # be sure targets is a numpy array and shift them
         targets = targets.cpu().numpy() if (
@@ -149,7 +150,10 @@ def _calculate_class_weights(targets):
         )
 
         # initialize weights to 1.0
-        class_weights = np.ones(num_keys, dtype=np.float32)
+        class_weights = np.ones(
+            config_settings["num_keys"],
+            dtype=np.float32
+        )
 
         # update weights for appearing classes
         for cls, weight in zip(present_classes, computed_weights):

@@ -1,8 +1,8 @@
 import yaml
 import os
 from yaml import YAMLError
-
-from config.main import validate_config
+import config
+from main import config_settings
 from utils.log_utils import _info, _debug
 
 
@@ -85,7 +85,7 @@ def _merge_config(config, updates):
     return config
 
 
-def _update_config(updated_config):
+def _update_config(updated_config, config_params=None):
     """
     Method to update the config file.
     :param updated_config: The updated config to write.
@@ -97,14 +97,14 @@ def _update_config(updated_config):
     # get the abs path of the config file
     config_path = _get_config_abs_path()
 
-    # load config file
-    config = _load_config()
-
     # debugging
     _debug(f"⚙️ Updated config to be saved: {updated_config}.")
 
     # merge update configs with config file
-    merged_config = _merge_config(config, updated_config)
+    merged_config = _merge_config(
+        config_settings["config"],
+        updated_config
+    )
 
     try:
         # update the config file
@@ -118,9 +118,6 @@ def _update_config(updated_config):
             )
     except (FileNotFoundError, PermissionError, IsADirectoryError, OSError) as e:
         raise RuntimeError(f"❌ Error while updating the config file: {e}.")
-
-    # validate the update
-    validate_config()
 
     # show a successful message
     _info("🟢 Config file updated.")
@@ -139,7 +136,6 @@ def _get_config_value(keys):
         keys = keys.split(".")
 
     # get the config file
-    config = _load_config()
     value = config
 
     try:

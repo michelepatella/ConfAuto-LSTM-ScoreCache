@@ -1,3 +1,6 @@
+from utils.config_utils import _get_config_value
+
+
 def _check_distribution_params(
         seed,
         distribution_type,
@@ -222,3 +225,116 @@ def _check_dataset_params(
     ):
         raise RuntimeError("❌ Both 'data.dataset.static_save_path' and "
                            "'data.dataset.dynamic_save_path' must be strings.")
+
+
+def _validate_data_distribution_params():
+    """
+    Method to validate data distribution parameters.
+    :return: All the data distribution parameters.
+    """
+    # distribution
+    seed = _get_config_value("data.distribution.seed")
+    distribution_type = _get_config_value("data.distribution.type")
+    num_requests = _get_config_value("data.distribution.num_requests")
+    num_keys = _get_config_value("data.distribution.num_keys")
+    first_key = _get_config_value("data.distribution.key_range.first_key")
+    last_key = _get_config_value("data.distribution.key_range.last_key") + 1
+    freq_windows = _get_config_value("data.distribution.freq_windows")
+
+    # check distribution params
+    _check_distribution_params(
+        seed,
+        distribution_type,
+        num_requests,
+        num_keys,
+        first_key,
+        last_key,
+        freq_windows
+    )
+
+    return (seed, distribution_type, num_requests,
+            num_keys, first_key, last_key, freq_windows)
+
+
+def _validate_data_access_pattern_params():
+    """
+    Method to validate access pattern parameters.
+    :return: All the data access pattern parameters.
+    """
+    # access pattern
+    # zipf
+    zipf_alpha = _get_config_value("data.access_pattern.zipf.alpha")
+    zipf_alpha_start = _get_config_value("data.access_pattern.zipf.alpha_start")
+    zipf_alpha_end = _get_config_value("data.access_pattern.zipf.alpha_end")
+    zipf_time_steps = _get_config_value("data.access_pattern.zipf.time_steps")
+    # locality
+    locality_prob = _get_config_value("data.access_pattern.locality.prob")
+
+    # temporal pattern
+    # burstiness
+    burst_high = _get_config_value("data.temporal_pattern.burstiness.burst_high")
+    burst_low = _get_config_value("data.temporal_pattern.burstiness.burst_low")
+    burst_every = _get_config_value("data.temporal_pattern.burstiness.burst_every")
+    burst_peak = _get_config_value("data.temporal_pattern.burstiness.burst_peak")
+    # periodic
+    periodic_base_scale = _get_config_value("data.temporal_pattern.periodic.base_scale")
+    periodic_amplitude = _get_config_value("data.temporal_pattern.periodic.amplitude")
+
+    # check access pattern params
+    _check_access_pattern_params(
+        zipf_alpha,
+        zipf_alpha_start,
+        zipf_alpha_end,
+        zipf_time_steps,
+        locality_prob,
+        burst_high,
+        burst_low,
+        burst_every,
+        burst_peak,
+        periodic_base_scale,
+        periodic_amplitude
+    )
+
+    return (zipf_alpha, zipf_alpha_start, zipf_alpha_end, zipf_time_steps,
+            locality_prob, burst_high, burst_low, burst_every,
+            burst_peak, periodic_base_scale, periodic_amplitude)
+
+
+def _validate_data_sequence_params(num_requests):
+    """
+    Method to validate data sequence parameters.
+    :param num_requests: The number of requests.
+    :return: All the data sequence parameters.
+    """
+    # sequence
+    seq_len = _get_config_value("data.sequence.len")
+    embedding_dim = _get_config_value("data.sequence.embedding_dim")
+
+    # check sequence params
+    _check_sequence_params(
+        seq_len,
+        embedding_dim,
+        num_requests
+    )
+
+    return seq_len, embedding_dim, num_requests
+
+
+def _validate_data_dataset_params():
+    """
+    Method to validate data dataset parameters.
+    :return: All the data dataset parameters.
+    """
+    # dataset
+    training_perc = _get_config_value("data.dataset.training_perc")
+    static_save_path = _get_config_value("data.dataset.static_save_path")
+    dynamic_save_path = _get_config_value("data.dataset.dynamic_save_path")
+
+    # check dataset params
+    _check_dataset_params(
+        training_perc,
+        static_save_path,
+        dynamic_save_path
+    )
+
+    return training_perc, static_save_path, dynamic_save_path

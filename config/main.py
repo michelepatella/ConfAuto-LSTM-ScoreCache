@@ -1,195 +1,121 @@
-from config.data_params_checker import _check_distribution_params, _check_access_pattern_params, _check_sequence_params, _check_dataset_params
-from config.evaluation_params_checker import _check_evaluation_params
-from config.model_params_checker import _check_general_model_params, _check_model_params
-from config.testing_params_checker import _check_testing_params
-from config.training_params_checker import _check_general_training_params, _check_optimizer_params
-from config.validation_params_checker import _check_cv_params, _check_early_stopping_params, _check_search_space_params
-from utils.config_utils import _get_config_value
+from config.data_params_validator import _validate_data_distribution_params, _validate_data_access_pattern_params, \
+    _validate_data_sequence_params, _validate_data_dataset_params
+from config.evaluation_params_validator import _validate_evaluation_general_params
+from config.model_params_validator import _validate_model_general_params, _validate_model_params
+from config.testing_params_validator import _validate_testing_general_params
+from config.training_params_validator import _validate_training_general_params, _validate_training_optimizer_params
+from config.validation_params_validator import _validate_cv_params, _validate_early_stopping_params, \
+    _validate_search_space_params
+from utils.config_utils import _load_config
 
-def validate_config():
+
+def prepare_config():
     """
-    Method to validate the config file.
-    :return:
+    Method to prepare the config file (loading, configuration, and validation).
+    :return: All the configuration parameters along with the config file.
     """
+    # load config file
+    config = _load_config()
+
     # --------------------------------------- data config --------------------------------------- #
-    # distribution
-    seed = _get_config_value("data.distribution.seed")
-    distribution_type = _get_config_value("data.distribution.type")
-    num_requests = _get_config_value("data.distribution.num_requests")
-    num_keys = _get_config_value("data.distribution.num_keys")
-    first_key = _get_config_value("data.distribution.key_range.first_key")
-    last_key = _get_config_value("data.distribution.key_range.last_key") + 1
-    freq_windows = _get_config_value("data.distribution.freq_windows")
+    (seed, distribution_type, num_requests,
+     num_keys, first_key, last_key, freq_windows) = (
+        _validate_data_distribution_params())
 
-    # check distribution params
-    _check_distribution_params(
-        seed,
-        distribution_type,
-        num_requests,
-        num_keys,
-        first_key,
-        last_key,
-        freq_windows
-    )
+    (zipf_alpha, zipf_alpha_start, zipf_alpha_end,
+     zipf_time_steps, locality_prob,
+     burst_high, burst_low, burst_every, burst_peak,
+     periodic_base_scale, periodic_amplitude) = (
+        _validate_data_access_pattern_params())
 
-    # access pattern
-    # zipf
-    zipf_alpha = _get_config_value("data.access_pattern.zipf.alpha")
-    zipf_alpha_start = _get_config_value("data.access_pattern.zipf.alpha_start")
-    zipf_alpha_end = _get_config_value("data.access_pattern.zipf.alpha_end")
-    zipf_time_steps = _get_config_value("data.access_pattern.zipf.time_steps")
-    # locality
-    locality_prob = _get_config_value("data.access_pattern.locality.prob")
+    seq_len, embedding_dim, num_requests = (
+        _validate_data_sequence_params(num_requests))
 
-    # temporal pattern
-    # burstiness
-    burst_high = _get_config_value("data.temporal_pattern.burstiness.burst_high")
-    burst_low = _get_config_value("data.temporal_pattern.burstiness.burst_low")
-    burst_every = _get_config_value("data.temporal_pattern.burstiness.burst_every")
-    burst_peak = _get_config_value("data.temporal_pattern.burstiness.burst_peak")
-    # periodic
-    periodic_base_scale = _get_config_value("data.temporal_pattern.periodic.base_scale")
-    periodic_amplitude = _get_config_value("data.temporal_pattern.periodic.amplitude")
-
-    # check access pattern params
-    _check_access_pattern_params(
-        zipf_alpha,
-        zipf_alpha_start,
-        zipf_alpha_end,
-        zipf_time_steps,
-        locality_prob,
-        burst_high,
-        burst_low,
-        burst_every,
-        burst_peak,
-        periodic_base_scale,
-        periodic_amplitude
-    )
-
-    # sequence
-    seq_len = _get_config_value("data.sequence.len")
-    embedding_dim = _get_config_value("data.sequence.embedding_dim")
-
-    # check sequence params
-    _check_sequence_params(
-        seq_len,
-        embedding_dim,
-        num_requests
-    )
-
-    # dataset
-    training_perc = _get_config_value("data.dataset.training_perc")
-    static_save_path = _get_config_value("data.dataset.static_save_path")
-    dynamic_save_path = _get_config_value("data.dataset.dynamic_save_path")
-
-    # check dataset params
-    _check_dataset_params(
-        training_perc,
-        static_save_path,
-        dynamic_save_path
-    )
+    training_perc, static_save_path, dynamic_save_path = (
+        _validate_data_dataset_params())
 
     # --------------------------------------- model config --------------------------------------- #
-    # general
-    num_features = _get_config_value("model.general.num_features")
-    model_save_path = _get_config_value("model.general.save_path")
+    num_features, model_save_path = (
+        _validate_model_general_params())
 
-    # check general params
-    _check_general_model_params(
-        num_features,
-        model_save_path
-    )
-
-    # params
-    model_params = _get_config_value("model.params")
-    hidden_size = _get_config_value("model.params.hidden_size")
-    num_layers = _get_config_value("model.params.num_layers")
-    bias = _get_config_value("model.params.bias")
-    batch_first = _get_config_value("model.params.batch_first")
-    dropout = _get_config_value("model.params.dropout")
-    bidirectional = _get_config_value("model.params.bidirectional")
-    proj_size = _get_config_value("model.params.proj_size")
-
-    # check model params
-    _check_model_params(
-        hidden_size,
-        num_layers,
-        bias,
-        batch_first,
-        dropout,
-        bidirectional,
-        proj_size
-    )
+    (model_params, hidden_size, num_layers,
+     bias, batch_first, dropout, bidirectional, proj_size) = (
+        _validate_model_params())
 
     # --------------------------------------- training config --------------------------------------- #
-    # general
-    training_num_epochs = _get_config_value("training.general.num_epochs")
-    training_batch_size = _get_config_value("training.general.batch_size")
+    training_num_epochs, training_batch_size = (
+        _validate_training_general_params())
 
-    # check general training params
-    _check_general_training_params(
-        training_num_epochs,
-        training_batch_size
-    )
-
-    # optimizer
-    optimizer_type = _get_config_value("training.optimizer.type")
-    learning_rate = _get_config_value("training.optimizer.learning_rate")
-    weight_decay = _get_config_value("training.optimizer.weight_decay")
-    momentum = _get_config_value("training.optimizer.momentum")
-
-    # check optimizer params
-    _check_optimizer_params(
-        optimizer_type,
-        learning_rate,
-        weight_decay,
-        momentum
-    )
+    optimizer_type, learning_rate, weight_decay, momentum = (
+        _validate_training_optimizer_params())
 
     # --------------------------------------- validation config --------------------------------------- #
-    # cross-validation
-    cv_num_folds = _get_config_value("validation.cross_validation.num_folds")
-    validation_num_epochs = _get_config_value("validation.cross_validation.num_epochs")
+    cv_num_folds, validation_num_epochs = (
+        _validate_cv_params())
 
-    # check cross-validation params
-    _check_cv_params(
-        cv_num_folds,
-        validation_num_epochs
-    )
+    early_stopping_patience, early_stopping_delta = (
+        _validate_early_stopping_params())
 
-    # early stopping
-    early_stopping_patience = _get_config_value("validation.early_stopping.patience")
-    early_stopping_delta = _get_config_value("validation.early_stopping.delta")
-
-    # check early stopping params
-    _check_early_stopping_params(
-        early_stopping_patience,
-        early_stopping_delta
-    )
-
-    # search space
-    search_space = _get_config_value("validation.search_space")
-    hidden_size_range = _get_config_value("validation.search_space.model.params.hidden_size_range")
-    num_layers_range = _get_config_value("validation.search_space.model.params.num_layers_range")
-    dropout_range = _get_config_value("validation.search_space.model.params.dropout_range")
-    learning_rate_range = _get_config_value("validation.search_space.training.learning_rate_range")
-
-    # check search space params
-    _check_search_space_params(
-            hidden_size_range,
-            num_layers_range,
-            dropout_range,
-            learning_rate_range
-    )
+    (search_space, hidden_size_range, num_layers_range, dropout_range,
+     learning_rate_range) = _validate_search_space_params()
 
     # --------------------------------------- evaluation config --------------------------------------- #
-    top_k = _get_config_value("evaluation.top_k")
-
-    # check evaluation params
-    _check_evaluation_params(top_k)
+    top_k = _validate_evaluation_general_params()
 
     # --------------------------------------- testing config --------------------------------------- #
-    testing_batch_size = _get_config_value("testing.general.batch_size")
+    testing_batch_size = _validate_testing_general_params()
 
-    # check testing params
-    _check_testing_params(testing_batch_size)
+    # return a dictionary containing all the config settings
+    return {
+        "config": config,
+        "seed": seed,
+        "distribution_type": distribution_type,
+        "num_requests": num_requests,
+        "num_keys": num_keys,
+        "first_key": first_key,
+        "last_key": last_key,
+        "freq_windows": freq_windows,
+        "zipf_alpha": zipf_alpha,
+        "zipf_alpha_start": zipf_alpha_start,
+        "zipf_alpha_end": zipf_alpha_end,
+        "zipf_time_steps": zipf_time_steps,
+        "locality_prob": locality_prob,
+        "burst_high": burst_high,
+        "burst_low": burst_low,
+        "burst_every": burst_every,
+        "burst_peak": burst_peak,
+        "periodic_base_scale": periodic_base_scale,
+        "periodic_amplitude": periodic_amplitude,
+        "seq_len": seq_len,
+        "embedding_dim": embedding_dim,
+        "training_perc": training_perc,
+        "static_save_path": static_save_path,
+        "dynamic_save_path": dynamic_save_path,
+        "num_features": num_features,
+        "model_save_path": model_save_path,
+        "model_params": model_params,
+        "hidden_size": hidden_size,
+        "num_layers": num_layers,
+        "bias": bias,
+        "batch_first": batch_first,
+        "dropout": dropout,
+        "bidirectional": bidirectional,
+        "proj_size": proj_size,
+        "training_num_epochs": training_num_epochs,
+        "training_batch_size": training_batch_size,
+        "optimizer_type": optimizer_type,
+        "learning_rate": learning_rate,
+        "weight_decay": weight_decay,
+        "momentum": momentum,
+        "cv_num_folds": cv_num_folds,
+        "validation_num_epochs": validation_num_epochs,
+        "early_stopping_patience": early_stopping_patience,
+        "early_stopping_delta": early_stopping_delta,
+        "search_space": search_space,
+        "hidden_size_range": hidden_size_range,
+        "num_layers_range": num_layers_range,
+        "dropout_range": dropout_range,
+        "learning_rate_range": learning_rate_range,
+        "top_k": top_k,
+        "testing_batch_size": testing_batch_size,
+    }
