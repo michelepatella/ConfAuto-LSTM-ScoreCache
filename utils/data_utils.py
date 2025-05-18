@@ -175,7 +175,7 @@ def _loader_setup(loader_type, shuffle):
         # create the data loader starting from the dataset
         loader = _create_data_loader(
             dataset,
-            _get_config_value(f"{loader_type}.batch_size"),
+            _get_config_value(f"{loader_type}.general.batch_size"),
             shuffle
         )
     except (FileNotFoundError, IOError, OSError, ValueError, TypeError, AttributeError) as e:

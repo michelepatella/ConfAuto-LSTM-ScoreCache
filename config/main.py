@@ -1,3 +1,4 @@
+from config.data_checker import _check_distribution, _check_access_pattern
 from utils.config_utils import _get_config_value
 
 # --------------------------------------- data config --------------------------------------- #
@@ -9,6 +10,17 @@ num_keys = _get_config_value("data.distribution.num_keys")
 first_key = _get_config_value("data.distribution.key_range.first_key")
 last_key = _get_config_value("data.distribution.key_range.last_key") + 1
 freq_windows = _get_config_value("data.distribution.freq_windows")
+
+# check distribution params
+_check_distribution(
+    seed,
+    distribution_type,
+    num_requests,
+    num_keys,
+    first_key,
+    last_key,
+    freq_windows
+)
 
 # access pattern
 # zipf
@@ -28,6 +40,21 @@ burst_peak = _get_config_value("data.temporal_pattern.burstiness.burst_peak")
 # periodic
 periodic_base_scale = _get_config_value("data.temporal_pattern.periodic.base_scale")
 periodic_amplitude = _get_config_value("data.temporal_pattern.periodic.amplitude")
+
+# check access pattern params
+_check_access_pattern(
+    zipf_alpha,
+    zipf_alpha_start,
+    zipf_alpha_end,
+    zipf_time_steps,
+    locality_prob,
+    burst_high,
+    burst_low,
+    burst_every,
+    burst_peak,
+    periodic_base_scale,
+    periodic_amplitude
+)
 
 # sequence
 seq_len = _get_config_value("data.sequence.len")
@@ -84,4 +111,4 @@ learning_rate_range = _get_config_value("validation.search_space.training.learni
 top_k = _get_config_value("evaluation.top_k")
 
 # --------------------------------------- testing config --------------------------------------- #
-testing_batch_size = _get_config_value("testing.batch_size")
+testing_batch_size = _get_config_value("testing.general.batch_size")

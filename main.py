@@ -3,18 +3,15 @@ from data_generation import data_generation
 from data_preprocessing.main import data_preprocessing
 from testing import testing
 from training import training
+from utils.log_utils import phase_var
 from validation import validation
 
-"""logging.basicConfig(
-    level=logging.DEBUG,
-    format='[%(phase)s] %(levelname)s: %(message)s'
-)
-"""
+
 data_generation()
 
 data_preprocessing()
 
-#validation()
+validation()
 
 training()
 

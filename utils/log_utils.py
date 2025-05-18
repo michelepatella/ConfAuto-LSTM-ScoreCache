@@ -1,6 +1,14 @@
 import contextvars
 import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(phase)s] %(levelname)s: %(message)s',
+    handlers=[
+        logging.FileHandler("log.log"),
+        logging.StreamHandler()
+    ]
+)
 
 def _info(msg, *args, **kwargs):
     """
