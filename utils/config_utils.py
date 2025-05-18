@@ -1,6 +1,8 @@
 import yaml
 import os
 from yaml import YAMLError
+
+from config.main import validate_config
 from utils.log_utils import _info, _debug
 
 
@@ -116,6 +118,9 @@ def _update_config(updated_config):
             )
     except (FileNotFoundError, PermissionError, IsADirectoryError, OSError) as e:
         raise RuntimeError(f"❌ Error while updating the config file: {e}.")
+
+    # validate the update
+    validate_config()
 
     # show a successful message
     _info("🟢 Config file updated.")
