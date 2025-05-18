@@ -3,7 +3,7 @@ data:
   distribution:
     seed: 42
     type: static
-    num_requests: 50000
+    num_requests: 100000
     num_keys: 50
     key_range:
       first_key: 1
@@ -58,7 +58,7 @@ model:
 training:
 
   general:
-    num_epochs: 5
+    num_epochs: 10
     batch_size: 64
 
   optimizer:
@@ -82,16 +82,20 @@ validation:
     model:
       params:
         hidden_size_range:
+        - 64
         - 128
         - 256
         num_layers_range:
         - 2
         - 3
+        - 4
         dropout_range:
         - 0.1
         - 0.3
+        - 0.5
     training:
       learning_rate_range:
+      - 0.0001
       - 0.001
       - 0.005
 
