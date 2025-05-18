@@ -1,5 +1,7 @@
 from config.data_params_checker import _check_distribution_params, _check_access_pattern_params, _check_sequence_params, _check_dataset_params
+from config.evaluation_params_checker import _check_evaluation_params
 from config.model_params_checker import _check_general_model_params, _check_model_params
+from config.testing_params_checker import _check_testing_params
 from config.training_params_checker import _check_general_training_params, _check_optimizer_params
 from config.validation_params_checker import _check_cv_params, _check_early_stopping_params, _check_search_space_params
 from utils.config_utils import _get_config_value
@@ -178,5 +180,11 @@ _check_search_space_params(
 # --------------------------------------- evaluation config --------------------------------------- #
 top_k = _get_config_value("evaluation.top_k")
 
+# check evaluation params
+_check_evaluation_params(top_k)
+
 # --------------------------------------- testing config --------------------------------------- #
 testing_batch_size = _get_config_value("testing.general.batch_size")
+
+# check testing params
+_check_testing_params(testing_batch_size)
