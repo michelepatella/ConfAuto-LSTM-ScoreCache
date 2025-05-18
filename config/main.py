@@ -1,4 +1,4 @@
-from config.data_checker import _check_distribution, _check_access_pattern, _check_sequence
+from config.data_checker import _check_distribution, _check_access_pattern, _check_sequence, _check_dataset
 from utils.config_utils import _get_config_value
 
 # --------------------------------------- data config --------------------------------------- #
@@ -71,6 +71,13 @@ _check_sequence(
 training_perc = _get_config_value("data.dataset.training_perc")
 static_save_path = _get_config_value("data.dataset.static_save_path")
 dynamic_save_path = _get_config_value("data.dataset.dynamic_save_path")
+
+# check dataset params
+_check_dataset(
+    training_perc,
+    static_save_path,
+    dynamic_save_path
+)
 
 # --------------------------------------- model config --------------------------------------- #
 # general

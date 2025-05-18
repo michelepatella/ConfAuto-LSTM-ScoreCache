@@ -20,24 +20,24 @@ def _check_distribution(
     """
     # check seed
     if seed < 0 or not isinstance(seed, int):
-        raise RuntimeError("'data.distribution.seed' must be an integer >= 0.")
+        raise RuntimeError("❌ 'data.distribution.seed' must be an integer >= 0.")
 
     # check distribution type
     if distribution_type not in {"static", "dynamic"}:
-        raise RuntimeError("'data.distribution.type' must be 'static' or 'dynamic'.")
+        raise RuntimeError("❌ 'data.distribution.type' must be 'static' or 'dynamic'.")
 
     # check number of requests
     if (
         num_requests <= 0
         or not isinstance(num_requests, int)
     ):
-        raise RuntimeError("'data.distribution.num_requests' must be an integer > 0.")
+        raise RuntimeError("❌ 'data.distribution.num_requests' must be an integer > 0.")
 
     # check number of keys
     if not isinstance(num_keys, int) or num_keys <= 1:
-        raise RuntimeError("'data.distribution.num_keys' must be an integer > 1.")
+        raise RuntimeError("❌ 'data.distribution.num_keys' must be an integer > 1.")
     if abs(last_key - first_key) != num_keys:
-        raise RuntimeError("'data.distribution.num_keys' must match the"
+        raise RuntimeError("❌ 'data.distribution.num_keys' must match the"
                            " range defined by first_key and last_key.")
 
     # check first key and last key
@@ -46,7 +46,7 @@ def _check_distribution(
         not isinstance(last_key, int)
         or last_key <= first_key
     ):
-        raise RuntimeError("'data.distribution.key_range.first_key' and  "
+        raise RuntimeError("❌ 'data.distribution.key_range.first_key' and  "
                            "'data.distribution.key_range.last_key' "
                            "must be integers, with the first one "
                            "< the second one.")
@@ -57,7 +57,7 @@ def _check_distribution(
         or not freq_windows
         or not all(isinstance(w, int) and w > 0 for w in freq_windows)
     ):
-        raise RuntimeError("'data.distribution.freq_windows' must "
+        raise RuntimeError("❌ 'data.distribution.freq_windows' must "
                            "be a list of integers > 0.")
 
 
@@ -94,17 +94,17 @@ def _check_access_pattern(
         not isinstance(zipf_alpha, float)
         or zipf_alpha <= 0
     ):
-        raise RuntimeError("'data.access_pattern.zipf.alpha' must be a float > 0.")
+        raise RuntimeError("❌ 'data.access_pattern.zipf.alpha' must be a float > 0.")
 
     # check zipf alpha start and end
     if(
         not all(isinstance(v, float)
         and v > 0 for v in [zipf_alpha_start, zipf_alpha_end])
     ):
-        raise RuntimeError("'data.access_pattern.zipf.alpha_start' and "
+        raise RuntimeError("❌ 'data.access_pattern.zipf.alpha_start' and "
                            "'data.access_pattern.zipf.alpha_end' must be float > 0.")
     if zipf_alpha_end < zipf_alpha_start:
-        raise RuntimeError("'data.access_pattern.zipf.alpha_end' must be"
+        raise RuntimeError("❌ 'data.access_pattern.zipf.alpha_end' must be"
                            " >= 'data.access_pattern.zipf.alpha_start'.")
 
     # check time steps
@@ -112,7 +112,7 @@ def _check_access_pattern(
         not isinstance(zipf_time_steps, int)
         or zipf_time_steps <= 0
     ):
-        raise RuntimeError("'data.access_pattern.zipf.time_steps"
+        raise RuntimeError("❌ 'data.access_pattern.zipf.time_steps"
                            "' must be an integer > 0.")
 
     # check local probability
@@ -120,7 +120,7 @@ def _check_access_pattern(
         not isinstance(locality_prob, float)
         or not (0.0 <= locality_prob <= 1.0)
     ):
-        raise RuntimeError("'data.access_pattern.locality.prob' must"
+        raise RuntimeError("❌ 'data.access_pattern.locality.prob' must"
                            " be a float between 0.0 and 1.0.")
 
     # check burst high and low
@@ -128,7 +128,7 @@ def _check_access_pattern(
         if not isinstance(val, float) or val <= 0:
             raise RuntimeError(f"'data.temporal_pattern.burstiness.{name}' must be a float > 0.")
     if burst_high >= burst_low:
-        raise RuntimeError("'data.temporal_pattern.burstiness.burst_high'"
+        raise RuntimeError("❌ 'data.temporal_pattern.burstiness.burst_high'"
                            " must be < 'data.temporal_pattern.burstiness.burst_low'.")
 
     # check burst every
@@ -136,7 +136,7 @@ def _check_access_pattern(
         not isinstance(burst_every, int)
         or burst_every <= 0
     ):
-        raise RuntimeError("'data.temporal_pattern.burstiness.burst_every'"
+        raise RuntimeError("❌ 'data.temporal_pattern.burstiness.burst_every'"
                            " must be an integer > 0.")
 
     # check burst peak
@@ -144,7 +144,7 @@ def _check_access_pattern(
         not isinstance(burst_peak, int)
         or burst_peak < 0
     ):
-        raise RuntimeError("'data.temporal_pattern.burstiness.burst_peak'"
+        raise RuntimeError("❌ 'data.temporal_pattern.burstiness.burst_peak'"
                            " must be an integer >= 0.")
 
     # check periodic base scale
@@ -152,7 +152,7 @@ def _check_access_pattern(
         not isinstance(periodic_base_scale, (int, float))
         or periodic_base_scale <= 0
     ):
-        raise RuntimeError("'data.temporal_pattern.periodic.base_scale'"
+        raise RuntimeError("❌ 'data.temporal_pattern.periodic.base_scale'"
                            " must be a number > 0.")
 
     # check periodic amplitude
@@ -160,7 +160,7 @@ def _check_access_pattern(
         not isinstance(periodic_amplitude, (int, float))
         or periodic_amplitude < 0
     ):
-        raise RuntimeError("'data.temporal_pattern.periodic.periodic_amplitude'"
+        raise RuntimeError("❌ 'data.temporal_pattern.periodic.periodic_amplitude'"
                            " must be a number >= 0.")
 
 
@@ -171,9 +171,9 @@ def _check_sequence(
 ):
     """
     Method to check sequence parameters.
-    :param seq_len:
-    :param embedding_dim:
-    :param num_requests:
+    :param seq_len: The sequence length.
+    :param embedding_dim: The embedding dimension.
+    :param num_requests: The number of requests.
     :return:
     """
     # check sequence length
@@ -181,9 +181,9 @@ def _check_sequence(
         not isinstance(seq_len, int)
         or seq_len <= 0
     ):
-        raise RuntimeError("'data.sequence.len' must be an integer > 0.")
+        raise RuntimeError("❌ 'data.sequence.len' must be an integer > 0.")
     if seq_len > num_requests:
-        raise RuntimeError("'data.sequence.len' must be"
+        raise RuntimeError("❌ 'data.sequence.len' must be"
                            " <= 'data.distribution.num_requests'.")
 
     # check embedding dimension
@@ -191,5 +191,30 @@ def _check_sequence(
         not isinstance(embedding_dim, int)
         or embedding_dim <= 0
     ):
-        raise RuntimeError("'data.sequence.embedding_dim'"
+        raise RuntimeError("❌ 'data.sequence.embedding_dim'"
                            " must be an integer > 0.")
+
+
+def _check_dataset(training_perc, static_save_path, dynamic_save_path):
+    """
+    Method to check dataset parameters.
+    :param training_perc: The training set percentage.
+    :param static_save_path: The path to save the static dataset.
+    :param dynamic_save_path: The path to save the dynamic dataset.
+    :return:
+    """
+    # check training percentage
+    if (
+        not isinstance(training_perc, float)
+        or not (0.0 <= training_perc <= 1.0)
+    ):
+        raise RuntimeError("❌ 'data.dataset.training_perc'"
+                           " must be a float between 0.0 and 1.0.")
+
+    # check dataset paths
+    if(
+        not isinstance(static_save_path, str)
+        or not isinstance(dynamic_save_path, str)
+    ):
+        raise RuntimeError("❌ Both 'data.dataset.static_save_path' and "
+                           "'data.dataset.dynamic_save_path' must be strings.")
