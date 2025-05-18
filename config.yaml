@@ -1,35 +1,50 @@
 data:
 
-  distribution_type: static
+  distribution:
+    seed: 42
+    type: static
+    num_requests: 50000
+    num_keys: 50
+    key_range:
+      first_key: 1
+      last_key: 50
+    freq_windows: [ 10, 100, 1000 ]
 
-  num_requests: 50000
-  num_keys: 50
-  first_key: 1
-  last_key: 50
-  freq_windows: [10, 100, 1000]
-  p_local: 0.7
+  access_pattern:
+    zipf:
+      alpha: 0.8
+      alpha_start: 0.8
+      alpha_end: 1.2
+      time_steps: 10
+    locality:
+      prob: 0.7
 
-  alpha: 0.8
-  alpha_start: 0.8
-  alpha_end: 1.0
-  time_steps: 10
+  temporal_pattern:
+    burstiness:
+      burst_high: 1.0
+      burst_low: 10.0
+      burst_every: 100
+      burst_peak: 20
+    periodic:
+      base_scale: 5
+      amplitude: 5
 
-  burst_high: 1.0
-  burst_low: 10.0
-  burst_every: 100
-  burst_peak: 20
-  periodic_base_scale: 5
-  periodic_amplitude: 5
+  sequence:
+    len: 25
+    embedding_dim: 32
 
-  seed: 42
-  seq_len: 25
-  embedding_dim: 32
-  freq_timestamp: 5
+  dataset:
+    training_perc: 0.7
+    static_save_path: data/static_access_logs.csv
+    dynamic_save_path: data/dynamic_access_logs.csv
 
-  training_perc: 0.7
-  static_dataset_path: data/static_access_logs.csv
-  dynamic_dataset_path: data/dynamic_access_logs.csv
+
 model:
+
+  general:
+    num_features: 5
+    save_path: model/trained_lstm_model.pt
+
   params:
       hidden_size: 256
       num_layers: 3
@@ -38,20 +53,31 @@ model:
       dropout: 0.2
       bidirectional: false
       proj_size: 0
-  num_features: 5
-  model_save_path: model/trained_lstm_model.pt
+
+
 training:
-  epochs: 5
-  batch_size: 64
-  learning_rate: 0.001
-  optimizer: adamw
-  weight_decay: 0.05
-  momentum: 0.9
+
+  general:
+    num_epochs: 5
+    batch_size: 64
+
+  optimizer:
+    type: adamw
+    learning_rate: 0.001
+    weight_decay: 0.05
+    momentum: 0.9
+
+
 validation:
-  num_folds: 3
-  epochs: 5
-  early_stopping_patience: 5
-  early_stopping_delta: 0.0005
+
+  cross_validation:
+    num_folds: 3
+    num_epochs: 5
+
+  early_stopping:
+    patience: 5
+    delta: 0.0005
+
   search_space:
     model:
       params:
@@ -68,7 +94,11 @@ validation:
       learning_rate_range:
       - 0.001
       - 0.005
+
+
 evaluation:
   top_k: 3
+
+
 testing:
   batch_size: 64

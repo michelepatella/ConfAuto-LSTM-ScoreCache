@@ -1,6 +1,6 @@
 import numpy as np
 from config.main import first_key, last_key, burst_every, burst_peak, \
-    burst_high, burst_low, seed, p_local, periodic_base_scale, periodic_amplitude
+    burst_high, burst_low, seed, locality_prob, periodic_base_scale, periodic_amplitude
 from utils.log_utils import _debug, _info
 
 
@@ -89,7 +89,7 @@ def _generate_pattern(probs, num_requests, timestamps):
             # for the first request or the p_local %
             # of all the other times use a Zipf distribution
             if (last_accessed_key is None
-                    or np.random.rand() > p_local):
+                    or np.random.rand() > locality_prob):
 
                 # generate the request following Zipf distribution
                 request = np.random.choice(

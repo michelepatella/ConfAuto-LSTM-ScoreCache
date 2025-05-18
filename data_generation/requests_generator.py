@@ -1,5 +1,5 @@
 import numpy as np
-from config.main import alpha_start, alpha_end, time_steps, num_requests, first_key, last_key, alpha
+from config.main import zipf_alpha_start, zipf_alpha_end, zipf_time_steps, num_requests, first_key, last_key, zipf_alpha
 from data_generation.pattern_generator import _generate_pattern
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
 from utils.log_utils import _info, _debug
@@ -53,7 +53,7 @@ def _generate_static_requests():
     # calculate the probabilities
     probs = _calculate_zipf_distribution_probs(
         np.arange(first_key, last_key),
-        alpha
+        zipf_alpha
     )
 
     timestamps = [0]
@@ -88,22 +88,22 @@ def _generate_dynamic_requests():
 
     # generate the Zipf distribution's parameter values
     alpha_values = np.linspace(
-        alpha_start,
-        alpha_end,
-        time_steps
+        zipf_alpha_start,
+        zipf_alpha_end,
+        zipf_time_steps
     )
 
     # debugging
     _debug(f"⚙️Alpha values length: {len(alpha_values)}.")
 
     # check validity of generated alpha values
-    if len(alpha_values) != time_steps:
+    if len(alpha_values) != zipf_time_steps:
         raise ValueError("❌ alpha_values length must match time_steps.")
     if any(alpha <= 0 for alpha in alpha_values):
         raise ValueError("❌ All alpha values must be positive.")
 
     # calculate the time step duration
-    time_step_duration = num_requests // time_steps
+    time_step_duration = num_requests // zipf_time_steps
 
     # debugging
     _debug(f"⚙️Time step duration: {time_step_duration}.")

@@ -2,7 +2,7 @@ import pandas as pd
 import torch
 from pandas.errors import EmptyDataError, ParserError
 from torch.utils.data import DataLoader
-from config.main import dataset_type, dynamic_dataset_path, static_dataset_path
+from config.main import distribution_type, dynamic_save_path, static_save_path
 from utils.log_utils import _info, _debug
 from utils.config_utils import _get_config_value
 
@@ -132,13 +132,13 @@ def _get_dataset_path_type():
     _info("🔄 Dataset path and type retrieval started...")
 
     # debugging
-    _debug(f"⚙️ Dataset distribution type from config: {dataset_type}.")
+    _debug(f"⚙️ Dataset distribution type from config: {distribution_type}.")
 
     # keep track of the dataset path
-    if dataset_type == "static":
-        dataset_path = static_dataset_path
+    if distribution_type == "static":
+        dataset_path = static_save_path
     else:
-        dataset_path = dynamic_dataset_path
+        dataset_path = dynamic_save_path
 
     # debugging
     _debug(f"⚙️ Dataset path found: {dataset_path}.")
@@ -146,7 +146,7 @@ def _get_dataset_path_type():
     # show a successful message
     _info("🟢 Dataset path and type retrieved.")
 
-    return dataset_path, dataset_type
+    return dataset_path, distribution_type
 
 
 def _loader_setup(loader_type, shuffle):

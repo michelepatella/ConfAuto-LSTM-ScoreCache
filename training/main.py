@@ -1,4 +1,4 @@
-from config.main import model_params, learning_rate, training_epochs
+from config.main import model_params, learning_rate, training_num_epochs
 from utils.log_utils import _info, phase_var
 from utils.data_utils import _loader_setup, _extract_targets_from_loader
 from utils.training_utils import _train_n_epochs
@@ -33,7 +33,7 @@ def training():
 
     # train the model
     _train_n_epochs(
-        training_epochs,
+        training_num_epochs,
         model,
         training_loader,
         optimizer,

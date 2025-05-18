@@ -1,59 +1,76 @@
 from utils.config_utils import _get_config_value
 
-# data configuration
+# --------------------------------------- data config --------------------------------------- #
+# distribution
+seed = _get_config_value("data.distribution.seed")
+distribution_type = _get_config_value("data.distribution.type")
+num_requests = _get_config_value("data.distribution.num_requests")
+num_keys = _get_config_value("data.distribution.num_keys")
+first_key = _get_config_value("data.distribution.key_range.first_key")
+last_key = _get_config_value("data.distribution.key_range.last_key") + 1
+freq_windows = _get_config_value("data.distribution.freq_windows")
+
+# access pattern
+# zipf
+zipf_alpha = _get_config_value("data.access_pattern.zipf.alpha")
+zipf_alpha_start = _get_config_value("data.access_pattern.zipf.alpha_start")
+zipf_alpha_end = _get_config_value("data.access_pattern.zipf.alpha_end")
+zipf_time_steps = _get_config_value("data.access_pattern.zipf.time_steps")
+# locality
+locality_prob = _get_config_value("data.access_pattern.locality.prob")
+
+# temporal pattern
+# burstiness
+burst_high = _get_config_value("data.temporal_pattern.burstiness.burst_high")
+burst_low = _get_config_value("data.temporal_pattern.burstiness.burst_low")
+burst_every = _get_config_value("data.temporal_pattern.burstiness.burst_every")
+burst_peak = _get_config_value("data.temporal_pattern.burstiness.burst_peak")
+# periodic
+periodic_base_scale = _get_config_value("data.temporal_pattern.periodic.base_scale")
+periodic_amplitude = _get_config_value("data.temporal_pattern.periodic.amplitude")
+
+# sequence
+seq_len = _get_config_value("data.sequence.len")
+embedding_dim = _get_config_value("data.sequence.embedding_dim")
 
 # dataset
-dataset_type = _get_config_value("data.distribution_type")
-static_dataset_path = _get_config_value("data.static_dataset_path")
-dynamic_dataset_path = _get_config_value("data.dynamic_dataset_path")
+training_perc = _get_config_value("data.dataset.training_perc")
+static_save_path = _get_config_value("data.dataset.static_save_path")
+dynamic_save_path = _get_config_value("data.dataset.dynamic_save_path")
 
-# data
-num_requests = _get_config_value("data.num_requests")
-num_keys = _get_config_value("data.num_keys")
-first_key = _get_config_value("data.first_key")
-last_key = _get_config_value("data.last_key") + 1
-freq_windows = _get_config_value("data.freq_windows")
-embedding_dim = _get_config_value("data.embedding_dim")
+# --------------------------------------- model config --------------------------------------- #
+# general
+num_features = _get_config_value("model.general.num_features")
+model_save_path = _get_config_value("model.general.save_path")
 
-# zipf config
-alpha = _get_config_value("data.alpha")
-alpha_start = _get_config_value("data.alpha_start")
-alpha_end = _get_config_value("data.alpha_end")
-time_steps = _get_config_value("data.time_steps")
-seed = _get_config_value("data.seed")
-p_local = _get_config_value("data.p_local")
-
-# pattern config
-burst_high = _get_config_value("data.burst_high")
-burst_low = _get_config_value("data.burst_low")
-burst_every = _get_config_value("data.burst_every")
-burst_peak = _get_config_value("data.burst_peak")
-periodic_base_scale = _get_config_value("data.periodic_base_scale")
-periodic_amplitude = _get_config_value("data.periodic_amplitude")
-
-# other information
-training_perc = _get_config_value("data.training_perc")
-seq_len = _get_config_value("data.seq_len")
-
-# training
-learning_rate = _get_config_value("training.learning_rate")
-training_batch_size = _get_config_value("training.batch_size")
-training_epochs = _get_config_value("training.epochs")
-optimizer_type = _get_config_value("training.optimizer")
-weight_decay = _get_config_value("training.weight_decay")
-momentum = _get_config_value("training.momentum")
-
-# model
+# params
 model_params = _get_config_value("model.params")
 num_layers = _get_config_value("model.params.num_layers")
 dropout = _get_config_value("model.params.dropout")
-num_features = _get_config_value("model.num_features")
-model_save_path = _get_config_value("model.model_save_path")
 
-# validation
+# --------------------------------------- training config --------------------------------------- #
+# general
+training_num_epochs = _get_config_value("training.general.num_epochs")
+training_batch_size = _get_config_value("training.general.batch_size")
+
+# optimizer
+optimizer_type = _get_config_value("training.optimizer.type")
+learning_rate = _get_config_value("training.optimizer.learning_rate")
+weight_decay = _get_config_value("training.optimizer.weight_decay")
+momentum = _get_config_value("training.optimizer.momentum")
+
+
+# --------------------------------------- validation config --------------------------------------- #
+# cross-validation
+cv_num_folds = _get_config_value("validation.cross_validation.num_folds")
+validation_num_epochs = _get_config_value("validation.cross_validation.num_epochs")
+
+# early stopping
+early_stopping_patience = _get_config_value("validation.early_stopping.patience")
+early_stopping_delta = _get_config_value("validation.early_stopping.delta")
+
+# search space
 search_space = _get_config_value("validation.search_space")
-num_folds = _get_config_value("validation.num_folds")
-validation_epochs = _get_config_value("validation.epochs")
-early_stopping_patience = _get_config_value("validation.early_stopping_patience")
-early_stopping_delta = _get_config_value("validation.early_stopping_delta")
+
+# --------------------------------------- evaluation config --------------------------------------- #
 top_k = _get_config_value("evaluation.top_k")

@@ -1,7 +1,7 @@
 import numpy as np
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
-from config.main import num_folds, training_batch_size, validation_epochs
+from config.main import cv_num_folds, training_batch_size, validation_num_epochs
 from utils.log_utils import _info, _debug
 from utils.data_utils import _create_data_loader, _extract_targets_from_loader
 from utils.evaluation_utils import _evaluate_model
@@ -26,7 +26,7 @@ def _time_series_cv(training_set, params):
 
     try:
         # setup for Time Series Split
-        tscv = TimeSeriesSplit(n_splits=num_folds)
+        tscv = TimeSeriesSplit(n_splits=cv_num_folds)
     except (ValueError, TypeError) as e:
         raise RuntimeError(f"❌ Error while instantiating Time Series Split: {e}.")
 
@@ -70,7 +70,7 @@ def _time_series_cv(training_set, params):
 
         # train the model
         _train_n_epochs(
-            validation_epochs,
+            validation_num_epochs,
             model,
             training_loader,
             optimizer,
