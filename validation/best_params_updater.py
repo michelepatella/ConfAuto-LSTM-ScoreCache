@@ -27,10 +27,12 @@ def _check_and_update_best_params(
         # check avg loss and best avg loss
         if (avg_loss is None or
                 not isinstance(avg_loss, (float, int))):
-            raise ValueError(f"❌ avg_loss must be a float or int. Received: {avg_loss}.")
+            raise ValueError(f"❌ avg_loss must be a float or int. "
+                             f"Received: {avg_loss}.")
         if (best_avg_loss is not None and
                 not isinstance(best_avg_loss, (float, int))):
-            raise ValueError(f"❌ best_avg_loss must be a float or int. Received: {best_avg_loss}.")
+            raise ValueError(f"❌ best_avg_loss must be a float or int. "
+                             f"Received: {best_avg_loss}.")
 
         # if the average loss is less than the best one,
         # update it and the best parameters
@@ -44,13 +46,16 @@ def _check_and_update_best_params(
             best_params = curr_params
 
             # print updated parameters and best average loss
-            _info(f"🆕 Updated best parameters: {best_params['model']} {best_params['training']}")
+            _info(f"🆕 Updated best parameters: {best_params['model']}"
+                  f" {best_params['training']}")
             _info(f"🆕 Updated best average loss: {best_avg_loss}")
         else:
-            _info("ℹ️ No best average loss improvement, best parameters not updated.")
+            _info("ℹ️ No best average loss improvement, best "
+                  "parameters not updated.")
 
     except ValueError as e:
-        raise RuntimeError(f"❌ Error while checking and/or updating best parameters: {e}.")
+        raise RuntimeError(f"❌ Error while checking and/or updating "
+                           f"best parameters: {e}.")
 
     # print a successful message
     _info("🟢 Best parameters check and update completed.")

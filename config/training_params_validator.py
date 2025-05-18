@@ -1,4 +1,5 @@
 from utils.config_utils import _get_config_value
+from utils.log_utils import _info
 
 
 def _check_general_training_params(
@@ -78,6 +79,9 @@ def _validate_training_general_params(config):
     :param config: The config object.
     :return: All the general training parameters.
     """
+    # initial message
+    _info("🔄 Training general params validation started...")
+
     # general
     training_num_epochs = _get_config_value(
         config,
@@ -94,6 +98,9 @@ def _validate_training_general_params(config):
         training_batch_size
     )
 
+    # show a successful message
+    _info("🟢 Training general params validated.")
+
     return training_num_epochs, training_batch_size
 
 
@@ -103,6 +110,9 @@ def _validate_training_optimizer_params(config):
     :param config: The config object.
     :return: All the training optimizer parameters.
     """
+    # initial message
+    _info("🔄 Training optimizer params validation started...")
+
     # optimizer
     optimizer_type = _get_config_value(
         config,
@@ -128,5 +138,8 @@ def _validate_training_optimizer_params(config):
         weight_decay,
         momentum
     )
+
+    # show a successful message
+    _info("🟢 Training optimizer params validated.")
 
     return optimizer_type, learning_rate, weight_decay, momentum

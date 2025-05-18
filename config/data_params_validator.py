@@ -1,4 +1,5 @@
 from utils.config_utils import _get_config_value
+from utils.log_utils import _info
 
 
 def _check_distribution_params(
@@ -233,6 +234,9 @@ def _validate_data_distribution_params(config):
     :param config: The configuration object.
     :return: All the data distribution parameters.
     """
+    # initial message
+    _info("🔄 Data distribution params validation started...")
+
     # distribution
     seed = _get_config_value(
         config,
@@ -274,6 +278,9 @@ def _validate_data_distribution_params(config):
         freq_windows
     )
 
+    # show a successful message
+    _info("🟢 Data distribution params validated.")
+
     return (seed, distribution_type, num_requests,
             num_keys, first_key, last_key, freq_windows)
 
@@ -284,6 +291,9 @@ def _validate_data_access_pattern_params(config):
     :param config: The configuration object.
     :return: All the data access pattern parameters.
     """
+    # initial message
+    _info("🔄 Data access pattern params validation started...")
+
     # access pattern
     # zipf
     zipf_alpha = _get_config_value(
@@ -351,6 +361,9 @@ def _validate_data_access_pattern_params(config):
         periodic_amplitude
     )
 
+    # show a successful message
+    _info("🟢 Data access pattern params validated.")
+
     return (zipf_alpha, zipf_alpha_start, zipf_alpha_end, zipf_time_steps,
             locality_prob, burst_high, burst_low, burst_every,
             burst_peak, periodic_base_scale, periodic_amplitude)
@@ -363,6 +376,9 @@ def _validate_data_sequence_params(config, num_requests):
     :param num_requests: The number of requests.
     :return: All the data sequence parameters.
     """
+    # initial message
+    _info("🔄 Data sequence params validation started...")
+
     # sequence
     seq_len = _get_config_value(
         config,
@@ -380,6 +396,9 @@ def _validate_data_sequence_params(config, num_requests):
         num_requests
     )
 
+    # show a successful message
+    _info("🟢 Data sequence params validated.")
+
     return seq_len, embedding_dim, num_requests
 
 
@@ -389,6 +408,9 @@ def _validate_data_dataset_params(config):
     :param config: The configuration object.
     :return: All the data dataset parameters.
     """
+    # initial message
+    _info("🔄 Dataset params validation started...")
+
     # dataset
     training_perc = _get_config_value(
         config,
@@ -409,5 +431,8 @@ def _validate_data_dataset_params(config):
         static_save_path,
         dynamic_save_path
     )
+
+    # show a successful message
+    _info("🟢 Dataset params validated.")
 
     return training_perc, static_save_path, dynamic_save_path

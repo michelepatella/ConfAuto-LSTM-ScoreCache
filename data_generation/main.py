@@ -5,13 +5,12 @@ from utils.data_utils import _save_dataset, _create_dataframe
 import numpy as np
 
 
-def data_generation():
+def data_generation(config_settings):
     """
     Method to orchestrate data generation.
+    :param config_settings: The configuration settings.
     :return:
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Data generation started...")
 

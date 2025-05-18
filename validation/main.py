@@ -4,13 +4,12 @@ from validation.best_params_saver import _save_best_params
 from validation.grid_search_optimizer import _grid_search
 
 
-def validation():
+def validation(config_settings):
     """
     Method to orchestrate the validation of the model.
+    :param config_settings: The configuration settings.
     :return:
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Validation started...")
 
@@ -25,10 +24,13 @@ def validation():
     )
 
     # grid search for best parameters
-    best_params = _grid_search(training_set)
+    best_params = _grid_search(
+        training_set,
+        config_settings
+    )
 
     # set the best parameters
-    _save_best_params(best_params)
+    _save_best_params(best_params, config_settings)
 
     # print a successful message
     _info("✅ Validation successfully completed.")

@@ -7,13 +7,12 @@ from validation.best_params_updater import _check_and_update_best_params
 from validation.time_series_cv import _time_series_cv
 
 
-def _get_parameters_combination():
+def _get_parameters_combination(config_settings):
     """
     Method to combine the parameters.
+    :param config_settings: The configuration settings.
     :return: The parameters' combination.
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Parameters' combination started...")
 
@@ -75,10 +74,11 @@ def _get_parameters_combination():
         raise RuntimeError(f"❌ Error while generating parameter combinations: {e}.")
 
 
-def _grid_search(training_set):
+def _grid_search(training_set, config_settings):
     """
     Method to perform grid search to find the best parameters.
     :param training_set: The training set.
+    :param config_settings: The configuration settings.
     :return: The best parameters.
     """
     # initial message
@@ -92,7 +92,7 @@ def _grid_search(training_set):
     best_avg_loss = float("inf")
 
     # get the parameters combination
-    param_combinations = _get_parameters_combination()
+    param_combinations = _get_parameters_combination(config_settings)
 
     # grid search
     with tqdm(
@@ -107,7 +107,8 @@ def _grid_search(training_set):
             # perform the time series CV
             avg_loss = _time_series_cv(
                 training_set,
-                params
+                params,
+                config_settings
             )
 
             # check the avg loss and eventually update the best parameters

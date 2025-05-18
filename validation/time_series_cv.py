@@ -8,14 +8,19 @@ from utils.model_utils import _model_setup
 from utils.training_utils import _train_n_epochs
 
 
-def _time_series_cv(training_set, params):
+def _time_series_cv(
+        training_set,
+        params,
+        config_settings
+):
     """
     Method to perform Time Series cross-validation.
+    :param training_set: The training set on which to
+    perform the time series cross-validation.
     :param params: The hyperparameters of the model.
+    :param config_settings: The configuration settings.
     :return: The final average loss.
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Time Series Cross-Validation started...")
 

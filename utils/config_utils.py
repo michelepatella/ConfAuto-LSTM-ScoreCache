@@ -83,7 +83,7 @@ def _merge_config(config, updates):
     return config
 
 
-def _update_config(updated_config, config_params=None):
+def _update_config(updated_config):
     """
     Method to update the config file.
     :param updated_config: The updated config to write.

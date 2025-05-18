@@ -4,13 +4,12 @@ from utils.training_utils import _train_n_epochs
 from utils.model_utils import _save_model, _model_setup
 
 
-def training():
+def training(config_settings):
     """
     Method to train the LSTM model.
+    :param config_settings: The configuration settings.
     :return:
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Training started...")
 

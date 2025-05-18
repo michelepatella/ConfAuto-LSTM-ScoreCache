@@ -1,6 +1,29 @@
 from utils.log_utils import _info, _debug
 
 
+def _remove_duplicates(df, columns):
+    """
+    Method to remove duplicated rows from a dataframe.
+    :param df: Dataframe to remove duplicated rows from.
+    :param columns: List of columns to remove duplicated rows from.
+    :return: The dataframe with duplicate rows removed.
+    """
+    # initial message
+    _info("🔄 Dataset deduplication started...")
+
+    try:
+        for column in columns:
+            # clear the dataset removing duplicated rows
+            df.drop_duplicates(subset=[column], inplace=True)
+    except Exception as e:
+        raise Exception(f"❌ Error while deduplicating the dataset: {e}")
+
+    # print a successful message
+    _info("🟢 Dataset deduplicated.")
+
+    return df
+
+
 def _remove_missing_values(df):
     """
     Method to remove missing values from a dataframe.

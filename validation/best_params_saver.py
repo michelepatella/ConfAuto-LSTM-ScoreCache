@@ -3,14 +3,13 @@ from utils.log_utils import _info, _debug
 from utils.config_utils import _update_config
 
 
-def _save_best_params(best_params):
+def _save_best_params(best_params, config_settings):
     """
     Method to save the best parameters to a config file.
     :param best_params: Best parameters found.
+    :param config_settings: Configuration settings.
     :return:
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Best parameter saving started...")
 
@@ -25,9 +24,11 @@ def _save_best_params(best_params):
             if section not in config:
                 raise KeyError(f"❌ Section '{section}' not found in config.")
             if not isinstance(params, dict):
-                raise ValueError(f"❌ Parameters for section '{section}' must be a dict. Received: {type(params)}.")
+                raise ValueError(f"❌ Parameters for section '{section}' must be a dict. "
+                                 f"Received: {type(params)}.")
             if not isinstance(config_settings.config[section], dict):
-                raise ValueError(f"❌ Config section '{section}' must be a dict. Found: {type(config_settings.config[section])}.")
+                raise ValueError(f"❌ Config section '{section}' must be a dict. "
+                                 f"Found: {type(config_settings.config[section])}.")
 
             # update parameter
             config_settings.config[section].update(params)

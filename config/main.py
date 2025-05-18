@@ -8,6 +8,7 @@ from config.training_params_validator import _validate_training_general_params, 
 from config.validation_params_validator import _validate_cv_params, _validate_early_stopping_params, \
     _validate_search_space_params
 from utils.config_utils import _load_config
+from utils.log_utils import _info
 
 
 def prepare_config():
@@ -15,6 +16,9 @@ def prepare_config():
     Method to prepare the config file (loading, configuration, and validation).
     :return: A Config object containing all the configuration settings.
     """
+    # initial message
+    _info("🔄 Config preparation started...")
+
     # load config file
     config = _load_config()
 
@@ -65,6 +69,9 @@ def prepare_config():
 
     # testing config
     testing_batch_size = _validate_testing_general_params(config)
+
+    # show a successful message
+    _info("✅ Config preparation completed.")
 
     return Config(
         config=config,

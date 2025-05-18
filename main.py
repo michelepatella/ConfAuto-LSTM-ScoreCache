@@ -8,15 +8,15 @@ from validation import validation
 
 config_settings = prepare_config()
 
-data_generation()
+data_generation(config_settings)
 
-data_preprocessing()
+data_preprocessing(config_settings)
 
-#validation()
+validation(config_settings)
 
-training()
+training(config_settings)
 
-avg_loss, avg_loss_per_class, metrics = testing()
+avg_loss, avg_loss_per_class, metrics = testing(config_settings)
 
 print("----------------------------------------------------------------------------------------")
 print(f"Average loss: {avg_loss}")

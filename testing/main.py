@@ -4,14 +4,13 @@ from utils.data_utils import _loader_setup, _extract_targets_from_loader
 from utils.model_utils import _load_model, _model_setup
 
 
-def testing():
+def testing(config_settings):
     """
     Method to test the model.
+    :param config_settings: The configuration settings.
     :return: The average loss, the average loss per class
     and metrics computed.
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Testing started...")
 

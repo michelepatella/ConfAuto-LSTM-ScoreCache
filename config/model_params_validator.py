@@ -83,6 +83,9 @@ def _validate_model_general_params(config):
     :param config: The config object.
     :return: All the model general parameters.
     """
+    # initial message
+    _info("🔄 Model general params validation started...")
+
     # general
     num_features = _get_config_value(
         config,
@@ -99,6 +102,9 @@ def _validate_model_general_params(config):
         model_save_path
     )
 
+    # show a successful message
+    _info("🟢 Model general params validated.")
+
     return num_features, model_save_path
 
 
@@ -108,6 +114,9 @@ def _validate_model_params(config):
     :param config: The config object.
     :return: All the model parameters.
     """
+    # initial message
+    _info("🔄 Model params validation started...")
+
     # params
     model_params = _get_config_value(
         config,
@@ -152,6 +161,9 @@ def _validate_model_params(config):
         bidirectional,
         proj_size
     )
+
+    # show a successful message
+    _info("🟢 Model params validated.")
 
     return (model_params, hidden_size, num_layers, bias,
             batch_first, dropout, bidirectional, proj_size)

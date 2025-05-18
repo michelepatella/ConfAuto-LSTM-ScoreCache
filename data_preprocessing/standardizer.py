@@ -2,15 +2,14 @@ from sklearn.preprocessing import StandardScaler
 from utils.log_utils import _info, _debug
 
 
-def _standardize(df, columns):
+def _standardize(df, columns, config_settings):
     """
     Method to standardize the specified columns of dataset.
     :param df: The dataframe to standardize.
     :param columns: The columns to standardize.
+    :param config_settings: The configuration settings.
     :return: The standardized dataframe.
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Dataset standardization started...")
 

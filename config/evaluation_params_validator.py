@@ -1,4 +1,5 @@
 from utils.config_utils import _get_config_value
+from utils.log_utils import _info
 
 
 def _check_evaluation_params(top_k):
@@ -21,6 +22,9 @@ def _validate_evaluation_general_params(config):
     :param config:
     :return: The evaluation general parameters.
     """
+    # initial message
+    _info("🔄 Evaluation general params validation started...")
+
     top_k = _get_config_value(
         config,
         "evaluation.top_k"
@@ -28,5 +32,8 @@ def _validate_evaluation_general_params(config):
 
     # check evaluation params
     _check_evaluation_params(top_k)
+
+    # show a successful message
+    _info("🟢 Evaluation general params validated.")
 
     return top_k

@@ -1,4 +1,5 @@
 from utils.config_utils import _get_config_value
+from utils.log_utils import _info
 
 
 def _check_testing_params(testing_batch_size):
@@ -22,6 +23,9 @@ def _validate_testing_general_params(config):
     :param config: The config object.
     :return: All the testing general parameters.
     """
+    # initial message
+    _info("🔄 Testing general params validation started...")
+
     testing_batch_size = _get_config_value(
         config,
         "testing.general.batch_size"
@@ -29,5 +33,8 @@ def _validate_testing_general_params(config):
 
     # check testing params
     _check_testing_params(testing_batch_size)
+
+    # show a successful message
+    _info("🟢 Testing general params validated.")
 
     return testing_batch_size

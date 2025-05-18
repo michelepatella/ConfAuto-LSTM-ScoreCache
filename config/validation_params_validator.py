@@ -1,4 +1,5 @@
 from utils.config_utils import _get_config_value
+from utils.log_utils import _info
 
 
 def _check_cv_params(
@@ -116,6 +117,9 @@ def _validate_cv_params(config):
     :param config: Config object.
     :return: All the cross-validation parameters.
     """
+    # initial message
+    _info("🔄 CV params validation started...")
+
     # cross-validation
     cv_num_folds = _get_config_value(
         config,
@@ -132,6 +136,9 @@ def _validate_cv_params(config):
         validation_num_epochs
     )
 
+    # show a successful message
+    _info("🟢 CV params validated.")
+
     return cv_num_folds, validation_num_epochs
 
 
@@ -141,6 +148,9 @@ def _validate_early_stopping_params(config):
     :param config: Config object.
     :return: All early stopping parameters.
     """
+    # initial message
+    _info("🔄 Early stopping params validation started...")
+
     # early stopping
     early_stopping_patience = _get_config_value(
         config,
@@ -157,6 +167,9 @@ def _validate_early_stopping_params(config):
         early_stopping_delta
     )
 
+    # show a successful message
+    _info("🟢 Early stopping params validated.")
+
     return early_stopping_patience, early_stopping_delta
 
 
@@ -166,6 +179,9 @@ def _validate_search_space_params(config):
     :param config: Config object.
     :return: All the search space parameters.
     """
+    # initial message
+    _info("🔄 Search space params validation started...")
+
     # search space
     search_space = _get_config_value(
         config,
@@ -195,6 +211,9 @@ def _validate_search_space_params(config):
         dropout_range,
         learning_rate_range
     )
+
+    # show a successful message
+    _info("🟢 Search space params validated.")
 
     return (search_space, hidden_size_range, num_layers_range,
             dropout_range, learning_rate_range)
