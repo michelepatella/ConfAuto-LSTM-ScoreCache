@@ -102,7 +102,7 @@ def _update_config(updated_config, config_params=None):
 
     # merge update configs with config file
     merged_config = _merge_config(
-        config_settings["config"],
+        config_settings.config,
         updated_config
     )
 

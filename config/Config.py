@@ -1,0 +1,56 @@
+from dataclasses import dataclass
+
+
+@dataclass
+class Config:
+    config: object
+    seed: int
+    distribution_type: str
+    num_requests: int
+    num_keys: int
+    first_key: int
+    last_key: int
+    freq_windows: list
+    zipf_alpha: float
+    zipf_alpha_start: float
+    zipf_alpha_end: float
+    zipf_time_steps: int
+    locality_prob: float
+    burst_high: float
+    burst_low: float
+    burst_every: int
+    burst_peak: int
+    periodic_base_scale: int
+    periodic_amplitude: int
+    seq_len: int
+    embedding_dim: int
+    training_perc: float
+    static_save_path: str
+    dynamic_save_path: str
+    num_features: int
+    model_save_path: str
+    model_params: dict
+    hidden_size: int
+    num_layers: int
+    bias: bool
+    batch_first: bool
+    dropout: float
+    bidirectional: bool
+    proj_size: int
+    training_num_epochs: int
+    training_batch_size: int
+    optimizer_type: str
+    learning_rate: float
+    weight_decay: float
+    momentum: float
+    cv_num_folds: int
+    validation_num_epochs: int
+    early_stopping_patience: int
+    early_stopping_delta: float
+    search_space: dict
+    hidden_size_range: list
+    num_layers_range: list
+    dropout_range: list
+    learning_rate_range: list
+    top_k: int
+    testing_batch_size: int

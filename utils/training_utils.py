@@ -153,20 +153,20 @@ def _build_optimizer(model, learning_rate):
 
     # debugging
     _debug(f"⚙️ Learning rate: {learning_rate}.")
-    _debug(f"⚙️ Optimizer type: {config_settings["optimizer_type"]}.")
+    _debug(f"⚙️ Optimizer type: {config_settings.optimizer_type}.")
 
     try:
         # define the optimizer
-        if config_settings["optimizer_type"] == "adam":
+        if config_settings.optimizer_type == "adam":
             optimizer = torch.optim.Adam(
                 model.parameters(),
                 lr=learning_rate
             )
-        elif config_settings["optimizer_type"] == "adamw":
+        elif config_settings.optimizer_type == "adamw":
             optimizer = torch.optim.AdamW(
                 model.parameters(),
                 lr=learning_rate,
-                weight_decay=config_settings["weight_decay"]
+                weight_decay=config_settings.weight_decay
             )
         else:
             optimizer = torch.optim.SGD(

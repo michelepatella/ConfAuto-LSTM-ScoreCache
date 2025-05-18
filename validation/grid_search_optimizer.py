@@ -21,7 +21,7 @@ def _get_parameters_combination():
 
     try:
         # iterate over all the sections in the search space
-        for section, params_dict in config_settings["search_space"].items():
+        for section, params_dict in config_settings.search_space.items():
             # make the sections flatten
             flat_params = _flatten_search_space(params_dict)
 

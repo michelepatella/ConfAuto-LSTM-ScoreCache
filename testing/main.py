@@ -26,8 +26,8 @@ def testing():
     # setup for testing
     device, criterion, model, _ = (
         _model_setup(
-            config_settings["model_params"],
-            config_settings["learning_rate"],
+            config_settings.model_params,
+            config_settings.learning_rate,
             _extract_targets_from_loader(testing_loader)
         )
     )

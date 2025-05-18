@@ -63,7 +63,7 @@ def _generate_last_freq(sequence):
         freq_columns = {}
 
         # create a new column
-        for w in config_settings["freq_windows"]:
+        for w in config_settings.freq_windows:
             col_name = f"freq_last_{w}"
             freq_columns[col_name] = _calculate_rel_frequency(
                 sequence,

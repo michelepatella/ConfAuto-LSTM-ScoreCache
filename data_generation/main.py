@@ -18,9 +18,9 @@ def data_generation():
     phase_var.set("data_generation")
 
     # debugging
-    _debug(f"⚙️Type of distribution: {config_settings["distribution_type"]}.")
+    _debug(f"⚙️Type of distribution: {config_settings.distribution_type}.")
 
-    if config_settings["distribution_type"] == "static":
+    if config_settings.distribution_type == "static":
         # generate static requests and delta times
         requests, delta_times = _generate_static_requests()
     else:

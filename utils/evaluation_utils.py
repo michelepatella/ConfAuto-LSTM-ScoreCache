@@ -190,7 +190,7 @@ def _top_k_accuracy(targets, outputs):
         outputs_tensor = torch.stack(outputs)
         top_k_preds = (torch.topk(
             outputs_tensor,
-            k=config_settings["top_k"],
+            k=config_settings.top_k,
             dim=1
         ).indices.cpu().numpy())
 
@@ -201,7 +201,7 @@ def _top_k_accuracy(targets, outputs):
         for i in range(len(targets)):
 
             # get the top-k predictions
-            top_k_i = top_k_preds[i][:config_settings["top_k"]]
+            top_k_i = top_k_preds[i][:config_settings.top_k]
 
             # check if the target is contained into the
             # top-k predictions

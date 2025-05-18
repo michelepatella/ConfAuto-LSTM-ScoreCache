@@ -20,7 +20,7 @@ class AccessLogsDataset(Dataset):
         try:
             # define the splitting's index
             split_idx = int(len(self.data) *
-            config_settings["training_perc"])
+            config_settings.training_perc)
         except (AttributeError, TypeError, ValueError) as e:
             raise RuntimeError(f"❌ Error while defining the dataset splitting's index: {e}.")
 
@@ -50,7 +50,7 @@ class AccessLogsDataset(Dataset):
             self.features = self.columns[:-1]
             self.target = self.columns[-1]
 
-            self.seq_len = config_settings["seq_len"]
+            self.seq_len = config_settings.seq_len
 
             # debugging
             _debug(f"⚙️ Dataset columns: {self.columns}.")

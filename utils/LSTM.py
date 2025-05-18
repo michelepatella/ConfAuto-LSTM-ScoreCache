@@ -62,7 +62,7 @@ class LSTM(nn.Module):
                     )
 
             # check if dropout can be applied
-            if params.get("num_layers", config_settings["num_layers"]) > 1:
+            if params.get("num_layers", config_settings.num_layers) > 1:
 
                 # debugging
                 _debug(f"⚙️ 'dropout' can be applied.")
@@ -79,7 +79,7 @@ class LSTM(nn.Module):
                     _debug(f"⚙️ 'dropout' not found. Using the default value.")
 
                     # set the value
-                    setattr(self, "dropout", float(config_settings["dropout"]))
+                    setattr(self, "dropout", float(config_settings.dropout))
             else:
                 # debugging
                 _debug(f"⚙️ 'dropout' cannot be applied.")
@@ -88,10 +88,10 @@ class LSTM(nn.Module):
                 setattr(self, "dropout", 0.0)
 
             # set the no. of keys
-            self.num_keys = config_settings["num_keys"]
+            self.num_keys = config_settings.num_keys
 
             # apply embedding
-            self.embedding_dim = config_settings["embedding_dim"]
+            self.embedding_dim = config_settings.embedding_dim
 
             # instantiate the embedding layer
             self.embedding = nn.Embedding(
@@ -120,7 +120,7 @@ class LSTM(nn.Module):
         try:
             # instantiate the LSTM model
             self.lstm = nn.LSTM(
-                input_size=config_settings["num_features"]
+                input_size=config_settings.num_features
                 +self.embedding_dim,
                 hidden_size=self.hidden_size,
                 num_layers=self.num_layers,

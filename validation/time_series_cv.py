@@ -27,7 +27,7 @@ def _time_series_cv(training_set, params):
 
     try:
         # setup for Time Series Split
-        tscv = TimeSeriesSplit(n_splits=config_settings["cv_num_folds"])
+        tscv = TimeSeriesSplit(n_splits=config_settings.cv_num_folds)
     except (ValueError, TypeError) as e:
         raise RuntimeError(f"❌ Error while instantiating Time Series Split: {e}.")
 
@@ -53,12 +53,12 @@ def _time_series_cv(training_set, params):
         # create training and validation loaders
         training_loader = _create_data_loader(
             training_dataset,
-            config_settings["training_batch_size"],
+            config_settings.training_batch_size,
             True
         )
         validation_loader = _create_data_loader(
             validation_dataset,
-            config_settings["training_batch_size"],
+            config_settings.training_batch_size,
             False
         )
 
@@ -71,7 +71,7 @@ def _time_series_cv(training_set, params):
 
         # train the model
         _train_n_epochs(
-            config_settings["validation_num_epochs"],
+            config_settings.validation_num_epochs,
             model,
             training_loader,
             optimizer,

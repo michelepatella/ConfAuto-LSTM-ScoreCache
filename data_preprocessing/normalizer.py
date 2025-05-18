@@ -17,11 +17,11 @@ def _standardize(df, columns):
     total_len = len(df)
 
     # calculate the final index of the training set
-    train_end_idx = int(config_settings["training_perc"] * total_len)
+    train_end_idx = int(config_settings.training_perc * total_len)
 
     # debugging
     _debug(f"⚙️Total rows: {total_len}.")
-    _debug(f"⚙️Training %: {config_settings["training_perc"]}.")
+    _debug(f"⚙️Training %: {config_settings.training_perc}.")
     _debug(f"⚙️Training dataset range (from-to): (0 - {train_end_idx - 1}).")
 
     # initialize the scaler

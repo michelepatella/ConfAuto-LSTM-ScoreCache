@@ -12,8 +12,8 @@ class EarlyStopping:
         """
         try:
             # set the fields
-            self.patience = config_settings["early_stopping_patience"]
-            self.delta = config_settings["early_stopping_delta"]
+            self.patience = config_settings.early_stopping_patience
+            self.delta = config_settings.early_stopping_delta
             self.best_avg_loss = np.inf
             self.counter = 0
             self.early_stop = False

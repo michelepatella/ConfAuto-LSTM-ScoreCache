@@ -25,11 +25,11 @@ def _save_best_params(best_params):
                 raise KeyError(f"❌ Section '{section}' not found in config.")
             if not isinstance(params, dict):
                 raise ValueError(f"❌ Parameters for section '{section}' must be a dict. Received: {type(params)}.")
-            if not isinstance(config_settings["config"][section], dict):
-                raise ValueError(f"❌ Config section '{section}' must be a dict. Found: {type(config_settings["config"][section])}.")
+            if not isinstance(config_settings.config[section], dict):
+                raise ValueError(f"❌ Config section '{section}' must be a dict. Found: {type(config_settings.config[section])}.")
 
             # update parameter
-            config_settings["config"][section].update(params)
+            config_settings.config[section].update(params)
 
     except (KeyError, TypeError, ValueError) as e:
         raise RuntimeError(f"❌ Error while saving the best parameters: {e}.")

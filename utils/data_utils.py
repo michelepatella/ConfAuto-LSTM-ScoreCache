@@ -133,13 +133,13 @@ def _get_dataset_path_type():
     _info("🔄 Dataset path and type retrieval started...")
 
     # debugging
-    _debug(f"⚙️ Dataset distribution type from config: {config_settings["distribution_type"]}.")
+    _debug(f"⚙️ Dataset distribution type from config: {config_settings.distribution_type}.")
 
     # keep track of the dataset path
-    if config_settings["distribution_type"] == "static":
-        dataset_path = config_settings["static_save_path"]
+    if config_settings.distribution_type == "static":
+        dataset_path = config_settings.static_save_path
     else:
-        dataset_path = config_settings["dynamic_save_path"]
+        dataset_path = config_settings.dynamic_save_path
 
     # debugging
     _debug(f"⚙️ Dataset path found: {dataset_path}.")

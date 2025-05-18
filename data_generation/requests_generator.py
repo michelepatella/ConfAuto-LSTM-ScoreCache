@@ -53,17 +53,17 @@ def _generate_static_requests():
     # calculate the probabilities
     probs = _calculate_zipf_distribution_probs(
         np.arange(
-            config_settings["first_key"],
-            config_settings["last_key"]
+            config_settings.first_key,
+            config_settings.last_key
         ),
-        config_settings["zipf_alpha"]
+        config_settings.zipf_alpha
     )
 
     timestamps = [0]
     # generate patterns
     requests, delta_times = _generate_pattern(
         probs,
-        config_settings["num_requests"],
+        config_settings.num_requests,
         timestamps
     )
 
@@ -91,22 +91,22 @@ def _generate_dynamic_requests():
 
     # generate the Zipf distribution's parameter values
     alpha_values = np.linspace(
-        config_settings["zipf_alpha_start"],
-        config_settings["zipf_alpha_end"],
-        config_settings["zipf_time_steps"]
+        config_settings.zipf_alpha_start,
+        config_settings.zipf_alpha_end,
+        config_settings.zipf_time_steps
     )
 
     # debugging
     _debug(f"⚙️Alpha values length: {len(alpha_values)}.")
 
     # check validity of generated alpha values
-    if len(alpha_values) != config_settings["zipf_time_steps"]:
+    if len(alpha_values) != config_settings.zipf_time_steps:
         raise ValueError("❌ alpha_values length must match time_steps.")
     if any(alpha <= 0 for alpha in alpha_values):
         raise ValueError("❌ All alpha values must be positive.")
 
     # calculate the time step duration
-    time_step_duration = config_settings["num_requests"] // config_settings["zipf_time_steps"]
+    time_step_duration = config_settings.num_requests // config_settings.zipf_time_steps
 
     # debugging
     _debug(f"⚙️Time step duration: {time_step_duration}.")
@@ -122,8 +122,8 @@ def _generate_dynamic_requests():
         # calculate the probabilities
         probs = _calculate_zipf_distribution_probs(
             np.arange(
-                config_settings["first_key"],
-                config_settings["last_key"]
+                config_settings.first_key,
+                config_settings.last_key
             ),
             alpha
         )
