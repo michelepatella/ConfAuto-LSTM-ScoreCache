@@ -1,6 +1,7 @@
 from config.data_params_checker import _check_distribution_params, _check_access_pattern_params, _check_sequence_params, _check_dataset_params
 from config.model_params_checker import _check_general_model_params, _check_model_params
 from config.training_params_checker import _check_general_training_params, _check_optimizer_params
+from config.validation_params_checker import _check_cv_params, _check_early_stopping_params
 from utils.config_utils import _get_config_value
 
 # --------------------------------------- data config --------------------------------------- #
@@ -88,8 +89,8 @@ model_save_path = _get_config_value("model.general.save_path")
 
 # check general params
 _check_general_model_params(
-        num_features,
-        model_save_path
+    num_features,
+    model_save_path
 )
 
 # params
@@ -104,13 +105,13 @@ proj_size = _get_config_value("model.params.proj_size")
 
 # check model params
 _check_model_params(
-        hidden_size,
-        num_layers,
-        bias,
-        batch_first,
-        dropout,
-        bidirectional,
-        proj_size
+    hidden_size,
+    num_layers,
+    bias,
+    batch_first,
+    dropout,
+    bidirectional,
+    proj_size
 )
 
 # --------------------------------------- training config --------------------------------------- #
@@ -120,8 +121,8 @@ training_batch_size = _get_config_value("training.general.batch_size")
 
 # check general training params
 _check_general_training_params(
-        training_num_epochs,
-        training_batch_size
+    training_num_epochs,
+    training_batch_size
 )
 
 # optimizer
@@ -132,10 +133,10 @@ momentum = _get_config_value("training.optimizer.momentum")
 
 # check optimizer params
 _check_optimizer_params(
-        optimizer_type,
-        learning_rate,
-        weight_decay,
-        momentum
+    optimizer_type,
+    learning_rate,
+    weight_decay,
+    momentum
 )
 
 # --------------------------------------- validation config --------------------------------------- #
@@ -143,9 +144,21 @@ _check_optimizer_params(
 cv_num_folds = _get_config_value("validation.cross_validation.num_folds")
 validation_num_epochs = _get_config_value("validation.cross_validation.num_epochs")
 
+# check cross-validation params
+_check_cv_params(
+    cv_num_folds,
+    validation_num_epochs
+)
+
 # early stopping
 early_stopping_patience = _get_config_value("validation.early_stopping.patience")
 early_stopping_delta = _get_config_value("validation.early_stopping.delta")
+
+# check early stopping params
+_check_early_stopping_params(
+    early_stopping_patience,
+    early_stopping_delta
+)
 
 # search space
 search_space = _get_config_value("validation.search_space")
