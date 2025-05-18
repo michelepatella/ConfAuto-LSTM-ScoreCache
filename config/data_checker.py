@@ -48,8 +48,8 @@ def _check_distribution(
     ):
         raise RuntimeError("'data.distribution.key_range.first_key' and  "
                            "'data.distribution.key_range.last_key' "
-                           "must be integers, with the first one strictly"
-                           " less than the second one.")
+                           "must be integers, with the first one "
+                           "< the second one.")
 
     # check frequency windows
     if (
@@ -58,7 +58,7 @@ def _check_distribution(
         or not all(isinstance(w, int) and w > 0 for w in freq_windows)
     ):
         raise RuntimeError("'data.distribution.freq_windows' must "
-                           "be a list of positive integers.")
+                           "be a list of integers > 0.")
 
 
 def _check_access_pattern(
@@ -74,6 +74,21 @@ def _check_access_pattern(
             periodic_base_scale,
             periodic_amplitude
     ):
+    """
+    Method to check data access pattern parameters.
+    :param zipf_alpha: Zipf alpha value.
+    :param zipf_alpha_start: Zipf alpha start value.
+    :param zipf_alpha_end: Zipf alpha end value.
+    :param zipf_time_steps: Zipf time steps value.
+    :param locality_prob: Locality probability value.
+    :param burst_high: The burst high value.
+    :param burst_low: The burst low value.
+    :param burst_every: The burst every value.
+    :param burst_peak: The burst peak value.
+    :param periodic_base_scale: The periodic base scale value.
+    :param periodic_amplitude: The periodic amplitude value.
+    :return:
+    """
     # check zipf alpha
     if (
         not isinstance(zipf_alpha, float)
@@ -117,9 +132,64 @@ def _check_access_pattern(
                            " must be < 'data.temporal_pattern.burstiness.burst_low'.")
 
     # check burst every
-    if not isinstance(burst_every, int) or burst_every <= 0:
-        raise RuntimeError("'burst_every' must be an integer > 0.")
+    if (
+        not isinstance(burst_every, int)
+        or burst_every <= 0
+    ):
+        raise RuntimeError("'data.temporal_pattern.burstiness.burst_every'"
+                           " must be an integer > 0.")
 
     # check burst peak
-    if not isinstance(burst_peak, int) or burst_peak < 0:
-        raise RuntimeError("'burst_peak' must be an integer >= 0.")
+    if (
+        not isinstance(burst_peak, int)
+        or burst_peak < 0
+    ):
+        raise RuntimeError("'data.temporal_pattern.burstiness.burst_peak'"
+                           " must be an integer >= 0.")
+
+    # check periodic base scale
+    if (
+        not isinstance(periodic_base_scale, (int, float))
+        or periodic_base_scale <= 0
+    ):
+        raise RuntimeError("'data.temporal_pattern.periodic.base_scale'"
+                           " must be a number > 0.")
+
+    # check periodic amplitude
+    if (
+        not isinstance(periodic_amplitude, (int, float))
+        or periodic_amplitude < 0
+    ):
+        raise RuntimeError("'data.temporal_pattern.periodic.periodic_amplitude'"
+                           " must be a number >= 0.")
+
+
+def _check_sequence(
+        seq_len,
+        embedding_dim,
+        num_requests
+):
+    """
+    Method to check sequence parameters.
+    :param seq_len:
+    :param embedding_dim:
+    :param num_requests:
+    :return:
+    """
+    # check sequence length
+    if (
+        not isinstance(seq_len, int)
+        or seq_len <= 0
+    ):
+        raise RuntimeError("'data.sequence.len' must be an integer > 0.")
+    if seq_len > num_requests:
+        raise RuntimeError("'data.sequence.len' must be"
+                           " <= 'data.distribution.num_requests'.")
+
+    # check embedding dimension
+    if (
+        not isinstance(embedding_dim, int)
+        or embedding_dim <= 0
+    ):
+        raise RuntimeError("'data.sequence.embedding_dim'"
+                           " must be an integer > 0.")

@@ -1,4 +1,4 @@
-from config.data_checker import _check_distribution, _check_access_pattern
+from config.data_checker import _check_distribution, _check_access_pattern, _check_sequence
 from utils.config_utils import _get_config_value
 
 # --------------------------------------- data config --------------------------------------- #
@@ -59,6 +59,13 @@ _check_access_pattern(
 # sequence
 seq_len = _get_config_value("data.sequence.len")
 embedding_dim = _get_config_value("data.sequence.embedding_dim")
+
+# check sequence params
+_check_sequence(
+    seq_len,
+    embedding_dim,
+    num_requests
+)
 
 # dataset
 training_perc = _get_config_value("data.dataset.training_perc")
