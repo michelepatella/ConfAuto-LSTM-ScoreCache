@@ -112,9 +112,9 @@ def _check_access_pattern(
     for name, val in [("burst_high", burst_high), ("burst_low", burst_low)]:
         if not isinstance(val, float) or val <= 0:
             raise RuntimeError(f"'data.temporal_pattern.burstiness.{name}' must be a float > 0.")
-    if burst_high <= burst_low:
+    if burst_high >= burst_low:
         raise RuntimeError("'data.temporal_pattern.burstiness.burst_high'"
-                           " must be > 'data.temporal_pattern.burstiness.burst_low'.")
+                           " must be < 'data.temporal_pattern.burstiness.burst_low'.")
 
     # check burst every
     if not isinstance(burst_every, int) or burst_every <= 0:
