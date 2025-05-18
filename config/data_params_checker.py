@@ -1,4 +1,4 @@
-def _check_distribution(
+def _check_distribution_params(
         seed,
         distribution_type,
         num_requests,
@@ -61,7 +61,7 @@ def _check_distribution(
                            "be a list of integers > 0.")
 
 
-def _check_access_pattern(
+def _check_access_pattern_params(
             zipf_alpha,
             zipf_alpha_start,
             zipf_alpha_end,
@@ -164,7 +164,7 @@ def _check_access_pattern(
                            " must be a number >= 0.")
 
 
-def _check_sequence(
+def _check_sequence_params(
         seq_len,
         embedding_dim,
         num_requests
@@ -195,7 +195,11 @@ def _check_sequence(
                            " must be an integer > 0.")
 
 
-def _check_dataset(training_perc, static_save_path, dynamic_save_path):
+def _check_dataset_params(
+        training_perc,
+        static_save_path,
+        dynamic_save_path
+):
     """
     Method to check dataset parameters.
     :param training_perc: The training set percentage.

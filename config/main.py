@@ -1,4 +1,6 @@
-from config.data_checker import _check_distribution, _check_access_pattern, _check_sequence, _check_dataset
+from config.data_params_checker import _check_distribution_params, _check_access_pattern_params, _check_sequence_params, _check_dataset_params
+from config.model_params_checker import _check_general_model_params, _check_model_params
+from config.training_params_checker import _check_general_training_params, _check_optimizer_params
 from utils.config_utils import _get_config_value
 
 # --------------------------------------- data config --------------------------------------- #
@@ -12,7 +14,7 @@ last_key = _get_config_value("data.distribution.key_range.last_key") + 1
 freq_windows = _get_config_value("data.distribution.freq_windows")
 
 # check distribution params
-_check_distribution(
+_check_distribution_params(
     seed,
     distribution_type,
     num_requests,
@@ -42,7 +44,7 @@ periodic_base_scale = _get_config_value("data.temporal_pattern.periodic.base_sca
 periodic_amplitude = _get_config_value("data.temporal_pattern.periodic.amplitude")
 
 # check access pattern params
-_check_access_pattern(
+_check_access_pattern_params(
     zipf_alpha,
     zipf_alpha_start,
     zipf_alpha_end,
@@ -61,7 +63,7 @@ seq_len = _get_config_value("data.sequence.len")
 embedding_dim = _get_config_value("data.sequence.embedding_dim")
 
 # check sequence params
-_check_sequence(
+_check_sequence_params(
     seq_len,
     embedding_dim,
     num_requests
@@ -73,7 +75,7 @@ static_save_path = _get_config_value("data.dataset.static_save_path")
 dynamic_save_path = _get_config_value("data.dataset.dynamic_save_path")
 
 # check dataset params
-_check_dataset(
+_check_dataset_params(
     training_perc,
     static_save_path,
     dynamic_save_path
@@ -83,6 +85,12 @@ _check_dataset(
 # general
 num_features = _get_config_value("model.general.num_features")
 model_save_path = _get_config_value("model.general.save_path")
+
+# check general params
+_check_general_model_params(
+        num_features,
+        model_save_path
+)
 
 # params
 model_params = _get_config_value("model.params")
@@ -94,16 +102,41 @@ dropout = _get_config_value("model.params.dropout")
 bidirectional = _get_config_value("model.params.bidirectional")
 proj_size = _get_config_value("model.params.proj_size")
 
+# check model params
+_check_model_params(
+        hidden_size,
+        num_layers,
+        bias,
+        batch_first,
+        dropout,
+        bidirectional,
+        proj_size
+)
+
 # --------------------------------------- training config --------------------------------------- #
 # general
 training_num_epochs = _get_config_value("training.general.num_epochs")
 training_batch_size = _get_config_value("training.general.batch_size")
+
+# check general training params
+_check_general_training_params(
+        training_num_epochs,
+        training_batch_size
+)
 
 # optimizer
 optimizer_type = _get_config_value("training.optimizer.type")
 learning_rate = _get_config_value("training.optimizer.learning_rate")
 weight_decay = _get_config_value("training.optimizer.weight_decay")
 momentum = _get_config_value("training.optimizer.momentum")
+
+# check optimizer params
+_check_optimizer_params(
+        optimizer_type,
+        learning_rate,
+        weight_decay,
+        momentum
+)
 
 # --------------------------------------- validation config --------------------------------------- #
 # cross-validation
