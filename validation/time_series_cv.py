@@ -2,7 +2,7 @@ import numpy as np
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
 from utils.log_utils import _info, _debug
-from utils.data_utils import _create_data_loader, _extract_targets_from_loader
+from utils.dataloader_utils import _create_data_loader, _extract_targets_from_loader
 from utils.evaluation_utils import _evaluate_model
 from utils.model_utils import _model_setup
 from utils.training_utils import _train_n_epochs
@@ -71,7 +71,8 @@ def _time_series_cv(
         device, criterion, model, optimizer = _model_setup(
             params["model"]["params"],
             params["training"]["learning_rate"],
-            _extract_targets_from_loader(training_loader)
+            _extract_targets_from_loader(training_loader),
+            config_settings
         )
 
         # train the model
@@ -91,7 +92,8 @@ def _time_series_cv(
             model,
             validation_loader,
             criterion,
-            device
+            device,
+            config_settings
         )
         fold_losses.append(avg_loss)
 

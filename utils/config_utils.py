@@ -83,13 +83,13 @@ def _merge_config(config, updates):
     return config
 
 
-def _update_config(updated_config):
+def _update_config(config, updated_config):
     """
     Method to update the config file.
+    :param config: The config object.
     :param updated_config: The updated config to write.
     :return:
     """
-    from main import config_settings
     # initial message
     _info("🔄 Config file updating started...")
 
@@ -101,7 +101,7 @@ def _update_config(updated_config):
 
     # merge update configs with config file
     merged_config = _merge_config(
-        config_settings.config,
+        config,
         updated_config
     )
 
@@ -152,71 +152,3 @@ def _get_config_value(config, keys):
         return value
     except (KeyError, TypeError, IndexError, AttributeError, ValueError) as e:
         raise RuntimeError(f"❌ Error while reading config file: {e}.")
-
-
-def _flatten_search_space(d, parent_key=()):
-    """
-    Method to make the search space flatten recursively.
-    :param d: The search space dictionary.
-    :param parent_key: The key path accumulated so far.
-    :return: A list of tuples where each tuple contains
-    a key path and its associated list of values.
-    """
-    try:
-        items = []
-        for k, v in d.items():
-            # extrapolate the name of the parameter
-            clean_key = k.replace("_range", "")
-
-            # build the new key (tuple with the name of the parameter)
-            new_key = parent_key + (clean_key,)
-
-            # if the new value is another dictionary
-            # apply recursively this method
-            if isinstance(v, dict):
-                items.extend(_flatten_search_space(v, new_key))
-            else:
-                # convert the value to list
-                values = v if isinstance(v, list) else [v]
-
-                # add the couple (key, values) to the final list
-                items.append((new_key, values))
-    except (TypeError, RecursionError, AttributeError) as e:
-        raise RuntimeError(f"❌ Error while making flatten the search space: {e}.")
-
-    return items
-
-
-def _set_nested_dict(d, keys, value):
-    """
-    Method to set a value in a nested dictionary
-    given a list of keys.
-    :param d: The dictionary to update.
-    :param keys: The list of nested keys.
-    :param value: The value to set.
-    :return:
-    """
-    try:
-        # current dictionary initialized to the
-        # starting dictionary
-        current = d
-
-        # iterate over all the keys except the last one
-        # to go down the nested levels
-        for k in keys[:-1]:
-
-            # if there is not the key, or
-            # it is not a dictionary, make it one
-            if (k not in current or not
-            isinstance(current[k], dict)):
-                current[k] = {}
-
-            # go down a level more
-            current = current[k]
-
-        # set the desired value in the last position
-        # indicate by the sequence
-        current[keys[-1]] = value
-
-    except (TypeError, IndexError, KeyError) as e:
-        raise RuntimeError(f"❌ Error while setting a value in a nested dictionary: {e}.")

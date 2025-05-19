@@ -37,7 +37,7 @@ def _save_best_params(best_params, config_settings):
         raise RuntimeError(f"❌ Error while saving the best parameters: {e}.")
 
     # update the best parameters on the config file
-    _update_config(config)
+    _update_config(config_settings.config, config)
 
     # show a successful message
     _info("🟢 Best parameters saved.")

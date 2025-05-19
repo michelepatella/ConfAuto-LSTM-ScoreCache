@@ -1,7 +1,6 @@
 import torch
 from sympy.physics.units import momentum
 from torch.cuda import CudaError
-
 from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.EarlyStopping import EarlyStopping
@@ -126,7 +125,8 @@ def _train_n_epochs(
                         model,
                         validation_loader,
                         criterion,
-                        device
+                        device,
+                        config_settings
                     )
 
                 # early stopping logic
@@ -141,15 +141,14 @@ def _train_n_epochs(
         raise RuntimeError(f"❌ Error while training the model (n-epochs): {e}.")
 
 
-def _build_optimizer(model, learning_rate):
+def _build_optimizer(model, learning_rate, config_settings):
     """
     Method to build the optimizer.
     :param model: Model for which the optimizer will be built.
     :param learning_rate: Learning rate.
+    :param config_settings: The configuration settings.
     :return: The created optimizer.
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Optimizer building started...")
 

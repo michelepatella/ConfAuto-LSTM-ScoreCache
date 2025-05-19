@@ -1,5 +1,5 @@
 from utils.log_utils import _info, phase_var
-from utils.data_utils import _loader_setup
+from utils.dataloader_utils import _loader_setup
 from validation.best_params_saver import _save_best_params
 from validation.grid_search_optimizer import _grid_search
 
@@ -20,7 +20,7 @@ def validation(config_settings):
     training_set, _ = _loader_setup(
         "training",
         False,
-        config_settings.config
+        config_settings
     )
 
     # grid search for best parameters

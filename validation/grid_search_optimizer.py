@@ -2,9 +2,76 @@ import copy
 import itertools
 from tqdm import tqdm
 from utils.log_utils import _info, _debug
-from utils.config_utils import _flatten_search_space, _set_nested_dict
 from validation.best_params_updater import _check_and_update_best_params
 from validation.time_series_cv import _time_series_cv
+
+
+def _flatten_search_space(d, parent_key=()):
+    """
+    Method to make the search space flatten recursively.
+    :param d: The search space dictionary.
+    :param parent_key: The key path accumulated so far.
+    :return: A list of tuples where each tuple contains
+    a key path and its associated list of values.
+    """
+    try:
+        items = []
+        for k, v in d.items():
+            # extrapolate the name of the parameter
+            clean_key = k.replace("_range", "")
+
+            # build the new key (tuple with the name of the parameter)
+            new_key = parent_key + (clean_key,)
+
+            # if the new value is another dictionary
+            # apply recursively this method
+            if isinstance(v, dict):
+                items.extend(_flatten_search_space(v, new_key))
+            else:
+                # convert the value to list
+                values = v if isinstance(v, list) else [v]
+
+                # add the couple (key, values) to the final list
+                items.append((new_key, values))
+    except (TypeError, RecursionError, AttributeError) as e:
+        raise RuntimeError(f"❌ Error while making flatten the search space: {e}.")
+
+    return items
+
+
+def _set_nested_dict(d, keys, value):
+    """
+    Method to set a value in a nested dictionary
+    given a list of keys.
+    :param d: The dictionary to update.
+    :param keys: The list of nested keys.
+    :param value: The value to set.
+    :return:
+    """
+    try:
+        # current dictionary initialized to the
+        # starting dictionary
+        current = d
+
+        # iterate over all the keys except the last one
+        # to go down the nested levels
+        for k in keys[:-1]:
+
+            # if there is not the key, or
+            # it is not a dictionary, make it one
+            if (k not in current or not
+            isinstance(current[k], dict)):
+                current[k] = {}
+
+            # go down a level more
+            current = current[k]
+
+        # set the desired value in the last position
+        # indicate by the sequence
+        current[keys[-1]] = value
+
+    except (TypeError, IndexError, KeyError) as e:
+        raise RuntimeError(f"❌ Error while setting a value in a nested dictionary: {e}.")
 
 
 def _get_parameters_combination(config_settings):

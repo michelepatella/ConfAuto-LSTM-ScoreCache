@@ -1,7 +1,7 @@
 from data_generation.frequencies_generator import _generate_last_rel_freq
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
 from utils.log_utils import _info, _debug, phase_var
-from utils.data_utils import _save_dataset, _create_dataframe
+from utils.dataset_utils import _save_dataset, _create_dataframe
 import numpy as np
 
 
@@ -44,7 +44,7 @@ def data_generation(config_settings):
     )
 
     # save the dataset
-    _save_dataset(df)
+    _save_dataset(df, config_settings)
 
     # show a successful message
     _info("✅ Data generation successfully completed.")

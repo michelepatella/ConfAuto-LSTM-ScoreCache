@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import Dataset
 from main import config_settings
 from utils.log_utils import _debug
-from utils.data_utils import _load_dataset
+from utils.dataset_utils import _load_dataset
 
 
 class AccessLogsDataset(Dataset):
@@ -67,7 +67,7 @@ class AccessLogsDataset(Dataset):
         :param dataset_type: The type of dataset requested ("training" or "testing").
         """
         # load the dataset
-        df = _load_dataset()
+        df = _load_dataset(config_settings)
 
         # debugging
         _debug(f"⚙️ Dataset shape: {df.shape}.")

@@ -1,21 +1,18 @@
 import numpy as np
 import torch
 from sklearn.utils import compute_class_weight
-
-from main import config_settings
 from utils.LSTM import LSTM
 from utils.log_utils import _info, _debug
 from utils.training_utils import _build_optimizer
 
 
-def _save_model(model):
+def _save_model(model, config_settings):
     """
     Method to save a model.
     :param model: The model to be saved.
+    :param config_settings: The configuration settings.
     :return:
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Model saving started...")
 
@@ -35,15 +32,14 @@ def _save_model(model):
     _info(f"🟢 Model save to '{config_settings.model_save_path}'.")
 
 
-def _load_model(model, device):
+def _load_model(model, device, config_settings):
     """
     Method to load a model.
     :param model: The initialization of the model.
     :param device: The device to use.
+    :param config_settings: The configuration settings.
     :return: The model loaded.
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Model loading started...")
 
@@ -68,13 +64,15 @@ def _load_model(model, device):
 def _model_setup(
         model_params,
         learning_rate,
-        targets
+        targets,
+        config_settings
 ):
     """
     Method to set up the training and testing processes.
     :param model_params: The model parameters.
     :param learning_rate: The learning rate.
     :param targets: The targets.
+    :param config_settings: The configuration settings.
     :return: The device to use, the loss function, the model and the optimizer.
     """
     # initial message
@@ -91,7 +89,10 @@ def _model_setup(
                               else "cpu")
 
         # get the class weights
-        class_weights = _calculate_class_weights(targets)
+        class_weights = _calculate_class_weights(
+            targets,
+            config_settings
+        )
 
         # debugging
         _debug(f"⚙️ Class weights: {class_weights}.")
@@ -109,7 +110,8 @@ def _model_setup(
         # define the optimizer
         optimizer = _build_optimizer(
             model,
-            learning_rate
+            learning_rate,
+            config_settings
         )
     except (TypeError, ValueError, KeyError) as e:
         raise RuntimeError(f"❌ Error while setting up the model: {e}.")
@@ -120,14 +122,13 @@ def _model_setup(
     return device, criterion, model, optimizer
 
 
-def _calculate_class_weights(targets):
+def _calculate_class_weights(targets, config_settings):
     """
     Method to calculate the class weights.
     :param targets: The targets for which to calculate the class weights.
+    :param config_settings: The configuration settings.
     :return: The class weights calculated.
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Class weights calculation started...")
 

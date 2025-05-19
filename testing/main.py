@@ -1,6 +1,6 @@
 from utils.log_utils import _info, phase_var
 from utils.evaluation_utils import _evaluate_model
-from utils.data_utils import _loader_setup, _extract_targets_from_loader
+from utils.dataloader_utils import _loader_setup, _extract_targets_from_loader
 from utils.model_utils import _load_model, _model_setup
 
 
@@ -21,7 +21,7 @@ def testing(config_settings):
     _, testing_loader = _loader_setup(
         "testing",
         False,
-        config_settings.config
+        config_settings
     )
 
     # setup for testing
@@ -29,14 +29,16 @@ def testing(config_settings):
         _model_setup(
             config_settings.model_params,
             config_settings.learning_rate,
-            _extract_targets_from_loader(testing_loader)
+            _extract_targets_from_loader(testing_loader),
+            config_settings
         )
     )
 
     # load the trained model
     model = _load_model(
         model,
-        device
+        device,
+        config_settings
     )
 
     model.to(device)
@@ -48,7 +50,8 @@ def testing(config_settings):
         model,
         testing_loader,
         criterion,
-        device
+        device,
+        config_settings
     )
 
     # print a successful message
