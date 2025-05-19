@@ -1,11 +1,11 @@
 import numpy as np
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
-from utils.log_utils import _info, _debug
-from utils.dataloader_utils import _create_data_loader, _extract_targets_from_loader
-from utils.evaluation_utils import _evaluate_model
-from utils.model_utils import _model_setup
-from utils.training_utils import _train_n_epochs
+from utils.log_utils import info, debug
+from utils.dataloader_utils import create_data_loader, extract_targets_from_loader
+from utils.evaluation_utils import evaluate_model
+from utils.model_utils import model_setup
+from utils.training_utils import train_n_epochs
 
 
 def _time_series_cv(
@@ -22,13 +22,13 @@ def _time_series_cv(
     :return: The final average loss.
     """
     # initial message
-    _info("🔄 Time Series Cross-Validation started...")
+    info("🔄 Time Series Cross-Validation started...")
 
     # get the no. of samples in the dataset
     n_samples = len(training_set)
 
     # debugging
-    _debug(f"⚙️ No. of samples in the training set: {n_samples}.")
+    debug(f"⚙️ No. of samples in the training set: {n_samples}.")
 
     try:
         # setup for Time Series Split
@@ -41,8 +41,8 @@ def _time_series_cv(
     for train_idx, val_idx in tscv.split(np.arange(n_samples)):
 
         # debugging
-        _debug(f"⚙️ Training idx (Time series CV): {train_idx}.")
-        _debug(f"⚙️ Validation idx (Time series CV): {val_idx}.")
+        debug(f"⚙️ Training idx (Time series CV): {train_idx}.")
+        debug(f"⚙️ Validation idx (Time series CV): {val_idx}.")
 
         try:
             # define training and validation sets
@@ -52,31 +52,31 @@ def _time_series_cv(
             raise RuntimeError(f"❌ Error while defining training and validation sets: {e}.")
 
         # debugging
-        _debug(f"⚙️ Training size (Time series CV): {len(training_dataset)}.")
-        _debug(f"⚙️ Validation size (Time series CV): {len(validation_dataset)}.")
+        debug(f"⚙️ Training size (Time series CV): {len(training_dataset)}.")
+        debug(f"⚙️ Validation size (Time series CV): {len(validation_dataset)}.")
 
         # create training and validation loaders
-        training_loader = _create_data_loader(
+        training_loader = create_data_loader(
             training_dataset,
             config_settings.training_batch_size,
             True
         )
-        validation_loader = _create_data_loader(
+        validation_loader = create_data_loader(
             validation_dataset,
             config_settings.training_batch_size,
             False
         )
 
         # setup for training
-        device, criterion, model, optimizer = _model_setup(
+        device, criterion, model, optimizer = model_setup(
             params["model"]["params"],
             params["training"]["learning_rate"],
-            _extract_targets_from_loader(training_loader),
+            extract_targets_from_loader(training_loader),
             config_settings
         )
 
         # train the model
-        _train_n_epochs(
+        train_n_epochs(
             config_settings.validation_num_epochs,
             model,
             training_loader,
@@ -88,7 +88,7 @@ def _time_series_cv(
         )
 
         # evaluate the model
-        avg_loss, _, _ = _evaluate_model(
+        avg_loss, _, _ = evaluate_model(
             model,
             validation_loader,
             criterion,
@@ -98,7 +98,7 @@ def _time_series_cv(
         fold_losses.append(avg_loss)
 
     # show a successful message
-    _info("🟢 Time Series Cross-Validation completed.")
+    info("🟢 Time Series Cross-Validation completed.")
 
     # calculate the average of loss
     final_avg_loss = np.mean(fold_losses)

@@ -1,5 +1,5 @@
 from collections import Counter
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 
 
 def _calculate_rel_frequency(sequence, window):
@@ -10,11 +10,11 @@ def _calculate_rel_frequency(sequence, window):
     :return: The frequency of the sequence.
     """
     # initial message
-    _info("🔄 Relative frequency sequence calculation started...")
+    info("🔄 Relative frequency sequence calculation started...")
 
     # debugging
-    _debug(f"⚙️ Sequence length: {len(sequence)}.")
-    _debug(f"⚙️ Window: {window}.")
+    debug(f"⚙️ Sequence length: {len(sequence)}.")
+    debug(f"⚙️ Window: {window}.")
 
     # initialize frequencies
     freqs = []
@@ -39,10 +39,10 @@ def _calculate_rel_frequency(sequence, window):
         raise RuntimeError(f"❌ Error while calculating relative frequency sequence: {e}.")
 
     # debugging
-    _debug(f"⚙️ Frequencies length: {len(freqs)}.")
+    debug(f"⚙️ Frequencies length: {len(freqs)}.")
 
     # show a successful message
-    _info(f"🟢 Relative frequency of the sequence calculated.")
+    info(f"🟢 Relative frequency of the sequence calculated.")
 
     return freqs
 
@@ -55,7 +55,7 @@ def _generate_last_rel_freq(sequence, config_settings):
     :return: The generated frequencies.
     """
     # initial message
-    _info("🔄 Relative frequencies generation started...")
+    info("🔄 Relative frequencies generation started...")
 
     try:
         # freq columns dictionary initialization
@@ -70,10 +70,10 @@ def _generate_last_rel_freq(sequence, config_settings):
             )
 
         # debugging
-        _debug(f"⚙️ Relative frequency columns length: {len(freq_columns)}.")
+        debug(f"⚙️ Relative frequency columns length: {len(freq_columns)}.")
 
         # show a successful message
-        _info("🟢 Relative frequencies generated.")
+        info("🟢 Relative frequencies generated.")
 
         return freq_columns
 

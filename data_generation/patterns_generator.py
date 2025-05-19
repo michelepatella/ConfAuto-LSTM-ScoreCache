@@ -1,5 +1,5 @@
 import numpy as np
-from utils.log_utils import _debug, _info
+from utils.log_utils import debug, info
 
 
 def _generate_key_relationships(first_key, last_key):
@@ -10,7 +10,7 @@ def _generate_key_relationships(first_key, last_key):
     :return: The key relationships.
     """
     # initial message
-    _info("🔄 Pattern generation started...")
+    info("🔄 Pattern generation started...")
 
     # initialize data
     key_relationships = {}
@@ -32,7 +32,7 @@ def _generate_key_relationships(first_key, last_key):
         key_relationships[key] = related
 
     # show a successful message
-    _info(f"🟢 Key relationships generated.")
+    info(f"🟢 Key relationships generated.")
 
     return key_relationships
 
@@ -52,7 +52,7 @@ def _generate_access_pattern_requests(
     :return: The requested generate, following a specific access pattern.
     """
     # initial message
-    _info("🔄 Access pattern requests generation started...")
+    info("🔄 Access pattern requests generation started...")
 
     if (
             last_accessed_key is None
@@ -87,7 +87,7 @@ def _generate_access_pattern_requests(
             )
 
     # show a successful message
-    _info(f"🟢 Access pattern requests generated.")
+    info(f"🟢 Access pattern requests generated.")
 
     return request
 
@@ -107,7 +107,7 @@ def _generate_temporal_access_pattern_requests(
     :return: The delta time generated.
     """
     # initial message
-    _info("🔄 Temporal access pattern requests generation started...")
+    info("🔄 Temporal access pattern requests generation started...")
 
     # calculate periodic component for frequency scaling
     periodic_scale = (config_settings.periodic_base_scale +
@@ -127,7 +127,7 @@ def _generate_temporal_access_pattern_requests(
     delta_t = np.random.exponential(scale=freq_scale)
 
     # show a successful message
-    _info(f"🟢 Temporal access pattern requests generated.")
+    info(f"🟢 Temporal access pattern requests generated.")
 
     return delta_t
 
@@ -148,12 +148,12 @@ def _generate_pattern_requests(
     :return: A tuple containing the generated requests and delta_times.
     """
     # initial message
-    _info("🔄 Pattern requests generation started...")
+    info("🔄 Pattern requests generation started...")
 
     # debugging
-    _debug(f"⚙️ Probabilities length: {len(probs)}.")
-    _debug(f"⚙️ Number of requests: {num_requests}.")
-    _debug(f"⚙️ Timestamps length: {len(timestamps)}.")
+    debug(f"⚙️ Probabilities length: {len(probs)}.")
+    debug(f"⚙️ Number of requests: {num_requests}.")
+    debug(f"⚙️ Timestamps length: {len(timestamps)}.")
 
     # initialize data
     requests = []
@@ -164,7 +164,7 @@ def _generate_pattern_requests(
     period = 24 * 60 * 60
 
     # debugging
-    _debug(f"⚙️ Period: {period}.")
+    debug(f"⚙️ Period: {period}.")
 
     # check timestamps and probabilities
     if len(timestamps) == 0:
@@ -213,15 +213,15 @@ def _generate_pattern_requests(
             last_accessed_key = request
 
             # debugging
-            _debug(f"⚙️ Number of request generated: {i}.")
-            _debug(f"⚙️ Request generated: {request}.")
-            _debug(f"⚙️ Delta time generated: {delta_t}.")
+            debug(f"⚙️ Number of request generated: {i}.")
+            debug(f"⚙️ Request generated: {request}.")
+            debug(f"⚙️ Delta time generated: {delta_t}.")
 
     except (ValueError, TypeError, IndexError, ZeroDivisionError,
             AttributeError, MemoryError) as e:
         raise RuntimeError(f"❌ Error while generating data access pattern: {e}.")
 
     # show a successful message
-    _info(f"🟢 Pattern requests generated.")
+    info(f"🟢 Pattern requests generated.")
 
     return requests, delta_times

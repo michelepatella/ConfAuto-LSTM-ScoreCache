@@ -1,18 +1,18 @@
-from utils.log_utils import _info
+from utils.log_utils import info
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from collections import Counter
 
 
-def _plot_key_frequencies(requests):
+def plot_key_frequencies(requests):
     """
     Method to plot the frequency of the keys in the dataset.
     :param requests: Requests created.
     :return:
     """
     # initial message
-    _info("🔄 Keys frequency plot building started...")
+    info("🔄 Keys frequency plot building started...")
 
     try:
 
@@ -33,7 +33,7 @@ def _plot_key_frequencies(requests):
         raise RuntimeError(f"❌ Error while building the keys frequency plot: {e}.")
 
     # show a successful message
-    _info("🟢 Keys frequency plot built.")
+    info("🟢 Keys frequency plot built.")
 
 
 def plot_inter_arrival_times(delta_times):

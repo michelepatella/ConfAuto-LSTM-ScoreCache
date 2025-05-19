@@ -1,7 +1,7 @@
-from utils.log_utils import _info, phase_var
-from utils.evaluation_utils import _evaluate_model
-from utils.dataloader_utils import _loader_setup, _extract_targets_from_loader
-from utils.model_utils import _load_model, _model_setup
+from utils.log_utils import info, phase_var
+from utils.evaluation_utils import evaluate_model
+from utils.dataloader_utils import loader_setup, extract_targets_from_loader
+from utils.model_utils import load_model, model_setup
 
 
 def testing(config_settings):
@@ -12,13 +12,13 @@ def testing(config_settings):
     and metrics computed.
     """
     # initial message
-    _info("🔄 Testing started...")
+    info("🔄 Testing started...")
 
     # set the variable indicating the state of the process
     phase_var.set("testing")
 
     # dataloader setup
-    _, testing_loader = _loader_setup(
+    _, testing_loader = loader_setup(
         "testing",
         False,
         config_settings
@@ -26,16 +26,16 @@ def testing(config_settings):
 
     # setup for testing
     device, criterion, model, _ = (
-        _model_setup(
+        model_setup(
             config_settings.model_params,
             config_settings.learning_rate,
-            _extract_targets_from_loader(testing_loader),
+            extract_targets_from_loader(testing_loader),
             config_settings
         )
     )
 
     # load the trained model
-    model = _load_model(
+    model = load_model(
         model,
         device,
         config_settings
@@ -46,7 +46,7 @@ def testing(config_settings):
     model.eval()
 
     # evaluate the model
-    avg_loss, avg_loss_per_class, metrics = _evaluate_model(
+    avg_loss, avg_loss_per_class, metrics = evaluate_model(
         model,
         testing_loader,
         criterion,
@@ -55,6 +55,6 @@ def testing(config_settings):
     )
 
     # print a successful message
-    _info("✅ Testing completed.")
+    info("✅ Testing completed.")
 
     return avg_loss, avg_loss_per_class, metrics

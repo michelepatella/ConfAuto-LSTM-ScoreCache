@@ -1,8 +1,8 @@
 import torch
 from torch.utils.data import Dataset
 from main import config_settings
-from utils.log_utils import _debug
-from utils.dataset_utils import _load_dataset
+from utils.log_utils import debug
+from utils.dataset_utils import load_dataset
 
 
 class AccessLogsDataset(Dataset):
@@ -14,7 +14,7 @@ class AccessLogsDataset(Dataset):
         :return:
         """
         # debugging
-        _debug(f"⚙️ Splitting type: {dataset_type}.")
+        debug(f"⚙️ Splitting type: {dataset_type}.")
 
         try:
             # define the splitting's index
@@ -24,7 +24,7 @@ class AccessLogsDataset(Dataset):
             raise RuntimeError(f"❌ Error while defining the dataset splitting's index: {e}.")
 
         # debugging
-        _debug(f"⚙️ Split index: {split_idx}.")
+        debug(f"⚙️ Split index: {split_idx}.")
 
         # split the dataset
         try:
@@ -52,10 +52,10 @@ class AccessLogsDataset(Dataset):
             self.seq_len = config_settings.seq_len
 
             # debugging
-            _debug(f"⚙️ Dataset columns: {self.columns}.")
-            _debug(f"⚙️ Feature(s): {self.features}.")
-            _debug(f"⚙️ Target: {self.target}.")
-            _debug(f"⚙️ Sequence length: {self.seq_len}.")
+            debug(f"⚙️ Dataset columns: {self.columns}.")
+            debug(f"⚙️ Feature(s): {self.features}.")
+            debug(f"⚙️ Target: {self.target}.")
+            debug(f"⚙️ Sequence length: {self.seq_len}.")
 
         except (AttributeError, TypeError, IndexError) as e:
             raise RuntimeError(f"❌ Error setting the class fields: {e}.")
@@ -67,10 +67,10 @@ class AccessLogsDataset(Dataset):
         :param dataset_type: The type of dataset requested ("training" or "testing").
         """
         # load the dataset
-        df = _load_dataset(config_settings)
+        df = load_dataset(config_settings)
 
         # debugging
-        _debug(f"⚙️ Dataset shape: {df.shape}.")
+        debug(f"⚙️ Dataset shape: {df.shape}.")
 
         try:
             # set data
@@ -100,7 +100,7 @@ class AccessLogsDataset(Dataset):
         :return: The numerical features and the key.
         """
         # debugging
-        _debug(f"⚙️ Getting item at index: {idx}.")
+        debug(f"⚙️ Getting item at index: {idx}.")
 
         try:
             # get the feature sequence of length seq_len
@@ -126,9 +126,9 @@ class AccessLogsDataset(Dataset):
             )
 
             # debugging
-            _debug(f"⚙️ Feature vector shape: {x_features.shape}.")
-            _debug(f"⚙️ Key shape: {x_keys.shape}")
-            _debug(f"⚙️ Target: {y_key.item()}.")
+            debug(f"⚙️ Feature vector shape: {x_features.shape}.")
+            debug(f"⚙️ Key shape: {x_keys.shape}")
+            debug(f"⚙️ Target: {y_key.item()}.")
 
         except (IndexError, KeyError, ValueError, TypeError, AttributeError) as e:
             raise RuntimeError(f"❌ Error retrieving item at index {idx}: {e}.")

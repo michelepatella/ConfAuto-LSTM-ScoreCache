@@ -2,9 +2,9 @@ import torch
 from sympy.physics.units import momentum
 from torch.cuda import CudaError
 from main import config_settings
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 from utils.EarlyStopping import EarlyStopping
-from utils.evaluation_utils import _evaluate_model
+from utils.evaluation_utils import evaluate_model
 from utils.feedforward_utils import _compute_forward, _compute_backward
 
 
@@ -25,7 +25,7 @@ def _train_one_epoch(
     :return:
     """
     # initial message
-    _info("🔄 Epoch training started...")
+    info("🔄 Epoch training started...")
 
     model.train()
 
@@ -62,10 +62,10 @@ def _train_one_epoch(
         raise RuntimeError(f"❌ Error while training the model (one-epoch): {e}.")
 
     # show a successful message
-    _info("🟢 Epoch training completed.")
+    info("🟢 Epoch training completed.")
 
 
-def _train_n_epochs(
+def train_n_epochs(
         epochs,
         model,
         training_loader,
@@ -88,13 +88,13 @@ def _train_n_epochs(
     :return:
     """
     # debugging
-    _debug(f"⚙️ Number of epochs: {epochs}.")
-    _debug(f"⚙️ Training loader size: {len(training_loader)}.")
-    _debug(f"⚙️ Optimizer to use: {optimizer}.")
-    _debug(f"⚙️ Criterion to use: {criterion}.")
-    _debug(f"⚙️ Device to use: {device}.")
-    _debug(f"⚙️ Early stopping: {'Enabled' if early_stopping else 'Disabled'}.")
-    _debug(f"⚙️ Validation loader: {'Received' if validation_loader is not None else 'Not received'}.")
+    debug(f"⚙️ Number of epochs: {epochs}.")
+    debug(f"⚙️ Training loader size: {len(training_loader)}.")
+    debug(f"⚙️ Optimizer to use: {optimizer}.")
+    debug(f"⚙️ Criterion to use: {criterion}.")
+    debug(f"⚙️ Device to use: {device}.")
+    debug(f"⚙️ Early stopping: {'Enabled' if early_stopping else 'Disabled'}.")
+    debug(f"⚙️ Validation loader: {'Received' if validation_loader is not None else 'Not received'}.")
 
     try:
         es = None
@@ -104,7 +104,7 @@ def _train_n_epochs(
 
         # n-epochs learning
         for epoch in range(epochs):
-            _info(f"⏳ Epoch {epoch + 1}/{epochs}")
+            info(f"⏳ Epoch {epoch + 1}/{epochs}")
 
             # train the model
             _train_one_epoch(
@@ -121,7 +121,7 @@ def _train_n_epochs(
                 if validation_loader:
 
                     # get the validation average loss
-                    avg_loss, _,  _ = _evaluate_model(
+                    avg_loss, _,  _ = evaluate_model(
                         model,
                         validation_loader,
                         criterion,
@@ -134,7 +134,7 @@ def _train_n_epochs(
                     es(avg_loss)
                     # check whether to stop
                     if es.early_stop:
-                        _info("🛑 Early stopping triggered.")
+                        info("🛑 Early stopping triggered.")
                         break
 
     except (NameError, AttributeError, TypeError, ValueError, CudaError, LookupError) as e:
@@ -150,11 +150,11 @@ def _build_optimizer(model, learning_rate, config_settings):
     :return: The created optimizer.
     """
     # initial message
-    _info("🔄 Optimizer building started...")
+    info("🔄 Optimizer building started...")
 
     # debugging
-    _debug(f"⚙️ Learning rate: {learning_rate}.")
-    _debug(f"⚙️ Optimizer type: {config_settings.optimizer_type}.")
+    debug(f"⚙️ Learning rate: {learning_rate}.")
+    debug(f"⚙️ Optimizer type: {config_settings.optimizer_type}.")
 
     try:
         # define the optimizer
@@ -179,6 +179,6 @@ def _build_optimizer(model, learning_rate, config_settings):
         raise RuntimeError(f"❌ Error while building optimizer: {e}.")
 
     # show a successful message
-    _info("🟢 Optimizer building completed.")
+    info("🟢 Optimizer building completed.")
 
     return optimizer

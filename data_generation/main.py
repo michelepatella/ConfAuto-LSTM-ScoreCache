@@ -1,7 +1,7 @@
 from data_generation.frequencies_generator import _generate_last_rel_freq
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
-from utils.log_utils import _info, _debug, phase_var
-from utils.dataset_utils import _save_dataset, _create_dataframe
+from utils.log_utils import info, debug, phase_var
+from utils.dataset_utils import save_dataset, create_dataframe
 import numpy as np
 
 
@@ -12,13 +12,13 @@ def data_generation(config_settings):
     :return:
     """
     # initial message
-    _info("🔄 Data generation started...")
+    info("🔄 Data generation started...")
 
     # set the variable indicating the state of the process
     phase_var.set("data_generation")
 
     # debugging
-    _debug(f"⚙️Type of distribution: {config_settings.distribution_type}.")
+    debug(f"⚙️Type of distribution: {config_settings.distribution_type}.")
 
     if config_settings.distribution_type == "static":
         # generate static requests and delta times
@@ -34,7 +34,7 @@ def data_generation(config_settings):
     )
 
     # create dataframe
-    df = _create_dataframe(
+    df = create_dataframe(
         {
             "id": np.arange(len(requests)),
             "delta_time": delta_times,
@@ -44,7 +44,7 @@ def data_generation(config_settings):
     )
 
     # save the dataset
-    _save_dataset(df, config_settings)
+    save_dataset(df, config_settings)
 
     # show a successful message
-    _info("✅ Data generation successfully completed.")
+    info("✅ Data generation successfully completed.")

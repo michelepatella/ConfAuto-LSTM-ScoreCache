@@ -1,5 +1,5 @@
 from sklearn.preprocessing import StandardScaler
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 
 
 def _standardize(df, columns, config_settings):
@@ -11,7 +11,7 @@ def _standardize(df, columns, config_settings):
     :return: The standardized dataframe.
     """
     # initial message
-    _info("🔄 Dataset standardization started...")
+    info("🔄 Dataset standardization started...")
 
     total_len = len(df)
 
@@ -19,9 +19,9 @@ def _standardize(df, columns, config_settings):
     train_end_idx = int(config_settings.training_perc * total_len)
 
     # debugging
-    _debug(f"⚙️Total rows: {total_len}.")
-    _debug(f"⚙️Training %: {config_settings.training_perc}.")
-    _debug(f"⚙️Training dataset range (from-to): (0 - {train_end_idx - 1}).")
+    debug(f"⚙️Total rows: {total_len}.")
+    debug(f"⚙️Training %: {config_settings.training_perc}.")
+    debug(f"⚙️Training dataset range (from-to): (0 - {train_end_idx - 1}).")
 
     # initialize the scaler
     scaler = StandardScaler()
@@ -41,9 +41,9 @@ def _standardize(df, columns, config_settings):
         raise RuntimeError(f"❌ Error while standardizing the dataset: {e}.")
 
     # debugging
-    _debug(f"⚙️Normalized columns: {columns}.")
+    debug(f"⚙️Normalized columns: {columns}.")
 
     # print a successful message
-    _info("🟢 Dataset standardized.")
+    info("🟢 Dataset standardized.")
 
     return df

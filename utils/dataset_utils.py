@@ -1,16 +1,16 @@
 import pandas as pd
 from pandas.errors import EmptyDataError, ParserError
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 
 
-def _create_dataframe(columns):
+def create_dataframe(columns):
     """
     Method to create a dataframe.
     :param columns: The columns to create the dataframe from.
     :return: The dataframe created.
     """
     # initial message
-    _info("🔄 Dataset creation started...")
+    info("🔄 Dataset creation started...")
 
     try:
         # check the columns
@@ -24,12 +24,12 @@ def _create_dataframe(columns):
         raise RuntimeError(f"❌ Error while creating the dataframe: {e}.")
 
     # show a successful message
-    _info(f"🟢 Dataframe created.")
+    info(f"🟢 Dataframe created.")
 
     return df
 
 
-def _save_dataset(df, config_settings):
+def save_dataset(df, config_settings):
     """
     Method to save the dataset.
     :param df: Dataframe to save.
@@ -37,21 +37,21 @@ def _save_dataset(df, config_settings):
     :return:
     """
     # initial message
-    _info("🔄 Dataset saving started...")
+    info("🔄 Dataset saving started...")
 
     # get the dataset path
     dataset_path = _get_dataset_path_type(config_settings)
 
     # debugging
-    _debug(f"⚙️ Dataset shape to save: {df.shape}.")
-    _debug(f"⚙️ Dataset path: {dataset_path}.")
+    debug(f"⚙️ Dataset shape to save: {df.shape}.")
+    debug(f"⚙️ Dataset path: {dataset_path}.")
 
     try:
         # convert dataframe to CSV file
         df.to_csv(dataset_path, index=False)
 
         # show a successful message
-        _info(f"🟢 Dataset saved to '{dataset_path}'.")
+        info(f"🟢 Dataset saved to '{dataset_path}'.")
     except (OSError, PermissionError, FileNotFoundError, ValueError, TypeError) as e:
         raise RuntimeError(f"❌ Error while saving the dataset: {e}.")
 
@@ -63,10 +63,10 @@ def _get_dataset_path_type(config_settings):
     :return: The dataset path.
     """
     # initial message
-    _info("🔄 Dataset path and type retrieval started...")
+    info("🔄 Dataset path and type retrieval started...")
 
     # debugging
-    _debug(f"⚙️ Dataset distribution type from config: "
+    debug(f"⚙️ Dataset distribution type from config: "
            f"{config_settings.distribution_type}.")
 
     # keep track of the dataset path
@@ -76,28 +76,28 @@ def _get_dataset_path_type(config_settings):
         dataset_path = config_settings.dynamic_save_path
 
     # debugging
-    _debug(f"⚙️ Dataset path found: {dataset_path}.")
+    debug(f"⚙️ Dataset path found: {dataset_path}.")
 
     # show a successful message
-    _info("🟢 Dataset path and type retrieved.")
+    info("🟢 Dataset path and type retrieved.")
 
     return dataset_path
 
 
-def _load_dataset(config_settings):
+def load_dataset(config_settings):
     """
     Method to load the dataset.
     :param config_settings: The configuration settings.
     :return: The dataset read.
     """
     # initial message
-    _info("🔄 Dataset loading started...")
+    info("🔄 Dataset loading started...")
 
     # get the dataset path
     dataset_path = _get_dataset_path_type(config_settings)
 
     # debugging
-    _debug(f"⚙️ Path of the dataset to be loaded: {dataset_path}.")
+    debug(f"⚙️ Path of the dataset to be loaded: {dataset_path}.")
 
     try:
         # load the dataset
@@ -106,9 +106,9 @@ def _load_dataset(config_settings):
         raise RuntimeError(f"❌ Error while loading dataset: {e}.")
 
     # debugging
-    _debug(f"⚙️ Shape of the dataset loaded: {df.shape}.")
+    debug(f"⚙️ Shape of the dataset loaded: {df.shape}.")
 
     # show a successful message
-    _info("🟢 Dataset loaded.")
+    info("🟢 Dataset loaded.")
 
     return df

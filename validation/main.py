@@ -1,5 +1,5 @@
-from utils.log_utils import _info, phase_var
-from utils.dataloader_utils import _loader_setup
+from utils.log_utils import info, phase_var
+from utils.dataloader_utils import loader_setup
 from validation.best_params_saver import _save_best_params
 from validation.grid_search_optimizer import _grid_search
 
@@ -11,13 +11,13 @@ def validation(config_settings):
     :return:
     """
     # initial message
-    _info("🔄 Validation started...")
+    info("🔄 Validation started...")
 
     # set the variable indicating the state of the process
     phase_var.set("validation")
 
     # load the training set
-    training_set, _ = _loader_setup(
+    training_set, _ = loader_setup(
         "training",
         False,
         config_settings
@@ -33,4 +33,4 @@ def validation(config_settings):
     _save_best_params(best_params, config_settings)
 
     # print a successful message
-    _info("✅ Validation successfully completed.")
+    info("✅ Validation successfully completed.")

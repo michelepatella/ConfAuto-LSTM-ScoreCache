@@ -1,7 +1,7 @@
 from collections import defaultdict
 import torch
 from utils.feedforward_utils import _compute_forward
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 
 
 def _infer_batch(
@@ -20,10 +20,10 @@ def _infer_batch(
      all the targets, and all the outputs returned by the model.
     """
     # initial message
-    _info("🔄 Batch inference started...")
+    info("🔄 Batch inference started...")
 
     # debugging
-    _debug(f"⚙️ Input loader batch size: {len(loader)}.")
+    debug(f"⚙️ Input loader batch size: {len(loader)}.")
 
     # initialize data
     total_loss = 0.0
@@ -37,9 +37,9 @@ def _infer_batch(
             for x_features, x_keys, y_key in loader:
 
                 # debugging
-                _debug(f"⚙️ Batch x_features shape: {x_features.shape}.")
-                _debug(f"⚙️ Batch x_keys shape: {x_keys.shape}.")
-                _debug(f"⚙️ Batch y_key shape: {y_key.shape}.")
+                debug(f"⚙️ Batch x_features shape: {x_features.shape}.")
+                debug(f"⚙️ Batch x_keys shape: {x_keys.shape}.")
+                debug(f"⚙️ Batch y_key shape: {y_key.shape}.")
 
                 x_features = x_features.to(device)
                 y_key = y_key.to(device)
@@ -53,8 +53,8 @@ def _infer_batch(
                 )
 
                 # debugging
-                _debug(f"⚙️ Loss computed: {loss}.")
-                _debug(f"⚙️ Outputs shape: {outputs.shape}.")
+                debug(f"⚙️ Loss computed: {loss}.")
+                debug(f"⚙️ Outputs shape: {outputs.shape}.")
 
                 # check the loss
                 if loss is None:
@@ -77,12 +77,12 @@ def _infer_batch(
                         loss_per_class[int(class_id.item())].append(class_loss.item())
 
                         # debugging
-                        _debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
+                        debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
 
     except (IndexError, IndexError, KeyError, AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
     # show a successful message
-    _info("🟢 Batch inferred.")
+    info("🟢 Batch inferred.")
 
     return total_loss, loss_per_class, all_preds, all_targets, all_outputs

@@ -1,5 +1,5 @@
 import numpy as np
-from utils.log_utils import _debug
+from utils.log_utils import debug
 
 
 class EarlyStopping:
@@ -20,9 +20,9 @@ class EarlyStopping:
             raise RuntimeError(f"❌ Error setting the class fields: {e}.")
 
         # debugging
-        _debug(f"⚙️ Patience for Early Stopping: {self.patience}.")
-        _debug(f"⚙️ Delta for Early Stopping: {self.delta}.")
-        _debug(f"⚙️ Best avg loss: {self.best_avg_loss}.")
+        debug(f"⚙️ Patience for Early Stopping: {self.patience}.")
+        debug(f"⚙️ Delta for Early Stopping: {self.delta}.")
+        debug(f"⚙️ Best avg loss: {self.best_avg_loss}.")
 
 
     def __call__(self, avg_loss):
@@ -42,7 +42,7 @@ class EarlyStopping:
                 self.counter = 0
 
                 # debugging
-                _debug(f"⚙️ New best average loss: {self.best_avg_loss}.")
+                debug(f"⚙️ New best average loss: {self.best_avg_loss}.")
 
             else:
 
@@ -50,7 +50,7 @@ class EarlyStopping:
                 self.counter += 1
 
                 # debugging
-                _debug(f"⚙️ Counter value updated: {self.counter}.")
+                debug(f"⚙️ Counter value updated: {self.counter}.")
 
                 # check whether the counter exceeds the patience
                 if self.counter >= self.patience:

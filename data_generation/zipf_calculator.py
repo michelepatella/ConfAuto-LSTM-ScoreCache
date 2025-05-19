@@ -1,5 +1,5 @@
 import numpy as np
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 
 
 def _calculate_zipf_distribution_probs(keys, alpha):
@@ -10,11 +10,11 @@ def _calculate_zipf_distribution_probs(keys, alpha):
     :return: Zipf distribution's probabilities calculated.
     """
     # initial message
-    _info("🔄 Zipf distribution's probabilities calculation started...")
+    info("🔄 Zipf distribution's probabilities calculation started...")
 
     # debugging
-    _debug(f"⚙️Keys length: {len(keys)}.")
-    _debug(f"⚙️Alpha value: {alpha}.")
+    debug(f"⚙️Keys length: {len(keys)}.")
+    debug(f"⚙️Alpha value: {alpha}.")
 
     # check the keys
     keys = np.array(keys, dtype=np.float64)
@@ -33,6 +33,6 @@ def _calculate_zipf_distribution_probs(keys, alpha):
         raise ZeroDivisionError("❌ Zipf distribution probabilities cannot be calculated due to zero division.")
 
     # show a successful message
-    _info("🟢 Zipf distribution's probabilities calculated.")
+    info("🟢 Zipf distribution's probabilities calculated.")
 
     return probs

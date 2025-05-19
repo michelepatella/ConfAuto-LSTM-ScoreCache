@@ -1,6 +1,6 @@
 import config
-from utils.log_utils import _info, _debug
-from utils.config_utils import _update_config
+from utils.log_utils import info, debug
+from utils.config_utils import update_config
 
 
 def _save_best_params(best_params, config_settings):
@@ -11,10 +11,10 @@ def _save_best_params(best_params, config_settings):
     :return:
     """
     # initial message
-    _info("🔄 Best parameter saving started...")
+    info("🔄 Best parameter saving started...")
 
     # debugging
-    _debug(f"⚙️ Best params to save: {best_params}.")
+    debug(f"⚙️ Best params to save: {best_params}.")
 
     try:
         # update all the parameters
@@ -37,7 +37,7 @@ def _save_best_params(best_params, config_settings):
         raise RuntimeError(f"❌ Error while saving the best parameters: {e}.")
 
     # update the best parameters on the config file
-    _update_config(config_settings.config, config)
+    update_config(config_settings.config, config)
 
     # show a successful message
-    _info("🟢 Best parameters saved.")
+    info("🟢 Best parameters saved.")

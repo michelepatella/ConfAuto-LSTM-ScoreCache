@@ -1,5 +1,5 @@
-from utils.config_utils import _get_config_value
-from utils.log_utils import _info
+from utils.config_utils import get_config_value
+from utils.log_utils import info
 
 
 def _check_distribution_params(
@@ -235,34 +235,34 @@ def _validate_data_distribution_params(config):
     :return: All the data distribution parameters.
     """
     # initial message
-    _info("🔄 Data distribution params validation started...")
+    info("🔄 Data distribution params validation started...")
 
     # distribution
-    seed = _get_config_value(
+    seed = get_config_value(
         config,
         "data.distribution.seed"
     )
-    distribution_type = _get_config_value(
+    distribution_type = get_config_value(
         config,
         "data.distribution.type"
     )
-    num_requests = _get_config_value(
+    num_requests = get_config_value(
         config,
         "data.distribution.num_requests"
     )
-    num_keys = _get_config_value(
+    num_keys = get_config_value(
         config,
         "data.distribution.num_keys"
     )
-    first_key = _get_config_value(
+    first_key = get_config_value(
         config,
         "data.distribution.key_range.first_key"
     )
-    last_key = _get_config_value(
+    last_key = get_config_value(
         config,
         "data.distribution.key_range.last_key"
     ) + 1
-    freq_windows = _get_config_value(
+    freq_windows = get_config_value(
         config,
         "data.distribution.freq_windows"
     )
@@ -279,7 +279,7 @@ def _validate_data_distribution_params(config):
     )
 
     # show a successful message
-    _info("🟢 Data distribution params validated.")
+    info("🟢 Data distribution params validated.")
 
     return (seed, distribution_type, num_requests,
             num_keys, first_key, last_key, freq_windows)
@@ -292,56 +292,56 @@ def _validate_data_access_pattern_params(config):
     :return: All the data access pattern parameters.
     """
     # initial message
-    _info("🔄 Data access pattern params validation started...")
+    info("🔄 Data access pattern params validation started...")
 
     # access pattern
     # zipf
-    zipf_alpha = _get_config_value(
+    zipf_alpha = get_config_value(
         config,
         "data.access_pattern.zipf.alpha"
     )
-    zipf_alpha_start = _get_config_value(
+    zipf_alpha_start = get_config_value(
         config,
         "data.access_pattern.zipf.alpha_start"
     )
-    zipf_alpha_end = _get_config_value(
+    zipf_alpha_end = get_config_value(
         config,
         "data.access_pattern.zipf.alpha_end"
     )
-    zipf_time_steps = _get_config_value(
+    zipf_time_steps = get_config_value(
         config,
         "data.access_pattern.zipf.time_steps"
     )
     # locality
-    locality_prob = _get_config_value(
+    locality_prob = get_config_value(
         config,
         "data.access_pattern.locality.prob"
     )
 
     # temporal pattern
     # burstiness
-    burst_high = _get_config_value(
+    burst_high = get_config_value(
         config,
         "data.temporal_pattern.burstiness.burst_high"
     )
-    burst_low = _get_config_value(
+    burst_low = get_config_value(
         config,
         "data.temporal_pattern.burstiness.burst_low"
     )
-    burst_every = _get_config_value(
+    burst_every = get_config_value(
         config,
         "data.temporal_pattern.burstiness.burst_every"
     )
-    burst_peak = _get_config_value(
+    burst_peak = get_config_value(
         config,
         "data.temporal_pattern.burstiness.burst_peak"
     )
     # periodic
-    periodic_base_scale = _get_config_value(
+    periodic_base_scale = get_config_value(
         config,
         "data.temporal_pattern.periodic.base_scale"
     )
-    periodic_amplitude = _get_config_value(
+    periodic_amplitude = get_config_value(
         config,
         "data.temporal_pattern.periodic.amplitude"
     )
@@ -362,7 +362,7 @@ def _validate_data_access_pattern_params(config):
     )
 
     # show a successful message
-    _info("🟢 Data access pattern params validated.")
+    info("🟢 Data access pattern params validated.")
 
     return (zipf_alpha, zipf_alpha_start, zipf_alpha_end, zipf_time_steps,
             locality_prob, burst_high, burst_low, burst_every,
@@ -377,14 +377,14 @@ def _validate_data_sequence_params(config, num_requests):
     :return: All the data sequence parameters.
     """
     # initial message
-    _info("🔄 Data sequence params validation started...")
+    info("🔄 Data sequence params validation started...")
 
     # sequence
-    seq_len = _get_config_value(
+    seq_len = get_config_value(
         config,
         "data.sequence.len"
     )
-    embedding_dim = _get_config_value(
+    embedding_dim = get_config_value(
         config,
         "data.sequence.embedding_dim"
     )
@@ -397,7 +397,7 @@ def _validate_data_sequence_params(config, num_requests):
     )
 
     # show a successful message
-    _info("🟢 Data sequence params validated.")
+    info("🟢 Data sequence params validated.")
 
     return seq_len, embedding_dim, num_requests
 
@@ -409,18 +409,18 @@ def _validate_data_dataset_params(config):
     :return: All the data dataset parameters.
     """
     # initial message
-    _info("🔄 Dataset params validation started...")
+    info("🔄 Dataset params validation started...")
 
     # dataset
-    training_perc = _get_config_value(
+    training_perc = get_config_value(
         config,
         "data.dataset.training_perc"
     )
-    static_save_path = _get_config_value(
+    static_save_path = get_config_value(
         config,
         "data.dataset.static_save_path"
     )
-    dynamic_save_path = _get_config_value(
+    dynamic_save_path = get_config_value(
         config,
         "data.dataset.dynamic_save_path"
     )
@@ -433,6 +433,6 @@ def _validate_data_dataset_params(config):
     )
 
     # show a successful message
-    _info("🟢 Dataset params validated.")
+    info("🟢 Dataset params validated.")
 
     return training_perc, static_save_path, dynamic_save_path

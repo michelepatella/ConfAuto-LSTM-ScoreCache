@@ -1,4 +1,4 @@
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 
 
 def _compute_forward(
@@ -16,7 +16,7 @@ def _compute_forward(
     :return: The loss function for the batch.
     """
     # initial message
-    _info("🔄 Forward pass started...")
+    info("🔄 Forward pass started...")
 
     # try unpack data
     try:
@@ -24,7 +24,7 @@ def _compute_forward(
         x_features, x_keys, y_key = batch
 
         # debugging
-        _debug(f"⚙️ Target batch: {y_key}.")
+        debug(f"⚙️ Target batch: {y_key}.")
     except (ValueError, TypeError) as e:
         raise RuntimeError(f"❌ Error while error unpacking data: {e}.")
 
@@ -41,9 +41,9 @@ def _compute_forward(
         outputs = model(x_features, x_keys)
 
         # debugging
-        _debug(f"⚙️ Input batch shape: {x_features.shape}.")
-        _debug(f"⚙️ Input keys shape: {x_keys.shape}")
-        _debug(f"⚙️ Model output shape: {outputs.shape}.")
+        debug(f"⚙️ Input batch shape: {x_features.shape}.")
+        debug(f"⚙️ Input keys shape: {x_keys.shape}")
+        debug(f"⚙️ Model output shape: {outputs.shape}.")
 
     except (TypeError, AttributeError) as e:
         raise RuntimeError(f"❌ Error during model inference: {e}.")
@@ -53,12 +53,12 @@ def _compute_forward(
         loss = criterion(outputs, y_key)
 
         # debugging
-        _debug(f"⚙️ Loss: {loss.item()}.")
+        debug(f"⚙️ Loss: {loss.item()}.")
     except (TypeError, ValueError) as e:
         raise RuntimeError(f"❌ Error while calculating loss: {e}.")
 
     # show a successful message
-    _info("🟢 Forward pass computed.")
+    info("🟢 Forward pass computed.")
 
     return loss, outputs
 
@@ -71,7 +71,7 @@ def _compute_backward(loss, optimizer):
     :return:
     """
     # initial message
-    _info("🔄 Backward pass started...")
+    info("🔄 Backward pass started...")
 
     try:
         # backward pass
@@ -83,4 +83,4 @@ def _compute_backward(loss, optimizer):
         raise RuntimeError(f"❌ Error during backpropagation: {e}.")
 
     # show a successful message
-    _info("🟢 Backward pass computed.")
+    info("🟢 Backward pass computed.")

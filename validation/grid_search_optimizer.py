@@ -1,7 +1,7 @@
 import copy
 import itertools
 from tqdm import tqdm
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 from validation.best_params_updater import _check_and_update_best_params
 from validation.time_series_cv import _time_series_cv
 
@@ -81,7 +81,7 @@ def _get_parameters_combination(config_settings):
     :return: The parameters' combination.
     """
     # initial message
-    _info("🔄 Parameters' combination started...")
+    info("🔄 Parameters' combination started...")
 
     section_combinations = []
 
@@ -126,14 +126,14 @@ def _get_parameters_combination(config_settings):
             param_combinations.append(full_dict)
 
         # debugging
-        _debug(f"⚙️ Total parameter combinations found: {len(param_combinations)}")
+        debug(f"⚙️ Total parameter combinations found: {len(param_combinations)}")
 
         # check if there is at least a parameter combination found
         if not param_combinations:
             raise ValueError("❌ No parameters combination found.")
 
         # show a successful message
-        _info("🟢 Parameters combined together.")
+        info("🟢 Parameters combined together.")
 
         return param_combinations
 
@@ -149,10 +149,10 @@ def _grid_search(training_set, config_settings):
     :return: The best parameters.
     """
     # initial message
-    _info("🔄 Grid Search started...")
+    info("🔄 Grid Search started...")
 
     # debugging
-    _debug(f"⚙️ Training set size: {len(training_set)}.")
+    debug(f"⚙️ Training set size: {len(training_set)}.")
 
     # initialize the best parameters and average loss
     best_params = {}
@@ -169,7 +169,7 @@ def _grid_search(training_set, config_settings):
         for params in param_combinations:
 
             # debugging
-            _debug(f"⚙️ Evaluating combination: {params}")
+            debug(f"⚙️ Evaluating combination: {params}")
 
             # perform the time series CV
             avg_loss = _time_series_cv(
@@ -190,12 +190,12 @@ def _grid_search(training_set, config_settings):
             pbar.update(1)
 
     # print the best parameters found
-    _info(f"🏆 Best parameters found: {best_params}")
+    info(f"🏆 Best parameters found: {best_params}")
 
     # print the best average loss
-    _info(f"🏆 Best avg loss found: {best_avg_loss}")
+    info(f"🏆 Best avg loss found: {best_avg_loss}")
 
     # show a successful message
-    _info("🟢 Grid Search completed.")
+    info("🟢 Grid Search completed.")
 
     return best_params

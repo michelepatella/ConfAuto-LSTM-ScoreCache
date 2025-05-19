@@ -1,5 +1,5 @@
 from utils.inference_utils import _infer_batch
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 from utils.metrics_utils import _compute_metrics, _calculate_average_losses
 
 
@@ -19,7 +19,7 @@ def _collect_predictions(
     and the both the global and class average loss.
     """
     # initial message
-    _info("🔄 Prediction collection started...")
+    info("🔄 Prediction collection started...")
 
     # check the length of the loader
     if len(loader) == 0:
@@ -35,8 +35,8 @@ def _collect_predictions(
     )
 
     # debugging
-    _debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
-    _debug(f"⚙️ Total targets: {len(all_targets)}.")
+    debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
+    debug(f"⚙️ Total targets: {len(all_targets)}.")
 
     # calculate the average of losses
     avg_loss, avg_loss_per_class = (
@@ -48,12 +48,12 @@ def _collect_predictions(
     )
 
     # show a successful message
-    _info("🟢 Predictions collected.")
+    info("🟢 Predictions collected.")
 
     return avg_loss, avg_loss_per_class, all_preds, all_targets, all_outputs
 
 
-def _evaluate_model(
+def evaluate_model(
         model,
         loader,
         criterion,
@@ -70,7 +70,7 @@ def _evaluate_model(
     :return: The average loss and the metrics.
     """
     # initial message
-    _info("🔄 Model's evaluation started...")
+    info("🔄 Model's evaluation started...")
 
     # collect predictions to get them along with
     # targets and average loss
@@ -91,11 +91,11 @@ def _evaluate_model(
     )
 
     # show results
-    _info(f"📉 Average Loss: {avg_loss}")
-    _info(f"📉 Average Loss per Class: {avg_loss_per_class}")
-    _info(f"📊 Metrics: {metrics}")
+    info(f"📉 Average Loss: {avg_loss}")
+    info(f"📉 Average Loss per Class: {avg_loss_per_class}")
+    info(f"📊 Metrics: {metrics}")
 
     # show a successful message
-    _info("🟢 Model's evaluation completed.")
+    info("🟢 Model's evaluation completed.")
 
     return avg_loss, avg_loss_per_class, metrics

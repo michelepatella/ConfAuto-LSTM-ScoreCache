@@ -7,8 +7,8 @@ from config.testing_params_validator import _validate_testing_general_params
 from config.training_params_validator import _validate_training_general_params, _validate_training_optimizer_params
 from config.validation_params_validator import _validate_cv_params, _validate_early_stopping_params, \
     _validate_search_space_params
-from utils.config_utils import _load_config
-from utils.log_utils import _info
+from utils.config_utils import load_config
+from utils.log_utils import info
 
 
 def prepare_config():
@@ -17,10 +17,10 @@ def prepare_config():
     :return: A Config object containing all the configuration settings.
     """
     # initial message
-    _info("🔄 Config preparation started...")
+    info("🔄 Config preparation started...")
 
     # load config file
-    config = _load_config()
+    config = load_config()
 
     # data config
     (seed, distribution_type, num_requests,
@@ -71,7 +71,7 @@ def prepare_config():
     testing_batch_size = _validate_testing_general_params(config)
 
     # show a successful message
-    _info("✅ Config preparation completed.")
+    info("✅ Config preparation completed.")
 
     return Config(
         config=config,

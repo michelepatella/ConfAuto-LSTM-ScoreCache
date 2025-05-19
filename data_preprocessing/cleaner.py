@@ -1,4 +1,4 @@
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 
 
 def _remove_duplicates(df, columns):
@@ -9,7 +9,7 @@ def _remove_duplicates(df, columns):
     :return: The dataframe with duplicate rows removed.
     """
     # initial message
-    _info("🔄 Dataset deduplication started...")
+    info("🔄 Dataset deduplication started...")
 
     try:
         for column in columns:
@@ -19,7 +19,7 @@ def _remove_duplicates(df, columns):
         raise Exception(f"❌ Error while deduplicating the dataset: {e}")
 
     # print a successful message
-    _info("🟢 Dataset deduplicated.")
+    info("🟢 Dataset deduplicated.")
 
     return df
 
@@ -31,7 +31,7 @@ def _remove_missing_values(df):
     :return: The dataframe with missing values removed.
     """
     # initial message
-    _info("🔄 Missing values remotion started...")
+    info("🔄 Missing values remotion started...")
 
     # size of the original dataset
     initial_len = len(df)
@@ -46,9 +46,9 @@ def _remove_missing_values(df):
     final_len = len(df)
 
     # debugging
-    _debug(f"⚙️Number of rows with missing values: {initial_len - final_len}.")
+    debug(f"⚙️Number of rows with missing values: {initial_len - final_len}.")
 
     # print a successful message
-    _info("🟢 Missing values removed.")
+    info("🟢 Missing values removed.")
 
     return df

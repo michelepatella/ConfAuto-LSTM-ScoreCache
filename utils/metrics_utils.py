@@ -1,6 +1,6 @@
 import torch
 from sklearn.metrics import classification_report
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 
 
 def _top_k_accuracy(
@@ -62,7 +62,7 @@ def _compute_metrics(
     :return: The computed metrics.
     """
     # initial message
-    _info("🔄 Metrics computation started...")
+    info("🔄 Metrics computation started...")
 
     try:
         # class-wise metrics
@@ -89,7 +89,7 @@ def _compute_metrics(
     }
 
     # show a successful message
-    _info("🟢 Metrics computed.")
+    info("🟢 Metrics computed.")
 
     return metrics
 
@@ -107,11 +107,11 @@ def _calculate_average_losses(
     :return: The average global loss and the average loss per class.
     """
     # initial message
-    _info("🔄 Average losses calculation started...")
+    info("🔄 Average losses calculation started...")
 
     # debugging
-    _debug(f"⚙️ Total loss: {total_loss}.")
-    _debug(f"⚙️ Number of batches: {num_batches}.")
+    debug(f"⚙️ Total loss: {total_loss}.")
+    debug(f"⚙️ Number of batches: {num_batches}.")
 
     try:
         # compute the average loss
@@ -126,6 +126,6 @@ def _calculate_average_losses(
         raise RuntimeError(f"❌ Error while calculating average losses: {e}.")
 
     # show a successful message
-    _info("🟢 Average losses calculated.")
+    info("🟢 Average losses calculated.")
 
     return avg_loss, avg_loss_per_class

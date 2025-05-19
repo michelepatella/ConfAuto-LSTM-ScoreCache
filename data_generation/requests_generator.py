@@ -1,8 +1,8 @@
 import numpy as np
 from data_generation.patterns_generator import _generate_pattern_requests
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
-from utils.log_utils import _info, _debug
-from utils.graph_utils import _plot_key_frequencies
+from utils.log_utils import info, debug
+from utils.graph_utils import plot_key_frequencies
 
 
 def _generate_static_requests(config_settings):
@@ -12,7 +12,7 @@ def _generate_static_requests(config_settings):
     :return: Static requests and delta times generated.
     """
     # initial message
-    _info("🔄 Static requests generation started...")
+    info("🔄 Static requests generation started...")
 
     # calculate the probabilities
     probs = _calculate_zipf_distribution_probs(
@@ -33,15 +33,15 @@ def _generate_static_requests(config_settings):
     )
 
     # debugging
-    _debug(f"⚙️Probabilities length: {len(probs)}.")
-    _debug(f"⚙️Requests length: {len(requests)}.")
-    _debug(f"⚙️Delta times length: {len(delta_times)}.")
+    debug(f"⚙️Probabilities length: {len(probs)}.")
+    debug(f"⚙️Requests length: {len(requests)}.")
+    debug(f"⚙️Delta times length: {len(delta_times)}.")
 
     # show a frequency table of the keys
-    _plot_key_frequencies(requests)
+    plot_key_frequencies(requests)
 
     # show a successful message
-    _info("🟢 Static requests generated.")
+    info("🟢 Static requests generated.")
 
     return requests, delta_times
 
@@ -53,7 +53,7 @@ def _generate_dynamic_requests(config_settings):
     :return: Dynamic requests and delta times generated.
     """
     # initial message
-    _info("🔄 Dynamic requests generation started...")
+    info("🔄 Dynamic requests generation started...")
 
     # generate the Zipf distribution's parameter values
     alpha_values = np.linspace(
@@ -63,7 +63,7 @@ def _generate_dynamic_requests(config_settings):
     )
 
     # debugging
-    _debug(f"⚙️Alpha values length: {len(alpha_values)}.")
+    debug(f"⚙️Alpha values length: {len(alpha_values)}.")
 
     # check validity of generated alpha values
     if len(alpha_values) != config_settings.zipf_time_steps:
@@ -75,7 +75,7 @@ def _generate_dynamic_requests(config_settings):
     time_step_duration = config_settings.num_requests // config_settings.zipf_time_steps
 
     # debugging
-    _debug(f"⚙️Time step duration: {time_step_duration}.")
+    debug(f"⚙️Time step duration: {time_step_duration}.")
 
     # initialize data
     requests = []
@@ -107,16 +107,16 @@ def _generate_dynamic_requests(config_settings):
         delta_times.extend(dt)
 
         # debugging
-        _debug(f"⚙️Probabilities length: {len(probs)}.")
+        debug(f"⚙️Probabilities length: {len(probs)}.")
 
     # debugging
-    _debug(f"⚙️Requests length: {len(requests)}.")
-    _debug(f"⚙️Delta times length: {len(delta_times)}.")
+    debug(f"⚙️Requests length: {len(requests)}.")
+    debug(f"⚙️Delta times length: {len(delta_times)}.")
 
     # show a frequency table of the keys
-    _plot_key_frequencies(requests)
+    plot_key_frequencies(requests)
 
     # show a successful message
-    _info("🟢 Dynamic requests generated.")
+    info("🟢 Dynamic requests generated.")
 
     return requests, delta_times

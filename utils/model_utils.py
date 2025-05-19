@@ -2,11 +2,11 @@ import numpy as np
 import torch
 from sklearn.utils import compute_class_weight
 from utils.LSTM import LSTM
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 from utils.training_utils import _build_optimizer
 
 
-def _save_model(model, config_settings):
+def save_model(model, config_settings):
     """
     Method to save a model.
     :param model: The model to be saved.
@@ -14,11 +14,11 @@ def _save_model(model, config_settings):
     :return:
     """
     # initial message
-    _info("🔄 Model saving started...")
+    info("🔄 Model saving started...")
 
     try:
         # debugging
-        _debug(f"⚙️ Path to save the model: {config_settings.model_save_path}.")
+        debug(f"⚙️ Path to save the model: {config_settings.model_save_path}.")
 
         # save the model
         torch.save(
@@ -29,10 +29,10 @@ def _save_model(model, config_settings):
         raise RuntimeError(f"❌ Error while saving the model: {e}.")
 
     # show a successful message
-    _info(f"🟢 Model save to '{config_settings.model_save_path}'.")
+    info(f"🟢 Model save to '{config_settings.model_save_path}'.")
 
 
-def _load_model(model, device, config_settings):
+def load_model(model, device, config_settings):
     """
     Method to load a model.
     :param model: The initialization of the model.
@@ -41,10 +41,10 @@ def _load_model(model, device, config_settings):
     :return: The model loaded.
     """
     # initial message
-    _info("🔄 Model loading started...")
+    info("🔄 Model loading started...")
 
     # debugging
-    _debug(f"⚙️ Path to load the model: {config_settings.model_save_path}.")
+    debug(f"⚙️ Path to load the model: {config_settings.model_save_path}.")
 
     try:
         # load the model
@@ -56,12 +56,12 @@ def _load_model(model, device, config_settings):
         raise RuntimeError(f"❌ Error while loading the model: {e}.")
 
     # show a successful message
-    _info("🟢 Model loaded.")
+    info("🟢 Model loaded.")
 
     return model
 
 
-def _model_setup(
+def model_setup(
         model_params,
         learning_rate,
         targets,
@@ -76,12 +76,12 @@ def _model_setup(
     :return: The device to use, the loss function, the model and the optimizer.
     """
     # initial message
-    _info("🔄 Model setup started...")
+    info("🔄 Model setup started...")
 
     # debugging
-    _debug(f"⚙️ Model params: {model_params}.")
-    _debug(f"⚙️ Learning rate: {learning_rate}.")
-    _debug(f"⚙️ Targets: {targets}.")
+    debug(f"⚙️ Model params: {model_params}.")
+    debug(f"⚙️ Learning rate: {learning_rate}.")
+    debug(f"⚙️ Targets: {targets}.")
 
     try:
         # define the device to use
@@ -95,7 +95,7 @@ def _model_setup(
         )
 
         # debugging
-        _debug(f"⚙️ Class weights: {class_weights}.")
+        debug(f"⚙️ Class weights: {class_weights}.")
 
         # define the loss function
         criterion = torch.nn.CrossEntropyLoss(
@@ -117,7 +117,7 @@ def _model_setup(
         raise RuntimeError(f"❌ Error while setting up the model: {e}.")
 
     # show a successful message
-    _info("🟢 Model setup completed.")
+    info("🟢 Model setup completed.")
 
     return device, criterion, model, optimizer
 
@@ -130,11 +130,11 @@ def _calculate_class_weights(targets, config_settings):
     :return: The class weights calculated.
     """
     # initial message
-    _info("🔄 Class weights calculation started...")
+    info("🔄 Class weights calculation started...")
 
     try:
         # debugging
-        _debug(f"⚙️ Number of classes: {config_settings.num_keys}.")
+        debug(f"⚙️ Number of classes: {config_settings.num_keys}.")
 
         # be sure targets is a numpy array and shift them
         targets = targets.cpu().numpy() if (
@@ -148,7 +148,7 @@ def _calculate_class_weights(targets, config_settings):
         present_classes = np.unique(targets)
 
         # debugging
-        _debug(f"⚙️ Present classes: {present_classes}.")
+        debug(f"⚙️ Present classes: {present_classes}.")
 
         # compute the class weights
         computed_weights = compute_class_weight(
@@ -171,6 +171,6 @@ def _calculate_class_weights(targets, config_settings):
         raise RuntimeError(f"❌ Error while calculating the class weights: {e}.")
 
     # show a successful message
-    _info("🟢 Class weights calculated.")
+    info("🟢 Class weights calculated.")
 
     return class_weights

@@ -1,7 +1,7 @@
 from data_preprocessing.cleaner import _remove_missing_values, _remove_duplicates
 from data_preprocessing.standardizer import _standardize
-from utils.log_utils import _info, phase_var
-from utils.dataset_utils import _save_dataset, _load_dataset
+from utils.log_utils import info, phase_var
+from utils.dataset_utils import save_dataset, load_dataset
 
 
 def data_preprocessing(config_settings):
@@ -10,13 +10,13 @@ def data_preprocessing(config_settings):
     :return:
     """
     # initial message
-    _info("🔄 Data preprocessing started...")
+    info("🔄 Data preprocessing started...")
 
     # set the variable indicating the state of the process
     phase_var.set("data_preprocessing")
 
     # load the dataset
-    df = _load_dataset(config_settings)
+    df = load_dataset(config_settings)
 
     # deduplicate the dataset
     df_deduplicated = _remove_duplicates(df, ["id"])
@@ -38,7 +38,7 @@ def data_preprocessing(config_settings):
     )
 
     # save the preprocessed dataset
-    _save_dataset(df_standardized, config_settings)
+    save_dataset(df_standardized, config_settings)
 
     # print a successful message
-    _info("✅ Data preprocessing successfully completed.")
+    info("✅ Data preprocessing successfully completed.")

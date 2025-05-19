@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from utils.log_utils import _debug
-from utils.config_utils import _get_config_value
+from utils.log_utils import debug
+from utils.config_utils import get_config_value
 
 
 class LSTM(nn.Module):
@@ -34,32 +34,32 @@ class LSTM(nn.Module):
                             params[param] != "dropout"):
 
                         # debugging
-                        _debug(f"⚙️ '{param}' found. Using the specified value ({params[param]}).")
+                        debug(f"⚙️ '{param}' found. Using the specified value ({params[param]}).")
 
                         # set the value
                         setattr(self, param, params[param])
                     else:
                         # debugging
-                        _debug(f"⚙️ '{param}' not found. Using the default value.")
+                        debug(f"⚙️ '{param}' not found. Using the default value.")
 
                         # if they are None, read them from config file and set them
                         setattr(
                             self,
                             param,
-                            _get_config_value(
+                            get_config_value(
                                 config_settings.config,
                                 f"model.params.{param}"
                             )
                         )
                 else:
                     # debugging
-                    _debug(f"⚙️ '{param}' not found. Using the default value.")
+                    debug(f"⚙️ '{param}' not found. Using the default value.")
 
                     # read the required parameter from config
                     setattr(
                         self,
                         param,
-                        _get_config_value(
+                        get_config_value(
                             config_settings.config,
                             f"model.params.{param}"
                             )
@@ -69,24 +69,24 @@ class LSTM(nn.Module):
             if params.get("num_layers", config_settings.num_layers) > 1:
 
                 # debugging
-                _debug(f"⚙️ 'dropout' can be applied.")
+                debug(f"⚙️ 'dropout' can be applied.")
 
                 # apply dropout
                 if params["dropout"] is not None:
                     # debugging
-                    _debug(f"⚙️ 'dropout' found. Using the specified value ({float(params['dropout'])}).")
+                    debug(f"⚙️ 'dropout' found. Using the specified value ({float(params['dropout'])}).")
 
                     # set the value
                     setattr(self, "dropout", float(params["dropout"]))
                 else:
                     # debugging
-                    _debug(f"⚙️ 'dropout' not found. Using the default value.")
+                    debug(f"⚙️ 'dropout' not found. Using the default value.")
 
                     # set the value
                     setattr(self, "dropout", float(config_settings.dropout))
             else:
                 # debugging
-                _debug(f"⚙️ 'dropout' cannot be applied.")
+                debug(f"⚙️ 'dropout' cannot be applied.")
 
                 # dropout cannot be applied
                 setattr(self, "dropout", 0.0)
@@ -120,7 +120,7 @@ class LSTM(nn.Module):
 
         # debugging
         for param in self.required_parameters:
-            _debug(f"⚙️ {param} = {getattr(self, param)}.")
+            debug(f"⚙️ {param} = {getattr(self, param)}.")
 
         try:
             # instantiate the LSTM model
@@ -157,14 +157,14 @@ class LSTM(nn.Module):
             raise ValueError("❌ Input features cannot be None.")
 
         # debugging
-        _debug(f"⚙️ Input features shape: {x_features.shape}.")
-        _debug(f"⚙️ Input keys shape: {x_keys.shape}.")
+        debug(f"⚙️ Input features shape: {x_features.shape}.")
+        debug(f"⚙️ Input keys shape: {x_keys.shape}.")
 
         # pass the key through the embedding layer
         embedded_keys = self.embedding(x_keys)
 
         # debugging
-        _debug(f"⚙️ Embedded keys shape: {embedded_keys.shape}.")
+        debug(f"⚙️ Embedded keys shape: {embedded_keys.shape}.")
 
         try:
             # concatenate embedding layer with the other features
@@ -195,7 +195,7 @@ class LSTM(nn.Module):
             raise RuntimeError(f"❌ Error while passing data through LSTM: {e}.")
 
         # debugging
-        _debug(f"⚙️ Output shape: {lstm_out.shape}.")
+        debug(f"⚙️ Output shape: {lstm_out.shape}.")
 
         try:
             # get the logits from the LSTM output
@@ -204,6 +204,6 @@ class LSTM(nn.Module):
             raise RuntimeError(f"❌ Error while processing LSTM output: {e}.")
 
         # debugging
-        _debug(f"⚙️ Logits shape: {logits.shape}.")
+        debug(f"⚙️ Logits shape: {logits.shape}.")
 
         return logits

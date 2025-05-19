@@ -1,5 +1,5 @@
-from utils.config_utils import _get_config_value
-from utils.log_utils import _info
+from utils.config_utils import get_config_value
+from utils.log_utils import info
 
 
 def _check_general_training_params(
@@ -80,14 +80,14 @@ def _validate_training_general_params(config):
     :return: All the general training parameters.
     """
     # initial message
-    _info("🔄 Training general params validation started...")
+    info("🔄 Training general params validation started...")
 
     # general
-    training_num_epochs = _get_config_value(
+    training_num_epochs = get_config_value(
         config,
         "training.general.num_epochs"
     )
-    training_batch_size = _get_config_value(
+    training_batch_size = get_config_value(
         config,
         "training.general.batch_size"
     )
@@ -99,7 +99,7 @@ def _validate_training_general_params(config):
     )
 
     # show a successful message
-    _info("🟢 Training general params validated.")
+    info("🟢 Training general params validated.")
 
     return training_num_epochs, training_batch_size
 
@@ -111,22 +111,22 @@ def _validate_training_optimizer_params(config):
     :return: All the training optimizer parameters.
     """
     # initial message
-    _info("🔄 Training optimizer params validation started...")
+    info("🔄 Training optimizer params validation started...")
 
     # optimizer
-    optimizer_type = _get_config_value(
+    optimizer_type = get_config_value(
         config,
         "training.optimizer.type"
     )
-    learning_rate = _get_config_value(
+    learning_rate = get_config_value(
         config,
         "training.optimizer.learning_rate"
     )
-    weight_decay = _get_config_value(
+    weight_decay = get_config_value(
         config,
         "training.optimizer.weight_decay"
     )
-    momentum = _get_config_value(
+    momentum = get_config_value(
         config,
         "training.optimizer.momentum"
     )
@@ -140,6 +140,6 @@ def _validate_training_optimizer_params(config):
     )
 
     # show a successful message
-    _info("🟢 Training optimizer params validated.")
+    info("🟢 Training optimizer params validated.")
 
     return optimizer_type, learning_rate, weight_decay, momentum

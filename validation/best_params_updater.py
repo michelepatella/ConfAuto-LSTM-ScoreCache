@@ -1,4 +1,4 @@
-from utils.log_utils import _info, _debug
+from utils.log_utils import info, debug
 
 
 def _check_and_update_best_params(
@@ -17,11 +17,11 @@ def _check_and_update_best_params(
     :return: The best average loss and the best parameters.
     """
     # initial message
-    _info("🔄 Best parameters check and update started...")
+    info("🔄 Best parameters check and update started...")
 
     # debugging
-    _debug(f"⚙️ Avg loss: {avg_loss}.")
-    _debug(f"⚙️ Best avg loss: {best_avg_loss}.")
+    debug(f"⚙️ Avg loss: {avg_loss}.")
+    debug(f"⚙️ Best avg loss: {best_avg_loss}.")
 
     try:
         # check avg loss and best avg loss
@@ -46,11 +46,11 @@ def _check_and_update_best_params(
             best_params = curr_params
 
             # print updated parameters and best average loss
-            _info(f"🆕 Updated best parameters: {best_params['model']}"
+            info(f"🆕 Updated best parameters: {best_params['model']}"
                   f" {best_params['training']}")
-            _info(f"🆕 Updated best average loss: {best_avg_loss}")
+            info(f"🆕 Updated best average loss: {best_avg_loss}")
         else:
-            _info("ℹ️ No best average loss improvement, best "
+            info("ℹ️ No best average loss improvement, best "
                   "parameters not updated.")
 
     except ValueError as e:
@@ -58,6 +58,6 @@ def _check_and_update_best_params(
                            f"best parameters: {e}.")
 
     # print a successful message
-    _info("🟢 Best parameters check and update completed.")
+    info("🟢 Best parameters check and update completed.")
 
     return best_avg_loss, best_params

@@ -11,7 +11,7 @@ logging.basicConfig(
     ]
 )
 
-def _info(msg, *args, **kwargs):
+def info(msg, *args, **kwargs):
     """
     Method to print a logging info message.
     :param msg: The message to print.
@@ -30,7 +30,7 @@ def _info(msg, *args, **kwargs):
         raise RuntimeError(f"❌ Error while logging info message: {e}.")
 
 
-def _debug(msg, *args, **kwargs):
+def debug(msg, *args, **kwargs):
     """
     Method to print a logging debug message.
     :param msg: The message to print.

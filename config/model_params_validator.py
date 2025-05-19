@@ -1,5 +1,5 @@
-from utils.config_utils import _get_config_value
-from utils.log_utils import _info
+from utils.config_utils import get_config_value
+from utils.log_utils import info
 
 
 def _check_general_model_params(
@@ -61,7 +61,7 @@ def _check_model_params(
         raise RuntimeError("❌ 'model.params.dropout' must be a "
                            "float within [0.0, 1.0).")
     if num_layers == 1 and dropout > 0:
-        _info("ℹ️ 'dropout' is ignored when 'num_layers' == 1.")
+        info("ℹ️ 'dropout' is ignored when 'num_layers' == 1.")
 
     # check bidirectional
     if not isinstance(bidirectional, bool):
@@ -84,14 +84,14 @@ def _validate_model_general_params(config):
     :return: All the model general parameters.
     """
     # initial message
-    _info("🔄 Model general params validation started...")
+    info("🔄 Model general params validation started...")
 
     # general
-    num_features = _get_config_value(
+    num_features = get_config_value(
         config,
         "model.general.num_features"
     )
-    model_save_path = _get_config_value(
+    model_save_path = get_config_value(
         config,
         "model.general.save_path"
     )
@@ -103,7 +103,7 @@ def _validate_model_general_params(config):
     )
 
     # show a successful message
-    _info("🟢 Model general params validated.")
+    info("🟢 Model general params validated.")
 
     return num_features, model_save_path
 
@@ -115,38 +115,38 @@ def _validate_model_params(config):
     :return: All the model parameters.
     """
     # initial message
-    _info("🔄 Model params validation started...")
+    info("🔄 Model params validation started...")
 
     # params
-    model_params = _get_config_value(
+    model_params = get_config_value(
         config,
         "model.params"
     )
-    hidden_size = _get_config_value(
+    hidden_size = get_config_value(
         config,
         "model.params.hidden_size"
     )
-    num_layers = _get_config_value(
+    num_layers = get_config_value(
         config,
         "model.params.num_layers"
     )
-    bias = _get_config_value(
+    bias = get_config_value(
         config,
         "model.params.bias"
     )
-    batch_first = _get_config_value(
+    batch_first = get_config_value(
         config,
         "model.params.batch_first"
     )
-    dropout = _get_config_value(
+    dropout = get_config_value(
         config,
         "model.params.dropout"
     )
-    bidirectional = _get_config_value(
+    bidirectional = get_config_value(
         config,
         "model.params.bidirectional"
     )
-    proj_size = _get_config_value(
+    proj_size = get_config_value(
         config,
         "model.params.proj_size"
     )
@@ -163,7 +163,7 @@ def _validate_model_params(config):
     )
 
     # show a successful message
-    _info("🟢 Model params validated.")
+    info("🟢 Model params validated.")
 
     return (model_params, hidden_size, num_layers, bias,
             batch_first, dropout, bidirectional, proj_size)
