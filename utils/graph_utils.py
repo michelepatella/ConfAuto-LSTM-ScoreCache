@@ -1,9 +1,11 @@
 from matplotlib.colors import LogNorm
+from sklearn.metrics import precision_recall_curve, average_precision_score
 from utils.log_utils import info
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from collections import Counter
+from sklearn.preprocessing import label_binarize
 
 
 def plot_key_frequencies_histogram(requests):
@@ -194,3 +196,55 @@ def plot_requests_over_time(requests, delta_times):
 
     # show a successful message
     info("🟢 Requests over time plot built.")
+
+
+def plot_precision_recall_curve(targets, outputs, num_keys):
+    """
+    Method to plot the precision and recall curve.
+    :param targets: The targets.
+    :param outputs: The outputs of the model.
+    :param num_keys: The total number of keys.
+    :return:
+    """
+    # initial message
+    info("🔄 Precision-Recall curve building started...")
+
+    try:
+        # get the one-hot version of the outputs
+        targets_bin = label_binarize(
+            targets,
+            classes=np.arange(num_keys)
+        )
+
+        # precision-recall curve one vs the rest
+        for i in range(num_keys):
+            precision, recall, _ = precision_recall_curve(
+                targets_bin[:, i],
+                outputs[:, i]
+            )
+            avg_precision = average_precision_score(
+                targets_bin[:, i],
+                outputs[:, i]
+            )
+
+            # plot the curve
+            plt.plot(
+                recall,
+                precision,
+                label=f"Class {i} (AP = {avg_precision:.2f})"
+            )
+
+        plt.xlabel("Recall")
+        plt.ylabel("Precision")
+        plt.title("Precision-Recall Curve")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+        plt.close()
+
+    except (ValueError, TypeError, IndexError) as e:
+        raise RuntimeError(f"❌ Error while building the precision-recall "
+                           f"curve: {e}.")
+
+    # show a successful message
+    info("🟢 Precision-Recall curve built.")

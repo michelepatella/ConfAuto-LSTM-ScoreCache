@@ -1,5 +1,5 @@
 import torch
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, cohen_kappa_score
 from utils.log_utils import info, debug
 
 
@@ -53,6 +53,28 @@ def _calculate_top_k_accuracy(
     return accuracy
 
 
+def _calculate_kappa_statistic(targets, predictions):
+    """
+    Method to calculate the kappa statistic.
+    :param targets: The targets.
+    :param predictions: The predictions coming from the model.
+    :return: The kappa statistic.
+    """
+    # initial message
+    info("🔄 Kappa statistic calculation started...")
+
+    try:
+        # calculate kappa statistic
+        kappa = cohen_kappa_score(targets, predictions)
+    except (ValueError, TypeError) as e:
+        raise RuntimeError(f"❌ Error while calculating kappa statistic: {e}.")
+
+    # show a successful message
+    info("🟢 Kappa statistic calculated.")
+
+    return kappa
+
+
 def _compute_metrics(
         targets,
         predictions,
@@ -89,6 +111,12 @@ def _compute_metrics(
         # compute the confusion matrix
         conf_matrix = confusion_matrix(targets, predictions)
 
+        # calculate kappa statistic
+        kappa_statistic = _calculate_kappa_statistic(
+            targets,
+            predictions
+        )
+
     except (ValueError, TypeError) as e:
         raise RuntimeError(f"❌ Error while computing metrics: {e}.")
 
@@ -96,7 +124,8 @@ def _compute_metrics(
     metrics = {
         "class_metrics": class_report,
         "top_k_accuracy": top_k_accuracy,
-        "confusion_matrix": conf_matrix.tolist()
+        "confusion_matrix": conf_matrix.tolist(),
+        "kappa_statistic": kappa_statistic
     }
 
     # show a successful message
