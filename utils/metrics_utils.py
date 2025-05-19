@@ -122,7 +122,7 @@ def _compute_metrics(
 
     # collect metrics
     metrics = {
-        "class_metrics": class_report,
+        "class_report": class_report,
         "top_k_accuracy": top_k_accuracy,
         "confusion_matrix": conf_matrix.tolist(),
         "kappa_statistic": kappa_statistic

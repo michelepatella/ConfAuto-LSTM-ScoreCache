@@ -3,6 +3,7 @@ from sklearn.metrics import precision_recall_curve, average_precision_score
 from utils.log_utils import info
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
 from collections import Counter
 from sklearn.preprocessing import label_binarize
@@ -243,8 +244,43 @@ def plot_precision_recall_curve(targets, outputs, num_keys):
         plt.close()
 
     except (ValueError, TypeError, IndexError) as e:
-        raise RuntimeError(f"❌ Error while building the precision-recall "
-                           f"curve: {e}.")
+        raise RuntimeError(f"❌ Error while building the precision-recall curve: {e}.")
 
     # show a successful message
     info("🟢 Precision-Recall curve built.")
+
+
+def plot_class_report(class_report):
+    """
+    Method to plot the class report.
+    :param class_report: The computed class report.
+    :return:
+    """
+    # initial message
+    info("🔄 Class report plot building started...")
+
+    try:
+        # extract precision, recall, and f1-score
+        class_report_filtered = {
+            k: v for k, v in class_report.items()
+            if k.isdigit() or isinstance(k, int)
+        }
+
+        # transform to dataframe
+        df = pd.DataFrame(class_report_filtered).T
+
+        (df[['precision', 'recall', 'f1-score']].
+            plot(kind='bar', figsize=(12, 6))
+         )
+        plt.title("Classification Report Metrics per Class")
+        plt.xlabel("Class")
+        plt.ylabel("Score")
+        plt.ylim(0, 1)
+        plt.grid(True)
+        plt.show()
+        plt.close()
+
+        # show a successful message
+        info("🟢 Class report plot built.")
+    except (AttributeError, TypeError, ValueError, KeyError) as e:
+        raise RuntimeError(f"❌ Error while building the class report plot: {e}.")

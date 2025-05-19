@@ -1,4 +1,4 @@
-from utils.graph_utils import plot_precision_recall_curve
+from utils.graph_utils import plot_precision_recall_curve, plot_class_report
 from utils.inference_utils import _infer_batch
 from utils.log_utils import info, debug
 from utils.metrics_utils import _compute_metrics, _calculate_average_losses
@@ -58,12 +58,13 @@ def evaluate_model(
     info(f"📉 Average Loss per Class: {avg_loss_per_class}")
     info(f"📊 Metrics: {metrics}")
 
-    # show precision recall curve
+    # show some plots
     plot_precision_recall_curve(
         all_targets,
         all_preds,
         config_settings.num_keys
     )
+    plot_class_report(metrics["class_report"])
 
     # show a successful message
     info("🟢 Model's evaluation completed.")
