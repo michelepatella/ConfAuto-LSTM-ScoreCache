@@ -212,10 +212,12 @@ def plot_precision_recall_curve(targets, outputs, num_keys):
 
     try:
         # get the one-hot version of the outputs
-        targets_bin = label_binarize(
+        targets_bin = np.array(label_binarize(
             targets,
             classes=np.arange(num_keys)
-        )
+        ))
+
+        outputs = np.array(outputs)
 
         # precision-recall curve one vs the rest
         for i in range(num_keys):
@@ -238,7 +240,6 @@ def plot_precision_recall_curve(targets, outputs, num_keys):
         plt.xlabel("Recall")
         plt.ylabel("Precision")
         plt.title("Precision-Recall Curve")
-        plt.legend()
         plt.grid(True)
         plt.show()
         plt.close()

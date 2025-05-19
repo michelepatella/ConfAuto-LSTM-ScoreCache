@@ -1,3 +1,4 @@
+import torch
 from utils.graph_utils import plot_precision_recall_curve, plot_class_report
 from utils.inference_utils import _infer_batch
 from utils.log_utils import info, debug
@@ -61,7 +62,7 @@ def evaluate_model(
     # show some plots
     plot_precision_recall_curve(
         all_targets,
-        all_preds,
+        torch.stack(all_outputs).numpy(),
         config_settings.num_keys
     )
     plot_class_report(metrics["class_report"])
