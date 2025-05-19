@@ -1,3 +1,4 @@
+from utils.AccessLogsDataset import AccessLogsDataset
 from utils.log_utils import info, phase_var
 from utils.dataloader_utils import loader_setup, extract_targets_from_loader
 from utils.training_utils import train_n_epochs
@@ -20,7 +21,8 @@ def training(config_settings):
     _, training_loader = loader_setup(
         "training",
         True,
-        config_settings
+        config_settings,
+        AccessLogsDataset
     )
 
     # setup for training
@@ -40,7 +42,8 @@ def training(config_settings):
         training_loader,
         optimizer,
         criterion,
-        device
+        device,
+        config_settings
     )
 
     # save the trained model

@@ -83,6 +83,7 @@ def _time_series_cv(
             optimizer,
             criterion,
             device,
+            config_settings,
             validation_loader=validation_loader,
             early_stopping=True
         )

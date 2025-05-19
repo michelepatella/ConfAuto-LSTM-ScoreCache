@@ -1,16 +1,16 @@
 import torch
 from torch.utils.data import Dataset
-from main import config_settings
 from utils.log_utils import debug
 from utils.dataset_utils import load_dataset
 
 
 class AccessLogsDataset(Dataset):
 
-    def _split_dataset(self, dataset_type):
+    def _split_dataset(self, dataset_type, config_settings):
         """
         Method to split the dataset based on the dataset type requested.
         :param dataset_type: The dataset type requested ("training" or "testing").
+        :param config_settings: The configuration settings.
         :return:
         """
         # debugging
@@ -36,10 +36,11 @@ class AccessLogsDataset(Dataset):
             raise RuntimeError(f"❌ Error while splitting the dataset: {e}.")
 
 
-    def _set_fields(self, data):
+    def _set_fields(self, data, config_settings):
         """
         Method to set the fields of the dataset.
         :param data: The data from which the fields are extracted.
+        :param config_settings: The configuration settings.
         :return:
         """
         try:
@@ -61,10 +62,11 @@ class AccessLogsDataset(Dataset):
             raise RuntimeError(f"❌ Error setting the class fields: {e}.")
 
 
-    def __init__(self, dataset_type):
+    def __init__(self, dataset_type, config_settings):
         """
         Method to instantiate the access logs dataset.
         :param dataset_type: The type of dataset requested ("training" or "testing").
+        :param config_settings: The configuration settings.
         """
         # load the dataset
         df = load_dataset(config_settings)
@@ -79,10 +81,10 @@ class AccessLogsDataset(Dataset):
             raise RuntimeError(f"❌ Error setting data of the dataset by copying it: {e}.")
 
         # split the dataset to assign data properly
-        self._split_dataset(dataset_type)
+        self._split_dataset(dataset_type, config_settings)
 
         # set the fields of the dataset
-        self._set_fields(self.data)
+        self._set_fields(self.data, config_settings)
 
 
     def __len__(self):

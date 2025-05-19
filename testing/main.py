@@ -1,3 +1,4 @@
+from utils.AccessLogsDataset import AccessLogsDataset
 from utils.log_utils import info, phase_var
 from utils.evaluation_utils import evaluate_model
 from utils.dataloader_utils import loader_setup, extract_targets_from_loader
@@ -21,7 +22,8 @@ def testing(config_settings):
     _, testing_loader = loader_setup(
         "testing",
         False,
-        config_settings
+        config_settings,
+        AccessLogsDataset
     )
 
     # setup for testing

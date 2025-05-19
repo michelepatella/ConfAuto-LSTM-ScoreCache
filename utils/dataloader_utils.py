@@ -43,17 +43,17 @@ def create_data_loader(
 def loader_setup(
         loader_type,
         shuffle,
-        config_settings
+        config_settings,
+        AccessLogsDataset
 ):
     """
     Method to prepare the data loader for the training and testing.
     :param loader_type: The loader type ("training" or "testing").
     :param shuffle: Whether to shuffle the data.
     :param config_settings: The configuration settings.
+    :param AccessLogsDataset: The class AccessLogsDataset.
     :return: The created data loader and the corresponding dataset.
     """
-    from utils.AccessLogsDataset import AccessLogsDataset
-
     # initial message
     info("🔄 Load setup started...")
 
@@ -66,7 +66,10 @@ def loader_setup(
 
     try:
         # get the dataset
-        dataset = AccessLogsDataset(dataset_path)
+        dataset = AccessLogsDataset(
+            dataset_path,
+            config_settings
+        )
 
         # create the data loader starting from the dataset
         loader = create_data_loader(

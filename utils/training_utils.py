@@ -1,7 +1,6 @@
 import torch
 from sympy.physics.units import momentum
 from torch.cuda import CudaError
-from main import config_settings
 from utils.log_utils import info, debug
 from utils.EarlyStopping import EarlyStopping
 from utils.evaluation_utils import evaluate_model
@@ -72,6 +71,7 @@ def train_n_epochs(
         optimizer,
         criterion,
         device,
+        config_settings,
         early_stopping=False,
         validation_loader=None,
 ):
@@ -83,6 +83,7 @@ def train_n_epochs(
     :param optimizer: The optimizer to be used.
     :param criterion: The loss function.
     :param device: The device to be used.
+    :param config_settings: The configuration settings.
     :param early_stopping: Whether to apply early stopping or not.
     :param validation_loader: Validation data loader.
     :return:
