@@ -40,7 +40,8 @@ def _remove_missing_values(df):
         # remove rows with missing values
         df = df.dropna(axis=0, how='any')
     except (AttributeError, TypeError, ValueError, KeyError) as e:
-        raise RuntimeError(f"❌ Error while removing missing values from the dataset: {e}.")
+        raise RuntimeError(f"❌ Error while removing missing values"
+                           f" from the dataset: {e}.")
 
     # size of the dataset without missing values
     final_len = len(df)

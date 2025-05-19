@@ -69,7 +69,6 @@ def _set_nested_dict(d, keys, value):
         # set the desired value in the last position
         # indicate by the sequence
         current[keys[-1]] = value
-
     except (TypeError, IndexError, KeyError) as e:
         raise RuntimeError(f"❌ Error while setting a value in a nested dictionary: {e}.")
 

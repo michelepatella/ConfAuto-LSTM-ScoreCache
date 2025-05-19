@@ -2,7 +2,7 @@ from collections import Counter
 from utils.log_utils import info, debug
 
 
-def _calculate_rel_frequency(sequence, window):
+def _calculate_relative_frequency(sequence, window):
     """
     Method to calculate the relative frequency of a specific sequence in a given window.
     :param sequence: The sequence to calculate the frequency of.
@@ -47,9 +47,9 @@ def _calculate_rel_frequency(sequence, window):
     return freqs
 
 
-def _generate_last_rel_freq(sequence, config_settings):
+def _generate_last_relative_frequency(sequence, config_settings):
     """
-    Method to generate the last relative frequencies of a given sequence.
+    Method to orchestrate the last relative frequencies of a given sequence.
     :param sequence: The sequence to generate frequencies for.
     :param config_settings: The configuration settings.
     :return: The generated frequencies.
@@ -64,7 +64,7 @@ def _generate_last_rel_freq(sequence, config_settings):
         # create a new column
         for w in config_settings.freq_windows:
             col_name = f"freq_last_{w}"
-            freq_columns[col_name] = _calculate_rel_frequency(
+            freq_columns[col_name] = _calculate_relative_frequency(
                 sequence,
                 window=w
             )

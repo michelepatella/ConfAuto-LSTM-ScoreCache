@@ -1,4 +1,4 @@
-from data_generation.frequencies_generator import _generate_last_rel_freq
+from data_generation.frequencies_generator import _generate_last_relative_frequency
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
 from utils.log_utils import info, debug, phase_var
 from utils.dataset_utils import save_dataset, create_dataframe
@@ -28,7 +28,7 @@ def data_generation(config_settings):
         requests, delta_times = _generate_dynamic_requests(config_settings)
 
     # generate other features (last relative frequencies w.r.t. requests)
-    freq_columns = _generate_last_rel_freq(
+    freq_columns = _generate_last_relative_frequency(
         requests,
         config_settings
     )

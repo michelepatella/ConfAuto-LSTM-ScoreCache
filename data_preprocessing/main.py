@@ -19,7 +19,10 @@ def data_preprocessing(config_settings):
     df = load_dataset(config_settings)
 
     # deduplicate the dataset
-    df_deduplicated = _remove_duplicates(df, ["id"])
+    df_deduplicated = _remove_duplicates(
+        df,
+        ["id"]
+    )
 
     # remove missing values
     df_no_missing_values = _remove_missing_values(df_deduplicated)

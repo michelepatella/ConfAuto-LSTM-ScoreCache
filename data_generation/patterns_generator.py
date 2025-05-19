@@ -175,16 +175,16 @@ def _generate_pattern_requests(
     ):
         raise ValueError("❌ probs must be a numpy array summing to 1.")
 
-    # define key relationships using a dictionary
-    key_relationships = _generate_key_relationships(
-        config_settings.first_key,
-        config_settings.last_key
-    )
-
-    # to make the process deterministic
-    np.random.seed(config_settings.seed)
-
     try:
+        # define key relationships using a dictionary
+        key_relationships = _generate_key_relationships(
+            config_settings.first_key,
+            config_settings.last_key
+        )
+
+        # to make the process deterministic
+        np.random.seed(config_settings.seed)
+
         # for each request
         for i in range(num_requests):
 

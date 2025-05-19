@@ -43,8 +43,6 @@ def testing(config_settings):
         config_settings
     )
 
-    model.to(device)
-
     model.eval()
 
     # evaluate the model
