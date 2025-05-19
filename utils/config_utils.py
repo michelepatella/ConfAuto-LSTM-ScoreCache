@@ -1,8 +1,6 @@
 import yaml
 import os
 from yaml import YAMLError
-
-from config import prepare_config
 from utils.log_utils import info, debug
 
 
@@ -98,6 +96,8 @@ def update_config(config, updated_config):
     :param updated_config: The updated config to write.
     :return: The updated config settings.
     """
+    from config import prepare_config
+
     # initial message
     info("🔄 Config file updating started...")
 
