@@ -51,7 +51,8 @@ def testing(config_settings):
         testing_loader,
         criterion,
         device,
-        config_settings
+        config_settings,
+        show_stats=True
     )
 
     # print a successful message

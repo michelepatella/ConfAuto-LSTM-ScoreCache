@@ -43,7 +43,7 @@ model:
 
   general:
     num_features: 5
-    save_path: model/trained_lstm_model.pt
+    save_path: trained_lstm_model.pt
 
   params:
       hidden_size: 256

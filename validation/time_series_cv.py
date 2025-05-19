@@ -76,7 +76,7 @@ def _compute_time_series_cv(
         )
 
         # train the model
-        train_n_epochs(
+        avg_loss, _, _ = train_n_epochs(
             config_settings.validation_num_epochs,
             model,
             training_loader,
@@ -86,15 +86,6 @@ def _compute_time_series_cv(
             config_settings,
             validation_loader=validation_loader,
             early_stopping=True
-        )
-
-        # evaluate the model
-        avg_loss, _, _ = evaluate_model(
-            model,
-            validation_loader,
-            criterion,
-            device,
-            config_settings
         )
         fold_losses.append(avg_loss)
 

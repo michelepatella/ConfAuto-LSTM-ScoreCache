@@ -49,8 +49,8 @@ def data_generation(config_settings):
 
     # show some plots
     plot_key_frequencies_histogram(requests)
-    plot_keys_transition_matrix(requests)
     plot_zipf_loglog(requests)
+    plot_keys_transition_matrix(requests)
     plot_requests_over_time(requests, delta_times)
 
     # show a successful message

@@ -85,7 +85,7 @@ def train_n_epochs(
     :param config_settings: The configuration settings.
     :param early_stopping: Whether to apply early stopping or not.
     :param validation_loader: Validation data loader.
-    :return:
+    :return: The average loss.
     """
     # initial message
     info("🔄 Train n-epochs started...")
@@ -98,6 +98,10 @@ def train_n_epochs(
     debug(f"⚙️ Device to use: {device}.")
     debug(f"⚙️ Early stopping: {'Enabled' if early_stopping else 'Disabled'}.")
     debug(f"⚙️ Validation loader: {'Received' if validation_loader is not None else 'Not received'}.")
+
+    # initialize data
+    tot_loss = 0.0
+    num_epochs_run = 0
 
     try:
         es = None
@@ -118,18 +122,22 @@ def train_n_epochs(
                 device
             )
 
+            # increase number of epochs by one
+            num_epochs_run += 1
+
             if early_stopping:
                 avg_loss = None
                 if validation_loader:
 
                     # get the validation average loss
-                    avg_loss, _,  _ = evaluate_model(
+                    avg_loss, _, _ = evaluate_model(
                         model,
                         validation_loader,
                         criterion,
                         device,
                         config_settings
                     )
+                    tot_loss = tot_loss + avg_loss
 
                 # early stopping logic
                 if early_stopping and avg_loss is not None:
@@ -145,3 +153,12 @@ def train_n_epochs(
 
     # show a successful message
     info("🟢 Train n-epochs completed.")
+
+    # check if the avg loss needs to be returned
+    if (
+        early_stopping and validation_loader
+        and num_epochs_run > 0
+    ):
+        return tot_loss / num_epochs_run
+    else:
+        return None
