@@ -1,3 +1,5 @@
+from collections import Counter
+
 import pandas as pd
 from tabulate import tabulate
 import torch
@@ -156,3 +158,48 @@ def _calculate_average_losses(
     _info("🟢 Average losses calculated.")
 
     return avg_loss, avg_loss_per_class
+
+
+def _calculate_rel_frequency(sequence, window):
+    """
+    Method to calculate the relative frequency of a specific sequence in a given window.
+    :param sequence: The sequence to calculate the frequency of.
+    :param window: The window within to calculate the frequency.
+    :return: The frequency of the sequence.
+    """
+    # initial message
+    _info("🔄 Relative frequency sequence calculation started...")
+
+    # debugging
+    _debug(f"⚙️ Sequence length: {len(sequence)}.")
+    _debug(f"⚙️ Window: {window}.")
+
+    # initialize frequencies
+    freqs = []
+
+    try:
+        # count the frequency of the sequence
+        # within the given temporal window
+        for i in range(len(sequence)):
+            if i < window:
+                recent = sequence[:i]
+            else:
+                recent = sequence[i - window:i]
+
+            # calculate the relative frequency
+            count = Counter(recent)
+            freq = count[sequence[i]] / len(recent) \
+                if len(recent) > 0 \
+                else 0.0
+            freqs.append(freq)
+    except (TypeError, ZeroDivisionError,
+            IndexError, AttributeError) as e:
+        raise RuntimeError(f"❌ Error while calculating relative frequency sequence: {e}.")
+
+    # debugging
+    _debug(f"⚙️ Frequencies length: {len(freqs)}.")
+
+    # show a successful message
+    _info(f"🟢 Relative frequency of the sequence calculated.")
+
+    return freqs

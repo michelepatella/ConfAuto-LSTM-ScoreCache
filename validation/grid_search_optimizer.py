@@ -96,8 +96,8 @@ def _grid_search(training_set, config_settings):
 
     # grid search
     with tqdm(
-            total=len(param_combinations),
-            desc="🔍 Grid Search Progress"
+        total=len(param_combinations),
+        desc="🔍 Grid Search Progress"
     ) as pbar:
         for params in param_combinations:
 

@@ -28,7 +28,10 @@ def data_generation(config_settings):
         requests, delta_times = _generate_dynamic_requests(config_settings)
 
     # generate other features (last relative frequencies w.r.t. requests)
-    freq_columns = _generate_last_freq(requests)
+    freq_columns = _generate_last_freq(
+        requests,
+        config_settings
+    )
 
     # create dataframe
     df = _create_dataframe(

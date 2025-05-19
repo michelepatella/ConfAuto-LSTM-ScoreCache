@@ -1,60 +1,14 @@
-from collections import Counter
 from utils.log_utils import _info, _debug
+from utils.metrics_utils import _calculate_rel_frequency
 
 
-def _calculate_rel_frequency(sequence, window):
-    """
-    Method to calculate the relative frequency of a specific sequence in a given window.
-    :param sequence: The sequence to calculate the frequency of.
-    :param window: The window within to calculate the frequency.
-    :return: The frequency of the sequence.
-    """
-    # initial message
-    _info("🔄 Relative frequency sequence calculation started...")
-
-    # debugging
-    _debug(f"⚙️ Sequence length: {len(sequence)}.")
-    _debug(f"⚙️ Window: {window}.")
-
-    # initialize frequencies
-    freqs = []
-
-    try:
-        # count the frequency of the sequence
-        # within the given temporal window
-        for i in range(len(sequence)):
-            if i < window:
-                recent = sequence[:i]
-            else:
-                recent = sequence[i - window:i]
-
-            # calculate the relative frequency
-            count = Counter(recent)
-            freq = count[sequence[i]] / len(recent) \
-                if len(recent) > 0 \
-                else 0.0
-            freqs.append(freq)
-    except (TypeError, ZeroDivisionError,
-            IndexError, AttributeError) as e:
-        raise RuntimeError(f"❌ Error while calculating relative frequency sequence: {e}.")
-
-    # debugging
-    _debug(f"⚙️ Frequencies length: {len(freqs)}.")
-
-    # show a successful message
-    _info(f"🟢 Relative frequency of the sequence calculated.")
-
-    return freqs
-
-
-def _generate_last_freq(sequence):
+def _generate_last_freq(sequence, config_settings):
     """
     Method to generate the last frequencies of a given sequence.
     :param sequence: The sequence to generate frequencies for.
+    :param config_settings: The configuration settings.
     :return: The generated frequencies.
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Frequencies generation started...")
 

@@ -1,5 +1,5 @@
 import numpy as np
-from data_generation.pattern_generator import _generate_pattern
+from data_generation.pattern_generator import _generate_pattern_requests
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
 from utils.log_utils import _info, _debug
 from utils.metrics_utils import _show_freq_table
@@ -25,10 +25,11 @@ def _generate_static_requests(config_settings):
 
     timestamps = [0]
     # generate patterns
-    requests, delta_times = _generate_pattern(
+    requests, delta_times = _generate_pattern_requests(
         probs,
         config_settings.num_requests,
-        timestamps
+        timestamps,
+        config_settings
     )
 
     # debugging
@@ -94,10 +95,11 @@ def _generate_dynamic_requests(config_settings):
         )
 
         # generate pattern
-        reqs, dt = _generate_pattern(
+        reqs, dt = _generate_pattern_requests(
             probs,
             time_step_duration,
-            timestamps
+            timestamps,
+            config_settings
         )
 
         # store generated data
