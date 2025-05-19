@@ -2,52 +2,15 @@ import numpy as np
 from data_generation.pattern_generator import _generate_pattern
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
 from utils.log_utils import _info, _debug
+from utils.metrics_utils import _show_freq_table
 
 
-def _show_freq_table(requests):
-    """
-    Method to show the frequency table of the keys in the dataset.
-    :param requests: Requests created.
-    :return:
-    """
-    # initial message
-    _info("🔄 Requests frequency table building started...")
-
-    try:
-        # get the number of requests per key
-        unique, counts = np.unique(
-            requests,
-            return_counts=True
-        )
-
-        # calculate the percentages
-        percentages = counts / len(requests) * 100
-
-        # create a table
-        table_lines = ["Key | Occurrences | %", "-" * 30]
-
-        # add all lines
-        for u, c, p in zip(unique, counts, percentages):
-            table_lines.append(f"{u:6} | {c:10} | {p:10.2f}%")
-        table_str = "\n".join(table_lines)
-
-    except (TypeError, ValueError, ZeroDivisionError) as e:
-        raise RuntimeError(f"❌ Error while building the requests frequency table: {e}.")
-
-    # show a successful message
-    _info("🟢 Requests frequency table built.")
-
-    # show the created table
-    _info("📊 Frequency table:\n%s", table_str)
-
-
-def _generate_static_requests():
+def _generate_static_requests(config_settings):
     """
     Method to orchestrate the static requests' generation.
+    :param config_settings: The configuration settings.
     :return: Static requests and delta times generated.
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Static requests generation started...")
 
@@ -82,13 +45,12 @@ def _generate_static_requests():
     return requests, delta_times
 
 
-def _generate_dynamic_requests():
+def _generate_dynamic_requests(config_settings):
     """
     Method to orchestrate the dynamic requests' generation.
+    :param config_settings: The configuration settings.
     :return: Dynamic requests and delta times generated.
     """
-    from main import config_settings
-
     # initial message
     _info("🔄 Dynamic requests generation started...")
 

@@ -22,12 +22,12 @@ def data_generation(config_settings):
 
     if config_settings.distribution_type == "static":
         # generate static requests and delta times
-        requests, delta_times = _generate_static_requests()
+        requests, delta_times = _generate_static_requests(config_settings)
     else:
         # generate dynamic requests and delta times
-        requests, delta_times = _generate_dynamic_requests()
+        requests, delta_times = _generate_dynamic_requests(config_settings)
 
-    # generate features (last freq w.r.t. requests)
+    # generate other features (last relative frequencies w.r.t. requests)
     freq_columns = _generate_last_freq(requests)
 
     # create dataframe
