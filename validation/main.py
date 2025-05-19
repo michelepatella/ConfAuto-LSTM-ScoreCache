@@ -1,8 +1,8 @@
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.log_utils import info, phase_var
-from utils.dataloader_utils import loader_setup
+from utils.dataloader_utils import dataloader_setup
 from validation.best_params_saver import _save_best_params
-from validation.grid_search_optimizer import _grid_search
+from validation.grid_search_optimizer import _compute_grid_search
 
 
 def validation(config_settings):
@@ -18,7 +18,7 @@ def validation(config_settings):
     phase_var.set("validation")
 
     # load the training set
-    training_set, _ = loader_setup(
+    training_set, _ = dataloader_setup(
         "training",
         False,
         config_settings,
@@ -26,7 +26,7 @@ def validation(config_settings):
     )
 
     # grid search for best parameters
-    best_params = _grid_search(
+    best_params = _compute_grid_search(
         training_set,
         config_settings
     )

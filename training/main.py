@@ -1,6 +1,6 @@
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.log_utils import info, phase_var
-from utils.dataloader_utils import loader_setup, extract_targets_from_loader
+from utils.dataloader_utils import dataloader_setup, extract_targets_from_dataloader
 from utils.training_utils import train_n_epochs
 from utils.model_utils import save_model, model_setup
 
@@ -18,7 +18,7 @@ def training(config_settings):
     phase_var.set("training")
 
     # dataloader setup
-    _, training_loader = loader_setup(
+    _, training_loader = dataloader_setup(
         "training",
         True,
         config_settings,
@@ -30,7 +30,7 @@ def training(config_settings):
         model_setup(
             config_settings.model_params,
             config_settings.learning_rate,
-            extract_targets_from_loader(training_loader),
+            extract_targets_from_dataloader(training_loader),
             config_settings
         )
     )

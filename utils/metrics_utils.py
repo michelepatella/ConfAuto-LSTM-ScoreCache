@@ -1,9 +1,9 @@
 import torch
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 from utils.log_utils import info, debug
 
 
-def _top_k_accuracy(
+def _calculate_top_k_accuracy(
         targets,
         outputs,
         config_settings
@@ -13,8 +13,11 @@ def _top_k_accuracy(
     :param targets: The targets.
     :param outputs: The outputs of the model.
     :param config_settings: The configuration settings.
-    :return: The k-accuracy of the predictions.
+    :return: The top k-accuracy of the predictions.
     """
+    # initial message
+    info("🔄 Top-k accuracy computation started...")
+
     try:
         # prepare data
         outputs_tensor = torch.stack(outputs)
@@ -43,6 +46,9 @@ def _top_k_accuracy(
 
     except (RuntimeError, IndexError, TypeError, ZeroDivisionError, ValueError) as e:
         raise RuntimeError(f"❌ Error while computing top-k accuracy: {e}.")
+
+    # show a successful message
+    info("🟢 Top-k accuracy computed.")
 
     return accuracy
 
@@ -74,11 +80,15 @@ def _compute_metrics(
         )
 
         # calculate the top-k accuracy
-        top_k_accuracy = _top_k_accuracy(
+        top_k_accuracy = _calculate_top_k_accuracy(
             targets,
             outputs,
             config_settings
         )
+
+        # compute the confusion matrix
+        conf_matrix = confusion_matrix(targets, predictions)
+
     except (ValueError, TypeError) as e:
         raise RuntimeError(f"❌ Error while computing metrics: {e}.")
 
@@ -86,6 +96,7 @@ def _compute_metrics(
     metrics = {
         "class_metrics": class_report,
         "top_k_accuracy": top_k_accuracy,
+        "confusion_matrix": conf_matrix.tolist()
     }
 
     # show a successful message

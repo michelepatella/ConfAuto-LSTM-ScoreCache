@@ -2,19 +2,19 @@ import numpy as np
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
 from utils.log_utils import info, debug
-from utils.dataloader_utils import create_data_loader, extract_targets_from_loader
+from utils.dataloader_utils import create_data_loader, extract_targets_from_dataloader
 from utils.evaluation_utils import evaluate_model
 from utils.model_utils import model_setup
 from utils.training_utils import train_n_epochs
 
 
-def _time_series_cv(
+def _compute_time_series_cv(
         training_set,
         params,
         config_settings
 ):
     """
-    Method to perform Time Series cross-validation.
+    Method to compute Time Series cross-validation.
     :param training_set: The training set on which to
     perform the time series cross-validation.
     :param params: The hyperparameters of the model.
@@ -71,7 +71,7 @@ def _time_series_cv(
         device, criterion, model, optimizer = model_setup(
             params["model"]["params"],
             params["training"]["learning_rate"],
-            extract_targets_from_loader(training_loader),
+            extract_targets_from_dataloader(training_loader),
             config_settings
         )
 

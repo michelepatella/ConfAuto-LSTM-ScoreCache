@@ -3,7 +3,7 @@ import itertools
 from tqdm import tqdm
 from utils.log_utils import info, debug
 from validation.best_params_updater import _check_and_update_best_params
-from validation.time_series_cv import _time_series_cv
+from validation.time_series_cv import _compute_time_series_cv
 
 
 def _flatten_search_space(d, parent_key=()):
@@ -14,6 +14,9 @@ def _flatten_search_space(d, parent_key=()):
     :return: A list of tuples where each tuple contains
     a key path and its associated list of values.
     """
+    # initial message
+    info("🔄 Search space flatting started...")
+
     try:
         items = []
         for k, v in d.items():
@@ -36,6 +39,9 @@ def _flatten_search_space(d, parent_key=()):
     except (TypeError, RecursionError, AttributeError) as e:
         raise RuntimeError(f"❌ Error while making flatten the search space: {e}.")
 
+    # show a successful message
+    info("🟢 Search space flatten.")
+
     return items
 
 
@@ -48,6 +54,9 @@ def _set_nested_dict(d, keys, value):
     :param value: The value to set.
     :return:
     """
+    # initial message
+    info("🔄 Nested dictionary setting started...")
+
     try:
         # current dictionary initialized to the
         # starting dictionary
@@ -71,6 +80,9 @@ def _set_nested_dict(d, keys, value):
         current[keys[-1]] = value
     except (TypeError, IndexError, KeyError) as e:
         raise RuntimeError(f"❌ Error while setting a value in a nested dictionary: {e}.")
+
+    # show a successful message
+    info("🟢 Nested dictionary setting completed.")
 
 
 def _get_parameters_combination(config_settings):
@@ -140,9 +152,9 @@ def _get_parameters_combination(config_settings):
         raise RuntimeError(f"❌ Error while generating parameter combinations: {e}.")
 
 
-def _grid_search(training_set, config_settings):
+def _compute_grid_search(training_set, config_settings):
     """
-    Method to perform grid search to find the best parameters.
+    Method to compute grid search to find the best parameters.
     :param training_set: The training set.
     :param config_settings: The configuration settings.
     :return: The best parameters.
@@ -171,7 +183,7 @@ def _grid_search(training_set, config_settings):
             debug(f"⚙️ Evaluating combination: {params}")
 
             # perform the time series CV
-            avg_loss = _time_series_cv(
+            avg_loss = _compute_time_series_cv(
                 training_set,
                 params,
                 config_settings

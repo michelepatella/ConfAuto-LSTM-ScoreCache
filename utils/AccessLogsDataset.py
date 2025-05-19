@@ -1,18 +1,25 @@
 import torch
 from torch.utils.data import Dataset
-from utils.log_utils import debug
+from utils.log_utils import debug, info
 from utils.dataset_utils import load_dataset
 
 
 class AccessLogsDataset(Dataset):
 
-    def _split_dataset(self, dataset_type, config_settings):
+    def _split_dataset(
+            self,
+            dataset_type,
+            config_settings
+    ):
         """
         Method to split the dataset based on the dataset type requested.
         :param dataset_type: The dataset type requested ("training" or "testing").
         :param config_settings: The configuration settings.
         :return:
         """
+        # initial message
+        info("🔄 Dataset splitting started...")
+
         # debugging
         debug(f"⚙️ Splitting type: {dataset_type}.")
 
@@ -21,7 +28,8 @@ class AccessLogsDataset(Dataset):
             split_idx = int(len(self.data) *
             config_settings.training_perc)
         except (AttributeError, TypeError, ValueError) as e:
-            raise RuntimeError(f"❌ Error while defining the dataset splitting's index: {e}.")
+            raise RuntimeError(f"❌ Error while defining the dataset"
+                               f" splitting's index: {e}.")
 
         # debugging
         debug(f"⚙️ Split index: {split_idx}.")
@@ -35,6 +43,9 @@ class AccessLogsDataset(Dataset):
         except (TypeError, IndexError, AttributeError) as e:
             raise RuntimeError(f"❌ Error while splitting the dataset: {e}.")
 
+        # show a successful message
+        info("🟢 Dataset split.")
+
 
     def _set_fields(self, data, config_settings):
         """
@@ -43,6 +54,9 @@ class AccessLogsDataset(Dataset):
         :param config_settings: The configuration settings.
         :return:
         """
+        # initial message
+        info("🔄 AccessLogsDataset fields setting started...")
+
         try:
             self.columns = data.columns.tolist()
 
@@ -61,6 +75,9 @@ class AccessLogsDataset(Dataset):
         except (AttributeError, TypeError, IndexError) as e:
             raise RuntimeError(f"❌ Error setting the class fields: {e}.")
 
+        # show a successful message
+        info("🟢 AccessLogsDataset fields set.")
+
 
     def __init__(self, dataset_type, config_settings):
         """
@@ -68,6 +85,9 @@ class AccessLogsDataset(Dataset):
         :param dataset_type: The type of dataset requested ("training" or "testing").
         :param config_settings: The configuration settings.
         """
+        # initial message
+        info("🔄 AccessLogsDataset initialization started...")
+
         # load the dataset
         df = load_dataset(config_settings)
 
@@ -86,6 +106,9 @@ class AccessLogsDataset(Dataset):
         # set the fields of the dataset
         self._set_fields(self.data, config_settings)
 
+        # show a successful message
+        info("🟢 AccessLogsDataset initialized.")
+
 
     def __len__(self):
         """
@@ -101,6 +124,9 @@ class AccessLogsDataset(Dataset):
         :param idx: The index of the access logs dataset.
         :return: The numerical features and the key.
         """
+        # initial message
+        info("🔄 AccessLogsDataset item retrieval started...")
+
         # debugging
         debug(f"⚙️ Getting item at index: {idx}.")
 
@@ -134,5 +160,8 @@ class AccessLogsDataset(Dataset):
 
         except (IndexError, KeyError, ValueError, TypeError, AttributeError) as e:
             raise RuntimeError(f"❌ Error retrieving item at index {idx}: {e}.")
+
+        # show a successful message
+        info("🟢 AccessLogsDataset retrieved.")
 
         return x_features, x_keys, y_key

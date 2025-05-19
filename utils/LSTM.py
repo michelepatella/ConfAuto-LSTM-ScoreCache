@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from utils.log_utils import debug
+from utils.log_utils import debug, info
 from utils.config_utils import get_config_value
 
 
@@ -13,6 +13,9 @@ class LSTM(nn.Module):
         :param config_settings: The configuration settings.
         :return:
         """
+        # initial message
+        info("🔄 LSTM fields setting started...")
+
         # definition of the required parameters
         self.required_parameters = [
             "hidden_size",
@@ -34,7 +37,8 @@ class LSTM(nn.Module):
                             params[param] != "dropout"):
 
                         # debugging
-                        debug(f"⚙️ '{param}' found. Using the specified value ({params[param]}).")
+                        debug(f"⚙️ '{param}' found. Using the specified "
+                              f"value ({params[param]}).")
 
                         # set the value
                         setattr(self, param, params[param])
@@ -66,7 +70,10 @@ class LSTM(nn.Module):
                     )
 
             # check if dropout can be applied
-            if params.get("num_layers", config_settings.num_layers) > 1:
+            if params.get(
+                    "num_layers",
+                    config_settings.num_layers
+            ) > 1:
 
                 # debugging
                 debug(f"⚙️ 'dropout' can be applied.")
@@ -74,7 +81,8 @@ class LSTM(nn.Module):
                 # apply dropout
                 if params["dropout"] is not None:
                     # debugging
-                    debug(f"⚙️ 'dropout' found. Using the specified value ({float(params['dropout'])}).")
+                    debug(f"⚙️ 'dropout' found. Using the specified "
+                          f"value ({float(params['dropout'])}).")
 
                     # set the value
                     setattr(self, "dropout", float(params["dropout"]))
@@ -106,6 +114,9 @@ class LSTM(nn.Module):
         except (AttributeError, KeyError, TypeError, ValueError) as e:
             raise RuntimeError(f"❌ Error while setting class fields: {e}.")
 
+        # show a successful message
+        info("🟢 LSTM fields set.")
+
 
     def __init__(self, params, config_settings):
         """
@@ -113,6 +124,9 @@ class LSTM(nn.Module):
         :param params: The hyperparameters of the model.
         :param config_settings: The configuration settings.
         """
+        # initial message
+        info("🔄 LSTM initialization started...")
+
         super(LSTM, self).__init__()
 
         # set model's parameters
@@ -144,6 +158,9 @@ class LSTM(nn.Module):
         except (TypeError, ValueError) as e:
             raise RuntimeError(f"❌ Error while instantiating the FC layer: {e}.")
 
+        # show a successful message
+        info("🟢 LSTM initialized.")
+
 
     def _get_lstm_input(self, x_features, x_keys):
         """
@@ -152,6 +169,9 @@ class LSTM(nn.Module):
         :param x_keys: The keys to embed and pass to the model.
         :return: The LSTM input.
         """
+        # initial message
+        info("🔄 LSTM input retrieval started...")
+
         # check the inputs validity
         if x_features is None or x_keys is None:
             raise ValueError("❌ Input features cannot be None.")
@@ -175,6 +195,9 @@ class LSTM(nn.Module):
         except (RuntimeError, TypeError) as e:
             raise RuntimeError(f"❌ Error while constructing the LSTM input: {e}.")
 
+        # show a successful message
+        info("🟢 LSTM input retrieved.")
+
         return x
 
 
@@ -185,6 +208,9 @@ class LSTM(nn.Module):
         :param x_keys: The keys.
         :return: The logits of the LSTM.
         """
+        # initial message
+        info("🔄 LSTM forward started...")
+
         try:
             # get the input of the LSTM
             x = self._get_lstm_input(x_features, x_keys)
@@ -205,5 +231,8 @@ class LSTM(nn.Module):
 
         # debugging
         debug(f"⚙️ Logits shape: {logits.shape}.")
+
+        # show a successful message
+        info("🟢 LSTM forward completed.")
 
         return logits

@@ -1,7 +1,7 @@
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.log_utils import info, phase_var
 from utils.evaluation_utils import evaluate_model
-from utils.dataloader_utils import loader_setup, extract_targets_from_loader
+from utils.dataloader_utils import dataloader_setup, extract_targets_from_dataloader
 from utils.model_utils import load_model, model_setup
 
 
@@ -19,7 +19,7 @@ def testing(config_settings):
     phase_var.set("testing")
 
     # dataloader setup
-    _, testing_loader = loader_setup(
+    _, testing_loader = dataloader_setup(
         "testing",
         False,
         config_settings,
@@ -31,7 +31,7 @@ def testing(config_settings):
         model_setup(
             config_settings.model_params,
             config_settings.learning_rate,
-            extract_targets_from_loader(testing_loader),
+            extract_targets_from_dataloader(testing_loader),
             config_settings
         )
     )

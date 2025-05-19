@@ -50,4 +50,7 @@ def debug(msg, *args, **kwargs):
 
 # contextual variable indicating the phase
 # in which the logging message is located in
-phase_var = contextvars.ContextVar("phase", default="unknown")
+phase_var = contextvars.ContextVar(
+    "phase",
+    default="unknown"
+)

@@ -1,5 +1,5 @@
 import numpy as np
-from utils.log_utils import debug
+from utils.log_utils import debug, info
 
 
 class EarlyStopping:
@@ -9,6 +9,9 @@ class EarlyStopping:
         Method to initialize the class.
         :param config_settings: The configuration settings.
         """
+        # initial message
+        info("🔄 EarlyStopping initialization started...")
+
         try:
             # set the fields
             self.patience = config_settings.early_stopping_patience
@@ -24,6 +27,9 @@ class EarlyStopping:
         debug(f"⚙️ Delta for Early Stopping: {self.delta}.")
         debug(f"⚙️ Best avg loss: {self.best_avg_loss}.")
 
+        # show a successful message
+        info(f"🟢 EarlyStopping initialized.")
+
 
     def __call__(self, avg_loss):
         """
@@ -31,11 +37,13 @@ class EarlyStopping:
         :param avg_loss: The average loss value.
         :return: 
         """
+        # initial message
+        info("🔄 EarlyStopping check started...")
+
         try:
             # check whether the avg loss is less
             # than the current best one
             if avg_loss < self.best_avg_loss - self.delta:
-
                 # update the best avg loss
                 # and reset the counter used to trigger early stopping
                 self.best_avg_loss = avg_loss
@@ -43,9 +51,7 @@ class EarlyStopping:
 
                 # debugging
                 debug(f"⚙️ New best average loss: {self.best_avg_loss}.")
-
             else:
-
                 # increment the counter to trigger early stopping
                 self.counter += 1
 
@@ -56,6 +62,8 @@ class EarlyStopping:
                 if self.counter >= self.patience:
                     # early stopping is triggered
                     self.early_stop = True
-
         except (AttributeError, TypeError, NameError) as e:
             raise RuntimeError(f"❌ Error while calling Early Stopping's object: {e}.")
+
+        # show a successful message
+        info(f"🟢 EarlyStopping check completed.")

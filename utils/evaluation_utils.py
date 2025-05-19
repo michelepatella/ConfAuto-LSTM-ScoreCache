@@ -3,56 +3,6 @@ from utils.log_utils import info, debug
 from utils.metrics_utils import _compute_metrics, _calculate_average_losses
 
 
-def _collect_predictions(
-        model,
-        loader,
-        criterion,
-        device
-):
-    """
-    Method to collect predictions and get related information.
-    :param model: The model from which prediction will be collected.
-    :param loader: The data loader.
-    :param criterion: The loss function.
-    :param device: The device to be used.
-    :return: The predictions (along with the outputs), the targets
-    and the both the global and class average loss.
-    """
-    # initial message
-    info("🔄 Prediction collection started...")
-
-    # check the length of the loader
-    if len(loader) == 0:
-        raise ValueError("❌ Error while collecting predictions due to empty loader.")
-
-    # infer the batch
-    (total_loss, loss_per_class,
-    all_preds, all_targets, all_outputs) = _infer_batch(
-        model,
-        loader,
-        criterion,
-        device
-    )
-
-    # debugging
-    debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
-    debug(f"⚙️ Total targets: {len(all_targets)}.")
-
-    # calculate the average of losses
-    avg_loss, avg_loss_per_class = (
-        _calculate_average_losses(
-            total_loss,
-            loss_per_class,
-            len(loader)
-        )
-    )
-
-    # show a successful message
-    info("🟢 Predictions collected.")
-
-    return avg_loss, avg_loss_per_class, all_preds, all_targets, all_outputs
-
-
 def evaluate_model(
         model,
         loader,
@@ -72,15 +22,27 @@ def evaluate_model(
     # initial message
     info("🔄 Model's evaluation started...")
 
-    # collect predictions to get them along with
-    # targets and average loss
-    avg_loss, avg_loss_per_class, all_preds, all_targets, all_outputs = (
-        _collect_predictions(
-            model,
-            loader,
-            criterion,
-            device
-        ))
+    # infer the batch
+    (total_loss, loss_per_class,
+     all_preds, all_targets, all_outputs) = _infer_batch(
+        model,
+        loader,
+        criterion,
+        device
+    )
+
+    # debugging
+    debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
+    debug(f"⚙️ Total targets: {len(all_targets)}.")
+
+    # calculate the average of losses
+    avg_loss, avg_loss_per_class = (
+        _calculate_average_losses(
+            total_loss,
+            loss_per_class,
+            len(loader)
+        )
+    )
 
     # compute metrics
     metrics = _compute_metrics(

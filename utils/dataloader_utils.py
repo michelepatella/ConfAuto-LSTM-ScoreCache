@@ -40,7 +40,7 @@ def create_data_loader(
     return loader
 
 
-def loader_setup(
+def dataloader_setup(
         loader_type,
         shuffle,
         config_settings,
@@ -89,7 +89,7 @@ def loader_setup(
     return dataset, loader
 
 
-def extract_targets_from_loader(data_loader):
+def extract_targets_from_dataloader(data_loader):
     """
     Method to extract the targets from the data loader.
     :param data_loader: The data loader from which to extract the targets.

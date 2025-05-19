@@ -50,7 +50,8 @@ def _train_one_epoch(
 
             # check loss
             if loss is None:
-                raise ValueError("❌ Error while training the model due to None loss returned.")
+                raise ValueError("❌ Error while training the "
+                                 "model due to None loss returned.")
 
             # backward pass
             _compute_backward(loss, optimizer)
@@ -88,6 +89,9 @@ def train_n_epochs(
     :param validation_loader: Validation data loader.
     :return:
     """
+    # initial message
+    info("🔄 Train n-epochs started...")
+
     # debugging
     debug(f"⚙️ Number of epochs: {epochs}.")
     debug(f"⚙️ Training loader size: {len(training_loader)}.")
@@ -117,7 +121,6 @@ def train_n_epochs(
             )
 
             if early_stopping:
-
                 avg_loss = None
                 if validation_loader:
 
@@ -136,10 +139,14 @@ def train_n_epochs(
                     # check whether to stop
                     if es.early_stop:
                         info("🛑 Early stopping triggered.")
+                        info("🟢 Train n-epochs completed.")
                         break
 
     except (NameError, AttributeError, TypeError, ValueError, CudaError, LookupError) as e:
         raise RuntimeError(f"❌ Error while training the model (n-epochs): {e}.")
+
+    # show a successful message
+    info("🟢 Train n-epochs completed.")
 
 
 def _build_optimizer(model, learning_rate, config_settings):
