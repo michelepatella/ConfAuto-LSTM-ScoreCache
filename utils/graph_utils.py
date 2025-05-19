@@ -1,3 +1,4 @@
+from matplotlib.colors import LogNorm
 from utils.log_utils import info
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,74 +6,191 @@ import seaborn as sns
 from collections import Counter
 
 
-def plot_key_frequencies(requests):
+def plot_key_frequencies_histogram(requests):
     """
-    Method to plot the frequency of the keys in the dataset.
-    :param requests: Requests created.
+    Method to plot the frequency of key accesses via histogram.
+    :param requests: The requests generated.
     :return:
     """
     # initial message
-    info("🔄 Keys frequency plot building started...")
+    info("🔄 Key frequencies histogram building started...")
 
     try:
+        # check requests list
+        if not requests:
+            raise ValueError("❌ Request list is empty, cannot generate plot.")
 
+        # count the keys
         key_counts = Counter(requests)
 
+        # sort the keys
         keys = sorted(key_counts.keys())
+
+        # count the frequency of each key
         freqs = [key_counts[k] for k in keys]
 
+        # plot the histogram showing the
+        # frequency key accesses
         plt.figure(figsize=(10, 5))
         plt.bar(keys, freqs)
         plt.xlabel("Key")
         plt.ylabel("Frequency")
         plt.title("Access Frequency per Key")
         plt.tight_layout()
+        plt.show()
         plt.close()
-
-    except (TypeError, ValueError, ZeroDivisionError) as e:
-        raise RuntimeError(f"❌ Error while building the keys frequency plot: {e}.")
+    except (NameError, TypeError, ImportError, AttributeError, KeyError) as e:
+        raise RuntimeError(f"❌ Error while building key frequencies histogram: {e}.")
 
     # show a successful message
-    info("🟢 Keys frequency plot built.")
+    info("🟢 Key frequencies histogram built.")
 
 
-def plot_inter_arrival_times(delta_times):
+def plot_zipf_loglog(requests):
+    """
+    Method to plot the frequency of key accesses via loglog.
+    :param requests: The requests generated.
+    :return:
+    """
+    # initial message
+    info("🔄 Zipf log-log plot building started...")
 
-    plt.figure(figsize=(10, 5))
-    plt.hist(delta_times, bins=50, color='skyblue', edgecolor='black')
-    plt.xlabel("Delta Time (s)")
-    plt.ylabel("Count")
-    plt.title("Distribution of Inter-arrival Times")
-    plt.tight_layout()
-    plt.close()
+    try:
+        # check requests list
+        if not requests:
+            raise ValueError("❌ Request list is empty, cannot generate plot.")
+
+        # count the requests
+        key_counts = Counter(requests)
+
+        # get frequencies
+        frequencies = np.array(sorted(
+            key_counts.values(),
+            reverse=True)
+        )
+
+        # get the frequencies for each key
+        ranks = np.arange(
+            1,
+            len(frequencies) + 1
+        )
+
+        # plot the zipf distribution loglog plot
+        plt.figure()
+        plt.loglog(
+            ranks,
+            frequencies,
+            marker='o'
+        )
+        plt.title("Zipf Distribution (Log-Log)")
+        plt.xlabel("Key")
+        plt.ylabel("Frequency")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+        plt.close()
+    except (NameError, AttributeError, TypeError, ValueError, IndexError) as e:
+        raise RuntimeError(f"❌ Error while building Zipg log-log plot: {e}.")
+
+    # show a successful message
+    info("🟢 Zipf log-log plot built.")
 
 
-def plot_requests_over_time(requests, timestamps):
+def plot_keys_transition_matrix(requests):
+    """
+    Method to plot the transition matrix of the keys.
+    :param requests: The requests generated.
+    :return:
+    """
+    # initial message
+    info("🔄 Keys transition matrix building started...")
 
-    plt.figure(figsize=(10, 5))
-    plt.scatter(timestamps[:len(requests)], requests, s=10, alpha=0.6)
-    plt.xlabel("Timestamp")
-    plt.ylabel("Key Requested")
-    plt.title("Requests Over Time")
-    plt.tight_layout()
-    plt.close()
+    try:
+        # check requests list
+        if not requests:
+            raise ValueError("❌ Request list is empty, "
+                             "cannot generate plot.")
+
+        # sort the requests
+        unique_keys = sorted(set(requests))
+
+        # get index of keys
+        key_to_idx = {
+            key: i for i,
+            key in enumerate(unique_keys)
+        }
+
+        # initialize the transition matrix
+        matrix = np.zeros((
+            len(unique_keys),
+            len(unique_keys)
+        ))
+
+        # for each request
+        for i in range(1, len(requests)):
+            # the position of the transition matrix
+            # corresponding to i-th key to j-th key is
+            # increased by one, indicating moving from
+            # i-th key to the j-th one
+            from_key = key_to_idx[requests[i - 1]]
+            to_key = key_to_idx[requests[i]]
+            matrix[from_key][to_key] += 1
+
+        # plot the transition matrix in form of heatmap
+        plt.figure(figsize=(12, 10))
+        sns.heatmap(
+            matrix,
+            norm=LogNorm(),
+            cmap="YlGnBu"
+        )
+        plt.xlabel("To Key")
+        plt.ylabel("From Key")
+        plt.title("Key Transition Heatmap")
+        plt.tight_layout()
+        plt.show()
+        plt.close()
+    except (NameError, TypeError, SyntaxError, IndexError, KeyError, ValueError) as e:
+        raise RuntimeError(f"❌ Error while building the "
+                           f"transition matrix of keys: {e}.")
+
+    # show a successful message
+    info("🟢 Keys transition matrix built.")
 
 
-def plot_transition_matrix(requests):
+def plot_requests_over_time(requests, delta_times):
+    """
+    Method to plot the requests over the time.
+    :param requests: The requests generated.
+    :param delta_times: The delta times generated.
+    :return:
+    """
+    # initial message
+    info("🔄 Requests over time plot building started...")
 
-    unique_keys = sorted(set(requests))
-    key_to_idx = {key: i for i, key in enumerate(unique_keys)}
-    matrix = np.zeros((len(unique_keys), len(unique_keys)))
+    try:
+        # check requests and delta times lists
+        if not requests or not delta_times:
+            raise ValueError("❌ Request and/or delta times lists is empty, "
+                             "cannot generate plot.")
 
-    for i in range(1, len(requests)):
-        from_key = key_to_idx[requests[i - 1]]
-        to_key = key_to_idx[requests[i]]
-        matrix[from_key][to_key] += 1
+        # construct timestamps starting from delta times
+        timestamps = [0]
+        for dt in delta_times:
+            timestamps.append(timestamps[-1] + dt)
+        timestamps = timestamps[1:]
 
-    plt.figure(figsize=(12, 10))
-    sns.heatmap(matrix, xticklabels=unique_keys, yticklabels=unique_keys, cmap="YlGnBu")
-    plt.xlabel("To Key")
-    plt.ylabel("From Key")
-    plt.title("Key Transition Heatmap")
-    plt.tight_layout()
-    plt.close()
+        # show requests over time
+        plt.figure(figsize=(10, 5))
+        plt.plot(timestamps, requests)
+        plt.ylabel("Key Requested")
+        plt.xlabel("Timestamps")
+        plt.title("Requests Over Time")
+        plt.grid(True)
+        plt.show()
+        plt.close()
+    except (TypeError, IndexError, ValueError) as e:
+        raise RuntimeError(f"❌ Error while building the requests"
+                           f" over time plot: {e}.")
+
+    # show a successful message
+    info("🟢 Requests over time plot built.")

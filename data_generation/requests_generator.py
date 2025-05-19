@@ -2,7 +2,6 @@ import numpy as np
 from data_generation.patterns_generator import _generate_pattern_requests
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
 from utils.log_utils import info, debug
-from utils.graph_utils import plot_key_frequencies
 
 
 def _generate_static_requests(config_settings):
@@ -36,9 +35,6 @@ def _generate_static_requests(config_settings):
     debug(f"⚙️Probabilities length: {len(probs)}.")
     debug(f"⚙️Requests length: {len(requests)}.")
     debug(f"⚙️Delta times length: {len(delta_times)}.")
-
-    # show a frequency table of the keys
-    plot_key_frequencies(requests)
 
     # show a successful message
     info("🟢 Static requests generated.")
@@ -112,9 +108,6 @@ def _generate_dynamic_requests(config_settings):
     # debugging
     debug(f"⚙️Requests length: {len(requests)}.")
     debug(f"⚙️Delta times length: {len(delta_times)}.")
-
-    # show a frequency table of the keys
-    plot_key_frequencies(requests)
 
     # show a successful message
     info("🟢 Dynamic requests generated.")
