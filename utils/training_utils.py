@@ -1,5 +1,3 @@
-import torch
-from sympy.physics.units import momentum
 from torch.cuda import CudaError
 from utils.log_utils import info, debug
 from utils.EarlyStopping import EarlyStopping
@@ -147,46 +145,3 @@ def train_n_epochs(
 
     # show a successful message
     info("🟢 Train n-epochs completed.")
-
-
-def _build_optimizer(model, learning_rate, config_settings):
-    """
-    Method to build the optimizer.
-    :param model: Model for which the optimizer will be built.
-    :param learning_rate: Learning rate.
-    :param config_settings: The configuration settings.
-    :return: The created optimizer.
-    """
-    # initial message
-    info("🔄 Optimizer building started...")
-
-    # debugging
-    debug(f"⚙️ Learning rate: {learning_rate}.")
-    debug(f"⚙️ Optimizer type: {config_settings.optimizer_type}.")
-
-    try:
-        # define the optimizer
-        if config_settings.optimizer_type == "adam":
-            optimizer = torch.optim.Adam(
-                model.parameters(),
-                lr=learning_rate
-            )
-        elif config_settings.optimizer_type == "adamw":
-            optimizer = torch.optim.AdamW(
-                model.parameters(),
-                lr=learning_rate,
-                weight_decay=config_settings.weight_decay
-            )
-        else:
-            optimizer = torch.optim.SGD(
-                model.parameters(),
-                lr=learning_rate,
-                momentum=momentum
-            )
-    except (ValueError, TypeError, UnboundLocalError, KeyError, AssertionError) as e:
-        raise RuntimeError(f"❌ Error while building optimizer: {e}.")
-
-    # show a successful message
-    info("🟢 Optimizer building completed.")
-
-    return optimizer

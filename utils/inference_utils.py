@@ -4,6 +4,46 @@ from utils.feedforward_utils import _compute_forward
 from utils.log_utils import info, debug
 
 
+def _calculate_average_loss_per_class(
+        criterion,
+        outputs,
+        y_key,
+        loss_per_class
+):
+    """
+    Method to calculate average loss per class.
+    :param criterion: The criterion to use.
+    :param outputs: The outputs of the model.
+    :param y_key: The targets.
+    :param loss_per_class: The loss per class calculated so far.
+    :return: The average loss per class updated.
+    """
+    # initial message
+    info("🔄 Average loss per class calculation started...")
+
+    # for all the class
+    for class_id in torch.unique(y_key):
+
+        # create a boolean mask for all samples
+        # belonging to the current class
+        mask = y_key == class_id
+
+        # if there is at least one sample for
+        # this class
+        if mask.sum() > 0:
+            # compute the loss and update it
+            class_loss = criterion(outputs[mask], y_key[mask])
+            loss_per_class[int(class_id.item())].append(class_loss.item())
+
+            # debugging
+            debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
+
+    # show a successful message
+    info("🟢 Average loss per class calculated.")
+
+    return loss_per_class
+
+
 def _infer_batch(
         model,
         loader,
@@ -70,16 +110,14 @@ def _infer_batch(
                 all_outputs.extend(outputs.cpu())
 
                 # calculate loss per class
-                for class_id in torch.unique(y_key):  # e qui
-                    mask = y_key == class_id
-                    if mask.sum() > 0:
-                        class_loss = criterion(outputs[mask], y_key[mask])
-                        loss_per_class[int(class_id.item())].append(class_loss.item())
+                loss_per_class = _calculate_average_loss_per_class(
+                    criterion,
+                    outputs,
+                    y_key,
+                    loss_per_class
+                )
 
-                        # debugging
-                        debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
-
-    except (IndexError, IndexError, KeyError, AttributeError, TypeError) as e:
+    except (IndexError, ValueError, KeyError, AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
     # show a successful message
