@@ -6,14 +6,13 @@ from utils.config_utils import _get_config_value
 
 class LSTM(nn.Module):
 
-    def _set_fields(self, params):
+    def _set_fields(self, params, config_settings):
         """
         Method to set the model's parameters.
         :param params: The model's parameters.
+        :param config_settings: The configuration settings.
         :return:
         """
-        from main import config_settings
-
         # definition of the required parameters
         self.required_parameters = [
             "hidden_size",
@@ -108,17 +107,16 @@ class LSTM(nn.Module):
             raise RuntimeError(f"❌ Error while setting class fields: {e}.")
 
 
-    def __init__(self, params):
+    def __init__(self, params, config_settings):
         """
         Method to initialize the LSTM model.
         :param params: The hyperparameters of the model.
+        :param config_settings: The configuration settings.
         """
-        from main import config_settings
-
         super(LSTM, self).__init__()
 
         # set model's parameters
-        self._set_fields(params)
+        self._set_fields(params, config_settings)
 
         # debugging
         for param in self.required_parameters:

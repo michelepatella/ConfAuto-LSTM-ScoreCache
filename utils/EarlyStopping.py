@@ -4,12 +4,11 @@ from utils.log_utils import _debug
 
 class EarlyStopping:
 
-    def __init__(self):
+    def __init__(self, config_settings):
         """
         Method to initialize the class.
+        :param config_settings: The configuration settings.
         """
-        from main import config_settings
-
         try:
             # set the fields
             self.patience = config_settings.early_stopping_patience

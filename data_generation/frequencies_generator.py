@@ -2,15 +2,15 @@ from utils.log_utils import _info, _debug
 from utils.metrics_utils import _calculate_rel_frequency
 
 
-def _generate_last_freq(sequence, config_settings):
+def _generate_last_rel_freq(sequence, config_settings):
     """
-    Method to generate the last frequencies of a given sequence.
+    Method to generate the last relative frequencies of a given sequence.
     :param sequence: The sequence to generate frequencies for.
     :param config_settings: The configuration settings.
     :return: The generated frequencies.
     """
     # initial message
-    _info("🔄 Frequencies generation started...")
+    _info("🔄 Relative frequencies generation started...")
 
     try:
         # freq columns dictionary initialization
@@ -25,12 +25,12 @@ def _generate_last_freq(sequence, config_settings):
             )
 
         # debugging
-        _debug(f"⚙️ Frequency columns length: {len(freq_columns)}.")
+        _debug(f"⚙️ Relative frequency columns length: {len(freq_columns)}.")
 
         # show a successful message
-        _info("🟢 Frequencies generated.")
+        _info("🟢 Relative frequencies generated.")
 
         return freq_columns
 
     except (ValueError, TypeError, NameError, RuntimeError) as e:
-        raise RuntimeError(f"❌ Error while generating frequencies: {e}.")
+        raise RuntimeError(f"❌ Error while generating relative frequencies: {e}.")

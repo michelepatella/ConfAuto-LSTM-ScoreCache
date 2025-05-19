@@ -1,6 +1,8 @@
 import torch
 from sympy.physics.units import momentum
 from torch.cuda import CudaError
+
+from main import config_settings
 from utils.log_utils import _info, _debug
 from utils.EarlyStopping import EarlyStopping
 from utils.evaluation_utils import _evaluate_model
@@ -99,7 +101,7 @@ def _train_n_epochs(
         es = None
         # instantiate early stopping object (if needed)
         if early_stopping:
-            es = EarlyStopping()
+            es = EarlyStopping(config_settings)
 
         # n-epochs learning
         for epoch in range(epochs):

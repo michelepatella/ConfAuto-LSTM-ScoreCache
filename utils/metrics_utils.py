@@ -1,45 +1,8 @@
 from collections import Counter
 
-import pandas as pd
-from tabulate import tabulate
 import torch
 from sklearn.metrics import classification_report
 from utils.log_utils import _info, _debug
-
-
-def _show_freq_table(requests):
-    """
-    Method to show the frequency table of the keys in the dataset.
-    :param requests: Requests created.
-    :return:
-    """
-    # initial message
-    _info("🔄 Requests frequency table building started...")
-
-    try:
-        # calculate the occurrences of requests in terms of percentage
-        value_counts = (pd.Series(requests).
-                        value_counts().reset_index())
-        value_counts.columns = ['Key', 'Occurrences']
-        value_counts['%'] = (value_counts['Occurrences']
-                             / len(requests)) * 100
-
-    except (TypeError, ValueError, ZeroDivisionError) as e:
-        raise RuntimeError(f"❌ Error while building the requests frequency table: {e}.")
-
-    # show a successful message
-    _info("🟢 Requests frequency table built.")
-
-    # show the created table
-    _info(
-        "📊 Frequency table:\n%s",
-        tabulate(
-            value_counts,
-            headers='keys',
-            tablefmt='github',
-            floatfmt=".2f"
-        )
-    )
 
 
 def _top_k_accuracy(targets, outputs):

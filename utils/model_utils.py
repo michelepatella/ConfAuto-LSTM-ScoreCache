@@ -1,6 +1,8 @@
 import numpy as np
 import torch
 from sklearn.utils import compute_class_weight
+
+from main import config_settings
 from utils.LSTM import LSTM
 from utils.log_utils import _info, _debug
 from utils.training_utils import _build_optimizer
@@ -101,7 +103,8 @@ def _model_setup(
         )
 
         # define the LSTM model
-        model = LSTM(model_params).to(device)
+        model = (LSTM(model_params, config_settings)
+        .to(device))
 
         # define the optimizer
         optimizer = _build_optimizer(
