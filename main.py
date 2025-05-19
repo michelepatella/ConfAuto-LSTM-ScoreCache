@@ -12,7 +12,7 @@ data_generation(config_settings)
 
 data_preprocessing(config_settings)
 
-validation(config_settings)
+config_settings = validation(config_settings)
 
 training(config_settings)
 

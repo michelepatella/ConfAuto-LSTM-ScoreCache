@@ -8,7 +8,7 @@ def _save_best_params(best_params, config_settings):
     Method to save the best parameters to a config file.
     :param best_params: Best parameters found.
     :param config_settings: Configuration settings.
-    :return:
+    :return: The new configuration settings.
     """
     # initial message
     info("🔄 Best parameter saving started...")
@@ -37,7 +37,9 @@ def _save_best_params(best_params, config_settings):
         raise RuntimeError(f"❌ Error while saving the best parameters: {e}.")
 
     # update the best parameters on the config file
-    update_config(config_settings.config, config)
+    new_config_settings = update_config(config_settings.config, config)
 
     # show a successful message
     info("🟢 Best parameters saved.")
+
+    return new_config_settings

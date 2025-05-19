@@ -1,6 +1,8 @@
 import yaml
 import os
 from yaml import YAMLError
+
+from config import prepare_config
 from utils.log_utils import info, debug
 
 
@@ -94,7 +96,7 @@ def update_config(config, updated_config):
     Method to update the config file.
     :param config: The config object.
     :param updated_config: The updated config to write.
-    :return:
+    :return: The updated config settings.
     """
     # initial message
     info("🔄 Config file updating started...")
@@ -126,6 +128,11 @@ def update_config(config, updated_config):
 
     # show a successful message
     info("🟢 Config file updated.")
+
+    # re-validate config and get the new settings
+    new_config_settings = prepare_config()
+
+    return new_config_settings
 
 
 def get_config_value(config, keys):

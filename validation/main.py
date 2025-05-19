@@ -9,7 +9,7 @@ def validation(config_settings):
     """
     Method to orchestrate the validation of the model.
     :param config_settings: The configuration settings.
-    :return:
+    :return: The new configuration settings.
     """
     # initial message
     info("🔄 Validation started...")
@@ -31,8 +31,10 @@ def validation(config_settings):
         config_settings
     )
 
-    # set the best parameters
-    _save_best_params(best_params, config_settings)
+    # set the best parameters and get new config settings
+    new_config_settings = _save_best_params(best_params, config_settings)
 
     # print a successful message
     info("✅ Validation successfully completed.")
+
+    return new_config_settings
