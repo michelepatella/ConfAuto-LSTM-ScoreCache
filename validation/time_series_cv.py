@@ -3,7 +3,6 @@ from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
 from utils.log_utils import info, debug
 from utils.dataloader_utils import create_data_loader, extract_targets_from_dataloader
-from utils.evaluation_utils import evaluate_model
 from utils.model_utils import model_setup
 from utils.training_utils import train_n_epochs
 
@@ -76,7 +75,7 @@ def _compute_time_series_cv(
         )
 
         # train the model
-        avg_loss, _, _ = train_n_epochs(
+        avg_loss = train_n_epochs(
             config_settings.validation_num_epochs,
             model,
             training_loader,
@@ -87,7 +86,8 @@ def _compute_time_series_cv(
             validation_loader=validation_loader,
             early_stopping=True
         )
-        fold_losses.append(avg_loss)
+        if avg_loss is not None:
+            fold_losses.append(avg_loss)
 
     # show a successful message
     info("🟢 Time Series Cross-Validation completed.")

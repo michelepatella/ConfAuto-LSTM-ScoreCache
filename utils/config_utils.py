@@ -89,15 +89,15 @@ def _merge_config(config, updates):
     return config
 
 
-def update_config(config, updated_config):
+def update_config(config, updated_config, prepare_config):
     """
     Method to update the config file.
+    :param prepare_config: Method to validate the config and
+    return the updated config settings.
     :param config: The config object.
     :param updated_config: The updated config to write.
     :return: The updated config settings.
     """
-    from config import prepare_config
-
     # initial message
     info("🔄 Config file updating started...")
 

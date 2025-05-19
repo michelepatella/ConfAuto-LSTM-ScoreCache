@@ -19,7 +19,6 @@ def create_dataframe(columns):
 
         # create the dataframe
         df = pd.DataFrame(columns)
-
     except (ValueError, TypeError) as e:
         raise RuntimeError(f"❌ Error while creating the dataframe: {e}.")
 

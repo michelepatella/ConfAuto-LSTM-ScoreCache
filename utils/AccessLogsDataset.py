@@ -98,7 +98,8 @@ class AccessLogsDataset(Dataset):
             # set data
             self.data = df.copy()
         except (AttributeError, TypeError, MemoryError) as e:
-            raise RuntimeError(f"❌ Error setting data of the dataset by copying it: {e}.")
+            raise RuntimeError(f"❌ Error setting data of the dataset "
+                               f"by copying it: {e}.")
 
         # split the dataset to assign data properly
         self._split_dataset(dataset_type, config_settings)

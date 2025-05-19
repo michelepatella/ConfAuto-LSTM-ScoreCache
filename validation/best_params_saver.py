@@ -1,4 +1,5 @@
 import config
+from config import prepare_config
 from utils.log_utils import info, debug
 from utils.config_utils import update_config
 
@@ -37,7 +38,11 @@ def _save_best_params(best_params, config_settings):
         raise RuntimeError(f"❌ Error while saving the best parameters: {e}.")
 
     # update the best parameters on the config file
-    new_config_settings = update_config(config_settings.config, config)
+    new_config_settings = update_config(
+        config_settings.config,
+        config,
+        prepare_config
+    )
 
     # show a successful message
     info("🟢 Best parameters saved.")
