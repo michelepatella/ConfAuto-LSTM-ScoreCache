@@ -9,31 +9,27 @@ from validation import validation
 
 config_settings = prepare_config()
 
-data_generation(config_settings)
+#data_generation(config_settings)
 
-data_preprocessing(config_settings)
+#data_preprocessing(config_settings)
 
 #config_settings = validation(config_settings)
 
-training(config_settings)
+#training(config_settings)
 
 avg_loss, avg_loss_per_class, metrics, cost_perc = testing(config_settings)
 
 print("----------------------------------------------------------------------------------------")
 print(f"Average Loss: {avg_loss}")
 print(f"Average Loss per Class:")
+print(f"{avg_loss_per_class}")
 
-for i, avg in enumerate(avg_loss_per_class):
-    print(f"— Key {i + 1}: {avg}")
+print(f"📉 Class Report per Class:")
+print(f"{metrics['class_report']}")
 
-    print(f"📉 Class Report per Class:")
-    for i, metric in enumerate(metrics["class_metrics"]):
-        print(f"— Key {i + 1}: precision={metric['precision']},"
-              f" recall={metric['recall']}, f1={metric['f1']}")
+print(f"\nConfusion Matrix:\n{np.array(metrics['confusion_matrix'])}")
 
-    print(f"\nConfusion Matrix:\n{np.array(metrics['confusion_matrix'])}")
+print(f"Top-k Accuracy: {metrics['top_k_accuracy']}")
+print(f"Kappa Statistic: {metrics['kappa_statistic']}")
 
-    print(f"Top-k Accuracy: {metrics['top_k_accuracy']}")
-    print(f"Kappa Statistic: {metrics['kappa_statistic']}")
-
-    print(f"📉 Cost (%): {cost_perc}")
+print(f"📉 Cost (%): {cost_perc}")

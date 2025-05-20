@@ -189,7 +189,7 @@ def _calculate_cost(
 
     try:
         # get the no. of classes
-        num_classes = config_settings.num_classes
+        num_classes = config_settings.num_keys
 
         # get costs corresponding to each kind of error
         fp_cost = config_settings.fp_cost
@@ -227,7 +227,7 @@ def _calculate_cost(
         # debugging
         debug(f"⚙️ Tot. cost: {total_cost.shape}.")
 
-        n_samples = targets.shape[0]
+        n_samples = len(targets)
         # get the max. cost
         max_fp = n_samples * (num_classes - 1)
         max_fn = n_samples

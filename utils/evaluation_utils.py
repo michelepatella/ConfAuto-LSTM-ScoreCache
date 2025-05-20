@@ -73,9 +73,7 @@ def evaluate_model(
             info(f"— Key {i + 1}: {avg}")
 
         info(f"📉 Class Report per Class:")
-        for i, metric in enumerate(metrics["class_metrics"]):
-            info(f"— Key {i + 1}: precision={metric['precision']},"
-                 f" recall={metric['recall']}, f1={metric['f1']}")
+        info(f"{metrics['class_report']}")
 
         info(f"\nConfusion Matrix:\n{np.array(metrics['confusion_matrix'])}")
 
