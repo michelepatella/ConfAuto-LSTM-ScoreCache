@@ -70,10 +70,10 @@ def evaluate_model(
             info(f"— Key {i + 1}: precision={metric['precision']},"
                  f" recall={metric['recall']}, f1={metric['f1']}")
 
-        info(f"\nConfusion Matrix:\n{np.array(metrics["confusion_matrix"])}")
+        info(f"\nConfusion Matrix:\n{np.array(metrics['confusion_matrix'])}")
 
-        info(f"📉 Top-k Accuracy: {metrics["top_k_accuracy"]}")
-        info(f"📉 Kappa Statistic: {metrics["kappa_statistic"]}")
+        info(f"📉 Top-k Accuracy: {metrics['top_k_accuracy']}")
+        info(f"📉 Kappa Statistic: {metrics['kappa_statistic']}")
 
         # show some plots
         plot_precision_recall_curve(
