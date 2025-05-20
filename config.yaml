@@ -3,7 +3,7 @@ data:
   distribution:
     seed: 42
     type: static
-    num_requests: 50000
+    num_requests: 80000
     num_keys: 50
     key_range:
       first_key: 1
@@ -87,7 +87,6 @@ validation:
         num_layers_range:
         - 2
         - 3
-        - 4
         dropout_range:
         - 0.1
         - 0.3
