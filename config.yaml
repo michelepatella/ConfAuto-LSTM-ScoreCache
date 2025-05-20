@@ -3,11 +3,11 @@ data:
   distribution:
     seed: 42
     type: static
-    num_requests: 80000
-    num_keys: 50
+    num_requests: 20000
+    num_keys: 20
     key_range:
       first_key: 1
-      last_key: 50
+      last_key: 20
     freq_windows: [ 10, 100, 1000 ]
 
   access_pattern:
