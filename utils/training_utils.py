@@ -28,11 +28,13 @@ def _train_one_epoch(
     model.train()
 
     # to show the progress bar
+    """
     training_loader = tqdm(
         training_loader,
         desc="🧠 Training Progress",
         leave=False
     )
+    """
     try:
         for x_features, x_keys, y_key in training_loader:
             # reset the gradients
@@ -54,7 +56,7 @@ def _train_one_epoch(
             # backward pass
             _compute_backward(loss, optimizer)
 
-            training_loader.set_postfix(loss=loss.item())
+            #training_loader.set_postfix(loss=loss.item())
 
     except (AttributeError, TypeError, ValueError, StopIteration, CudaError, AssertionError) as e:
         raise RuntimeError(f"❌ Error while training the model (one-epoch): {e}.")
