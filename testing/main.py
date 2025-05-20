@@ -9,8 +9,8 @@ def testing(config_settings):
     """
     Method to test the model.
     :param config_settings: The configuration settings.
-    :return: The average loss, the average loss per class
-    and metrics computed.
+    :return: The average loss, the average loss per class,
+    the metrics computed, and the cost.
     """
     # initial message
     info("🔄 Testing started...")
@@ -46,7 +46,7 @@ def testing(config_settings):
     model.eval()
 
     # evaluate the model
-    avg_loss, avg_loss_per_class, metrics = evaluate_model(
+    avg_loss, avg_loss_per_class, metrics, cost_perc = evaluate_model(
         model,
         testing_loader,
         criterion,
@@ -58,4 +58,4 @@ def testing(config_settings):
     # print a successful message
     info("✅ Testing completed.")
 
-    return avg_loss, avg_loss_per_class, metrics
+    return avg_loss, avg_loss_per_class, metrics, cost_perc

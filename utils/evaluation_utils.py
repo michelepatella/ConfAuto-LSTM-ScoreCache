@@ -3,7 +3,7 @@ import numpy as np
 from utils.graph_utils import plot_precision_recall_curve, plot_class_report
 from utils.inference_utils import _infer_batch
 from utils.log_utils import info, debug
-from utils.metrics_utils import _compute_metrics, _calculate_average_losses
+from utils.metrics_utils import _compute_metrics, _calculate_average_losses, _calculate_cost
 
 
 def evaluate_model(
@@ -22,7 +22,7 @@ def evaluate_model(
     :param device: Device to use.
     :param config_settings: The configuration settings.
     :param show_stats: Whether to show statistics.
-    :return: The average loss and the metrics.
+    :return: The average loss, the metrics, and the cost.
     """
     # initial message
     info("🔄 Model's evaluation started...")
@@ -57,6 +57,13 @@ def evaluate_model(
         config_settings
     )
 
+    # calculate cost
+    cost_perc = _calculate_cost(
+        all_targets,
+        all_preds,
+        config_settings
+    )
+
     if show_stats:
         # show results
         info(f"📉 Average Loss: {avg_loss}")
@@ -75,6 +82,8 @@ def evaluate_model(
         info(f"📉 Top-k Accuracy: {metrics['top_k_accuracy']}")
         info(f"📉 Kappa Statistic: {metrics['kappa_statistic']}")
 
+        info(f"📉 Cost (%): {cost_perc}")
+
         # show some plots
         plot_precision_recall_curve(
             all_targets,
@@ -86,4 +95,4 @@ def evaluate_model(
     # show a successful message
     info("🟢 Model's evaluation completed.")
 
-    return avg_loss, avg_loss_per_class, metrics
+    return avg_loss, avg_loss_per_class, metrics, cost_perc

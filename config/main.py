@@ -65,7 +65,7 @@ def prepare_config():
      learning_rate_range) = _validate_search_space_params(config)
 
     # evaluation config
-    top_k = _validate_evaluation_general_params(config)
+    top_k, fp_cost, fn_cost = _validate_evaluation_general_params(config)
 
     # testing config
     testing_batch_size = _validate_testing_general_params(config)
@@ -124,5 +124,7 @@ def prepare_config():
         dropout_range=dropout_range,
         learning_rate_range=learning_rate_range,
         top_k=top_k,
+        fp_cost=fp_cost,
+        fn_cost=fn_cost,
         testing_batch_size=testing_batch_size,
     )

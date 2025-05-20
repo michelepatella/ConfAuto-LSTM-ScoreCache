@@ -17,7 +17,7 @@ data_preprocessing(config_settings)
 
 training(config_settings)
 
-avg_loss, avg_loss_per_class, metrics = testing(config_settings)
+avg_loss, avg_loss_per_class, metrics, cost_perc = testing(config_settings)
 
 print("----------------------------------------------------------------------------------------")
 print(f"Average Loss: {avg_loss}")
@@ -35,3 +35,5 @@ for i, avg in enumerate(avg_loss_per_class):
 
     print(f"Top-k Accuracy: {metrics['top_k_accuracy']}")
     print(f"Kappa Statistic: {metrics['kappa_statistic']}")
+
+    print(f"📉 Cost (%): {cost_perc}")
