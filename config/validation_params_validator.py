@@ -14,11 +14,11 @@ def _check_cv_params(
     """
     # check number of folds
     if (
-        cv_num_folds <= 0 or
+        cv_num_folds <= 1 or
         not isinstance(cv_num_folds, int)
     ):
         raise RuntimeError("❌ 'validation.cross_validation.num_folds' "
-                           "must be an integer > 0.")
+                           "must be an integer > 1.")
 
     # check number of epochs
     if (
@@ -42,10 +42,10 @@ def _check_early_stopping_params(
     # check patience
     if (
         not isinstance(early_stopping_patience, int)
-        or early_stopping_patience <=0
+        or early_stopping_patience < 0
     ):
         raise RuntimeError("❌ 'validation.early_stopping.patience' "
-                           "must be an integer > 0.")
+                           "must be an integer >= 0.")
 
     # check delta
     if (

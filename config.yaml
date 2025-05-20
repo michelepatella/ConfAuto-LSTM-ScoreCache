@@ -55,19 +55,6 @@ model:
       proj_size: 0
 
 
-training:
-
-  general:
-    num_epochs: 10
-    batch_size: 64
-
-  optimizer:
-    type: adamw
-    learning_rate: 0.001
-    weight_decay: 0.05
-    momentum: 0.9
-
-
 validation:
 
   cross_validation:
@@ -96,13 +83,26 @@ validation:
       - 0.003
 
 
-evaluation:
-  top_k: 3
-  costs:
-    fp_cost: 1.0
-    fn_cost: 10.0
+training:
+
+  general:
+    num_epochs: 10
+    batch_size: 64
+
+  optimizer:
+    type: adamw
+    learning_rate: 0.001
+    weight_decay: 0.05
+    momentum: 0.9
 
 
 testing:
   general:
     batch_size: 64
+
+
+evaluation:
+  top_k: 3
+  costs:
+    fp_cost: 1.0
+    fn_cost: 10.0
