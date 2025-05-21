@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Config:
-    config: object
+    config_file: object
     seed: int
     distribution_type: str
     num_requests: int
