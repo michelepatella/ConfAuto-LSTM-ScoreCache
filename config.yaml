@@ -21,13 +21,13 @@ data:
       prob: 0.7
   temporal_pattern:
     burstiness:
-      burst_high: 1.0
-      burst_low: 50.0
-      burst_every: 100
-      burst_peak: 20
+      burst_high: 1.5
+      burst_low: 3.0
+      burst_every: 500
+      burst_peak: 50
     periodic:
-      base_scale: 5
-      amplitude: 5
+      base_scale: 20
+      amplitude: 15
   sequence:
     len: 25
     embedding_dim: 32

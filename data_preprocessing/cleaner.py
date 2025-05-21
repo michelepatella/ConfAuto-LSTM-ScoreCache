@@ -14,7 +14,10 @@ def _remove_duplicates(df, columns):
     try:
         for column in columns:
             # clear the dataset removing duplicated rows
-            df.drop_duplicates(subset=[column], inplace=True)
+            df.drop_duplicates(
+                subset=[column],
+                inplace=True
+            )
     except Exception as e:
         raise Exception(f"❌ Error while deduplicating the dataset: {e}")
 

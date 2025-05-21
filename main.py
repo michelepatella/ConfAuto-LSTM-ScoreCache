@@ -13,9 +13,9 @@ data_generation(config_settings)
 
 data_preprocessing(config_settings)
 
-config_settings = validation(config_settings)
+#config_settings = validation(config_settings)
 
-training(config_settings)
+#training(config_settings)
 
 avg_loss, avg_loss_per_class, metrics, cost_perc = testing(config_settings)
 
