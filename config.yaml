@@ -50,7 +50,7 @@ model:
 validation:
   cross_validation:
     num_folds: 10
-    num_epochs: 50
+    num_epochs: 30
   early_stopping:
     patience: 10
     delta: 0.0005
