@@ -1,15 +1,37 @@
 import contextvars
 import logging
+from logging.handlers import RotatingFileHandler
 
-
-logging.basicConfig(
-    level=logging.ERROR,
-    format='[%(phase)s] %(levelname)s: %(message)s',
-    handlers=[
-        logging.FileHandler("./log.log"),
-        logging.StreamHandler()
-    ]
+# contextual variable indicating the phase
+# in which the logging message is located in
+phase_var = contextvars.ContextVar(
+    "phase",
+    default="unknown"
 )
+
+# define a global formatter
+formatter = logging.Formatter('[%(phase)s] %(levelname)s: %(message)s')
+
+# all logging messages from INFO-level must be written in a file
+file_handler = RotatingFileHandler(
+    './log/log.log',
+    maxBytes=10_000_000,
+    backupCount=100
+)
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(formatter)
+
+# show in terminal only ERROR-level loggin messages
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.ERROR)
+stream_handler.setFormatter(formatter)
+
+# configuration of logging messages
+logging.basicConfig(
+    level=logging.DEBUG,
+    handlers=[file_handler, stream_handler]
+)
+
 
 def info(msg, *args, **kwargs):
     """
@@ -47,10 +69,3 @@ def debug(msg, *args, **kwargs):
         )
     except (KeyError, ValueError, LookupError, TypeError, AttributeError) as e:
         raise RuntimeError(f"❌ Error while logging debug message: {e}.")
-
-# contextual variable indicating the phase
-# in which the logging message is located in
-phase_var = contextvars.ContextVar(
-    "phase",
-    default="unknown"
-)
