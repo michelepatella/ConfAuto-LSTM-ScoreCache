@@ -75,7 +75,7 @@ def dataloader_setup(
         loader = create_data_loader(
             dataset,
             get_config_value(
-                config_settings.config,
+                config_settings.config_file,
                 f"{loader_type}.general.batch_size"
             ),
             shuffle

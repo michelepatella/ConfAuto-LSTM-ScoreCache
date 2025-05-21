@@ -42,14 +42,14 @@ def load_config():
     try:
         # load the file
         with open(config_path, "r") as f:
-            config = yaml.safe_load(f)
+            config_file = yaml.safe_load(f)
     except (FileNotFoundError, PermissionError, IsADirectoryError, OSError, YAMLError) as e:
         raise RuntimeError(f"❌ Error while loading config file: {e}.")
 
     # show a successful message
     info("🟢 Config file loaded.")
 
-    return config
+    return config_file
 
 
 def _merge_config(config, updates):

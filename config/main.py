@@ -20,61 +20,61 @@ def prepare_config():
     info("🔄 Config preparation started...")
 
     # load config file
-    config = load_config()
+    config_file = load_config()
 
     # data config
     (seed, distribution_type, num_requests,
      num_keys, first_key, last_key, freq_windows) = (
-        _validate_data_distribution_params(config))
+        _validate_data_distribution_params(config_file))
 
     (zipf_alpha, zipf_alpha_start, zipf_alpha_end,
      zipf_time_steps, locality_prob,
      burst_high, burst_low, burst_every, burst_peak,
      periodic_base_scale, periodic_amplitude) = (
-        _validate_data_access_pattern_params(config))
+        _validate_data_access_pattern_params(config_file))
 
     seq_len, embedding_dim, num_requests = (
-        _validate_data_sequence_params(config, num_requests))
+        _validate_data_sequence_params(config_file, num_requests))
 
     training_perc, static_save_path, dynamic_save_path = (
-        _validate_data_dataset_params(config))
+        _validate_data_dataset_params(config_file))
 
     # model config
     num_features, model_save_path = (
-        _validate_model_general_params(config))
+        _validate_model_general_params(config_file))
 
     (model_params, hidden_size, num_layers,
      bias, batch_first, dropout, bidirectional, proj_size) = (
-        _validate_model_params(config))
+        _validate_model_params(config_file))
 
     # training config
     training_num_epochs, training_batch_size = (
-        _validate_training_general_params(config))
+        _validate_training_general_params(config_file))
 
     optimizer_type, learning_rate, weight_decay, momentum = (
-        _validate_training_optimizer_params(config))
+        _validate_training_optimizer_params(config_file))
 
     # validation config
     cv_num_folds, validation_num_epochs = (
-        _validate_cv_params(config))
+        _validate_cv_params(config_file))
 
     early_stopping_patience, early_stopping_delta = (
-        _validate_early_stopping_params(config))
+        _validate_early_stopping_params(config_file))
 
     (search_space, hidden_size_range, num_layers_range, dropout_range,
-     learning_rate_range) = _validate_search_space_params(config)
+     learning_rate_range) = _validate_search_space_params(config_file)
 
     # evaluation config
-    top_k, fp_cost, fn_cost = _validate_evaluation_general_params(config)
+    top_k, fp_cost, fn_cost = _validate_evaluation_general_params(config_file)
 
     # testing config
-    testing_batch_size = _validate_testing_general_params(config)
+    testing_batch_size = _validate_testing_general_params(config_file)
 
     # show a successful message
     info("✅ Config preparation completed.")
 
     return Config(
-        config=config,
+        config=config_file,
         seed=seed,
         distribution_type=distribution_type,
         num_requests=num_requests,

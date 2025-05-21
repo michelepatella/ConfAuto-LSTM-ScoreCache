@@ -51,7 +51,7 @@ class LSTM(nn.Module):
                             self,
                             param,
                             get_config_value(
-                                config_settings.config,
+                                config_settings.config_file,
                                 f"model.params.{param}"
                             )
                         )
@@ -64,7 +64,7 @@ class LSTM(nn.Module):
                         self,
                         param,
                         get_config_value(
-                            config_settings.config,
+                            config_settings.config_file,
                             f"model.params.{param}"
                             )
                     )
