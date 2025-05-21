@@ -74,7 +74,7 @@ def prepare_config():
     info("✅ Config preparation completed.")
 
     return Config(
-        config=config_file,
+        config_file=config_file,
         seed=seed,
         distribution_type=distribution_type,
         num_requests=num_requests,
