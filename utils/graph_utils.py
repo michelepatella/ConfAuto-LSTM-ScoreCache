@@ -9,46 +9,6 @@ from collections import Counter
 from sklearn.preprocessing import label_binarize
 
 
-def plot_key_frequencies_histogram(requests):
-    """
-    Method to plot the frequency of key accesses via histogram.
-    :param requests: The requests generated.
-    :return:
-    """
-    # initial message
-    info("🔄 Key frequencies histogram building started...")
-
-    try:
-        # check requests list
-        if not requests:
-            raise ValueError("❌ Request list is empty, cannot generate plot.")
-
-        # count the keys
-        key_counts = Counter(requests)
-
-        # sort the keys
-        keys = sorted(key_counts.keys())
-
-        # count the frequency of each key
-        freqs = [key_counts[k] for k in keys]
-
-        # plot the histogram showing the
-        # frequency key accesses
-        plt.figure(figsize=(12, 10))
-        plt.bar(keys, freqs)
-        plt.xlabel("Key")
-        plt.ylabel("Frequency")
-        plt.title("Access Frequency per Key")
-        plt.tight_layout()
-        plt.show()
-        plt.close()
-    except (NameError, TypeError, ImportError, AttributeError, KeyError) as e:
-        raise RuntimeError(f"❌ Error while building key frequencies histogram: {e}.")
-
-    # show a successful message
-    info("🟢 Key frequencies histogram built.")
-
-
 def plot_zipf_loglog(requests):
     """
     Method to plot the frequency of key accesses via loglog.
