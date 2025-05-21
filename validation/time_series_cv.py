@@ -69,7 +69,7 @@ def _compute_time_series_cv(
         # setup for training
         device, criterion, model, optimizer = model_setup(
             params["model"]["params"],
-            params["training"]["learning_rate"],
+            params["training"]["optimizer"]["learning_rate"],
             extract_targets_from_dataloader(training_loader),
             config_settings
         )

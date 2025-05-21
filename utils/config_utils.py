@@ -89,12 +89,11 @@ def _merge_config(config, updates):
     return config
 
 
-def update_config(config, updated_config, prepare_config):
+def update_config(updated_config, prepare_config):
     """
     Method to update the config file.
     :param prepare_config: Method to validate the config and
     return the updated config settings.
-    :param config: The config object.
     :param updated_config: The updated config to write.
     :return: The updated config settings.
     """
@@ -107,9 +106,12 @@ def update_config(config, updated_config, prepare_config):
     # debugging
     debug(f"⚙️ Updated config to be saved: {updated_config}.")
 
+    # load the original file
+    original_config = load_config()
+
     # merge update configs with config file
     merged_config = _merge_config(
-        config,
+        original_config,
         updated_config
     )
 

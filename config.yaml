@@ -1,5 +1,4 @@
 data:
-
   distribution:
     seed: 42
     type: static
@@ -8,8 +7,10 @@ data:
     key_range:
       first_key: 1
       last_key: 20
-    freq_windows: [ 10, 100, 1000 ]
-
+    freq_windows:
+    - 10
+    - 100
+    - 1000
   access_pattern:
     zipf:
       alpha: 0.8
@@ -18,7 +19,6 @@ data:
       time_steps: 10
     locality:
       prob: 0.7
-
   temporal_pattern:
     burstiness:
       burst_high: 1.0
@@ -28,43 +28,32 @@ data:
     periodic:
       base_scale: 5
       amplitude: 5
-
   sequence:
     len: 25
     embedding_dim: 32
-
   dataset:
     training_perc: 0.7
     static_save_path: data/static_access_logs.csv
     dynamic_save_path: data/dynamic_access_logs.csv
-
-
 model:
-
   general:
     num_features: 5
     save_path: trained_lstm_model.pt
-
   params:
-      hidden_size: 256
-      num_layers: 3
-      bias: false
-      batch_first: true
-      dropout: 0.2
-      bidirectional: false
-      proj_size: 0
-
-
+    hidden_size: 128
+    num_layers: 2
+    bias: false
+    batch_first: true
+    dropout: 0.1
+    bidirectional: false
+    proj_size: 0
 validation:
-
   cross_validation:
     num_folds: 2
     num_epochs: 1
-
   early_stopping:
     patience: 5
     delta: 0.0005
-
   search_space:
     model:
       params:
@@ -75,28 +64,21 @@ validation:
         dropout_range:
         - 0.1
     training:
-      learning_rate_range:
-      - 0.001
-
-
+      optimizer:
+        learning_rate_range:
+        - 0.001
 training:
-
   general:
     num_epochs: 10
     batch_size: 64
-
   optimizer:
     type: adamw
     learning_rate: 0.001
     weight_decay: 0.05
     momentum: 0.9
-
-
 testing:
   general:
     batch_size: 64
-
-
 evaluation:
   top_k: 3
   costs:

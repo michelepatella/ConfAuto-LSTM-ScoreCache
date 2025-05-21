@@ -201,7 +201,7 @@ def _validate_search_space_params(config):
     )
     learning_rate_range = get_config_value(
         config,
-        "validation.search_space.training.learning_rate_range"
+        "validation.search_space.training.optimizer.learning_rate_range"
     )
 
     # check search space params
