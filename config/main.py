@@ -2,6 +2,7 @@ from config.Config import Config
 from config.data_params_validator import _validate_data_distribution_params, _validate_data_access_pattern_params, \
     _validate_data_sequence_params, _validate_data_dataset_params
 from config.evaluation_params_validator import _validate_evaluation_general_params
+from config.inference_params_validator import _validate_inference_confidence_intervals_params
 from config.model_params_validator import _validate_model_general_params, _validate_model_params
 from config.testing_params_validator import _validate_testing_general_params
 from config.training_params_validator import _validate_training_general_params, _validate_training_optimizer_params
@@ -70,6 +71,9 @@ def prepare_config():
     # testing config
     testing_batch_size = _validate_testing_general_params(config_file)
 
+    # inference config
+    confidence_level = _validate_inference_confidence_intervals_params(config_file)
+
     # show a successful message
     info("✅ Config preparation completed.")
 
@@ -127,4 +131,5 @@ def prepare_config():
         fp_cost=fp_cost,
         fn_cost=fn_cost,
         testing_batch_size=testing_batch_size,
+        confidence_level=confidence_level
     )

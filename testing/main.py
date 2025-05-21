@@ -46,7 +46,7 @@ def testing(config_settings):
     model.eval()
 
     # evaluate the model
-    avg_loss, avg_loss_per_class, metrics, cost_perc = evaluate_model(
+    avg_loss, avg_loss_per_class, metrics, cost_perc, _, _ = evaluate_model(
         model,
         testing_loader,
         criterion,

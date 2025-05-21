@@ -88,3 +88,6 @@ evaluation:
   costs:
     fp_cost: 1.0
     fn_cost: 10.0
+inference:
+  confidence_intervals:
+    confidence_level: 0.95

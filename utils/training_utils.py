@@ -132,7 +132,7 @@ def train_n_epochs(
                 if validation_loader:
 
                     # get the validation average loss
-                    avg_loss, _, _, _ = evaluate_model(
+                    avg_loss, _, _, _, _, _ = evaluate_model(
                         model,
                         validation_loader,
                         criterion,

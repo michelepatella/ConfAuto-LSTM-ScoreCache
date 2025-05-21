@@ -56,3 +56,4 @@ class Config:
     fp_cost: float
     fn_cost: float
     testing_batch_size: int
+    confidence_level: float

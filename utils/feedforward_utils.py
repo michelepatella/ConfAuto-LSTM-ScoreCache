@@ -13,7 +13,7 @@ def _compute_forward(
     :param model: The model to use.
     :param criterion: The loss function.
     :param device: The device to use.
-    :return: The loss function for the batch.
+    :return: The loss function (if computed) and the outputs for the batch.
     """
     # initial message
     info("🔄 Forward pass started...")
@@ -44,18 +44,19 @@ def _compute_forward(
         debug(f"⚙️ Input batch shape: {x_features.shape}.")
         debug(f"⚙️ Input keys shape: {x_keys.shape}")
         debug(f"⚙️ Model output shape: {outputs.shape}.")
-
     except (TypeError, AttributeError) as e:
         raise RuntimeError(f"❌ Error during model inference: {e}.")
 
-    try:
-        # calculate the loss and update the total one
-        loss = criterion(outputs, y_key)
+    loss = None
+    if criterion is not None:
+        try:
+            # calculate the loss and update the total one
+            loss = criterion(outputs, y_key)
 
-        # debugging
-        debug(f"⚙️ Loss: {loss.item()}.")
-    except (TypeError, ValueError) as e:
-        raise RuntimeError(f"❌ Error while calculating loss: {e}.")
+            # debugging
+            debug(f"⚙️ Loss: {loss.item()}.")
+        except (TypeError, ValueError) as e:
+            raise RuntimeError(f"❌ Error while calculating loss: {e}.")
 
     # show a successful message
     info("🟢 Forward pass computed.")

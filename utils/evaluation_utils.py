@@ -22,14 +22,15 @@ def evaluate_model(
     :param device: Device to use.
     :param config_settings: The configuration settings.
     :param show_stats: Whether to show statistics.
-    :return: The average loss, the metrics, and the cost.
+    :return: The average loss, the metrics, the cost, all the outputs
+    and the all the variances.
     """
     # initial message
     info("🔄 Model's evaluation started...")
 
     # infer the batch
     (total_loss, loss_per_class,
-     all_preds, all_targets, all_outputs) = _infer_batch(
+     all_preds, all_targets, all_outputs, all_vars) = _infer_batch(
         model,
         loader,
         criterion,
@@ -93,4 +94,5 @@ def evaluate_model(
     # show a successful message
     info("🟢 Model's evaluation completed.")
 
-    return avg_loss, avg_loss_per_class, metrics, cost_perc
+    return (avg_loss, avg_loss_per_class,
+            metrics, cost_perc, all_outputs, all_vars)
