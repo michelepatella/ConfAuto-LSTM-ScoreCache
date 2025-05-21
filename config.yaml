@@ -50,9 +50,9 @@ model:
 validation:
   cross_validation:
     num_folds: 10
-    num_epochs: 5
+    num_epochs: 50
   early_stopping:
-    patience: 3
+    patience: 10
     delta: 0.0005
   search_space:
     model:
@@ -73,7 +73,7 @@ validation:
         - 0.005
 training:
   general:
-    num_epochs: 50
+    num_epochs: 100
     batch_size: 64
   optimizer:
     type: adamw
