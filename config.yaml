@@ -44,7 +44,7 @@ model:
     num_layers: 2
     bias: false
     batch_first: true
-    dropout: 0.1
+    dropout: 0.3
     bidirectional: false
     proj_size: 0
 validation:
@@ -77,7 +77,7 @@ training:
     batch_size: 64
   optimizer:
     type: adamw
-    learning_rate: 0.001
+    learning_rate: 0.005
     weight_decay: 0.05
     momentum: 0.9
 testing:
