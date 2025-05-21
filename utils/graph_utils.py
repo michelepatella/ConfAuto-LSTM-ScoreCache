@@ -34,7 +34,7 @@ def plot_key_frequencies_histogram(requests):
 
         # plot the histogram showing the
         # frequency key accesses
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(12, 10))
         plt.bar(keys, freqs)
         plt.xlabel("Key")
         plt.ylabel("Frequency")
@@ -160,9 +160,11 @@ def plot_keys_transition_matrix(requests):
     info("🟢 Keys transition matrix built.")
 
 
-def plot_requests_over_time(requests, delta_times):
+def plot_requests_over_time(requests, delta_times, bin_size=1000):
     """
     Method to plot the requests over the time.
+    :param bin_size: The bin size to consider when
+    plotting the requests over the time.
     :param requests: The requests generated.
     :param delta_times: The delta times generated.
     :return:
@@ -182,13 +184,32 @@ def plot_requests_over_time(requests, delta_times):
             timestamps.append(timestamps[-1] + dt)
         timestamps = timestamps[1:]
 
+        # get the max timestamp (the last element)
+        max_time = timestamps[-1]
+
+        # calculate the number of bin required
+        # to cover max_time
+        num_bins = int(max_time // bin_size) + 1
+
+
+        bins = [0] * num_bins
+        for ts in timestamps:
+            # for each timestamp, find its bin
+            # increasing the occurrences of this latter
+            bin_index = int(ts // bin_size)
+            bins[bin_index] += 1
+
+        # define the position of each bin
+        x_vals = [i * bin_size for i in range(num_bins)]
+
         # show requests over time
-        plt.figure(figsize=(10, 5))
-        plt.plot(timestamps, requests)
-        plt.ylabel("Key Requested")
-        plt.xlabel("Timestamps")
-        plt.title("Requests Over Time")
+        plt.figure(figsize=(12, 10))
+        plt.plot(x_vals, bins, marker='o', linewidth=1)
+        plt.xlabel(f"Time (ms), bin size = {bin_size}")
+        plt.ylabel("Number of Requests")
+        plt.title("Requests Over Time (Binned)")
         plt.grid(True)
+        plt.tight_layout()
         plt.show()
         plt.close()
     except (TypeError, IndexError, ValueError) as e:
@@ -271,7 +292,7 @@ def plot_class_report(class_report):
         df = pd.DataFrame(class_report_filtered).T
 
         (df[['precision', 'recall', 'f1-score']].
-            plot(kind='bar', figsize=(12, 6))
+            plot(kind='bar', figsize=(12, 10))
          )
         plt.title("Classification Report Metrics per Class")
         plt.xlabel("Class")
