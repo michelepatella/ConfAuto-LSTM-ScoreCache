@@ -89,3 +89,5 @@ evaluation:
 inference:
   confidence_intervals:
     confidence_level: 0.95 #
+  mc_dropout:
+    num_samples: 50

@@ -56,3 +56,4 @@ class Config:
     top_k: int
     testing_batch_size: int
     confidence_level: float
+    mc_dropout_num_samples: int

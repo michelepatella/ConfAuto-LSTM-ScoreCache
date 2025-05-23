@@ -72,7 +72,9 @@ def prepare_config():
     testing_batch_size = _validate_testing_general_params(config_file)
 
     # inference config
-    confidence_level = _validate_inference_confidence_intervals_params(config_file)
+    confidence_level, mc_dropout_num_samples = (
+        _validate_inference_confidence_intervals_params(config_file)
+    )
 
     # show a successful message
     info("✅ Config preparation completed.")
@@ -130,5 +132,6 @@ def prepare_config():
         learning_rate_range=learning_rate_range,
         top_k=top_k,
         testing_batch_size=testing_batch_size,
-        confidence_level=confidence_level
+        confidence_level=confidence_level,
+        mc_dropout_num_samples=mc_dropout_num_samples
     )
