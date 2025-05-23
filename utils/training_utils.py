@@ -1,3 +1,4 @@
+import copy
 from torch.cuda import CudaError
 from tqdm import tqdm
 from utils.log_utils import info, debug
@@ -74,7 +75,7 @@ def train_n_epochs(
         device,
         config_settings,
         early_stopping=False,
-        validation_loader=None,
+        validation_loader=None
 ):
     """
     Method to train the model a specified number of epochs.
@@ -87,7 +88,7 @@ def train_n_epochs(
     :param config_settings: The configuration settings.
     :param early_stopping: Whether to apply early stopping or not.
     :param validation_loader: Validation data loader.
-    :return: The average loss.
+    :return: The average loss and the best trained model.
     """
     # initial message
     info("🔄 Train n-epochs started...")
@@ -104,6 +105,8 @@ def train_n_epochs(
     # initialize data
     tot_loss = 0.0
     num_epochs_run = 0
+    best_model_wts = copy.deepcopy(model.state_dict())
+    best_loss = float('inf')
 
     try:
         es = None
@@ -150,8 +153,22 @@ def train_n_epochs(
                         info("🟢 Train n-epochs completed.")
                         break
 
+                    # save the model if it is the new best one
+                    if avg_loss < best_loss:
+                        best_loss = avg_loss
+                        best_model_wts = copy.deepcopy(model.state_dict())
+
+        # show the best validation loss obtained
+        info(f"🏆 Best validation loss achieved: {best_loss}")
+
+        # load best weights to the model
+        model.load_state_dict(best_model_wts)
+
     except (NameError, AttributeError, TypeError, ValueError, CudaError, LookupError) as e:
         raise RuntimeError(f"❌ Error while training the model (n-epochs): {e}.")
+
+    # debugging
+    debug(f"⚙️ Number of epochs run: {num_epochs_run}.")
 
     # show a successful message
     info("🟢 Train n-epochs completed.")
@@ -161,6 +178,6 @@ def train_n_epochs(
         early_stopping and validation_loader
         and num_epochs_run > 0
     ):
-        return tot_loss / num_epochs_run
+        return tot_loss / num_epochs_run, model
     else:
-        return None
+        return None, model

@@ -25,6 +25,7 @@ class Config:
     seq_len: int
     embedding_dim: int
     training_perc: float
+    validation_perc: float
     static_save_path: str
     dynamic_save_path: str
     num_features: int

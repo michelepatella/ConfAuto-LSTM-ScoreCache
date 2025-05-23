@@ -1,88 +1,89 @@
 data:
   distribution:
-    seed: 42
-    type: static
-    num_requests: 30000
-    num_keys: 30
+    seed: 42 #
+    type: dynamic #
+    num_requests: 30000 #
+    num_keys: 30 #
     key_range:
-      first_key: 1
-      last_key: 30
+      first_key: 1 #
+      last_key: 30 #
     freq_windows:
-    - 10
-    - 100
-    - 1000
+    - 10 #
+    - 100 #
+    - 1000 #
   access_pattern:
     zipf:
-      alpha: 0.8
-      alpha_start: 0.8
-      alpha_end: 1.2
-      time_steps: 10
+      alpha: 0.8 #
+      alpha_start: 0.8 #
+      alpha_end: 1.2 #
+      time_steps: 10 #
     locality:
-      prob: 0.7
+      prob: 0.7 #
   temporal_pattern:
     burstiness:
-      burst_high: 1.5
-      burst_low: 3.0
-      burst_every: 500
-      burst_peak: 50
+      burst_high: 1.5 #
+      burst_low: 3.0 #
+      burst_every: 500 #
+      burst_peak: 50 #
     periodic:
-      base_scale: 20
-      amplitude: 15
+      base_scale: 20 #
+      amplitude: 15 #
   sequence:
-    len: 25
-    embedding_dim: 32
+    len: 25 #
+    embedding_dim: 32 #
   dataset:
-    training_perc: 0.7
-    static_save_path: data/static_access_logs.csv
-    dynamic_save_path: data/dynamic_access_logs.csv
+    training_perc: 0.7 #
+    validation_perc: 0.1 #
+    static_save_path: data/static_access_logs.csv #
+    dynamic_save_path: data/dynamic_access_logs.csv #
 model:
   general:
-    num_features: 5
-    save_path: trained_lstm_model.pt
+    num_features: 5 #
+    save_path: trained_lstm_model.pt #
   params:
-    hidden_size: 128
-    num_layers: 2
-    bias: false
-    batch_first: true
-    dropout: 0.3
-    bidirectional: false
-    proj_size: 0
+    hidden_size: 128 #
+    num_layers: 2 #
+    bias: false #
+    batch_first: true #
+    dropout: 0.3 #
+    bidirectional: false #
+    proj_size: 0 #
 validation:
   cross_validation:
-    num_folds: 10
-    num_epochs: 30
+    num_folds: 10 #
+    num_epochs: 30 #
   early_stopping:
-    patience: 10
-    delta: 0.0005
+    patience: 40 #
+    delta: 0.0005 #
   search_space:
     model:
       params:
         hidden_size_range:
-        - 128
-        - 256
+        - 128 #
+        - 256 #
         num_layers_range:
-        - 2
-        - 3
+        - 2 #
+        - 3 #
         dropout_range:
-        - 0.1
-        - 0.3
+        - 0.1 #
+        - 0.3 #
     training:
       optimizer:
         learning_rate_range:
-        - 0.001
-        - 0.005
+        - 0.001 #
+        - 0.005 #
 training:
   general:
-    num_epochs: 100
-    batch_size: 64
+    num_epochs: 500 #
+    batch_size: 64 #
   optimizer:
-    type: adamw
-    learning_rate: 0.005
-    weight_decay: 0.05
-    momentum: 0.9
+    type: adamw #
+    learning_rate: 0.005 #
+    weight_decay: 0.05 #
+    momentum: 0.9 #
 testing:
   general:
-    batch_size: 64
+    batch_size: 64 #
 evaluation:
   top_k: 3
   costs:
@@ -90,4 +91,4 @@ evaluation:
     fn_cost: 10.0
 inference:
   confidence_intervals:
-    confidence_level: 0.95
+    confidence_level: 0.95 #

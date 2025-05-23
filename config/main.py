@@ -37,7 +37,7 @@ def prepare_config():
     seq_len, embedding_dim, num_requests = (
         _validate_data_sequence_params(config_file, num_requests))
 
-    training_perc, static_save_path, dynamic_save_path = (
+    training_perc, validation_perc, static_save_path, dynamic_save_path = (
         _validate_data_dataset_params(config_file))
 
     # model config
@@ -100,6 +100,7 @@ def prepare_config():
         seq_len=seq_len,
         embedding_dim=embedding_dim,
         training_perc=training_perc,
+        validation_perc=validation_perc,
         static_save_path=static_save_path,
         dynamic_save_path=dynamic_save_path,
         num_features=num_features,

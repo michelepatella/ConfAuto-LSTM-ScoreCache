@@ -1,5 +1,3 @@
-from urllib.request import localhost
-
 from utils.config_utils import get_config_value
 from utils.log_utils import info
 

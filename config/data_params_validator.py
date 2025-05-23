@@ -201,12 +201,14 @@ def _check_sequence_params(
 
 def _check_dataset_params(
         training_perc,
+        validation_perc,
         static_save_path,
         dynamic_save_path
 ):
     """
     Method to check dataset parameters.
     :param training_perc: The training set percentage.
+    :param validation_perc: The validation set percentage.
     :param static_save_path: The path to save the static dataset.
     :param dynamic_save_path: The path to save the dynamic dataset.
     :return:
@@ -218,6 +220,14 @@ def _check_dataset_params(
     ):
         raise RuntimeError("❌ 'data.dataset.training_perc'"
                            " must be a float between 0.0 and 1.0.")
+
+    # check validation percentage
+    if (
+        not isinstance(validation_perc, float)
+        or not (0.0 <= validation_perc < 1.0)
+    ):
+        raise RuntimeError("❌ 'data.dataset.validation_perc'"
+                            " must be a float between 0.0 and 1.0 (excluded).")
 
     # check dataset paths
     if(
@@ -416,6 +426,10 @@ def _validate_data_dataset_params(config):
         config,
         "data.dataset.training_perc"
     )
+    validation_perc = get_config_value(
+        config,
+        "data.dataset.validation_perc"
+    )
     static_save_path = get_config_value(
         config,
         "data.dataset.static_save_path"
@@ -428,6 +442,7 @@ def _validate_data_dataset_params(config):
     # check dataset params
     _check_dataset_params(
         training_perc,
+        validation_perc,
         static_save_path,
         dynamic_save_path
     )
@@ -435,4 +450,4 @@ def _validate_data_dataset_params(config):
     # show a successful message
     info("🟢 Dataset params validated.")
 
-    return training_perc, static_save_path, dynamic_save_path
+    return training_perc, validation_perc, static_save_path, dynamic_save_path
