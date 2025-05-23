@@ -46,9 +46,9 @@ def _check_and_update_best_params(
             best_params = curr_params
 
             # print updated parameters and best average loss
-            info(f"🆕 Updated best parameters: {best_params['model']}"
+            print(f"🆕 Updated best parameters: {best_params['model']}"
                   f" {best_params['training']}")
-            info(f"🆕 Updated best average loss: {best_avg_loss}")
+            print(f"🆕 Updated best average loss: {best_avg_loss}")
         else:
             info("ℹ️ No best average loss improvement, best "
                   "parameters not updated.")
