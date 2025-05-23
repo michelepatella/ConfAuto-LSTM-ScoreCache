@@ -54,7 +54,5 @@ class Config:
     dropout_range: list
     learning_rate_range: list
     top_k: int
-    fp_cost: float
-    fn_cost: float
     testing_batch_size: int
     confidence_level: float
