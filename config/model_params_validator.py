@@ -31,6 +31,17 @@ def _check_model_params(
         bidirectional,
         proj_size
 ):
+    """
+    Method to check model parameters.
+    :param hidden_size: The hidden size.
+    :param num_layers: The number of layers.
+    :param bias: The bias parameter.
+    :param batch_first: Whether to use batch first or not.
+    :param dropout: The dropout rate.
+    :param bidirectional: Whether to apply bidirectional or not.
+    :param proj_size: The projection size.
+    :return:
+    """
     # check hidden size
     if (
         not isinstance(hidden_size, int)
