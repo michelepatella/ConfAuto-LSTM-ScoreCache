@@ -1,5 +1,4 @@
 import copy
-from torch.cuda import CudaError
 from tqdm import tqdm
 from utils.log_utils import info, debug
 from utils.EarlyStopping import EarlyStopping
@@ -59,7 +58,8 @@ def _train_one_epoch(
 
             #training_loader.set_postfix(loss=loss.item())
 
-    except (AttributeError, TypeError, ValueError, StopIteration, CudaError, AssertionError) as e:
+    except (AttributeError, TypeError, ValueError,
+            StopIteration, AssertionError) as e:
         raise RuntimeError(f"❌ Error while training the model (one-epoch): {e}.")
 
     # show a successful message
@@ -130,19 +130,21 @@ def train_n_epochs(
             # increase number of epochs by one
             num_epochs_run += 1
 
-            if early_stopping:
-                avg_loss = None
-                if validation_loader:
+            if validation_loader is not None:
+                # get the validation average loss
+                avg_loss, *_ = evaluate_model(
+                    model,
+                    validation_loader,
+                    criterion,
+                    device,
+                    config_settings
+                )
+                tot_loss = tot_loss + avg_loss
 
-                    # get the validation average loss
-                    avg_loss, _, _, _, _, _ = evaluate_model(
-                        model,
-                        validation_loader,
-                        criterion,
-                        device,
-                        config_settings
-                    )
-                    tot_loss = tot_loss + avg_loss
+                # save the model weights if it is the new best one
+                if avg_loss < best_loss:
+                    best_loss = avg_loss
+                    best_model_wts = copy.deepcopy(model.state_dict())
 
                 # early stopping logic
                 if early_stopping and avg_loss is not None:
@@ -153,18 +155,13 @@ def train_n_epochs(
                         info("🟢 Train n-epochs completed.")
                         break
 
-                    # save the model if it is the new best one
-                    if avg_loss < best_loss:
-                        best_loss = avg_loss
-                        best_model_wts = copy.deepcopy(model.state_dict())
-
         # show the best validation loss obtained
         info(f"🏆 Best validation loss achieved: {best_loss}")
 
         # load best weights to the model
         model.load_state_dict(best_model_wts)
 
-    except (NameError, AttributeError, TypeError, ValueError, CudaError, LookupError) as e:
+    except (NameError, AttributeError, TypeError, ValueError, LookupError) as e:
         raise RuntimeError(f"❌ Error while training the model (n-epochs): {e}.")
 
     # debugging
@@ -174,10 +171,7 @@ def train_n_epochs(
     info("🟢 Train n-epochs completed.")
 
     # check if the avg loss needs to be returned
-    if (
-        early_stopping and validation_loader
-        and num_epochs_run > 0
-    ):
+    if validation_loader and num_epochs_run > 0:
         return tot_loss / num_epochs_run, model
     else:
         return None, model

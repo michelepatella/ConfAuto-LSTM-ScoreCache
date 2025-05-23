@@ -266,3 +266,33 @@ def plot_class_report(class_report):
         info("🟢 Class report plot built.")
     except (AttributeError, TypeError, ValueError, KeyError) as e:
         raise RuntimeError(f"❌ Error while building the class report plot: {e}.")
+
+
+def plot_confusion_matrix(confusion_matrix):
+    """
+    Method to plot the confusion matrix.
+    :param confusion_matrix: The computed confusion matrix.
+    :return:
+    """
+    # initial message
+    info("🔄 Confusion matrix plot building started...")
+
+    try:
+        plt.figure(figsize=(12, 10))
+        sns.heatmap(
+            confusion_matrix,
+            annot=True,
+            fmt="d",
+            cmap="Blues",
+        )
+        plt.title("Confusion Matrix")
+        plt.ylabel("True Label")
+        plt.xlabel("Predicted Label")
+        plt.tight_layout()
+        plt.show()
+        plt.close()
+    except (AttributeError, TypeError, ValueError) as e:
+        raise RuntimeError(f"❌ Error while building the confusion matrix plot: {e}.")
+
+    # show a successful message
+    info("🟢 Confusion matrix built.")

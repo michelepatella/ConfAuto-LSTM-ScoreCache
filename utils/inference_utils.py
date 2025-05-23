@@ -1,48 +1,7 @@
-from collections import defaultdict
 import torch
 from scipy.stats import norm
 from utils.feedforward_utils import _compute_forward
 from utils.log_utils import info, debug
-
-
-def _calculate_average_loss_per_class(
-        criterion,
-        outputs,
-        y_key,
-        loss_per_class
-):
-    """
-    Method to calculate average loss per class.
-    :param criterion: The criterion to use.
-    :param outputs: The outputs of the model.
-    :param y_key: The targets.
-    :param loss_per_class: The loss per class calculated so far.
-    :return: The average loss per class updated.
-    """
-    # initial message
-    info("🔄 Average loss per class calculation started...")
-
-    # for all the class
-    for class_id in torch.unique(y_key):
-
-        # create a boolean mask for all samples
-        # belonging to the current class
-        mask = y_key == class_id
-
-        # if there is at least one sample for
-        # this class
-        if mask.sum() > 0:
-            # compute the loss and update it
-            class_loss = criterion(outputs[mask], y_key[mask])
-            loss_per_class[int(class_id.item())].append(class_loss.item())
-
-            # debugging
-            debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
-
-    # show a successful message
-    info("🟢 Average loss per class calculated.")
-
-    return loss_per_class
 
 
 def _enable_mc_dropout(model):
@@ -54,9 +13,12 @@ def _enable_mc_dropout(model):
     # initial message
     info("🔄 MC dropout enabling started...")
 
-    for module in model.modules():
-        if isinstance(module, torch.nn.Dropout):
-            module.train()
+    try:
+        for module in model.modules():
+            if isinstance(module, torch.nn.Dropout):
+                module.train()
+    except (AttributeError, TypeError) as e:
+        raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
     # show a successful message
     info("🟢 MC dropout enabled.")
@@ -77,8 +39,8 @@ def _infer_batch(
     :param device: The device to be used.
     :param mc_dropout_samples: The number of MC dropout
     samples (=1 means no MC dropout).
-    :return: The total loss, the loss per class, all the predictions,
-     all the targets, all the outputs returned by the model and the variances.
+    :return: The total loss, all the predictions,
+    all the targets, all the outputs returned by the model and the variances.
     """
     # initial message
     info("🔄 Batch inference started...")
@@ -90,7 +52,6 @@ def _infer_batch(
     # initialize data
     total_loss = 0.0
     all_preds, all_targets, all_outputs = [], [], []
-    loss_per_class = defaultdict(list)
     all_vars = []
 
     model.eval()
@@ -104,11 +65,16 @@ def _infer_batch(
                 debug(f"⚙️ Batch x_keys shape: {x_keys.shape}.")
                 debug(f"⚙️ Batch y_key shape: {y_key.shape}.")
 
+                # move features and key on device
                 x_features = x_features.to(device)
                 y_key = y_key.to(device)
 
                 outputs_mc = []
+                # for each MC sample
                 for _ in range(mc_dropout_samples):
+
+                    # if there is more than one MC sample
+                    # enable MC dropout
                     if mc_dropout_samples > 1:
                         _enable_mc_dropout(model)
 
@@ -123,19 +89,18 @@ def _infer_batch(
                     # store the output
                     outputs_mc.append(outputs.unsqueeze(0))
 
-                # save mean of MC dropout results
+                # save the mean of the outputs of the model
+                # for a specific input
                 outputs_mc_tensor = torch.cat(outputs_mc, dim=0)
                 outputs_mean = outputs_mc_tensor.mean(dim=0)
 
                 if mc_dropout_samples > 1:
-                    # obtain and save variance
+                    # obtain and save the variance
                     outputs_var = outputs_mc_tensor.var(
                         dim=0,
                         unbiased=False
                     )
                     all_vars.extend(outputs_var.cpu())
-                else:
-                    outputs_var = None
 
                 # compute the loss
                 loss = criterion(outputs_mean, y_key)
@@ -157,21 +122,13 @@ def _infer_batch(
                 all_targets.extend(y_key.cpu().numpy())
                 all_outputs.extend(outputs_mean.cpu())
 
-                # calculate loss per class
-                loss_per_class = _calculate_average_loss_per_class(
-                    criterion,
-                    outputs_mean,
-                    y_key,
-                    loss_per_class
-                )
-
     except (IndexError, ValueError, KeyError, AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
     # show a successful message
     info("🟢 Batch inferred.")
 
-    return (total_loss, loss_per_class, all_preds,
+    return (total_loss, all_preds,
             all_targets, all_outputs, all_vars)
 
 

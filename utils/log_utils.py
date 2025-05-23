@@ -21,7 +21,7 @@ file_handler = RotatingFileHandler(
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(formatter)
 
-# show in terminal only ERROR-level loggin messages
+# show in terminal only ERROR-level logging messages
 stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.DEBUG)
 stream_handler.setFormatter(formatter)

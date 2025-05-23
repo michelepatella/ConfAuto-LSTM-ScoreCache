@@ -1,7 +1,6 @@
 import torch
-import numpy as np
 from sklearn.metrics import classification_report, confusion_matrix, cohen_kappa_score
-from utils.log_utils import info, debug
+from utils.log_utils import info
 
 
 def _calculate_top_k_accuracy(
@@ -22,6 +21,8 @@ def _calculate_top_k_accuracy(
     try:
         # prepare data
         outputs_tensor = torch.stack(outputs)
+
+        # extract top-k predictions
         top_k_preds = (torch.topk(
             outputs_tensor,
             k=config_settings.top_k,
@@ -133,121 +134,3 @@ def _compute_metrics(
     info("🟢 Metrics computed.")
 
     return metrics
-
-
-def _calculate_average_losses(
-        total_loss,
-        loss_per_class,
-        num_batches
-):
-    """
-    Method to calculate average losses (global and per class).
-    :param total_loss: The total global loss.
-    :param loss_per_class: The total loss per class.
-    :param num_batches: The number of batches.
-    :return: The average global loss and the average loss per class.
-    """
-    # initial message
-    info("🔄 Average losses calculation started...")
-
-    # debugging
-    debug(f"⚙️ Total loss: {total_loss}.")
-    debug(f"⚙️ Number of batches: {num_batches}.")
-
-    try:
-        # compute the average loss
-        avg_loss = total_loss / num_batches
-
-        # compute the average loss per class
-        avg_loss_per_class = {
-            cls: sum(losses) / len(losses)
-            for cls, losses in loss_per_class.items()
-        }
-    except (ZeroDivisionError, TypeError, AttributeError, KeyError) as e:
-        raise RuntimeError(f"❌ Error while calculating average losses: {e}.")
-
-    # show a successful message
-    info("🟢 Average losses calculated.")
-
-    return avg_loss, avg_loss_per_class
-
-
-def _calculate_cost(
-        targets,
-        predictions,
-        config_settings
-):
-    """
-    Method to calculate costs.
-    :param targets: The targets.
-    :param predictions: The predictions coming from the model.
-    :param config_settings: The configuration settings.
-    :return: The computed total cost in terms of percentage.
-    """
-    # initial message
-    info("🔄 Cost calculation started...")
-
-    try:
-        # get the no. of classes
-        num_classes = config_settings.num_keys
-
-        # get costs corresponding to each kind of error
-        fp_cost = config_settings.fp_cost
-        fn_cost = config_settings.fn_cost
-
-        # debugging
-        debug(f"⚙️ FN cost: {fp_cost}.")
-        debug(f"⚙️ FN cost: {fn_cost}.")
-
-        # targets and predictions represented
-        # as one-hot encoders
-        targets_oh = np.eye(num_classes)[targets]
-        preds_oh = np.eye(num_classes)[predictions]
-
-        # debugging
-        debug(f"⚙️ One-hot targets shape: {targets_oh.shape}.")
-        debug(f"⚙️ One-hot predictions shape: {preds_oh.shape}.")
-
-        # calculate errors (false positive and false negative respectively)
-        fp = np.logical_and(
-            preds_oh == 1,
-            targets_oh == 0
-        )
-        fn = np.logical_and(
-            preds_oh == 0,
-            targets_oh == 1
-        )
-
-        # calculate the tot. cost
-        total_cost = (
-            np.sum(fp) * fp_cost +
-            np.sum(fn) * fn_cost
-        )
-
-        # debugging
-        debug(f"⚙️ Tot. cost: {total_cost.shape}.")
-
-        n_samples = len(targets)
-        # get the max. cost
-        max_fp = n_samples * (num_classes - 1)
-        max_fn = n_samples
-        max_cost = max_fp * fp_cost + max_fn * fn_cost
-
-        # debugging
-        debug(f"⚙️ Max. FP cost: {max_fp}.")
-        debug(f"⚙️ Max. FN cost: {max_fn}.")
-        debug(f"⚙️ Max. cost: {max_cost}.")
-
-        # calculate the cost in terms of %
-        if max_cost > 0 and max_cost is not None:
-            cost_perc = (total_cost/max_cost) * 100
-        else:
-            cost_perc = None
-
-    except (AttributeError, ZeroDivisionError, TypeError, ValueError, IndexError) as e:
-        raise RuntimeError(f"❌ Error while calculating cost: {e}.")
-
-    # show a successful message
-    info("🟢 Cost calculated.")
-
-    return cost_perc
