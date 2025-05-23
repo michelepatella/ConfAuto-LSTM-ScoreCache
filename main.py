@@ -17,7 +17,7 @@ config_settings = prepare_config()
 
 training(config_settings)
 
-#avg_loss, metrics = testing(config_settings)
+avg_loss, metrics = testing(config_settings)
 
 print("----------------------------------------------------------------------------------------")
 """
