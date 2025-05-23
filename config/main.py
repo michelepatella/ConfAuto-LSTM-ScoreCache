@@ -8,7 +8,7 @@ from config.testing_params_validator import _validate_testing_general_params
 from config.training_params_validator import _validate_training_general_params, _validate_training_optimizer_params
 from config.validation_params_validator import _validate_cv_params, _validate_early_stopping_params, \
     _validate_search_space_params
-from utils.config_utils import load_config
+from config.config_utils import load_config
 from utils.log_utils import info
 
 

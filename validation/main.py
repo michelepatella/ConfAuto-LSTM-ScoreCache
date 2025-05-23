@@ -20,6 +20,7 @@ def validation(config_settings):
     # load the training set
     training_set, _ = dataloader_setup(
         "training",
+        config_settings.training_batch_size,
         False,
         config_settings,
         AccessLogsDataset

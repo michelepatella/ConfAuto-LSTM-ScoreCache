@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
-from utils.config_utils import get_config_value
+from config.config_utils import get_config_value
 from utils.dataset_utils import _get_dataset_path_type
 from utils.log_utils import info, debug
 
@@ -42,6 +42,7 @@ def create_data_loader(
 
 def dataloader_setup(
         loader_type,
+        batch_size,
         shuffle,
         config_settings,
         AccessLogsDataset
@@ -49,6 +50,7 @@ def dataloader_setup(
     """
     Method to prepare the data loader for the training and testing.
     :param loader_type: The loader type ("training" or "testing").
+    :param batch_size: The batch size to use.
     :param shuffle: Whether to shuffle the data.
     :param config_settings: The configuration settings.
     :param AccessLogsDataset: The class AccessLogsDataset.
@@ -74,11 +76,8 @@ def dataloader_setup(
         # create the data loader starting from the dataset
         loader = create_data_loader(
             dataset,
-            get_config_value(
-                config_settings.config_file,
-                f"{loader_type}.general.batch_size"
-            ),
-            shuffle
+            batch_size=batch_size,
+            shuffle=shuffle
         )
     except (FileNotFoundError, IOError, OSError, ValueError, TypeError, AttributeError) as e:
         raise RuntimeError(f"❌ Error while set upping the loader: {e}.")

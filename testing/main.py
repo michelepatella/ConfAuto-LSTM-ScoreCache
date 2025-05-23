@@ -21,6 +21,7 @@ def testing(config_settings):
     # dataloader setup
     _, testing_loader = dataloader_setup(
         "testing",
+        config_settings.testing_batch_size,
         False,
         config_settings,
         AccessLogsDataset
