@@ -20,7 +20,7 @@ training(config_settings)
 avg_loss, metrics = testing(config_settings)
 
 print("----------------------------------------------------------------------------------------")
-"""
+
 print(f"Average Loss: {avg_loss}")
 
 print(f"📉 Class Report per Class:")
@@ -30,4 +30,3 @@ print(f"\nConfusion Matrix:\n{np.array(metrics['confusion_matrix'])}")
 
 print(f"Top-k Accuracy: {metrics['top_k_accuracy']}")
 print(f"Kappa Statistic: {metrics['kappa_statistic']}")
-"""
