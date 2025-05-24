@@ -1,6 +1,5 @@
 import torch
 from torch.utils.data import DataLoader
-from config.config_utils import get_config_value
 from utils.dataset_utils import _get_dataset_path_type
 from utils.log_utils import info, debug
 
