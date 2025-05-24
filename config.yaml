@@ -1,7 +1,7 @@
 data:
   distribution:
     seed: 42 #
-    type: static #
+    type: dynamic #
     num_requests: 30000 #
     num_keys: 30 #
     key_range:
