@@ -28,7 +28,7 @@ stream_handler.setFormatter(formatter)
 
 # configuration of logging messages
 logging.basicConfig(
-    level=logging.ERROR,
+    level=logging.DEBUG,
     handlers=[file_handler, stream_handler]
 )
 

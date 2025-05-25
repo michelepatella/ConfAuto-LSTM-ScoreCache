@@ -184,11 +184,11 @@ def _validate_training_early_stopping_params(config):
     # early stopping
     training_early_stopping_patience = get_config_value(
         config,
-        "validation.early_stopping.patience"
+        "training.early_stopping.patience"
     )
     training_early_stopping_delta = get_config_value(
         config,
-        "validation.early_stopping.delta"
+        "training.early_stopping.delta"
     )
 
     # check early stopping params

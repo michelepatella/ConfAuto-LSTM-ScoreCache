@@ -15,7 +15,7 @@ class EarlyStopping:
         try:
             # read the current phase
             current_phase = phase_var.get()
-
+            print("Ciao" + current_phase)
             # set the fields
             self.patience = config_settings.validation_early_stopping_patience \
                 if current_phase == "validation" \
