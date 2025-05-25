@@ -49,9 +49,6 @@ def evaluate_model(
     debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
     debug(f"⚙️ Total targets: {len(all_targets)}.")
 
-    # calculate the average of losses
-    avg_loss = total_loss / len(loader)
-
     metrics = None
     if compute_metrics:
         # compute metrics

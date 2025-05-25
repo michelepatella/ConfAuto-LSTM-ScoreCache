@@ -19,12 +19,55 @@ def training(config_settings):
     phase_var.set("training")
 
     # dataloader setup
-    _, training_loader = dataloader_setup(
+    training_set, _ = dataloader_setup(
         "training",
         config_settings.training_batch_size,
-        True,
+        False,
         config_settings,
         AccessLogsDataset
+    )
+
+    # calculate total training set size
+    total_training_size = len(training_set)
+
+    # calculate training and validation size
+    training_size = int(
+        (1.0 - config_settings.validation_perc) * total_training_size
+    )
+    validation_size = int(
+        config_settings.validation_perc * total_training_size
+    )
+
+    # create indexes for training and validation
+    training_indices = list(range(
+        0,
+        training_size
+    ))
+    validation_indices = list(range(
+        training_size,
+        training_size + validation_size
+    ))
+
+    # split the training set into training and validation set
+    final_training_set = Subset(
+        training_set,
+        training_indices
+    )
+    final_validation_set = Subset(
+        training_set,
+        validation_indices
+    )
+
+    # create a loader for each set
+    training_loader = create_data_loader(
+        final_training_set,
+        config_settings.training_batch_size,
+        True
+    )
+    validation_loader = create_data_loader(
+        final_validation_set,
+        config_settings.training_batch_size,
+        False
     )
 
     # setup for training
@@ -38,17 +81,19 @@ def training(config_settings):
     )
 
     # train the model
-    _ = train_n_epochs(
+    _, model = train_n_epochs(
         config_settings.training_num_epochs,
         model,
         training_loader,
         optimizer,
         criterion,
         device,
-        config_settings
+        config_settings,
+        early_stopping=True,
+        validation_loader=validation_loader
     )
 
-    # save the trained model
+    # save the best model trained
     save_model(model, config_settings)
 
     # print a successful message

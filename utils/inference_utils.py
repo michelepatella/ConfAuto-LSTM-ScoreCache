@@ -1,5 +1,4 @@
 from collections import defaultdict
-
 import torch
 from scipy.stats import norm
 from utils.feedforward_utils import _compute_forward
@@ -165,14 +164,6 @@ def _infer_batch(
                 all_preds.extend(preds.cpu().numpy())
                 all_targets.extend(y_key.cpu().numpy())
                 all_outputs.extend(outputs_mean.cpu())
-
-                # compute loss per class
-                loss_per_class = _calculate_average_loss_per_class(
-                    criterion,
-                    outputs_mean,
-                    y_key,
-                    loss_per_class
-                )
 
     except (IndexError, ValueError, KeyError, AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
