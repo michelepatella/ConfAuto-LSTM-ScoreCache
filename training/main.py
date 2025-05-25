@@ -22,7 +22,7 @@ def training(config_settings):
     training_set, training_loader = dataloader_setup(
         "training",
         config_settings.training_batch_size,
-        True,
+        False,
         config_settings,
         AccessLogsDataset
     )
