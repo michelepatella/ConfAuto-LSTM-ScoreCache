@@ -19,14 +19,14 @@ def training(config_settings):
     phase_var.set("training")
 
     # dataloader setup
-    training_set, _ = dataloader_setup(
+    training_set, training_loader = dataloader_setup(
         "training",
         config_settings.training_batch_size,
         False,
         config_settings,
         AccessLogsDataset
     )
-
+    """
     # calculate total training set size
     total_training_size = len(training_set)
 
@@ -69,7 +69,7 @@ def training(config_settings):
         config_settings.training_batch_size,
         False
     )
-
+    """
     # setup for training
     device, criterion, model, optimizer = (
         model_setup(
@@ -88,9 +88,7 @@ def training(config_settings):
         optimizer,
         criterion,
         device,
-        config_settings,
-        early_stopping=True,
-        validation_loader=validation_loader
+        config_settings
     )
 
     # save the best model trained
