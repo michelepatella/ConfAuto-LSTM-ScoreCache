@@ -1,4 +1,4 @@
-from data_generation.frequencies_generator import _generate_last_relative_frequency
+from data_generation.frequencies_calculator import _generate_last_relative_frequency
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
 from utils.graph_utils import plot_keys_transition_matrix, plot_zipf_loglog, plot_requests_over_time
 from utils.log_utils import info, debug, phase_var

@@ -58,9 +58,6 @@ def dataloader_setup(
     # initial message
     info("🔄 Load setup started...")
 
-    # get the dataset type
-    dataset_path = _get_dataset_path_type(config_settings)
-
     # debugging
     debug(f"⚙️ Loader type: {loader_type}.")
     debug(f"⚙️ Shuffle: {shuffle}.")
@@ -68,7 +65,7 @@ def dataloader_setup(
     try:
         # get the dataset
         dataset = AccessLogsDataset(
-            dataset_path,
+            loader_type,
             config_settings
         )
 
