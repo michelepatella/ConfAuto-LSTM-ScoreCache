@@ -33,7 +33,7 @@ data:
     embedding_dim: 32 #
   dataset:
     training_perc: 0.7 #
-    validation_perc: 0.1 #
+    validation_perc: 0.2 #
     static_save_path: data/static_access_logs.csv #
     dynamic_save_path: data/dynamic_access_logs.csv #
 model:
