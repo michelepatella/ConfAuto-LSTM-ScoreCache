@@ -13,7 +13,7 @@ config_settings = prepare_config()
 
 #data_preprocessing(config_settings)
 
-config_settings = validation(config_settings)
+#config_settings = validation(config_settings)
 
 training(config_settings)
 
@@ -25,8 +25,6 @@ print(f"Average Loss: {avg_loss}")
 
 print(f"📉 Class Report per Class:")
 print(f"{metrics['class_report']}")
-
-print(f"\nConfusion Matrix:\n{np.array(metrics['confusion_matrix'])}")
 
 print(f"Top-k Accuracy: {metrics['top_k_accuracy']}")
 print(f"Kappa Statistic: {metrics['kappa_statistic']}")

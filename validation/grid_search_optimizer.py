@@ -201,10 +201,10 @@ def _compute_grid_search(training_set, config_settings):
             pbar.update(1)
 
     # print the best parameters found
-    print(f"🏆 Best parameters found: {best_params}")
+    info(f"🏆 Best parameters found: {best_params}")
 
     # print the best average loss
-    print(f"🏆 Best avg loss found: {best_avg_loss}")
+    info(f"🏆 Best avg loss found: {best_avg_loss}")
 
     # show a successful message
     info("🟢 Grid Search completed.")
