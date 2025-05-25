@@ -165,6 +165,14 @@ def _infer_batch(
                 all_targets.extend(y_key.cpu().numpy())
                 all_outputs.extend(outputs_mean.cpu())
 
+                # calculate loss per class
+                loss_per_class = _calculate_average_loss_per_class(
+                    criterion,
+                    outputs_mean,
+                    y_key,
+                    loss_per_class
+                )
+
     except (IndexError, ValueError, KeyError, AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
