@@ -53,8 +53,8 @@ validation:
     num_folds: 10 #
     num_epochs: 30 #
   early_stopping:
-    patience: 50 #
-    delta: 0.0001 #
+    patience: 100 #
+    delta: 0.0005 #
   search_space:
     model:
       params:
