@@ -52,7 +52,7 @@ def testing(config_settings):
         criterion,
         device,
         config_settings,
-        show_metrics=True
+        compute_metrics=True
     )
 
     # print a successful message
