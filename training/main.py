@@ -19,7 +19,7 @@ def training(config_settings):
     phase_var.set("training")
 
     # dataloader setup
-    training_set, training_loader = dataloader_setup(
+    training_set, _ = dataloader_setup(
         "training",
         config_settings.training_batch_size,
         False,

@@ -1,7 +1,48 @@
+from collections import defaultdict
+
 import torch
 from scipy.stats import norm
 from utils.feedforward_utils import _compute_forward
 from utils.log_utils import info, debug
+
+def _calculate_average_loss_per_class(
+        criterion,
+        outputs,
+        y_key,
+        loss_per_class
+):
+    """
+    Method to calculate average loss per class.
+    :param criterion: The criterion to use.
+    :param outputs: The outputs of the model.
+    :param y_key: The targets.
+    :param loss_per_class: The loss per class calculated so far.
+    :return: The average loss per class updated.
+    """
+    # initial message
+    info("🔄 Average loss per class calculation started...")
+
+    # for all the class
+    for class_id in torch.unique(y_key):
+
+        # create a boolean mask for all samples
+        # belonging to the current class
+        mask = y_key == class_id
+
+        # if there is at least one sample for
+        # this class
+        if mask.sum() > 0:
+            # compute the loss and update it
+            class_loss = criterion(outputs[mask], y_key[mask])
+            loss_per_class[int(class_id.item())].append(class_loss.item())
+
+            # debugging
+            debug(f"⚙️ (Class-Loss): ({int(class_id.item())} - {class_loss.item()}).")
+
+    # show a successful message
+    info("🟢 Average loss per class calculated.")
+
+    return loss_per_class
 
 
 def _enable_mc_dropout(model):
@@ -39,7 +80,7 @@ def _infer_batch(
     :param device: The device to be used.
     :param mc_dropout_samples: The number of MC dropout
     samples (=1 means no MC dropout).
-    :return: The total loss, all the predictions,
+    :return: The total loss and loss per class, all the predictions,
     all the targets, all the outputs returned by the model and the variances.
     """
     # initial message
@@ -53,6 +94,7 @@ def _infer_batch(
     total_loss = 0.0
     all_preds, all_targets, all_outputs = [], [], []
     all_vars = []
+    loss_per_class = defaultdict(list)
 
     model.eval()
 
@@ -101,6 +143,8 @@ def _infer_batch(
                         unbiased=False
                     )
                     all_vars.extend(outputs_var.cpu())
+                else:
+                    outputs_var = None
 
                 # compute the loss
                 loss = criterion(outputs_mean, y_key)
@@ -122,14 +166,22 @@ def _infer_batch(
                 all_targets.extend(y_key.cpu().numpy())
                 all_outputs.extend(outputs_mean.cpu())
 
+                # compute loss per class
+                loss_per_class = _calculate_average_loss_per_class(
+                    criterion,
+                    outputs_mean,
+                    y_key,
+                    loss_per_class
+                )
+
     except (IndexError, ValueError, KeyError, AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
     # show a successful message
     info("🟢 Batch inferred.")
 
-    return (total_loss, all_preds,
-            all_targets, all_outputs, all_vars)
+    return (total_loss, loss_per_class, all_preds,
+        all_targets, all_outputs, all_vars)
 
 
 def infer_single_sample(

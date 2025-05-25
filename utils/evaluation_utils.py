@@ -3,7 +3,7 @@ import numpy as np
 from utils.graph_utils import plot_precision_recall_curve, plot_class_report, plot_confusion_matrix
 from utils.inference_utils import _infer_batch
 from utils.log_utils import info, debug
-from utils.metrics_utils import _compute_metrics
+from utils.metrics_utils import _compute_metrics, _calculate_average_losses
 
 
 def evaluate_model(
@@ -22,19 +22,27 @@ def evaluate_model(
     :param device: Device to use.
     :param config_settings: The configuration settings.
     :param compute_metrics: Whether to compute metrics or not.
-    :return: The average loss, the metrics, all the outputs
+    :return: The average losses, the metrics, all the outputs
     and the all the variances.
     """
     # initial message
     info("🔄 Model's evaluation started...")
 
     # infer the batch
-    (total_loss, all_preds, all_targets,
-    all_outputs, all_vars) = _infer_batch(
+    (total_loss, loss_per_class,
+     all_preds, all_targets, all_outputs, all_vars) = _infer_batch(
         model,
         loader,
         criterion,
         device
+    )
+
+    avg_loss, avg_loss_per_class = (
+        _calculate_average_losses(
+            total_loss,
+            loss_per_class,
+            len(loader)
+        )
     )
 
     # debugging
@@ -79,4 +87,5 @@ def evaluate_model(
     # show a successful message
     info("🟢 Model's evaluation completed.")
 
-    return avg_loss, metrics, all_outputs, all_vars
+    return (avg_loss, avg_loss_per_class,
+            metrics, all_outputs, all_vars)
