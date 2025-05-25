@@ -1,9 +1,9 @@
 import torch
 import numpy as np
-from utils.graph_utils import plot_precision_recall_curve, plot_class_report, plot_confusion_matrix
+from utils.graph_utils import plot_precision_recall_curve, plot_class_report
 from utils.inference_utils import _infer_batch
 from utils.log_utils import info, debug
-from utils.metrics_utils import _compute_metrics, _calculate_average_losses
+from utils.metrics_utils import _compute_metrics, _calculate_average_losses, _calculate_cost
 
 
 def evaluate_model(
@@ -22,7 +22,7 @@ def evaluate_model(
     :param device: Device to use.
     :param config_settings: The configuration settings.
     :param compute_metrics: Whether to compute metrics or not.
-    :return: The average losses, the metrics, all the outputs
+    :return: The average loss, the metrics, the cost, all the outputs
     and the all the variances.
     """
     # initial message
@@ -37,6 +37,11 @@ def evaluate_model(
         device
     )
 
+    # debugging
+    debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
+    debug(f"⚙️ Total targets: {len(all_targets)}.")
+
+    # calculate the average of losses
     avg_loss, avg_loss_per_class = (
         _calculate_average_losses(
             total_loss,
@@ -45,22 +50,21 @@ def evaluate_model(
         )
     )
 
-    # debugging
-    debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
-    debug(f"⚙️ Total targets: {len(all_targets)}.")
+    # compute metrics
+    metrics = _compute_metrics(
+        all_targets,
+        all_preds,
+        all_outputs,
+        config_settings
+    )
 
-    metrics = None
     if compute_metrics:
-        # compute metrics
-        metrics = _compute_metrics(
-            all_targets,
-            all_preds,
-            all_outputs,
-            config_settings
-        )
-
         # show results
         info(f"📉 Average Loss: {avg_loss}")
+        info(f"📉 Average Loss per Class:")
+
+        for i, avg in enumerate(avg_loss_per_class):
+            info(f"— Key {i + 1}: {avg}")
 
         info(f"📉 Class Report per Class:")
         info(f"{metrics['class_report']}")
@@ -76,10 +80,7 @@ def evaluate_model(
             torch.stack(all_outputs).numpy(),
             config_settings.num_keys
         )
-
         plot_class_report(metrics["class_report"])
-
-        plot_confusion_matrix(metrics["confusion_matrix"])
 
     # show a successful message
     info("🟢 Model's evaluation completed.")

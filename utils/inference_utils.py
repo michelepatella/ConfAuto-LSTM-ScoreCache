@@ -4,6 +4,7 @@ from scipy.stats import norm
 from utils.feedforward_utils import _compute_forward
 from utils.log_utils import info, debug
 
+
 def _calculate_average_loss_per_class(
         criterion,
         outputs,
@@ -53,12 +54,9 @@ def _enable_mc_dropout(model):
     # initial message
     info("🔄 MC dropout enabling started...")
 
-    try:
-        for module in model.modules():
-            if isinstance(module, torch.nn.Dropout):
-                module.train()
-    except (AttributeError, TypeError) as e:
-        raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
+    for module in model.modules():
+        if isinstance(module, torch.nn.Dropout):
+            module.train()
 
     # show a successful message
     info("🟢 MC dropout enabled.")
@@ -79,8 +77,8 @@ def _infer_batch(
     :param device: The device to be used.
     :param mc_dropout_samples: The number of MC dropout
     samples (=1 means no MC dropout).
-    :return: The total loss and loss per class, all the predictions,
-    all the targets, all the outputs returned by the model and the variances.
+    :return: The total loss, the loss per class, all the predictions,
+     all the targets, all the outputs returned by the model and the variances.
     """
     # initial message
     info("🔄 Batch inference started...")
@@ -92,8 +90,8 @@ def _infer_batch(
     # initialize data
     total_loss = 0.0
     all_preds, all_targets, all_outputs = [], [], []
-    all_vars = []
     loss_per_class = defaultdict(list)
+    all_vars = []
 
     model.eval()
 
@@ -106,18 +104,14 @@ def _infer_batch(
                 debug(f"⚙️ Batch x_keys shape: {x_keys.shape}.")
                 debug(f"⚙️ Batch y_key shape: {y_key.shape}.")
 
-                # move features and key on device
                 x_features = x_features.to(device)
+                x_keys = x_keys.to(device)
                 y_key = y_key.to(device)
 
-                # if there is more than one MC sample
-                # enable MC dropout
-                if mc_dropout_samples > 1:
-                    _enable_mc_dropout(model)
-
                 outputs_mc = []
-                # for each MC sample
                 for _ in range(mc_dropout_samples):
+                    if mc_dropout_samples > 1:
+                        _enable_mc_dropout(model)
 
                     # calculate loss and outputs through forward pass
                     _, outputs = _compute_forward(
@@ -130,13 +124,12 @@ def _infer_batch(
                     # store the output
                     outputs_mc.append(outputs.unsqueeze(0))
 
-                # save the mean of the outputs of the model
-                # for a specific input
+                # save mean of MC dropout results
                 outputs_mc_tensor = torch.cat(outputs_mc, dim=0)
                 outputs_mean = outputs_mc_tensor.mean(dim=0)
 
                 if mc_dropout_samples > 1:
-                    # obtain and save the variance
+                    # obtain and save variance
                     outputs_var = outputs_mc_tensor.var(
                         dim=0,
                         unbiased=False
@@ -180,70 +173,10 @@ def _infer_batch(
     info("🟢 Batch inferred.")
 
     return (total_loss, loss_per_class, all_preds,
-        all_targets, all_outputs, all_vars)
+            all_targets, all_outputs, all_vars)
 
 
-def infer_single_sample(
-        model,
-        x_features,
-        x_keys,
-        y_key,
-        device,
-        mc_samples=10
-):
-    """
-    Method to infer a single sample with MC dropout.
-    :param model: The model to be used.
-    :param x_features: The features.
-    :param x_keys: The embedded keys.
-    :param y_key: The key.
-    :param device: The device to be used.
-    :param mc_samples: The number of MC dropout samples.
-    :return: The mean and the variance of the predictions.
-    """
-    # initial message
-    info("🔄 Single sample inference started...")
-
-    try:
-        model.eval()
-        outputs_mc = []
-
-        with torch.no_grad():
-            # for each sample
-            for _ in range(mc_samples):
-                # enable dropout at inference time if > 1 samples
-                if mc_samples > 1:
-                    _enable_mc_dropout(model)
-
-                # compute forward pass
-                _, outputs = _compute_forward(
-                    (x_features, x_keys, y_key),
-                    model,
-                    None,
-                    device
-                )
-
-                # store di output
-                outputs_mc.append(outputs.unsqueeze(0))
-
-        # at the end, compute mean and variance of the outputs
-        outputs_mc_tensor = torch.cat(outputs_mc, dim=0)
-        outputs_mean = outputs_mc_tensor.mean(dim=0)
-        outputs_var = outputs_mc_tensor.var(
-            dim=0,
-            unbiased=False
-        )
-
-    except (AttributeError, TypeError, ValueError, IndexError) as e:
-        raise RuntimeError(f"❌ Error while inferring a single sample: {e}.")
-
-    # show a successful message
-    info("🟢 Single sample inferred.")
-
-    return outputs_mean, outputs_var
-
-
-def calculate_confidence_intervals(
+def _calculate_confidence_intervals(
         all_outputs,
         all_vars,
         config_settings
