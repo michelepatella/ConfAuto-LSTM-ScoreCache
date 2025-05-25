@@ -32,7 +32,7 @@ def training(config_settings):
 
     # calculate training and validation size
     training_size = int(
-        config_settings.training_perc * total_training_size
+        (1.0 - config_settings.validation_perc) * total_training_size
     )
     validation_size = int(
         config_settings.validation_perc * total_training_size
@@ -49,23 +49,23 @@ def training(config_settings):
     ))
 
     # split the training set into training and validation set
-    training_dataset = Subset(
+    final_training_set = Subset(
         training_set,
         training_indices
     )
-    validation_dataset = Subset(
+    final_validation_set = Subset(
         training_set,
         validation_indices
     )
 
     # create a loader for each set
     training_loader = create_data_loader(
-        training_dataset,
+        final_training_set,
         config_settings.training_batch_size,
         True
     )
     validation_loader = create_data_loader(
-        validation_dataset,
+        final_validation_set,
         config_settings.training_batch_size,
         False
     )

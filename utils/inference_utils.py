@@ -69,14 +69,14 @@ def _infer_batch(
                 x_features = x_features.to(device)
                 y_key = y_key.to(device)
 
+                # if there is more than one MC sample
+                # enable MC dropout
+                if mc_dropout_samples > 1:
+                    _enable_mc_dropout(model)
+
                 outputs_mc = []
                 # for each MC sample
                 for _ in range(mc_dropout_samples):
-
-                    # if there is more than one MC sample
-                    # enable MC dropout
-                    if mc_dropout_samples > 1:
-                        _enable_mc_dropout(model)
 
                     # calculate loss and outputs through forward pass
                     _, outputs = _compute_forward(

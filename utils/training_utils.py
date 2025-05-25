@@ -140,7 +140,7 @@ def train_n_epochs(
                     config_settings
                 )
                 tot_loss = tot_loss + avg_loss
-
+                print(f"Avg loss: {avg_loss}")
                 # save the model weights if it is the new best one
                 if avg_loss < best_loss:
                     best_loss = avg_loss
