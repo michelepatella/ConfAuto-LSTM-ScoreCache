@@ -27,6 +27,49 @@ def training(config_settings):
         AccessLogsDataset
     )
 
+    # calculate total training set size
+    total_training_size = len(training_set)
+
+    # calculate training and validation size
+    training_size = int(
+        (1.0 - config_settings.validation_perc) * total_training_size
+    )
+    validation_size = int(
+        config_settings.validation_perc * total_training_size
+    )
+
+    # create indexes for training and validation
+    training_indices = list(range(
+        0,
+        training_size
+    ))
+    validation_indices = list(range(
+        training_size,
+        training_size + validation_size
+    ))
+
+    # split the training set into training and validation set
+    final_training_set = Subset(
+        training_set,
+        training_indices
+    )
+    final_validation_set = Subset(
+        training_set,
+        validation_indices
+    )
+
+    # create a loader for each set
+    training_loader = create_data_loader(
+        final_training_set,
+        config_settings.training_batch_size,
+        True
+    )
+    validation_loader = create_data_loader(
+        final_validation_set,
+        config_settings.training_batch_size,
+        False
+    )
+
     # setup for training
     device, criterion, model, optimizer = (
         model_setup(
@@ -45,7 +88,9 @@ def training(config_settings):
         optimizer,
         criterion,
         device,
-        config_settings
+        config_settings,
+        early_stopping=True,
+        validation_loader=validation_loader
     )
 
     # save the best model trained
