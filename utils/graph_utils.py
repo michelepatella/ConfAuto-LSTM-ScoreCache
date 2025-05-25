@@ -286,8 +286,8 @@ def plot_confusion_matrix(confusion_matrix):
             cmap="Blues",
         )
         plt.title("Confusion Matrix")
-        plt.ylabel("True Label")
-        plt.xlabel("Predicted Label")
+        plt.ylabel("True Key")
+        plt.xlabel("Predicted Key")
         plt.tight_layout()
         plt.show()
         plt.close()
