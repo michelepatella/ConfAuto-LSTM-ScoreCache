@@ -156,7 +156,8 @@ def train_n_epochs(
                         break
 
         # show the best validation loss obtained
-        info(f"🏆 Best validation loss achieved: {best_loss}")
+        print(f"🏆 Best validation loss achieved: {best_loss}")
+        print(f"No. of epochs run: {num_epochs_run}")
 
         # load best weights to the model
         model.load_state_dict(best_model_wts)
