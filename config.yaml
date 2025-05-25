@@ -82,7 +82,7 @@ training:
     weight_decay: 0.05 #
     momentum: 0.9 #
   early_stopping:
-    patience: 50 #
+    patience: 100 #
     delta: 0.0005 #
 testing:
   general:
