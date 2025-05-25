@@ -210,7 +210,7 @@ def _build_optimizer(model, learning_rate, config_settings):
             optimizer = torch.optim.SGD(
                 model.parameters(),
                 lr=learning_rate,
-                momentum=momentum
+                momentum=config_settings.momentum
             )
     except (ValueError, TypeError, UnboundLocalError, KeyError, AssertionError) as e:
         raise RuntimeError(f"❌ Error while building optimizer: {e}.")
