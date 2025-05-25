@@ -29,28 +29,28 @@ def _check_cv_params(
                            "must be an integer > 0.")
 
 
-def _check_early_stopping_params(
-        early_stopping_patience,
-        early_stopping_delta
+def _check_validation_early_stopping_params(
+        validation_early_stopping_patience,
+        validation_early_stopping_delta
 ):
     """
-    Method to check early stopping parameters.
-    :param early_stopping_patience: Early stopping patience value.
-    :param early_stopping_delta: Early stopping delta value.
+    Method to check validation early stopping parameters.
+    :param validation_early_stopping_patience: Validation arly stopping patience value.
+    :param validation_early_stopping_delta: Validation early stopping delta value.
     :return:
     """
     # check patience
     if (
-        not isinstance(early_stopping_patience, int)
-        or early_stopping_patience < 0
+        not isinstance(validation_early_stopping_patience, int)
+        or validation_early_stopping_patience < 0
     ):
         raise RuntimeError("❌ 'validation.early_stopping.patience' "
                            "must be an integer >= 0.")
 
     # check delta
     if (
-        not isinstance(early_stopping_delta, (int, float)) or
-        early_stopping_delta < 0
+        not isinstance(validation_early_stopping_delta, (int, float)) or
+        validation_early_stopping_delta < 0
     ):
         raise RuntimeError("❌ 'validation.early_stopping.delta' "
                            "must be a number >= 0.")
@@ -142,35 +142,35 @@ def _validate_cv_params(config):
     return cv_num_folds, validation_num_epochs
 
 
-def _validate_early_stopping_params(config):
+def _validate_validation_early_stopping_params(config):
     """
-    Method to validate early stopping parameters.
+    Method to validate validation early stopping parameters.
     :param config: Config object.
     :return: All early stopping parameters.
     """
     # initial message
-    info("🔄 Early stopping params validation started...")
+    info("🔄 Validation early stopping params validation started...")
 
     # early stopping
-    early_stopping_patience = get_config_value(
+    validation_early_stopping_patience = get_config_value(
         config,
         "validation.early_stopping.patience"
     )
-    early_stopping_delta = get_config_value(
+    validation_early_stopping_delta = get_config_value(
         config,
         "validation.early_stopping.delta"
     )
 
     # check early stopping params
-    _check_early_stopping_params(
-        early_stopping_patience,
-        early_stopping_delta
+    _check_validation_early_stopping_params(
+        validation_early_stopping_patience,
+        validation_early_stopping_delta
     )
 
     # show a successful message
-    info("🟢 Early stopping params validated.")
+    info("🟢 Validation early stopping params validated.")
 
-    return early_stopping_patience, early_stopping_delta
+    return validation_early_stopping_patience, validation_early_stopping_delta
 
 
 def _validate_search_space_params(config):

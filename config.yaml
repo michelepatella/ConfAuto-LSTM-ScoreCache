@@ -53,7 +53,7 @@ validation:
     num_folds: 10 #
     num_epochs: 30 #
   early_stopping:
-    patience: 50 #
+    patience: 5 #
     delta: 0.0005 #
   search_space:
     model:
@@ -81,6 +81,9 @@ training:
     learning_rate: 0.005 #
     weight_decay: 0.05 #
     momentum: 0.9 #
+  early_stopping:
+    patience: 50 #
+    delta: 0.0005 #
 testing:
   general:
     batch_size: 64 #

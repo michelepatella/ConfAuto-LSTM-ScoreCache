@@ -13,7 +13,7 @@ config_settings = prepare_config()
 
 #data_preprocessing(config_settings)
 
-#config_settings = validation(config_settings)
+config_settings = validation(config_settings)
 
 training(config_settings)
 

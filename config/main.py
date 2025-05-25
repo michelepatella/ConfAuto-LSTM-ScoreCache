@@ -5,8 +5,9 @@ from config.evaluation_params_validator import _validate_evaluation_general_para
 from config.inference_params_validator import _validate_inference_confidence_intervals_params
 from config.model_params_validator import _validate_model_general_params, _validate_model_params
 from config.testing_params_validator import _validate_testing_general_params
-from config.training_params_validator import _validate_training_general_params, _validate_training_optimizer_params
-from config.validation_params_validator import _validate_cv_params, _validate_early_stopping_params, \
+from config.training_params_validator import _validate_training_general_params, _validate_training_optimizer_params, \
+    _validate_training_early_stopping_params
+from config.validation_params_validator import _validate_cv_params, _validate_validation_early_stopping_params, \
     _validate_search_space_params
 from config.config_utils import load_config
 from utils.log_utils import info
@@ -55,12 +56,15 @@ def prepare_config():
     optimizer_type, learning_rate, weight_decay, momentum = (
         _validate_training_optimizer_params(config_file))
 
+    training_early_stopping_patience, training_early_stopping_delta = (
+        _validate_training_early_stopping_params(config_file))
+
     # validation config
     cv_num_folds, validation_num_epochs = (
         _validate_cv_params(config_file))
 
-    early_stopping_patience, early_stopping_delta = (
-        _validate_early_stopping_params(config_file))
+    validation_early_stopping_patience, validation_early_stopping_delta = (
+        _validate_validation_early_stopping_params(config_file))
 
     (search_space, hidden_size_range, num_layers_range, dropout_range,
      learning_rate_range) = _validate_search_space_params(config_file)
@@ -121,10 +125,12 @@ def prepare_config():
         learning_rate=learning_rate,
         weight_decay=weight_decay,
         momentum=momentum,
+        training_early_stopping_patience=training_early_stopping_patience,
+        training_early_stopping_delta=training_early_stopping_delta,
         cv_num_folds=cv_num_folds,
         validation_num_epochs=validation_num_epochs,
-        early_stopping_patience=early_stopping_patience,
-        early_stopping_delta=early_stopping_delta,
+        validation_early_stopping_patience=validation_early_stopping_patience,
+        validation_early_stopping_delta=validation_early_stopping_delta,
         search_space=search_space,
         hidden_size_range=hidden_size_range,
         num_layers_range=num_layers_range,

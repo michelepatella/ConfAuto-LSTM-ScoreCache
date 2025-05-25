@@ -73,6 +73,33 @@ def _check_optimizer_params(
                            " a float between 0.0 and 1.0.")
 
 
+def _check_training_early_stopping_params(
+        training_early_stopping_patience,
+        training_early_stopping_delta
+):
+    """
+    Method to check training early stopping parameters.
+    :param training_early_stopping_patience: Training arly stopping patience value.
+    :param training_early_stopping_delta: Training early stopping delta value.
+    :return:
+    """
+    # check patience
+    if (
+        not isinstance(training_early_stopping_patience, int)
+        or training_early_stopping_patience < 0
+    ):
+        raise RuntimeError("❌ 'training.early_stopping.patience' "
+                           "must be an integer >= 0.")
+
+    # check delta
+    if (
+        not isinstance(training_early_stopping_delta, (int, float)) or
+        training_early_stopping_delta < 0
+    ):
+        raise RuntimeError("❌ 'training.early_stopping.delta' "
+                           "must be a number >= 0.")
+
+
 def _validate_training_general_params(config):
     """
     Method to validate general training parameters.
@@ -143,3 +170,34 @@ def _validate_training_optimizer_params(config):
     info("🟢 Training optimizer params validated.")
 
     return optimizer_type, learning_rate, weight_decay, momentum
+
+
+def _validate_training_early_stopping_params(config):
+    """
+    Method to validate training early stopping parameters.
+    :param config: Config object.
+    :return: All early stopping parameters.
+    """
+    # initial message
+    info("🔄 Training early stopping params validation started...")
+
+    # early stopping
+    training_early_stopping_patience = get_config_value(
+        config,
+        "validation.early_stopping.patience"
+    )
+    training_early_stopping_delta = get_config_value(
+        config,
+        "validation.early_stopping.delta"
+    )
+
+    # check early stopping params
+    _check_training_early_stopping_params(
+        training_early_stopping_patience,
+        training_early_stopping_delta
+    )
+
+    # show a successful message
+    info("🟢 Training early stopping params validated.")
+
+    return training_early_stopping_patience, training_early_stopping_delta

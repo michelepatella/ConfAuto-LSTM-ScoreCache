@@ -47,7 +47,7 @@ def _train_one_epoch(
                 criterion,
                 device
             )
-            print(loss)
+
             # check loss
             if loss is None:
                 raise ValueError("❌ Error while training the "
@@ -151,16 +151,6 @@ def train_n_epochs(
                     es(avg_loss)
                     # check whether to stop
                     if es.early_stop:
-                        # evaluate metrics for the best model
-                        _, metrics, *_ = evaluate_model(
-                            model,
-                            validation_loader,
-                            criterion,
-                            device,
-                            config_settings,
-                            compute_metrics=True
-                        )
-
                         info("🛑 Early stopping triggered.")
                         info("🟢 Train n-epochs completed.")
                         break
@@ -168,10 +158,6 @@ def train_n_epochs(
         # show the best validation loss obtained
         print(f"🏆 Best validation loss achieved: {best_loss}")
         print(f"No. of epochs run: {num_epochs_run}")
-        print(f"📉 Class Report per Class:")
-        print(f"{metrics['class_report']}")
-        print(f"Top-k Accuracy: {metrics['top_k_accuracy']}")
-        print(f"Kappa Statistic: {metrics['kappa_statistic']}")
 
         # load best weights to the model
         model.load_state_dict(best_model_wts)

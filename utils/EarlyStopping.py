@@ -1,5 +1,5 @@
 import numpy as np
-from utils.log_utils import debug, info
+from utils.log_utils import debug, info, phase_var
 
 
 class EarlyStopping:
@@ -13,9 +13,16 @@ class EarlyStopping:
         info("🔄 EarlyStopping initialization started...")
 
         try:
+            # read the current phase
+            current_phase = phase_var.get()
+
             # set the fields
-            self.patience = config_settings.early_stopping_patience
-            self.delta = config_settings.early_stopping_delta
+            self.patience = config_settings.validation_early_stopping_patience \
+                if current_phase == "validation" \
+                else config_settings.training_early_stopping_patience
+            self.delta = config_settings.validation_early_stopping_delta \
+                if current_phase == "validation" \
+                else config_settings.training_early_stopping_delta
             self.best_avg_loss = np.inf
             self.counter = 0
             self.early_stop = False

@@ -44,10 +44,12 @@ class Config:
     learning_rate: float
     weight_decay: float
     momentum: float
+    training_early_stopping_patience: int
+    training_early_stopping_delta: float
     cv_num_folds: int
     validation_num_epochs: int
-    early_stopping_patience: int
-    early_stopping_delta: float
+    validation_early_stopping_patience: int
+    validation_early_stopping_delta: float
     search_space: dict
     hidden_size_range: list
     num_layers_range: list
