@@ -1,7 +1,7 @@
 data:
   distribution:
     seed: 42 #
-    type: dynamic #
+    type: static #
     num_requests: 30000 #
     num_keys: 30 #
     key_range:
@@ -53,7 +53,7 @@ validation:
     num_folds: 10 #
     num_epochs: 30 #
   early_stopping:
-    patience: 5 #
+    patience: 40 #
     delta: 0.0005 #
   search_space:
     model:
