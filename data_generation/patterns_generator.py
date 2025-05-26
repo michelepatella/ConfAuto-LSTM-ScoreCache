@@ -29,6 +29,7 @@ def _generate_access_pattern_requests(
         last_accessed_key,
         key_relationships,
         probs,
+        current_time,
         config_settings
 ):
     """
@@ -36,11 +37,38 @@ def _generate_access_pattern_requests(
     :param last_accessed_key: The last accessed key.
     :param key_relationships: The key relationships.
     :param probs: The probabilities of the keys.
+    :param current_time: The current time.
     :param config_settings: The configuration settings.
     :return: The requested generate, following a specific access pattern.
     """
     # initial message
     info("🔄 Access pattern requests generation started...")
+
+    # calculate the hour
+    day_seconds = 24 * 60 * 60
+    hour_of_day = (current_time % day_seconds) / 3600.0
+
+    key_range = np.arange(config_settings.first_key, config_settings.last_key)
+    weights = np.ones_like(key_range, dtype=float)
+
+    # modify zipf based on the hour of the day
+    if 6 <= hour_of_day < 12:
+        # morning: prefer first keys
+        weights *= np.exp(-0.2 * (key_range - config_settings.first_key))
+    elif 12 <= hour_of_day < 18:
+        # afternoon: prefer mid-keys
+        mid = (config_settings.first_key + config_settings.last_key) / 2
+        weights *= np.exp(-0.01 * (key_range - mid) ** 2)
+    elif 18 <= hour_of_day < 24:
+        # evening: prefer last keys
+        weights *= np.exp(-0.2 * (config_settings.last_key - key_range))
+    else:
+        # night: distribution is flattened
+        weights *= 1.0
+
+    # apply and normalize zipf probabilities
+    modified_probs = probs * weights
+    modified_probs /= modified_probs.sum()
 
     if (
             last_accessed_key is None
@@ -48,11 +76,8 @@ def _generate_access_pattern_requests(
     ):
         # generate the request following Zipf distribution
         request = np.random.choice(
-            np.arange(
-                config_settings.first_key,
-                config_settings.last_key
-            ),
-            p=probs
+            key_range,
+            p=modified_probs
         )
     else:
         # get the related keys
@@ -183,6 +208,8 @@ def _generate_pattern_requests(
         # to make the process deterministic
         np.random.seed(config_settings.seed)
 
+        current_time = timestamps[-1]
+
         # for each request
         for i in range(num_requests):
 
@@ -192,6 +219,7 @@ def _generate_pattern_requests(
                 last_accessed_key,
                 key_relationships,
                 probs,
+                current_time,
                 config_settings
             )
 
@@ -209,6 +237,8 @@ def _generate_pattern_requests(
             timestamps.append(timestamps[-1] + delta_t)
             delta_times.append(delta_t)
             last_accessed_key = request
+
+            current_time = timestamps[-1]
 
             # debugging
             debug(f"⚙️ Number of request generated: {i}.")
