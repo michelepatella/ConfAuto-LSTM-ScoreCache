@@ -96,7 +96,7 @@ def extract_targets_from_dataloader(data_loader):
         all_targets = []
         # extract targets from data loader
         for _, _, targets in data_loader:
-            all_targets.append(targets - 1)
+            all_targets.append(targets)
     except (TypeError, ValueError, IndexError) as e:
         raise RuntimeError(f"❌ Error while extracting targets from loader: {e}.")
 

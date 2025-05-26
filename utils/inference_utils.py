@@ -67,6 +67,7 @@ def _infer_batch(
 
                 # move features and key on device
                 x_features = x_features.to(device)
+                x_keys = x_keys.to(device)
                 y_key = y_key.to(device)
 
                 # if there is more than one MC sample
