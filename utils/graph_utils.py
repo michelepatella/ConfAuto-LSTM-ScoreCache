@@ -120,29 +120,23 @@ def plot_keys_transition_matrix(requests):
     info("🟢 Keys transition matrix built.")
 
 
-def plot_requests_over_time(requests, delta_times, bin_size=1000):
+def plot_requests_over_time(requests, timestamps, bin_size=1000):
     """
     Method to plot the requests over the time.
     :param bin_size: The bin size to consider when
     plotting the requests over the time.
     :param requests: The requests generated.
-    :param delta_times: The delta times generated.
+    :param timestamps: The timestamps generated.
     :return:
     """
     # initial message
     info("🔄 Requests over time plot building started...")
 
     try:
-        # check requests and delta times lists
-        if not requests or not delta_times:
-            raise ValueError("❌ Request and/or delta times lists is empty, "
+        # check requests and timestamps lists
+        if not requests or not timestamps:
+            raise ValueError("❌ Request and/or timestamps lists is empty, "
                              "cannot generate plot.")
-
-        # construct timestamps starting from delta times
-        timestamps = [0]
-        for dt in delta_times:
-            timestamps.append(timestamps[-1] + dt)
-        timestamps = timestamps[1:]
 
         # get the max timestamp (the last element)
         max_time = timestamps[-1]
@@ -296,3 +290,68 @@ def plot_confusion_matrix(confusion_matrix):
 
     # show a successful message
     info("🟢 Confusion matrix built.")
+
+
+def plot_key_usage_heatmap(
+        requests,
+        timestamps,
+        config_settings
+):
+    """
+    Plot heatmap of key access frequencies for all 24 hours.
+    :param requests: List of keys requested.
+    :param timestamps: Corresponding list of timestamps (in seconds).
+    :param config_settings: Config settings for key range.
+    """
+    # show initial message
+    info("🔄 Plotting key usage heatmap for all 24 hours started...")
+
+    try:
+        day_seconds = 24 * 60 * 60
+        num_keys = config_settings.last_key - config_settings.first_key
+        heatmap = np.zeros(
+            (24, num_keys),
+            dtype=int
+        )
+
+        # fill heatmap
+        for key, ts in zip(requests, timestamps):
+            hour = int((ts % day_seconds) / 3600)
+            key_idx = key - config_settings.first_key
+            if 0 <= hour < 24 and 0 <= key_idx < num_keys:
+                heatmap[hour, key_idx] += 1
+
+        plt.figure(figsize=(12, 10))
+        plt.imshow(
+            heatmap,
+            aspect='auto',
+            cmap='viridis'
+        )
+        plt.colorbar(label='Access Count')
+        plt.xlabel('Key')
+        plt.ylabel('Hour of Day')
+        plt.title('Heatmap of Key Access Frequency by Hour of Day')
+        plt.yticks(
+            ticks=np.arange(24),
+            labels=[f"{h}:00" for h in range(24)]
+        )
+        plt.xticks(
+            ticks=np.arange(
+                0,
+                num_keys,
+                max(1, num_keys // 20)
+            ),
+            labels=np.arange(
+                config_settings.first_key,
+                config_settings.last_key,
+                max(1, num_keys // 20)
+            ),
+            rotation=90)
+        plt.tight_layout()
+        plt.show()
+        plt.close()
+    except (AttributeError, TypeError, ValueError, IndexError) as e:
+        raise RuntimeError(f"❌ Error while building the confusion matrix plot: {e}.")
+
+    # show successful message
+    info("🟢 Key usage heatmap for all 24 hours plotted.")

@@ -10,13 +10,10 @@ class Config:
     num_keys: int
     first_key: int
     last_key: int
-    freq_windows: list
     zipf_alpha: float
     zipf_alpha_start: float
     zipf_alpha_end: float
     zipf_time_steps: int
-    locality_prob: float
-    locality_prob_succ_key: float
     burst_high: float
     burst_low: float
     burst_every: int

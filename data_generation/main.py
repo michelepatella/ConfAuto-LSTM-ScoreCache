@@ -1,6 +1,6 @@
-from data_generation.frequencies_calculator import _generate_last_relative_frequency
 from data_generation.requests_generator import _generate_static_requests, _generate_dynamic_requests
-from utils.graph_utils import plot_keys_transition_matrix, plot_zipf_loglog, plot_requests_over_time
+from utils.graph_utils import plot_keys_transition_matrix, plot_zipf_loglog, plot_requests_over_time, \
+    plot_key_usage_heatmap
 from utils.log_utils import info, debug, phase_var
 from utils.dataset_utils import save_dataset, create_dataframe
 import numpy as np
@@ -22,24 +22,17 @@ def data_generation(config_settings):
     debug(f"⚙️Type of distribution: {config_settings.distribution_type}.")
 
     if config_settings.distribution_type == "static":
-        # generate static requests and delta times
-        requests, delta_times = _generate_static_requests(config_settings)
+        # generate static requests and timestamps
+        requests, timestamps = _generate_static_requests(config_settings)
     else:
-        # generate dynamic requests and delta times
-        requests, delta_times = _generate_dynamic_requests(config_settings)
-
-    # generate other features (last relative frequencies w.r.t. requests)
-    freq_columns = _generate_last_relative_frequency(
-        requests,
-        config_settings
-    )
-
+        # generate dynamic requests and timestamps
+        requests, timestamps = _generate_dynamic_requests(config_settings)
+    print(timestamps)
     # create dataframe
     df = create_dataframe(
         {
             "id": np.arange(len(requests)),
-            "delta_time": delta_times,
-            **freq_columns,
+            "timestamp": timestamps[:len(requests)],
             "request": requests,
         }
     )
@@ -50,7 +43,8 @@ def data_generation(config_settings):
     # show some plots
     plot_zipf_loglog(requests)
     plot_keys_transition_matrix(requests)
-    plot_requests_over_time(requests, delta_times)
-
+    plot_requests_over_time(requests, timestamps)
+    plot_key_usage_heatmap(requests, timestamps, config_settings)
+    print("Stampato")
     # show a successful message
     info("✅ Data generation successfully completed.")

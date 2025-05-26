@@ -7,19 +7,12 @@ data:
     key_range:
       first_key: 1 #
       last_key: 30 #
-    freq_windows:
-    - 10 #
-    - 100 #
-    - 1000 #
   access_pattern:
     zipf:
       alpha: 0.8 #
       alpha_start: 0.8 #
       alpha_end: 1.2 #
       time_steps: 10 #
-    locality:
-      prob: 0.8 #
-      prob_succ_key: 0.8
   temporal_pattern:
     burstiness:
       burst_high: 1.5 #
@@ -39,7 +32,7 @@ data:
     dynamic_save_path: data/dynamic_access_logs.csv #
 model:
   general:
-    num_features: 5 #
+    num_features: 2 #
     save_path: model/trained_lstm.pt #
   params:
     hidden_size: 128 #

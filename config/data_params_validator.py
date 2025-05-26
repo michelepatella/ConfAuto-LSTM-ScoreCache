@@ -8,8 +8,7 @@ def _check_distribution_params(
         num_requests,
         num_keys,
         first_key,
-        last_key,
-        freq_windows
+        last_key
 ):
     """
     Method to check data distribution parameters.
@@ -19,7 +18,6 @@ def _check_distribution_params(
     :param num_keys: The number of keys.
     :param first_key: The first key.
     :param last_key: The last key.
-    :param freq_windows: The frequency windows.
     :return:
     """
     # check seed
@@ -55,23 +53,12 @@ def _check_distribution_params(
                            "must be integers, with the first one "
                            "< the second one.")
 
-    # check frequency windows
-    if (
-        not isinstance(freq_windows, list)
-        or not freq_windows
-        or not all(isinstance(w, int) and w > 0 for w in freq_windows)
-    ):
-        raise RuntimeError("❌ 'data.distribution.freq_windows' must "
-                           "be a list of integers > 0.")
-
 
 def _check_access_pattern_params(
             zipf_alpha,
             zipf_alpha_start,
             zipf_alpha_end,
             zipf_time_steps,
-            locality_prob,
-            locality_prob_succ_key,
             burst_high,
             burst_low,
             burst_every,
@@ -85,9 +72,6 @@ def _check_access_pattern_params(
     :param zipf_alpha_start: Zipf alpha start value.
     :param zipf_alpha_end: Zipf alpha end value.
     :param zipf_time_steps: Zipf time steps value.
-    :param locality_prob: Locality probability value.
-    :param locality_prob_succ_key: Locality probability of
-    accessing the succeeding key.
     :param burst_high: The burst high value.
     :param burst_low: The burst low value.
     :param burst_every: The burst every value.
@@ -121,22 +105,6 @@ def _check_access_pattern_params(
     ):
         raise RuntimeError("❌ 'data.access_pattern.zipf.time_steps"
                            "' must be an integer > 0.")
-
-    # check local probability
-    if (
-        not isinstance(locality_prob_succ_key, float)
-        or not (0.0 <= locality_prob_succ_key <= 1.0)
-    ):
-        raise RuntimeError("❌ 'data.access_pattern.locality.locality_prob_succ_key' must"
-                           " be a float between 0.0 and 1.0.")
-
-    # check local probability
-    if (
-            not isinstance(locality_prob, float)
-            or not (0.0 <= locality_prob <= 1.0)
-    ):
-        raise RuntimeError("❌ 'data.access_pattern.locality.prob' must"
-                            " be a float between 0.0 and 1.0.")
 
     # check burst high and low
     for name, val in [("burst_high", burst_high), ("burst_low", burst_low)]:
@@ -283,10 +251,6 @@ def _validate_data_distribution_params(config):
         config,
         "data.distribution.key_range.last_key"
     ) + 1
-    freq_windows = get_config_value(
-        config,
-        "data.distribution.freq_windows"
-    )
 
     # check distribution params
     _check_distribution_params(
@@ -295,15 +259,14 @@ def _validate_data_distribution_params(config):
         num_requests,
         num_keys,
         first_key,
-        last_key,
-        freq_windows
+        last_key
     )
 
     # show a successful message
     info("🟢 Data distribution params validated.")
 
     return (seed, distribution_type, num_requests,
-            num_keys, first_key, last_key, freq_windows)
+            num_keys, first_key, last_key)
 
 
 def _validate_data_access_pattern_params(config):
@@ -332,15 +295,6 @@ def _validate_data_access_pattern_params(config):
     zipf_time_steps = get_config_value(
         config,
         "data.access_pattern.zipf.time_steps"
-    )
-    # locality
-    locality_prob = get_config_value(
-        config,
-        "data.access_pattern.locality.prob"
-    )
-    locality_prob_succ_key = get_config_value(
-        config,
-        "data.access_pattern.locality.prob_succ_key"
     )
 
     # temporal pattern
@@ -377,8 +331,6 @@ def _validate_data_access_pattern_params(config):
         zipf_alpha_start,
         zipf_alpha_end,
         zipf_time_steps,
-        locality_prob,
-        locality_prob_succ_key,
         burst_high,
         burst_low,
         burst_every,
@@ -391,7 +343,7 @@ def _validate_data_access_pattern_params(config):
     info("🟢 Data access pattern params validated.")
 
     return (zipf_alpha, zipf_alpha_start, zipf_alpha_end, zipf_time_steps,
-            locality_prob, locality_prob_succ_key, burst_high, burst_low, burst_every,
+            burst_high, burst_low, burst_every,
             burst_peak, periodic_base_scale, periodic_amplitude)
 
 

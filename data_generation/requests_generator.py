@@ -8,7 +8,7 @@ def _generate_static_requests(config_settings):
     """
     Method to orchestrate the static requests' generation.
     :param config_settings: The configuration settings.
-    :return: Static requests and delta times generated.
+    :return: Static requests and timestamps generated.
     """
     # initial message
     info("🔄 Static requests generation started...")
@@ -24,7 +24,7 @@ def _generate_static_requests(config_settings):
 
     timestamps = [0]
     # generate patterns
-    requests, delta_times = _generate_pattern_requests(
+    requests, timestamps = _generate_pattern_requests(
         probs,
         config_settings.num_requests,
         timestamps,
@@ -34,19 +34,19 @@ def _generate_static_requests(config_settings):
     # debugging
     debug(f"⚙️Probabilities length: {len(probs)}.")
     debug(f"⚙️Requests length: {len(requests)}.")
-    debug(f"⚙️Delta times length: {len(delta_times)}.")
+    debug(f"⚙️Timestamps length: {len(timestamps)}.")
 
     # show a successful message
     info("🟢 Static requests generated.")
 
-    return requests, delta_times
+    return requests, timestamps
 
 
 def _generate_dynamic_requests(config_settings):
     """
     Method to orchestrate the dynamic requests' generation.
     :param config_settings: The configuration settings.
-    :return: Dynamic requests and delta times generated.
+    :return: Dynamic requests and timestamps generated.
     """
     # initial message
     info("🔄 Dynamic requests generation started...")
@@ -75,7 +75,6 @@ def _generate_dynamic_requests(config_settings):
 
     # initialize data
     requests = []
-    delta_times = []
     timestamps = [0]
 
     # for each alpha value
@@ -91,7 +90,7 @@ def _generate_dynamic_requests(config_settings):
         )
 
         # generate pattern
-        reqs, dt = _generate_pattern_requests(
+        reqs, timestamps = _generate_pattern_requests(
             probs,
             time_step_duration,
             timestamps,
@@ -100,16 +99,15 @@ def _generate_dynamic_requests(config_settings):
 
         # store generated data
         requests.extend(reqs)
-        delta_times.extend(dt)
 
         # debugging
         debug(f"⚙️Probabilities length: {len(probs)}.")
 
     # debugging
     debug(f"⚙️Requests length: {len(requests)}.")
-    debug(f"⚙️Delta times length: {len(delta_times)}.")
+    debug(f"⚙️timestamps length: {len(timestamps)}.")
 
     # show a successful message
     info("🟢 Dynamic requests generated.")
 
-    return requests, delta_times
+    return requests, timestamps

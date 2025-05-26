@@ -62,7 +62,7 @@ def training(config_settings):
     training_loader = create_data_loader(
         final_training_set,
         config_settings.training_batch_size,
-        False
+        True
     )
     validation_loader = create_data_loader(
         final_validation_set,

@@ -26,12 +26,12 @@ def prepare_config():
 
     # data config
     (seed, distribution_type, num_requests,
-     num_keys, first_key, last_key, freq_windows) = (
+     num_keys, first_key, last_key) = (
         _validate_data_distribution_params(config_file))
 
     (zipf_alpha, zipf_alpha_start, zipf_alpha_end,
-     zipf_time_steps, locality_prob, locality_prob_succ_key,
-     burst_high, burst_low, burst_every, burst_peak,
+     zipf_time_steps, burst_high, burst_low,
+    burst_every, burst_peak,
      periodic_base_scale, periodic_amplitude) = (
         _validate_data_access_pattern_params(config_file))
 
@@ -91,13 +91,10 @@ def prepare_config():
         num_keys=num_keys,
         first_key=first_key,
         last_key=last_key,
-        freq_windows=freq_windows,
         zipf_alpha=zipf_alpha,
         zipf_alpha_start=zipf_alpha_start,
         zipf_alpha_end=zipf_alpha_end,
         zipf_time_steps=zipf_time_steps,
-        locality_prob=locality_prob,
-        locality_prob_succ_key=locality_prob_succ_key,
         burst_high=burst_high,
         burst_low=burst_low,
         burst_every=burst_every,

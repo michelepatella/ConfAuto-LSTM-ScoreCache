@@ -1,33 +1,56 @@
-import numpy as np
 from utils.log_utils import debug, info
+import numpy as np
 
 
-def _generate_key_relationships(first_key, last_key):
+def _modify_zipf_distribution(probs, current_time, config_settings):
     """
-    Method to generate key relationships between two keys.
-    :param first_key: The first key.
-    :param last_key: The last key.
-    :return: The key relationships.
+    Method to modify zipf distribution, according to the hour of the day.
+    :param probs: The Zipf distribution probabilities.
+    :param current_time: The current time.
+    :param config_settings: The config settings.
+    :return: The key range and modified zipf distribution probabilities.
     """
     # initial message
-    info("🔄 Pattern generation started...")
+    info("🔄 Zipf distribution modification started...")
 
-    key_relationships = {}
-    keys = list(range(first_key, last_key))
-    num_keys = len(keys)
+    try:
+        # calculate the hour
+        day_seconds = 24 * 60 * 60
+        hour_of_day = (current_time % day_seconds) / 3600.0
 
-    for i, key in enumerate(keys):
-        prev_key = keys[(i - 1) % num_keys]
-        next_key = keys[(i + 1) % num_keys]
-        key_relationships[key] = [prev_key, next_key]
+        key_range = np.arange(config_settings.first_key, config_settings.last_key)
+        weights = np.ones_like(key_range, dtype=float)
 
-    info(f"🟢 Key relationships generated.")
-    return key_relationships
+        # modify zipf based on the hour of the day
+        if 6 <= hour_of_day < 12:
+            # morning: prefer first keys
+            weights *= np.exp(-0.2 * (key_range - config_settings.first_key))
+        elif 12 <= hour_of_day < 18:
+            # afternoon: prefer mid-keys
+            mid = (config_settings.first_key + config_settings.last_key) / 2
+            weights *= np.exp(-0.01 * (key_range - mid) ** 2)
+        elif 18 <= hour_of_day < 24:
+            # evening: prefer last keys
+            weights *= np.exp(-0.2 * (config_settings.last_key - key_range))
+        else:
+            # night: distribution is flattened
+            weights *= 1.0
+
+        # apply and normalize zipf probabilities
+        modified_probs = probs * weights
+        modified_probs /= modified_probs.sum()
+
+    except (ZeroDivisionError, TypeError, ValueError) as e:
+        raise RuntimeError(f"❌ Error while modifying Zipf distribution: {e}.")
+
+    # show a successful message
+    info(f"🟢 Access pattern requests generated.")
+
+    return key_range, modified_probs
 
 
 def _generate_access_pattern_requests(
         last_accessed_key,
-        key_relationships,
         probs,
         current_time,
         config_settings
@@ -35,7 +58,6 @@ def _generate_access_pattern_requests(
     """
     Method to generate access pattern requests.
     :param last_accessed_key: The last accessed key.
-    :param key_relationships: The key relationships.
     :param probs: The probabilities of the keys.
     :param current_time: The current time.
     :param config_settings: The configuration settings.
@@ -44,70 +66,18 @@ def _generate_access_pattern_requests(
     # initial message
     info("🔄 Access pattern requests generation started...")
 
-    # calculate the hour
-    day_seconds = 24 * 60 * 60
-    hour_of_day = (current_time % day_seconds) / 3600.0
+    # modify zipf distribution based on the hour of the day
+    key_range, modified_probs = _modify_zipf_distribution(
+        probs,
+        current_time,
+        config_settings
+    )
 
-    key_range = np.arange(config_settings.first_key, config_settings.last_key)
-    weights = np.ones_like(key_range, dtype=float)
-
-    # modify zipf based on the hour of the day
-    if 6 <= hour_of_day < 12:
-        # morning: prefer first keys
-        weights *= np.exp(-0.2 * (key_range - config_settings.first_key))
-    elif 12 <= hour_of_day < 18:
-        # afternoon: prefer mid-keys
-        mid = (config_settings.first_key + config_settings.last_key) / 2
-        weights *= np.exp(-0.01 * (key_range - mid) ** 2)
-    elif 18 <= hour_of_day < 24:
-        # evening: prefer last keys
-        weights *= np.exp(-0.2 * (config_settings.last_key - key_range))
-    else:
-        # night: distribution is flattened
-        weights *= 1.0
-
-    # apply and normalize zipf probabilities
-    modified_probs = probs * weights
-    modified_probs /= modified_probs.sum()
-
-    if (
-            last_accessed_key is None
-            or np.random.rand() > config_settings.locality_prob
-    ):
-        # generate the request following Zipf distribution
-        request = np.random.choice(
-            key_range,
-            p=modified_probs
-        )
-    else:
-        # get the related keys
-        related_keys = key_relationships.get(
-            last_accessed_key,
-            []
-        )
-
-        if related_keys:
-            # calculate the weights for neighboring keys
-            weights = []
-            for k in related_keys:
-                if k > last_accessed_key:
-                    weights.append(config_settings.locality_prob_succ_key)
-                else:
-                    weights.append(1.0 - config_settings.locality_prob_succ_key)
-
-            weights = np.array(weights)
-            weights /= weights.sum()
-
-            request = np.random.choice(related_keys, p=weights)
-        else:
-            # generate the request following Zipf distribution
-            request = np.random.choice(
-                np.arange(
-                    config_settings.first_key,
-                    config_settings.last_key
-                ),
-                p=probs
-            )
+    # generate the request following Zipf distribution
+    request = np.random.choice(
+        key_range,
+        p=modified_probs
+    )
 
     # show a successful message
     info(f"🟢 Access pattern requests generated.")
@@ -135,7 +105,7 @@ def _generate_temporal_access_pattern_requests(
     # calculate periodic component for frequency scaling
     periodic_scale = (config_settings.periodic_base_scale +
                       config_settings.periodic_amplitude
-                      * np.cos(2 * np.pi * timestamps[-1] / period))
+                      * np.cos(2 * np.pi * timestamps[-1] / period - np.pi))
 
     # introduce burstiness
     if i % config_settings.burst_every < config_settings.burst_peak:
@@ -162,13 +132,13 @@ def _generate_pattern_requests(
         config_settings
 ):
     """
-    Method to orchestrate requests and delta times generation
+    Method to orchestrate requests and timestamps generation
     based on a combination of access pattern and temporal access pattern.
     :param probs: The Zipf probabilities.
     :param num_requests: The number of requests.
     :param timestamps: The list of timestamps.
     :param config_settings: The configuration settings.
-    :return: A tuple containing the generated requests and delta_times.
+    :return: A tuple containing the generated requests and timestamps.
     """
     # initial message
     info("🔄 Pattern requests generation started...")
@@ -199,16 +169,9 @@ def _generate_pattern_requests(
         raise ValueError("❌ probs must be a numpy array summing to 1.")
 
     try:
-        # define key relationships using a dictionary
-        key_relationships = _generate_key_relationships(
-            config_settings.first_key,
-            config_settings.last_key
-        )
 
         # to make the process deterministic
         np.random.seed(config_settings.seed)
-
-        current_time = timestamps[-1]
 
         # for each request
         for i in range(num_requests):
@@ -217,9 +180,8 @@ def _generate_pattern_requests(
             # access pattern
             request = _generate_access_pattern_requests(
                 last_accessed_key,
-                key_relationships,
                 probs,
-                current_time,
+                timestamps[-1],
                 config_settings
             )
 
@@ -238,12 +200,10 @@ def _generate_pattern_requests(
             delta_times.append(delta_t)
             last_accessed_key = request
 
-            current_time = timestamps[-1]
-
             # debugging
-            debug(f"⚙️ Number of request generated: {i}.")
+            debug(f"⚙️ Number of request generated: {i+1}.")
             debug(f"⚙️ Request generated: {request}.")
-            debug(f"⚙️ Delta time generated: {delta_t}.")
+            debug(f"⚙️ Timestamps generated: {timestamps}.")
 
     except (ValueError, TypeError, IndexError, ZeroDivisionError,
             AttributeError, MemoryError) as e:
@@ -252,4 +212,4 @@ def _generate_pattern_requests(
     # show a successful message
     info(f"🟢 Pattern requests generated.")
 
-    return requests, delta_times
+    return requests, timestamps

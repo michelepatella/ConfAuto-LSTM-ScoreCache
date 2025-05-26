@@ -27,15 +27,12 @@ def data_preprocessing(config_settings):
     # remove missing values
     df_no_missing_values = _remove_missing_values(df_deduplicated)
 
-    # standardize 'delta_time' column
+    # standardize columns
     df_standardized = _standardize(
         df_no_missing_values,
         [
             "id",
-            "delta_time",
-            "freq_last_10",
-            "freq_last_100",
-            "freq_last_1000"
+            "timestamp"
         ],
         config_settings
     )
