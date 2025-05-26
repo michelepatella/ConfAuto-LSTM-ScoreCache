@@ -1,5 +1,6 @@
 from data_preprocessing.cleaner import _remove_missing_values
-from data_preprocessing.encoder import _encode_time_trigonometrically
+from data_preprocessing.feature_engineering import _encode_time_trigonometrically, build_features
+from data_preprocessing.normalizer import normalize
 from utils.log_utils import info, phase_var
 from utils.dataset_utils import save_dataset, load_dataset
 
@@ -21,14 +22,28 @@ def data_preprocessing(config_settings):
     # remove missing values
     df_no_missing_values = _remove_missing_values(df)
 
-    # encode time column
-    df_standardized = _encode_time_trigonometrically(
+    # feature engineering
+    df_final = build_features(
         df_no_missing_values,
-        "timestamp"
+        "timestamp",
+        "request"
+    )
+
+    # normalize some just created features
+    df_normalized = normalize(
+        df_final,
+        [
+            "day_fraction",
+            "delta_t",
+            "last_request",
+            "delta_key",
+            "moving_avg_key"
+        ],
+        config_settings
     )
 
     # save the preprocessed dataset
-    save_dataset(df_standardized, config_settings)
+    save_dataset(df_normalized, config_settings)
 
     # print a successful message
     info("✅ Data preprocessing successfully completed.")
