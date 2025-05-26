@@ -23,7 +23,7 @@ data:
       base_scale: 20 #
       amplitude: 15 #
   sequence:
-    len: 25 #
+    len: 100 #
     embedding_dim: 32 #
   dataset:
     training_perc: 0.7 #

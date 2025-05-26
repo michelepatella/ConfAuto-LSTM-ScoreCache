@@ -1,4 +1,3 @@
-from matplotlib.colors import LogNorm
 from sklearn.metrics import precision_recall_curve, average_precision_score
 from utils.log_utils import info
 import matplotlib.pyplot as plt
@@ -48,7 +47,6 @@ def plot_zipf_loglog(requests):
         plt.title("Zipf Distribution (Log-Log)")
         plt.xlabel("Key")
         plt.ylabel("Frequency")
-        plt.grid(True)
         plt.tight_layout()
         plt.show()
         plt.close()
@@ -61,32 +59,36 @@ def plot_zipf_loglog(requests):
 
 def plot_daily_profile(timestamps, bin_size=0.5):
     """
-    Plot the distribution of requests over a 24-hour day.
-
-    :param timestamps: Array of timestamps in hours.
-    :param bin_size: Bin size in hours (e.g., 0.5 = 30 min).
+    Method to plot the distribution of requests over a 24-hour day.
+    :param timestamps: Timestamps (in hours).
+    :param bin_size: Bin size (in hours).
     """
-    info("🔄 Daily request profile plot started...")
+    # show initial message
+    info("🔄 Daily request profile plot building started...")
 
     try:
-        # timestamps are already in hours, just reduce to [0, 24)
+        # extract hours
         hours = np.array(timestamps) % 24
 
-        # Define bins
+        # define bins
         num_bins = int(24 / bin_size)
         bins = np.linspace(0, 24, num_bins + 1)
 
-        # Histogram
+        # define the histogram
         counts, _ = np.histogram(hours, bins=bins)
 
-        # Plot
-        plt.figure(figsize=(12, 6))
-        plt.bar(bins[:-1], counts, width=bin_size, align='edge', edgecolor='black')
+        plt.figure(figsize=(12, 10))
+        plt.bar(
+            bins[:-1],
+            counts,
+            width=bin_size,
+            align='edge',
+            edgecolor='black'
+        )
         plt.xlabel("Hour of Day")
         plt.ylabel("Number of Requests")
         plt.title("Distribution of Requests Over 24 Hours")
         plt.xticks(np.arange(0, 25, step=1))
-        plt.grid(True, axis='y')
         plt.tight_layout()
         plt.show()
         plt.close()
@@ -95,6 +97,73 @@ def plot_daily_profile(timestamps, bin_size=0.5):
         raise RuntimeError(f"❌ Error while building daily request profile: {e}.")
 
     info("🟢 Daily request profile plot built.")
+
+
+def plot_key_usage_heatmap(
+        requests,
+        timestamps,
+        config_settings
+):
+    """
+    Method to plot the heatmap of key access frequencies for all 24 hours.
+    :param requests: List of keys.
+    :param timestamps: List of timestamps.
+    :param config_settings: Config settings.
+    """
+    # show initial message
+    info("🔄 Plotting key usage heatmap for all 24 hours started...")
+
+    try:
+        # define the heatmap
+        heatmap = np.zeros(
+            (24, config_settings.num_keys),
+            dtype=int
+        )
+
+        # fill the heatmap
+        for key, ts in zip(requests, timestamps):
+            hour = int(ts)
+            key_idx = key - config_settings.first_key
+            if (
+                0 <= hour < 24 and
+                0 <= key_idx < config_settings.num_keys
+            ):
+                heatmap[hour, key_idx] += 1
+
+        plt.figure(figsize=(12, 10))
+        plt.imshow(
+            heatmap,
+            aspect='auto',
+            cmap='viridis'
+        )
+        plt.colorbar(label='Access Count')
+        plt.xlabel('Key')
+        plt.ylabel('Hour of Day')
+        plt.title('Heatmap of Key Access Frequency by Hour of Day')
+        plt.yticks(
+            ticks=np.arange(24),
+            labels=[f"{h}:00" for h in range(24)]
+        )
+        plt.xticks(
+            ticks=np.arange(
+                0,
+                config_settings.num_keys,
+                max(1, config_settings.num_keys // 20)
+            ),
+            labels=np.arange(
+                config_settings.first_key,
+                config_settings.last_key,
+                max(1, config_settings.num_keys // 20)
+            ),
+            rotation=90)
+        plt.tight_layout()
+        plt.show()
+        plt.close()
+    except (AttributeError, TypeError, ValueError, IndexError) as e:
+        raise RuntimeError(f"❌ Error while building the confusion matrix plot: {e}.")
+
+    # show successful message
+    info("🟢 Key usage heatmap for all 24 hours plotted.")
 
 
 def plot_precision_recall_curve(targets, outputs, num_keys):
@@ -138,7 +207,6 @@ def plot_precision_recall_curve(targets, outputs, num_keys):
         plt.xlabel("Recall")
         plt.ylabel("Precision")
         plt.title("Precision-Recall Curve")
-        plt.grid(True)
         plt.show()
         plt.close()
 
@@ -175,7 +243,6 @@ def plot_class_report(class_report):
         plt.xlabel("Class")
         plt.ylabel("Score")
         plt.ylim(0, 1)
-        plt.grid(True)
         plt.show()
         plt.close()
 
@@ -213,68 +280,3 @@ def plot_confusion_matrix(confusion_matrix):
 
     # show a successful message
     info("🟢 Confusion matrix built.")
-
-
-def plot_key_usage_heatmap(
-        requests,
-        timestamps,
-        config_settings
-):
-    """
-    Plot heatmap of key access frequencies for all 24 hours.
-    :param requests: List of keys requested.
-    :param timestamps: Corresponding list of timestamps (in seconds).
-    :param config_settings: Config settings for key range.
-    """
-    # show initial message
-    info("🔄 Plotting key usage heatmap for all 24 hours started...")
-
-    try:
-        day_seconds = 24 * 60 * 60
-        num_keys = config_settings.last_key - config_settings.first_key
-        heatmap = np.zeros(
-            (24, num_keys),
-            dtype=int
-        )
-
-        # fill heatmap
-        for key, ts in zip(requests, timestamps):
-            hour = int(ts)
-            key_idx = key - config_settings.first_key
-            if 0 <= hour < 24 and 0 <= key_idx < num_keys:
-                heatmap[hour, key_idx] += 1
-
-        plt.figure(figsize=(12, 10))
-        plt.imshow(
-            heatmap,
-            aspect='auto',
-            cmap='viridis'
-        )
-        plt.colorbar(label='Access Count')
-        plt.xlabel('Key')
-        plt.ylabel('Hour of Day')
-        plt.title('Heatmap of Key Access Frequency by Hour of Day')
-        plt.yticks(
-            ticks=np.arange(24),
-            labels=[f"{h}:00" for h in range(24)]
-        )
-        plt.xticks(
-            ticks=np.arange(
-                0,
-                num_keys,
-                max(1, num_keys // 20)
-            ),
-            labels=np.arange(
-                config_settings.first_key,
-                config_settings.last_key,
-                max(1, num_keys // 20)
-            ),
-            rotation=90)
-        plt.tight_layout()
-        plt.show()
-        plt.close()
-    except (AttributeError, TypeError, ValueError, IndexError) as e:
-        raise RuntimeError(f"❌ Error while building the confusion matrix plot: {e}.")
-
-    # show successful message
-    info("🟢 Key usage heatmap for all 24 hours plotted.")

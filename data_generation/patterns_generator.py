@@ -6,51 +6,64 @@ def _modify_zipf_distribution(
         probs,
         period,
         current_time,
-        config_settings
+        config_settings,
+        history_keys=None
 ):
     """
-    Method to modify Zipf distribution making it follows a pattern
-    of requests depending on the hour of the day.
-    :param probs: The original Zipf distribution probabilities.
-    :param period: The predefined period.
-    :param current_time: The current time.
-    :param config_settings: The configuration settings.
-    :return: The key range to be accessed and the modified
-    Zipf distribution probabilities.
+    Versione più complessa della modifica della distribuzione Zipf,
+    con pattern a lungo termine, oscillazioni multiple e dipendenza storica.
     """
-    # show initial message
-    info("🔄 Zipf distribution modification started...")
 
-    try:
-        # extrapolate the hour of the day
-        hour_of_day = (current_time % period) / 3600.0
+    hour_of_day = (current_time % period) / 3600.0
+    key_range = np.arange(config_settings.first_key, config_settings.last_key)
+    total_keys = config_settings.last_key - config_settings.first_key
 
-        # define the range of possible keys
-        key_range = np.arange(config_settings.first_key, config_settings.last_key)
-        total_keys = config_settings.last_key - config_settings.first_key
+    # Numero di fasce orarie
+    num_blocks = 6
+    block_length = 24 / num_blocks
+    current_block = int(hour_of_day // block_length)
 
-        # the preferred key to be accessed linearly varies over time
-        base_preferred_key = ((hour_of_day / 24.0) * (total_keys - 1)
-                              + config_settings.first_key)
+    # Chiave preferita base per ciascuna fascia
+    preferred_keys_per_block = np.linspace(
+        config_settings.first_key,
+        config_settings.last_key - 1,
+        num_blocks
+    )
 
-        # add gaussian noise
-        noise = np.random.normal(loc=0.0, scale=2.0)
+    # Media pesata delle ultime 3 fasce (se disponibile)
+    if history_keys and len(history_keys) >= 3:
+        weight_history = np.array([0.5, 0.3, 0.2])  # più peso al passato più recente
+        last_three = history_keys[-3:]
+        historical_effect = np.average(last_three, weights=weight_history)
+    else:
+        historical_effect = preferred_keys_per_block[current_block]
 
-        preferred_key_index = base_preferred_key + noise
+    # Oscillazioni multiple (bassa e alta frequenza)
+    freq_low = 2 * np.pi / block_length
+    freq_high = 10 * freq_low  # oscillazione più veloce
 
-        sigma = max(1.0, total_keys * 0.07)
+    intra_block_time = hour_of_day % block_length
+    oscillation_low = (total_keys / num_blocks) / 3 * np.sin(freq_low * intra_block_time)
+    oscillation_high = (total_keys / num_blocks) / 6 * np.sin(freq_high * intra_block_time)
 
-        # calculate gaussian weights centered on preferred key
-        weights = np.exp(-0.5 * ((key_range - preferred_key_index) / sigma) ** 2)
+    # Chiave preferita finale combinando tutti i fattori
+    base_preferred_key = historical_effect + oscillation_low + oscillation_high
 
-        # modify and normalize new probabilities
-        modified_probs = probs * weights
-        modified_probs /= modified_probs.sum()
+    # Rumore condizionato da stato passato (es. più rumore se la variazione precedente era alta)
+    if history_keys and len(history_keys) >= 2:
+        prev_delta = abs(history_keys[-1] - history_keys[-2])
+        noise_scale = 0.5 + 0.5 * np.tanh(prev_delta)
+    else:
+        noise_scale = 0.5
 
-    except (ZeroDivisionError, TypeError, ValueError) as e:
-        raise RuntimeError(f"❌ Error while modifying Zipf distribution: {e}.")
+    noise = np.random.normal(loc=0.0, scale=noise_scale)
+    preferred_key_index = base_preferred_key + noise
 
-    info(f"🟢 Access pattern requests generated.")
+    sigma = max(0.5, total_keys * 0.015)
+    weights = np.exp(-0.5 * ((key_range - preferred_key_index) / sigma) ** 2)
+
+    modified_probs = probs * weights
+    modified_probs /= modified_probs.sum()
 
     return key_range, modified_probs
 
@@ -59,7 +72,8 @@ def _generate_access_pattern_requests(
         probs,
         period,
         current_time,
-        config_settings
+        config_settings,
+        history_keys
 ):
     """
     Method to generate access pattern requests.
@@ -67,6 +81,7 @@ def _generate_access_pattern_requests(
     :param period: The predefined period.
     :param current_time: The current time.
     :param config_settings: The configuration settings.
+    :param history_keys: The history keys.
     :return: The requested generate, following a specific access pattern.
     """
     # initial message
@@ -77,7 +92,8 @@ def _generate_access_pattern_requests(
         probs,
         period,
         current_time,
-        config_settings
+        config_settings,
+        history_keys=history_keys
     )
 
     # generate the request following modified Zipf distribution
@@ -160,6 +176,7 @@ def _generate_pattern_requests(
     requests = []
     delta_times = []
     timestamps = [0.0]
+    history_keys = []
 
     # define the day as period (24(h) * 60 (min) * 60(s))
     period = 24 * 60 * 60
@@ -190,7 +207,8 @@ def _generate_pattern_requests(
                 probs,
                 period,
                 timestamps[-1],
-                config_settings
+                config_settings,
+                history_keys=history_keys
             )
 
             # generate a delta time following specific
@@ -205,6 +223,7 @@ def _generate_pattern_requests(
             requests.append(request)
             timestamps.append(timestamps[-1] + delta_t)
             delta_times.append(delta_t)
+            history_keys.append(request)
 
             # debugging
             debug(f"⚙️ Number of request generated: {i+1}.")
