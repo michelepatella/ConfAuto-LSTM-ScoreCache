@@ -1,6 +1,6 @@
 import torch
 from sklearn.metrics import classification_report, confusion_matrix, cohen_kappa_score
-from utils.log_utils import info, debug
+from utils.log_utils import info
 
 
 def _calculate_top_k_accuracy(
@@ -21,6 +21,8 @@ def _calculate_top_k_accuracy(
     try:
         # prepare data
         outputs_tensor = torch.stack(outputs)
+
+        # extract top-k predictions
         top_k_preds = (torch.topk(
             outputs_tensor,
             k=config_settings.top_k,
@@ -132,40 +134,3 @@ def _compute_metrics(
     info("🟢 Metrics computed.")
 
     return metrics
-
-
-def _calculate_average_losses(
-        total_loss,
-        loss_per_class,
-        num_batches
-):
-    """
-    Method to calculate average losses (global and per class).
-    :param total_loss: The total global loss.
-    :param loss_per_class: The total loss per class.
-    :param num_batches: The number of batches.
-    :return: The average global loss and the average loss per class.
-    """
-    # initial message
-    info("🔄 Average losses calculation started...")
-
-    # debugging
-    debug(f"⚙️ Total loss: {total_loss}.")
-    debug(f"⚙️ Number of batches: {num_batches}.")
-
-    try:
-        # compute the average loss
-        avg_loss = total_loss / num_batches
-
-        # compute the average loss per class
-        avg_loss_per_class = {
-            cls: sum(losses) / len(losses)
-            for cls, losses in loss_per_class.items()
-        }
-    except (ZeroDivisionError, TypeError, AttributeError, KeyError) as e:
-        raise RuntimeError(f"❌ Error while calculating average losses: {e}.")
-
-    # show a successful message
-    info("🟢 Average losses calculated.")
-
-    return avg_loss, avg_loss_per_class

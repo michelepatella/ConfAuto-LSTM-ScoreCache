@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 from utils.log_utils import debug, info
-from config.config_utils import get_config_value
 
 
 class LSTM(nn.Module):
@@ -30,74 +29,25 @@ class LSTM(nn.Module):
         try:
             # for each required parameter
             for param in self.required_parameters:
-                # check if the parameter has been passed
-                if param in params:
-                    # apply all the other parameters (except dropout), if specified
-                    if (params[param] is not None and
-                            params[param] != "dropout"):
-
-                        # debugging
-                        debug(f"⚙️ '{param}' found. Using the specified "
-                              f"value ({params[param]}).")
-
-                        # set the value
-                        setattr(self, param, params[param])
-                    else:
-                        # debugging
-                        debug(f"⚙️ '{param}' not found. Using the default value.")
-
-                        # if they are None, read them from config file and set them
-                        setattr(
-                            self,
-                            param,
-                            get_config_value(
-                                config_settings.config_file,
-                                f"model.params.{param}"
-                            )
-                        )
+                # check if it is passed to the model
+                if param in params and params[param] is not None:
+                    debug(f"⚙️ '{param}' found. Using the specified value ({params[param]}).")
+                    # set the parameter to the specified value
+                    setattr(self, param, params[param])
                 else:
-                    # debugging
-                    debug(f"⚙️ '{param}' not found. Using the default value.")
+                    # otherwise, take the parameter from configuration settings
+                    config_value = getattr(config_settings, param)
+                    debug(f"⚙️ '{param}' not found or is None. Using config value ({config_value}).")
+                    # and set the parameter to that value
+                    setattr(self, param, config_value)
 
-                    # read the required parameter from config
-                    setattr(
-                        self,
-                        param,
-                        get_config_value(
-                            config_settings.config_file,
-                            f"model.params.{param}"
-                            )
-                    )
-
-            # check if dropout can be applied
-            if params.get(
-                    "num_layers",
-                    config_settings.num_layers
-            ) > 1:
-
-                # debugging
-                debug(f"⚙️ 'dropout' can be applied.")
-
-                # apply dropout
-                if params["dropout"] is not None:
-                    # debugging
-                    debug(f"⚙️ 'dropout' found. Using the specified "
-                          f"value ({float(params['dropout'])}).")
-
-                    # set the value
-                    setattr(self, "dropout", float(params["dropout"]))
-                else:
-                    # debugging
-                    debug(f"⚙️ 'dropout' not found. Using the default value.")
-
-                    # set the value
-                    setattr(self, "dropout", float(config_settings.dropout))
+            # apply dropout only if num_layers > 1
+            if self.num_layers > 1:
+                self.dropout = float(self.dropout)
+                debug(f"⚙️ 'dropout' applied: {self.dropout}")
             else:
-                # debugging
-                debug(f"⚙️ 'dropout' cannot be applied.")
-
-                # dropout cannot be applied
-                setattr(self, "dropout", 0.0)
+                debug(f"⚙️ 'dropout' cannot be applied with num_layers = {self.num_layers}.")
+                self.dropout = 0.0
 
             # set the no. of keys
             self.num_keys = config_settings.num_keys
