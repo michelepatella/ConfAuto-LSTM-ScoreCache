@@ -14,7 +14,7 @@ formatter = logging.Formatter('[%(phase)s] %(levelname)s: %(message)s')
 
 # all logging messages from INFO-level must be written in a file
 file_handler = RotatingFileHandler(
-    './logs/logs.log',
+    './logs/log.log',
     maxBytes=10_000_000,
     backupCount=100
 )
