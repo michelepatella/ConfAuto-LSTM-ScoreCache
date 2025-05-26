@@ -10,42 +10,41 @@ def _modify_zipf_distribution(
         history_keys=None
 ):
     """
-    Creates a time-based Zipf distribution with hidden phase pattern,
-    requiring memory (e.g., LSTM) to predict future keys.
+    Creates a smooth time-based access pattern using harmonics and gradual
+    transitions between day phases. Suited for LSTM-like models.
     """
-    info("🔄 LSTM-focused Zipf modification started...")
+    info("🔄 LSTM-focused time-based distribution generation started...")
 
     key_range = np.arange(config_settings.first_key, config_settings.last_key)
     total_keys = len(key_range)
 
-    # Phase shifts every 6 hours (21600 seconds)
-    phase_duration = 6  # hours
-    phase_index = int(current_time // phase_duration) % 4
+    # Normalize time over a 24-hour day [0, 1]
+    t = (current_time % period) / period
 
-    # Each phase shifts the preferred key
-    base_preferred_index = {
-        0: 0.2,
-        1: 0.4,
-        2: 0.6,
-        3: 0.8
-    }[phase_index]
+    # Harmonic time functions to simulate smooth daily transitions
+    harmonic1 = np.sin(2 * np.pi * t)              # 1 cycle per day
+    harmonic2 = np.sin(4 * np.pi * t + np.pi / 3)  # 2 cycles per day
+    harmonic3 = np.cos(6 * np.pi * t + np.pi / 5)  # 3 cycles per day
 
-    preferred_key_index = config_settings.first_key + \
-        base_preferred_index * (total_keys - 1)
+    # Combine harmonics to calculate dynamic peak position
+    dynamic_peak_pos = 0.5 + 0.2 * harmonic1 + 0.15 * harmonic2 + 0.1 * harmonic3
+    dynamic_peak_pos = np.clip(dynamic_peak_pos, 0, 1)
 
-    # Optional: slight historical bias
+    preferred_key_index = config_settings.first_key + dynamic_peak_pos * (total_keys - 1)
+
+    # Optionally bias based on recent history
     if history_keys and len(history_keys) >= 5:
         past_mean = np.mean(history_keys[-5:])
-        preferred_key_index = 0.9 * preferred_key_index + 0.1 * past_mean
+        preferred_key_index = 0.8 * preferred_key_index + 0.6 * past_mean
 
-    # Gaussian distribution around preferred key
-    sigma = total_keys * 0.07  # narrower peak
-
+    # Apply Gaussian bias centered on the preferred index
+    sigma = total_keys * 0.03  # peak sharpness
     weights = np.exp(-0.5 * ((key_range - preferred_key_index) / sigma) ** 2) + 1e-6
+    weights = weights * 100 + 0.1
     modified_probs = probs * weights
     modified_probs /= modified_probs.sum()
 
-    info("🟢 Zipf distribution for LSTM pattern calculated.")
+    info("🟢 Time-based access pattern calculated.")
     return key_range, modified_probs
 
 
