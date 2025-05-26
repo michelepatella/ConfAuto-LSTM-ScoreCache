@@ -116,7 +116,7 @@ def train_n_epochs(
 
         # n-epochs learning
         for epoch in range(epochs):
-            info(f"⏳ Epoch {epoch + 1}/{epochs}")
+            print(f"⏳ Epoch {epoch + 1}/{epochs}")
 
             # train the model
             _train_one_epoch(
