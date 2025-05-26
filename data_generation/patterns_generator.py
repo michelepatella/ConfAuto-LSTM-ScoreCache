@@ -78,9 +78,9 @@ def _generate_access_pattern_requests(
             weights = []
             for k in related_keys:
                 if k > last_accessed_key:
-                    weights.append(0.8)
+                    weights.append(config_settings.locality_prob_succ_key)
                 else:
-                    weights.append(0.2)
+                    weights.append(1.0 - config_settings.locality_prob_succ_key)
 
             weights = np.array(weights)
             weights /= weights.sum()

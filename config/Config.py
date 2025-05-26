@@ -16,6 +16,7 @@ class Config:
     zipf_alpha_end: float
     zipf_time_steps: int
     locality_prob: float
+    locality_prob_succ_key: float
     burst_high: float
     burst_low: float
     burst_every: int
