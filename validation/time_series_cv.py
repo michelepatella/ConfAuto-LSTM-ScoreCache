@@ -58,7 +58,7 @@ def _compute_time_series_cv(
         training_loader = create_data_loader(
             training_dataset,
             config_settings.training_batch_size,
-            True
+            False
         )
         validation_loader = create_data_loader(
             validation_dataset,
