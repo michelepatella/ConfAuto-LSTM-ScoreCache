@@ -102,6 +102,8 @@ def prepare_config():
         burst_low=burst_low,
         burst_every=burst_every,
         burst_peak=burst_peak,
+        burst_hour_start=burst_hour_start,
+        burst_hour_end=burst_hour_end,
         periodic_base_scale=periodic_base_scale,
         periodic_amplitude=periodic_amplitude,
         seq_len=seq_len,
