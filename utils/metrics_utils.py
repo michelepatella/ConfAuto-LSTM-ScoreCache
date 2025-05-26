@@ -21,8 +21,6 @@ def _calculate_top_k_accuracy(
     try:
         # prepare data
         outputs_tensor = torch.stack(outputs)
-
-        # extract top-k predictions
         top_k_preds = (torch.topk(
             outputs_tensor,
             k=config_settings.top_k,

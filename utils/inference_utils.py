@@ -54,9 +54,12 @@ def _enable_mc_dropout(model):
     # initial message
     info("🔄 MC dropout enabling started...")
 
-    for module in model.modules():
-        if isinstance(module, torch.nn.Dropout):
-            module.train()
+    try:
+        for module in model.modules():
+            if isinstance(module, torch.nn.Dropout):
+                module.train()
+    except (AttributeError, TypeError) as e:
+        raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
     # show a successful message
     info("🟢 MC dropout enabled.")
@@ -105,7 +108,6 @@ def _infer_batch(
                 debug(f"⚙️ Batch y_key shape: {y_key.shape}.")
 
                 x_features = x_features.to(device)
-                x_keys = x_keys.to(device)
                 y_key = y_key.to(device)
 
                 outputs_mc = []

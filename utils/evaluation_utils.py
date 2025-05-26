@@ -3,7 +3,7 @@ import numpy as np
 from utils.graph_utils import plot_precision_recall_curve, plot_class_report
 from utils.inference_utils import _infer_batch
 from utils.log_utils import info, debug
-from utils.metrics_utils import _compute_metrics, _calculate_average_losses, _calculate_cost
+from utils.metrics_utils import _compute_metrics, _calculate_average_losses
 
 
 def evaluate_model(
