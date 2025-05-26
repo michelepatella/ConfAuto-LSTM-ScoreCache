@@ -47,7 +47,7 @@ def testing(config_settings):
     model.eval()
 
     # evaluate the model
-    avg_loss, avg_loss_per_class, metrics, cost_perc, _, _ = evaluate_model(
+    avg_loss, avg_loss_per_class, metrics, _, _ = evaluate_model(
         model,
         testing_loader,
         criterion,
@@ -59,4 +59,4 @@ def testing(config_settings):
     # print a successful message
     info("✅ Testing completed.")
 
-    return avg_loss, avg_loss_per_class, metrics, cost_perc
+    return avg_loss, avg_loss_per_class, metrics

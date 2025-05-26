@@ -21,7 +21,7 @@ def evaluate_model(
     :param criterion: The loss function.
     :param device: Device to use.
     :param config_settings: The configuration settings.
-    :param compute_metrics: Whether to compute metrics or not.
+    :param compute_metrics: Whether to show statistics.
     :return: The average loss, the metrics, the cost, all the outputs
     and the all the variances.
     """
@@ -50,15 +50,15 @@ def evaluate_model(
         )
     )
 
-    # compute metrics
-    metrics = _compute_metrics(
-        all_targets,
-        all_preds,
-        all_outputs,
-        config_settings
-    )
-
     if compute_metrics:
+        # compute metrics
+        metrics = _compute_metrics(
+            all_targets,
+            all_preds,
+            all_outputs,
+            config_settings
+        )
+
         # show results
         info(f"📉 Average Loss: {avg_loss}")
         info(f"📉 Average Loss per Class:")
