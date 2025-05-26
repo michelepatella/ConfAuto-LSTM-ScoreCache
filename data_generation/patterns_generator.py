@@ -74,8 +74,18 @@ def _generate_access_pattern_requests(
         )
 
         if related_keys:
-            # generate a request following the relation among keys
-            request = np.random.choice(related_keys)
+            # calculate the weights for neighboring keys
+            weights = []
+            for k in related_keys:
+                if k > last_accessed_key:
+                    weights.append(0.8)
+                else:
+                    weights.append(0.2)
+
+            weights = np.array(weights)
+            weights /= weights.sum()
+
+            request = np.random.choice(related_keys, p=weights)
         else:
             # generate the request following Zipf distribution
             request = np.random.choice(
