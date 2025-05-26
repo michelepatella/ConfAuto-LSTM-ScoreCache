@@ -19,6 +19,8 @@ data:
       burst_low: 10.0 #
       burst_every: 500 #
       burst_peak: 50 #
+      burst_hour_start: 11
+      burst_hour_end: 15
     periodic:
       base_scale: 20 #
       amplitude: 15 #

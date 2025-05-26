@@ -2,11 +2,12 @@ import numpy as np
 from utils.log_utils import info
 
 
-def _build_temporal_features(df, time_column):
+def _build_temporal_features(df, time_column, config_settings):
     """
     Method to build temporal features.
     :param df: The dataframe to process.
     :param time_column: The name of the time column.
+    :param config_settings: The configuration settings.
     :return: The augmented dataframe.
     """
     # show initial message
@@ -19,7 +20,8 @@ def _build_temporal_features(df, time_column):
     # create new features
     delta_t = np.diff(timestamps, prepend=timestamps[0])
     hours = timestamps % period
-    is_peak = ((hours >= 11) & (hours < 15)).astype(float)
+    is_peak = ((hours >= config_settings.burst_hour_start) &
+               (hours <= config_settings.burst_hour_end)).astype(float)
 
     df["delta_t"] = delta_t
     df["is_peak"] = is_peak
@@ -71,12 +73,14 @@ def build_features(
         df,
         time_column,
         target_column,
+        config_settings
 ):
     """
     Method to orchestrate feature engineering.
     :param df: The original dataframe.
     :param time_column: The time column.
     :param target_column: The target column.
+    :param config_settings: The configuration settings.
     :return: The final dataframe.
     """
     # show initial message
@@ -84,7 +88,7 @@ def build_features(
 
     try:
         # build new features
-        df = _build_temporal_features(df, time_column)
+        df = _build_temporal_features(df, time_column, config_settings)
         df = _encode_time_trigonometrically(df, time_column)
 
         # reorder column s.t. target column is the last one

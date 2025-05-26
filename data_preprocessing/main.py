@@ -26,7 +26,8 @@ def data_preprocessing(config_settings):
     df_final = build_features(
         df_no_missing_values,
         "timestamp",
-        "request"
+        "request",
+        config_settings
     )
 
     # normalize some just created features

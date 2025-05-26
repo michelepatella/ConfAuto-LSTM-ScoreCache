@@ -18,6 +18,8 @@ class Config:
     burst_low: float
     burst_every: int
     burst_peak: int
+    burst_hour_start: int
+    burst_hour_end: int
     periodic_base_scale: int
     periodic_amplitude: int
     seq_len: int

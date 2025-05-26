@@ -10,58 +10,39 @@ def _modify_zipf_distribution(
         history_keys=None
 ):
     """
-    Versione più complessa della modifica della distribuzione Zipf,
-    con pattern a lungo termine, oscillazioni multiple e dipendenza storica.
+    Distribuzione modificata semplificata e bilanciata:
+    - Evita concentrazione su chiavi basse
+    - Introduce variazione dinamica ma su tutto il range
+    - Favorisce apprendimento LSTM (nessuna classe è penalizzata)
     """
 
+    # Ora in formato decimale (0-24h)
     hour_of_day = (current_time % period) / 3600.0
+
+    # Range chiavi
     key_range = np.arange(config_settings.first_key, config_settings.last_key)
-    total_keys = config_settings.last_key - config_settings.first_key
+    total_keys = len(key_range)
 
-    # Numero di fasce orarie
-    num_blocks = 6
-    block_length = 24 / num_blocks
-    current_block = int(hour_of_day // block_length)
+    # Centro preferito che varia sinusoidalmente durante il giorno
+    # (scorre su tutto il range in 24 ore)
+    normalized_hour = hour_of_day / 24.0  # ∈ [0,1]
+    preferred_key_index = config_settings.first_key + normalized_hour * (total_keys - 1)
 
-    # Chiave preferita base per ciascuna fascia
-    preferred_keys_per_block = np.linspace(
-        config_settings.first_key,
-        config_settings.last_key - 1,
-        num_blocks
-    )
-
-    # Media pesata delle ultime 3 fasce (se disponibile)
+    # Aggiunta di una piccola componente storica per dare coerenza sequenziale
     if history_keys and len(history_keys) >= 3:
-        weight_history = np.array([0.5, 0.3, 0.2])  # più peso al passato più recente
-        last_three = history_keys[-3:]
-        historical_effect = np.average(last_three, weights=weight_history)
-    else:
-        historical_effect = preferred_keys_per_block[current_block]
+        past_mean = np.mean(history_keys[-3:])
+        preferred_key_index = (preferred_key_index + past_mean) / 2
 
-    # Oscillazioni multiple (bassa e alta frequenza)
-    freq_low = 2 * np.pi / block_length
-    freq_high = 10 * freq_low  # oscillazione più veloce
+    # Deviazione fissa per includere più chiavi nel focus
+    sigma = total_keys * 0.2  # più larga per coprire più classi
 
-    intra_block_time = hour_of_day % block_length
-    oscillation_low = (total_keys / num_blocks) / 3 * np.sin(freq_low * intra_block_time)
-    oscillation_high = (total_keys / num_blocks) / 6 * np.sin(freq_high * intra_block_time)
-
-    # Chiave preferita finale combinando tutti i fattori
-    base_preferred_key = historical_effect + oscillation_low + oscillation_high
-
-    # Rumore condizionato da stato passato (es. più rumore se la variazione precedente era alta)
-    if history_keys and len(history_keys) >= 2:
-        prev_delta = abs(history_keys[-1] - history_keys[-2])
-        noise_scale = 0.5 + 0.5 * np.tanh(prev_delta)
-    else:
-        noise_scale = 0.5
-
-    noise = np.random.normal(loc=0.0, scale=noise_scale)
-    preferred_key_index = base_preferred_key + noise
-
-    sigma = max(0.5, total_keys * 0.015)
+    # Costruzione dei pesi con gaussiana
     weights = np.exp(-0.5 * ((key_range - preferred_key_index) / sigma) ** 2)
 
+    # Evita che pesi troppo piccoli spariscano (aiuta le classi meno frequenti)
+    weights += 1e-6
+
+    # Applicazione dei pesi
     modified_probs = probs * weights
     modified_probs /= modified_probs.sum()
 
@@ -126,13 +107,13 @@ def _generate_temporal_access_pattern_requests(
     # calculate periodic component for frequency scaling
     periodic_scale = (config_settings.periodic_base_scale +
                       config_settings.periodic_amplitude
-                      * np.cos(2 * np.pi * timestamps[-1] / period - np.pi))
+                      * np.cos(2 * np.pi * timestamps[-1]))
 
     # extract hour of the day from timestamp
     hour_of_day = (timestamps[-1] % period) / 3600.0
 
     # generate burst middle of the day
-    if 11 <= hour_of_day < 15:
+    if config_settings.burst_hour_start <= hour_of_day <= config_settings.burst_hour_end:
         bursty_scale = config_settings.burst_high
     else:
         bursty_scale = config_settings.burst_low
