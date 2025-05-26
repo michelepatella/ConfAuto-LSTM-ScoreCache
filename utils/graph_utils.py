@@ -59,119 +59,42 @@ def plot_zipf_loglog(requests):
     info("🟢 Zipf log-log plot built.")
 
 
-def plot_keys_transition_matrix(requests):
+def plot_daily_profile(timestamps, bin_size=0.5):
     """
-    Method to plot the transition matrix of the keys.
-    :param requests: The requests generated.
-    :return:
+    Plot the distribution of requests over a 24-hour day.
+
+    :param timestamps: Array of timestamps in hours.
+    :param bin_size: Bin size in hours (e.g., 0.5 = 30 min).
     """
-    # initial message
-    info("🔄 Keys transition matrix building started...")
+    info("🔄 Daily request profile plot started...")
 
     try:
-        # check requests list
-        if not requests:
-            raise ValueError("❌ Request list is empty, "
-                             "cannot generate plot.")
+        # timestamps are already in hours, just reduce to [0, 24)
+        hours = np.array(timestamps) % 24
 
-        # sort the requests
-        unique_keys = sorted(set(requests))
+        # Define bins
+        num_bins = int(24 / bin_size)
+        bins = np.linspace(0, 24, num_bins + 1)
 
-        # get index of keys
-        key_to_idx = {
-            key: i for i,
-            key in enumerate(unique_keys)
-        }
+        # Histogram
+        counts, _ = np.histogram(hours, bins=bins)
 
-        # initialize the transition matrix
-        matrix = np.zeros((
-            len(unique_keys),
-            len(unique_keys)
-        ))
-
-        # for each request
-        for i in range(1, len(requests)):
-            # the position of the transition matrix
-            # corresponding to i-th key to j-th key is
-            # increased by one, indicating moving from
-            # i-th key to the j-th one
-            from_key = key_to_idx[requests[i - 1]]
-            to_key = key_to_idx[requests[i]]
-            matrix[from_key][to_key] += 1
-
-        # plot the transition matrix in form of heatmap
-        plt.figure(figsize=(12, 10))
-        sns.heatmap(
-            matrix,
-            norm=LogNorm(),
-            cmap="YlGnBu"
-        )
-        plt.xlabel("To Key")
-        plt.ylabel("From Key")
-        plt.title("Key Transition Heatmap")
-        plt.tight_layout()
-        plt.show()
-        plt.close()
-    except (NameError, TypeError, SyntaxError, IndexError, KeyError, ValueError) as e:
-        raise RuntimeError(f"❌ Error while building the "
-                           f"transition matrix of keys: {e}.")
-
-    # show a successful message
-    info("🟢 Keys transition matrix built.")
-
-
-def plot_requests_over_time(requests, timestamps, bin_size=1000):
-    """
-    Method to plot the requests over the time.
-    :param bin_size: The bin size to consider when
-    plotting the requests over the time.
-    :param requests: The requests generated.
-    :param timestamps: The timestamps generated.
-    :return:
-    """
-    # initial message
-    info("🔄 Requests over time plot building started...")
-
-    try:
-        # check requests and timestamps lists
-        if not requests or not timestamps:
-            raise ValueError("❌ Request and/or timestamps lists is empty, "
-                             "cannot generate plot.")
-
-        # get the max timestamp (the last element)
-        max_time = timestamps[-1]
-
-        # calculate the number of bin required
-        # to cover max_time
-        num_bins = int(max_time // bin_size) + 1
-
-
-        bins = [0] * num_bins
-        for ts in timestamps:
-            # for each timestamp, find its bin
-            # increasing the occurrences of this latter
-            bin_index = int(ts // bin_size)
-            bins[bin_index] += 1
-
-        # define the position of each bin
-        x_vals = [i * bin_size for i in range(num_bins)]
-
-        # show requests over time
-        plt.figure(figsize=(12, 10))
-        plt.plot(x_vals, bins, marker='o', linewidth=1)
-        plt.xlabel(f"Time (ms), bin size = {bin_size}")
+        # Plot
+        plt.figure(figsize=(12, 6))
+        plt.bar(bins[:-1], counts, width=bin_size, align='edge', edgecolor='black')
+        plt.xlabel("Hour of Day")
         plt.ylabel("Number of Requests")
-        plt.title("Requests Over Time (Binned)")
-        plt.grid(True)
+        plt.title("Distribution of Requests Over 24 Hours")
+        plt.xticks(np.arange(0, 25, step=1))
+        plt.grid(True, axis='y')
         plt.tight_layout()
         plt.show()
         plt.close()
-    except (TypeError, IndexError, ValueError) as e:
-        raise RuntimeError(f"❌ Error while building the requests"
-                           f" over time plot: {e}.")
 
-    # show a successful message
-    info("🟢 Requests over time plot built.")
+    except Exception as e:
+        raise RuntimeError(f"❌ Error while building daily request profile: {e}.")
+
+    info("🟢 Daily request profile plot built.")
 
 
 def plot_precision_recall_curve(targets, outputs, num_keys):
@@ -316,7 +239,7 @@ def plot_key_usage_heatmap(
 
         # fill heatmap
         for key, ts in zip(requests, timestamps):
-            hour = int((ts % day_seconds) / 3600)
+            hour = int(ts)
             key_idx = key - config_settings.first_key
             if 0 <= hour < 24 and 0 <= key_idx < num_keys:
                 heatmap[hour, key_idx] += 1

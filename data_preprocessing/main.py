@@ -1,5 +1,5 @@
-from data_preprocessing.cleaner import _remove_missing_values, _remove_duplicates
-from data_preprocessing.standardizer import _standardize
+from data_preprocessing.cleaner import _remove_missing_values
+from data_preprocessing.encoder import _encode_time_trigonometrically
 from utils.log_utils import info, phase_var
 from utils.dataset_utils import save_dataset, load_dataset
 
@@ -18,23 +18,13 @@ def data_preprocessing(config_settings):
     # load the dataset
     df = load_dataset(config_settings)
 
-    # deduplicate the dataset
-    df_deduplicated = _remove_duplicates(
-        df,
-        ["id"]
-    )
-
     # remove missing values
-    df_no_missing_values = _remove_missing_values(df_deduplicated)
+    df_no_missing_values = _remove_missing_values(df)
 
-    # standardize columns
-    df_standardized = _standardize(
+    # encode time column
+    df_standardized = _encode_time_trigonometrically(
         df_no_missing_values,
-        [
-            "id",
-            "timestamp"
-        ],
-        config_settings
+        "timestamp"
     )
 
     # save the preprocessed dataset

@@ -36,6 +36,9 @@ def _generate_static_requests(config_settings):
     debug(f"⚙️Requests length: {len(requests)}.")
     debug(f"⚙️Timestamps length: {len(timestamps)}.")
 
+    # consider timestamps as hours of the day
+    timestamps = np.array(timestamps) / 3600.0
+
     # show a successful message
     info("🟢 Static requests generated.")
 
@@ -106,6 +109,9 @@ def _generate_dynamic_requests(config_settings):
     # debugging
     debug(f"⚙️Requests length: {len(requests)}.")
     debug(f"⚙️timestamps length: {len(timestamps)}.")
+
+    # consider timestamps as hours of the day
+    timestamps = np.array(timestamps) / 3600.0
 
     # show a successful message
     info("🟢 Dynamic requests generated.")

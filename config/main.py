@@ -10,7 +10,7 @@ from config.training_params_validator import _validate_training_general_params, 
 from config.validation_params_validator import _validate_cv_params, _validate_validation_early_stopping_params, \
     _validate_search_space_params
 from config.config_utils import load_config
-from utils.log_utils import info
+from utils.log_utils import info, phase_var
 
 
 def prepare_config():
@@ -20,6 +20,9 @@ def prepare_config():
     """
     # initial message
     info("🔄 Config preparation started...")
+
+    # set the variable indicating the state of the process
+    phase_var.set("config_preparation")
 
     # load config file
     config_file = load_config()

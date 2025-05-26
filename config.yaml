@@ -15,8 +15,8 @@ data:
       time_steps: 10 #
   temporal_pattern:
     burstiness:
-      burst_high: 1.5 #
-      burst_low: 3.0 #
+      burst_high: 2.5 #
+      burst_low: 10.0 #
       burst_every: 500 #
       burst_peak: 50 #
     periodic:
