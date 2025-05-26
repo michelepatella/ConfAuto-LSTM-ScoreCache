@@ -18,7 +18,7 @@ data:
       alpha_end: 1.2 #
       time_steps: 10 #
     locality:
-      prob: 0.7 #
+      prob: 0.8 #
       prob_succ_key: 0.8
   temporal_pattern:
     burstiness:
