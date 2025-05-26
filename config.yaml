@@ -70,7 +70,7 @@ validation:
         - 0.005 #
 training:
   general:
-    num_epochs: 20 #
+    num_epochs: 10 #
     batch_size: 64 #
   optimizer:
     type: adamw #

@@ -10,42 +10,42 @@ def _modify_zipf_distribution(
         history_keys=None
 ):
     """
-    Distribuzione modificata semplificata e bilanciata:
-    - Evita concentrazione su chiavi basse
-    - Introduce variazione dinamica ma su tutto il range
-    - Favorisce apprendimento LSTM (nessuna classe è penalizzata)
+    Creates a time-based Zipf distribution with hidden phase pattern,
+    requiring memory (e.g., LSTM) to predict future keys.
     """
+    info("🔄 LSTM-focused Zipf modification started...")
 
-    # Ora in formato decimale (0-24h)
-    hour_of_day = (current_time % period) / 3600.0
-
-    # Range chiavi
     key_range = np.arange(config_settings.first_key, config_settings.last_key)
     total_keys = len(key_range)
 
-    # Centro preferito che varia sinusoidalmente durante il giorno
-    # (scorre su tutto il range in 24 ore)
-    normalized_hour = hour_of_day / 24.0  # ∈ [0,1]
-    preferred_key_index = config_settings.first_key + normalized_hour * (total_keys - 1)
+    # Phase shifts every 6 hours (21600 seconds)
+    phase_duration = 6  # hours
+    phase_index = int(current_time // phase_duration) % 4
 
-    # Aggiunta di una piccola componente storica per dare coerenza sequenziale
-    if history_keys and len(history_keys) >= 3:
-        past_mean = np.mean(history_keys[-3:])
-        preferred_key_index = (preferred_key_index + past_mean) / 2
+    # Each phase shifts the preferred key
+    base_preferred_index = {
+        0: 0.2,
+        1: 0.4,
+        2: 0.6,
+        3: 0.8
+    }[phase_index]
 
-    # Deviazione fissa per includere più chiavi nel focus
-    sigma = total_keys * 0.2  # più larga per coprire più classi
+    preferred_key_index = config_settings.first_key + \
+        base_preferred_index * (total_keys - 1)
 
-    # Costruzione dei pesi con gaussiana
-    weights = np.exp(-0.5 * ((key_range - preferred_key_index) / sigma) ** 2)
+    # Optional: slight historical bias
+    if history_keys and len(history_keys) >= 5:
+        past_mean = np.mean(history_keys[-5:])
+        preferred_key_index = 0.9 * preferred_key_index + 0.1 * past_mean
 
-    # Evita che pesi troppo piccoli spariscano (aiuta le classi meno frequenti)
-    weights += 1e-6
+    # Gaussian distribution around preferred key
+    sigma = total_keys * 0.07  # narrower peak
 
-    # Applicazione dei pesi
+    weights = np.exp(-0.5 * ((key_range - preferred_key_index) / sigma) ** 2) + 1e-6
     modified_probs = probs * weights
     modified_probs /= modified_probs.sum()
 
+    info("🟢 Zipf distribution for LSTM pattern calculated.")
     return key_range, modified_probs
 
 
@@ -110,7 +110,7 @@ def _generate_temporal_access_pattern_requests(
                       * np.cos(2 * np.pi * timestamps[-1]))
 
     # extract hour of the day from timestamp
-    hour_of_day = (timestamps[-1] % period) / 3600.0
+    hour_of_day = (timestamps[-1] % period)
 
     # generate burst middle of the day
     if config_settings.burst_hour_start <= hour_of_day <= config_settings.burst_hour_end:
@@ -160,7 +160,7 @@ def _generate_pattern_requests(
     history_keys = []
 
     # define the day as period (24(h) * 60 (min) * 60(s))
-    period = 24 * 60 * 60
+    period = 24
 
     # debugging
     debug(f"⚙️ Period: {period}.")
