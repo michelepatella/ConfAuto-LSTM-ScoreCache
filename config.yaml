@@ -42,8 +42,8 @@ model:
     num_features: 5 #
     save_path: model/trained_lstm.pt #
   params:
-    hidden_size: 256 #
-    num_layers: 3 #
+    hidden_size: 128 #
+    num_layers: 2 #
     bias: false #
     batch_first: true #
     dropout: 0.3 #

@@ -16,7 +16,7 @@ data_preprocessing(config_settings)
 
 training(config_settings)
 
-avg_loss, avg_loss_per_class, metrics = testing(config_settings)
+avg_loss, metrics = testing(config_settings)
 
 print("----------------------------------------------------------------------------------------")
 

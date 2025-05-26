@@ -141,7 +141,7 @@ def _calculate_class_weights(targets, config_settings):
             else targets
 
         # shift
-        targets = targets + 1
+        #targets = targets + 1
 
         # get the classes appearing in target list
         present_classes = np.unique(targets)
