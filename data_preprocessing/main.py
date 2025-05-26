@@ -32,13 +32,7 @@ def data_preprocessing(config_settings):
     # normalize some just created features
     df_normalized = normalize(
         df_final,
-        [
-            "day_fraction",
-            "delta_t",
-            "last_request",
-            "delta_key",
-            "moving_avg_key"
-        ],
+        ["delta_t"],
         config_settings
     )
 

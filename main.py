@@ -8,9 +8,9 @@ from validation import validation
 
 config_settings = prepare_config()
 
-#data_generation(config_settings)
+##data_generation(config_settings)
 
-#data_preprocessing(config_settings)
+data_preprocessing(config_settings)
 
 #config_settings = validation(config_settings)
 
