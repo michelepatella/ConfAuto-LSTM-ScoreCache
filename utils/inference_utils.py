@@ -201,6 +201,7 @@ def calculate_confidence_intervals(
     Method to calculate confidence intervals.
     :param all_outputs: The outputs of the model.
     :param all_vars: The variances of the outputs.
+    :param config_settings: Configuration settings.
     :return: The upper and lower confidence interval boundaries.
     """
     # initial message

@@ -1,4 +1,3 @@
-import numpy as np
 from config import prepare_config
 from data_generation import data_generation
 from data_preprocessing.main import data_preprocessing
