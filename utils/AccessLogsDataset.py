@@ -90,6 +90,8 @@ class AccessLogsDataset(Dataset):
 
         # load the dataset
         df = load_dataset(config_settings)
+        # shift target column (requests)
+        df[df.columns[-1]] = df[df.columns[-1]].astype(int) - 1
 
         # debugging
         debug(f"⚙️ Dataset shape: {df.shape}.")
@@ -143,14 +145,14 @@ class AccessLogsDataset(Dataset):
 
             # Extract key IDs (request IDs)
             x_keys = torch.tensor(
-                seq_data[self.target].values.astype(int) - 1,
+                seq_data[self.target].values.astype(int),
                 dtype=torch.long
             )
 
             # extract target
             target_row = self.data.iloc[idx + self.seq_len]
             y_key = torch.tensor(
-                int(target_row[self.target]) - 1,
+                int(target_row[self.target]),
                 dtype=torch.long
             )
 

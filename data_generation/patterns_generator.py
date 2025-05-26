@@ -12,28 +12,16 @@ def _generate_key_relationships(first_key, last_key):
     # initial message
     info("🔄 Pattern generation started...")
 
-    # initialize data
     key_relationships = {}
     keys = list(range(first_key, last_key))
+    num_keys = len(keys)
 
-    # for each key
     for i, key in enumerate(keys):
+        prev_key = keys[(i - 1) % num_keys]
+        next_key = keys[(i + 1) % num_keys]
+        key_relationships[key] = [prev_key, next_key]
 
-        # initialize related keys to the current one
-        related = []
-
-        # relations between the previous and next key
-        if i - 1 >= 0:
-            related.append(keys[i - 1])
-        if i + 1 < len(keys):
-            related.append(keys[i + 1])
-
-        # store the related keys
-        key_relationships[key] = related
-
-    # show a successful message
     info(f"🟢 Key relationships generated.")
-
     return key_relationships
 
 

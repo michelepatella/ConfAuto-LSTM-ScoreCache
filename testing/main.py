@@ -36,23 +36,6 @@ def testing(config_settings):
         )
     )
 
-    from collections import Counter
-
-    # Estrai tutte le etichette dal testing_loader
-    all_targets = []
-    for _, targets in testing_loader:
-        if isinstance(targets, dict):
-            targets = targets["request"]  # usa la chiave corretta se è un dizionario
-        all_targets.extend(targets.cpu().numpy())  # assicurati che sia una lista di numeri
-
-    # Calcola la frequenza per ogni classe
-    class_counts = Counter(all_targets)
-
-    # Stampa le frequenze
-    info("📊 Frequenze delle classi nel testing set:")
-    for cls, count in sorted(class_counts.items()):
-        info(f"Classe {cls}: {count} campioni")
-
     # load the trained model
     model = load_model(
         model,

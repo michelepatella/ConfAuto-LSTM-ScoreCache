@@ -37,11 +37,6 @@ def evaluate_model(
         device
     )
 
-    # 🔍 Stampa true vs predicted key
-    info("🧾 True key vs Predicted key:")
-    for true, pred in zip(all_targets, all_preds):
-        print(f"True: {true} - Pred: {pred}")
-
     # debugging
     debug(f"⚙️ Total predictions collected: {len(all_preds)}.")
     debug(f"⚙️ Total targets: {len(all_targets)}.")
