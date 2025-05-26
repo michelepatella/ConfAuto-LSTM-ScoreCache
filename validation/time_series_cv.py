@@ -75,7 +75,7 @@ def _compute_time_series_cv(
         )
 
         # train the model
-        avg_loss, _ = train_n_epochs(
+        avg_loss = train_n_epochs(
             config_settings.validation_num_epochs,
             model,
             training_loader,
