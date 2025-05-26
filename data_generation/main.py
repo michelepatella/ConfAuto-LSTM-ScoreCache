@@ -27,7 +27,10 @@ def data_generation(config_settings):
     else:
         # generate dynamic requests and timestamps
         requests, timestamps = _generate_dynamic_requests(config_settings)
-    print(timestamps)
+
+    # consider timestamps as hours of the day
+    timestamps = (timestamps % 24 * 60 * 60) / 3600.0  #
+
     # create dataframe
     df = create_dataframe(
         {

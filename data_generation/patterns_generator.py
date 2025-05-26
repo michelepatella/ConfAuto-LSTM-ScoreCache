@@ -107,8 +107,12 @@ def _generate_temporal_access_pattern_requests(
                       config_settings.periodic_amplitude
                       * np.cos(2 * np.pi * timestamps[-1] / period - np.pi))
 
-    # introduce burstiness
-    if i % config_settings.burst_every < config_settings.burst_peak:
+    # calculate current hour
+    day_seconds = 24 * 60 * 60
+    hour_of_day = (timestamps[-1] % day_seconds) / 3600.0
+
+    # generate burst middle of the day
+    if 11 <= hour_of_day < 15:
         bursty_scale = config_settings.burst_high
     else:
         bursty_scale = config_settings.burst_low
