@@ -44,14 +44,14 @@ def _generate_access_pattern_requests(
 
     idx = len(history_keys)
 
-    # 05:00 - 09:00 pattern
+    # 05:00 - 09:00 repetition pattern
     if 5 <= hour < 9:
         if idx % rep_int == 0:
             new_key = history_keys[-rep_off]
         else:
             new_key = np.random.choice(keys[:n_keys // 3])
 
-    # 09:00 - 12:00 pattern
+    # 09:00 - 12:00 toggle pattern
     elif 9 <= hour < 12:
         toggle = (idx // toggle_int) % 2
         if toggle == 0:
@@ -59,13 +59,13 @@ def _generate_access_pattern_requests(
         else:
             new_key = ((history_keys[-2] - base - 1) % range_size) + base
 
-    # 12:00 - 18:00 pattern
+    # 12:00 - 18:00 cyclic scanning
     elif 12 <= hour < 18:
         cycle_length = cycle_base + (idx // cycle_div) % cycle_mod
         cycle = keys[:cycle_length]
         new_key = cycle[idx % cycle_length]
 
-    # 18:00 - 23:00 pattern
+    # 18:00 - 23:00 distorted history
     elif 18 <= hour < 23:
         if idx % dist_int == 0:
             new_key = ((history_keys[-4] - base + 2) % range_size) + base

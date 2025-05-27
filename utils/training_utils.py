@@ -28,11 +28,13 @@ def _train_one_epoch(
     model.train()
 
     # to show the progress bar
+    """
     training_loader = tqdm(
         training_loader,
         desc="🧠 Training Progress",
         leave=False
     )
+    """
     try:
         for x_features, x_keys, y_key in training_loader:
             # reset the gradients
@@ -54,7 +56,7 @@ def _train_one_epoch(
             # backward pass
             _compute_backward(loss, optimizer)
 
-            training_loader.set_postfix(loss=loss.item())
+            #training_loader.set_postfix(loss=loss.item())
 
     except (AttributeError, TypeError, ValueError,
             StopIteration, AssertionError) as e:
@@ -155,7 +157,7 @@ def train_n_epochs(
 
         # show the best validation loss obtained
         info(f"🏆 Best validation loss achieved: {best_loss}")
-        print(f"ℹ️ No. of epochs run: {num_epochs_run}")
+        info(f"ℹ️ No. of epochs run: {num_epochs_run}")
 
         if validation_loader is not None:
             # load best weights to the model
