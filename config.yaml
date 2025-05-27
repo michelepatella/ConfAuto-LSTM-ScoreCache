@@ -34,7 +34,7 @@ data:
     dynamic_save_path: data/dynamic_access_logs.csv #
 model:
   general:
-    num_features: 4 #
+    num_features: 2 #
     save_path: model/trained_lstm.pt #
   params:
     hidden_size: 128 #

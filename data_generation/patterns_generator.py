@@ -2,90 +2,64 @@ from utils.log_utils import debug, info
 import numpy as np
 
 
-def _modify_zipf_distribution(
-        probs,
-        period,
-        current_time,
-        config_settings,
-        history_keys=None
-):
-    """
-    Creates a smooth time-based access pattern using harmonics and gradual
-    transitions between day phases. Suited for LSTM-like models.
-    """
-    info("🔄 LSTM-focused time-based distribution generation started...")
-
-    key_range = np.arange(config_settings.first_key, config_settings.last_key)
-    total_keys = len(key_range)
-
-    # Normalize time over a 24-hour day [0, 1]
-    t = (current_time % period) / period
-
-    # Harmonic time functions to simulate smooth daily transitions
-    harmonic1 = np.sin(2 * np.pi * t)              # 1 cycle per day
-    harmonic2 = np.sin(4 * np.pi * t + np.pi / 3)  # 2 cycles per day
-    harmonic3 = np.cos(6 * np.pi * t + np.pi / 5)  # 3 cycles per day
-
-    # Combine harmonics to calculate dynamic peak position
-    dynamic_peak_pos = 0.5 + 0.2 * harmonic1 + 0.15 * harmonic2 + 0.1 * harmonic3
-    dynamic_peak_pos = np.clip(dynamic_peak_pos, 0, 1)
-
-    preferred_key_index = config_settings.first_key + dynamic_peak_pos * (total_keys - 1)
-
-    # Optionally bias based on recent history
-    if history_keys and len(history_keys) >= 5:
-        past_mean = np.mean(history_keys[-5:])
-        preferred_key_index = 0.8 * preferred_key_index + 0.6 * past_mean
-
-    # Apply Gaussian bias centered on the preferred index
-    sigma = total_keys * 0.03  # peak sharpness
-    weights = np.exp(-0.5 * ((key_range - preferred_key_index) / sigma) ** 2) + 1e-6
-    weights = weights * 100 + 0.1
-    modified_probs = probs * weights
-    modified_probs /= modified_probs.sum()
-
-    info("🟢 Time-based access pattern calculated.")
-    return key_range, modified_probs
-
-
 def _generate_access_pattern_requests(
         probs,
-        period,
+        key_range,
         current_time,
-        config_settings,
-        history_keys
+        history_keys,
+        config_settings
 ):
     """
     Method to generate access pattern requests.
     :param probs: The probabilities of the keys.
-    :param period: The predefined period.
+    :param key_range: The range of possible keys.
     :param current_time: The current time.
-    :param config_settings: The configuration settings.
     :param history_keys: The history keys.
+    :param config_settings: The configuration settings.
     :return: The requested generate, following a specific access pattern.
     """
     # initial message
     info("🔄 Access pattern requests generation started...")
 
-    # modify zipf distribution based on the hour of the day
-    key_range, modified_probs = _modify_zipf_distribution(
-        probs,
-        period,
-        current_time,
-        config_settings,
-        history_keys=history_keys
-    )
+    hour = current_time % 24
+    base = config_settings.first_key  # 1
+    key_blocks = {
+        (0, 4): list(range(base, base + 5)),  # 1-5
+        (4, 8): list(range(base + 5, base + 10)),  # 6-10
+        (8, 12): list(range(base + 10, base + 15)),  # 11-15
+        (12, 16): list(range(base + 15, base + 20)),  # 16-20
+        (16, 20): list(range(base + 20, base + 25)),  # 21-25
+        (20, 24): list(range(base + 25, base + 30))  # 26-30
+    }
 
-    # generate the request following modified Zipf distribution
-    request = np.random.choice(
-        key_range,
-        p=modified_probs
-    )
+    for (start, end), keys in key_blocks.items():
+        if start <= hour < end:
+            if (start, end) == (0, 4):
+                idx = len(history_keys) % len(keys)
+                return keys[idx]
+            elif (start, end) == (4, 8):
+                return np.random.choice(keys, p=np.ones(len(keys)) / len(keys))
+            elif (start, end) == (8, 12):
+                if len(history_keys) % 2 == 0:
+                    return keys[::2][len(history_keys) % len(keys[::2])]
+                else:
+                    return keys[1::2][len(history_keys) % len(keys[1::2])]
+            elif (start, end) == (12, 16):
+                cycle = [keys[0], keys[2], keys[4]]
+                return cycle[len(history_keys) % len(cycle)]
+            elif (start, end) == (16, 20):
+                if len(history_keys) % 3 == 0:
+                    return keys[len(history_keys) % len(keys)]
+                else:
+                    return np.random.choice(keys)
+            elif (start, end) == (20, 24):
+                return np.random.choice(key_range, p=probs)
 
     # show a successful message
     info(f"🟢 Access pattern requests generated.")
 
-    return request
+    # Default fallback
+    return np.random.choice(key_range, p=probs)
 
 
 def _generate_temporal_access_pattern_requests(
@@ -156,9 +130,12 @@ def _generate_pattern_requests(
     requests = []
     delta_times = []
     timestamps = [0.0]
-    history_keys = []
+    key_range = np.arange(
+        config_settings.first_key,
+        config_settings.last_key
+    )
 
-    # define the day as period (24(h) * 60 (min) * 60(s))
+    # define the day as period
     period = 24
 
     # debugging
@@ -185,10 +162,10 @@ def _generate_pattern_requests(
             # access pattern
             request = _generate_access_pattern_requests(
                 probs,
-                period,
+                key_range,
                 timestamps[-1],
+                requests,
                 config_settings,
-                history_keys=history_keys
             )
 
             # generate a delta time following specific
@@ -203,7 +180,6 @@ def _generate_pattern_requests(
             requests.append(request)
             timestamps.append(timestamps[-1] + delta_t)
             delta_times.append(delta_t)
-            history_keys.append(request)
 
             # debugging
             debug(f"⚙️ Number of request generated: {i+1}.")
