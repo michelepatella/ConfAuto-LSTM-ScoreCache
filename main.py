@@ -14,6 +14,7 @@ config_settings = prepare_config()
 
 #config_settings = validation(config_settings)
 
+
 training(config_settings)
 
 avg_loss, metrics = testing(config_settings)

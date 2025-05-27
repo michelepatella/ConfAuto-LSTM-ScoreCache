@@ -1,7 +1,7 @@
 data:
   distribution:
     seed: 42 #
-    type: static #
+    type: dynamic #
     num_requests: 30000 #
     num_keys: 30 #
     key_range:
@@ -31,7 +31,7 @@ data:
       burst_hour_start: 10
       burst_hour_end: 18
     periodic:
-      base_scale: 120 #
+      base_scale: 90 #
       amplitude: 50 #
   sequence:
     len: 25 #

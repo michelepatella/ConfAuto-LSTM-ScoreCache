@@ -44,7 +44,7 @@ def _generate_access_pattern_requests(
 
     idx = len(history_keys)
 
-    # 06:00 - 09:00 pattern
+    # 05:00 - 09:00 pattern
     if 5 <= hour < 9:
         if idx % rep_int == 0:
             new_key = history_keys[-rep_off]
@@ -65,7 +65,7 @@ def _generate_access_pattern_requests(
         cycle = keys[:cycle_length]
         new_key = cycle[idx % cycle_length]
 
-    # 18:00 - 21:00 pattern
+    # 18:00 - 23:00 pattern
     elif 18 <= hour < 23:
         if idx % dist_int == 0:
             new_key = ((history_keys[-4] - base + 2) % range_size) + base
@@ -73,7 +73,7 @@ def _generate_access_pattern_requests(
             noise = np.random.randint(noise_low, noise_high + 1)
             new_key = ((history_keys[-1] - base + noise) % range_size) + base
 
-    # night pattern, again (22:00 - 00:00)
+    # 23:00 - 05:00 pattern
     else:
         if idx % mem_int == 0:
             new_key = history_keys[-mem_off]
