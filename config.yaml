@@ -13,6 +13,17 @@ data:
       alpha_start: 0.8 #
       alpha_end: 1.2 #
       time_steps: 10 #
+    access_behavior:
+      repetition_interval: 7
+      repetition_offset: 3
+      toggle_interval: 10
+      cycle_base: 5
+      cycle_mod: 3
+      cycle_divisor: 50
+      distortion_interval: 4
+      noise_range: [ -2, 3 ]
+      memory_interval: 9
+      memory_offset: 6
   temporal_pattern:
     burstiness:
       burst_high: 0.8

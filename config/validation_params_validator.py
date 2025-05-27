@@ -39,21 +39,17 @@ def _check_validation_early_stopping_params(
     :param validation_early_stopping_delta: Validation early stopping delta value.
     :return:
     """
-    # check patience
-    if (
-        not isinstance(validation_early_stopping_patience, int)
-        or validation_early_stopping_patience < 0
-    ):
-        raise RuntimeError("❌ 'validation.early_stopping.patience' "
-                           "must be an integer >= 0.")
-
-    # check delta
-    if (
-        not isinstance(validation_early_stopping_delta, (int, float)) or
-        validation_early_stopping_delta < 0
-    ):
-        raise RuntimeError("❌ 'validation.early_stopping.delta' "
-                           "must be a number >= 0.")
+    # check early stopping patience and delta
+    for name, val, t, min_val in [
+        ("validation.early_stopping.patience",
+         validation_early_stopping_patience, int, 0),
+        ("validation.early_stopping.delta",
+         validation_early_stopping_delta, (int, float), 0)
+    ]:
+        if not (isinstance(val, t) and val >= min_val):
+            raise RuntimeError(f"❌ '{name}' must be a "
+                               f"{'number' if t == (int, float) else
+                               'integer'} >= {min_val}.")
 
 
 def _check_search_space_params(
@@ -70,45 +66,30 @@ def _check_search_space_params(
     :param learning_rate_range: The learning rate range.
     :return:
     """
-    # check hidden size range
-    if (
-        not isinstance(hidden_size_range, list)
-        or len(hidden_size_range) == 0 or
-        not all(isinstance(v, int) for v in hidden_size_range) or
-        not all(v > 0 for v in hidden_size_range)
-    ):
-        raise RuntimeError(f"❌ 'validation.search_space.model.params.hidden_size_range'"
-                           f" must be a non-empty list of integers > 0.")
+    # search space rules definition
+    range_checks = [
+        ("validation.search_space.model.params.hidden_size_range",
+         hidden_size_range, int, lambda v: v > 0,
+         "a non-empty list of integers > 0"),
+        ("validation.search_space.model.params.num_layers_range",
+         num_layers_range, int, lambda v: v > 0,
+         "a non-empty list of integers > 0"),
+        ("validation.search_space.model.params.dropout_range",
+         dropout_range, float, lambda v: 0.0 <= v < 1.0,
+         "a non-empty list of floats within [0.0, 1.0)"),
+        ("validation.search_space.model.params.learning_rate_range",
+         learning_rate_range, float, lambda v: v > 0,
+         "a non-empty list of floats > 0"),
+    ]
 
-    # check number of layers range
-    if (
-        not isinstance(num_layers_range, list)
-        or len(num_layers_range) == 0 or
-        not all(isinstance(v, int) for v in num_layers_range) or
-        not all(v > 0 for v in num_layers_range)
-    ):
-        raise RuntimeError(f"❌ 'validation.search_space.model.params.num_layers_range'"
-                            f" must be a non-empty of integers > 0.")
-
-    # check dropout range
-    if (
-        not isinstance(dropout_range, list)
-        or len(dropout_range) == 0 or
-        not all(isinstance(v, float) for v in dropout_range) or
-        not all(0.0 <= v < 1.0 for v in dropout_range)
-    ):
-        raise RuntimeError(f"❌ 'validation.search_space.model.params.dropout_range'"
-                            f" must be a non-empty list of floats within [0.0, 1.0).")
-
-    # check learning rate range
-    if (
-        not isinstance(learning_rate_range, list)
-        or len(learning_rate_range) == 0 or
-        not all(isinstance(v, float) for v in learning_rate_range) or
-        not all(v > 0 for v in learning_rate_range)
-    ):
-        raise RuntimeError(f"❌ 'validation.search_space.model.params.learning_rate_range'"
-                           f" must be a non-empty list of floats > 0.")
+    for name, val, typ, cond, msg in range_checks:
+        if (
+            not isinstance(val, list)
+            or len(val) == 0
+            or not all(isinstance(v, typ) for v in val)
+            or not all(cond(v) for v in val)
+        ):
+            raise RuntimeError(f"❌ '{name}' must be {msg}.")
 
 
 def _validate_cv_params(config):
@@ -139,7 +120,10 @@ def _validate_cv_params(config):
     # show a successful message
     info("🟢 CV params validated.")
 
-    return cv_num_folds, validation_num_epochs
+    return (
+        cv_num_folds,
+        validation_num_epochs
+    )
 
 
 def _validate_validation_early_stopping_params(config):
@@ -170,7 +154,10 @@ def _validate_validation_early_stopping_params(config):
     # show a successful message
     info("🟢 Validation early stopping params validated.")
 
-    return validation_early_stopping_patience, validation_early_stopping_delta
+    return (
+        validation_early_stopping_patience,
+        validation_early_stopping_delta
+    )
 
 
 def _validate_search_space_params(config):
@@ -215,5 +202,10 @@ def _validate_search_space_params(config):
     # show a successful message
     info("🟢 Search space params validated.")
 
-    return (search_space, hidden_size_range, num_layers_range,
-            dropout_range, learning_rate_range)
+    return (
+        search_space,
+        hidden_size_range,
+        num_layers_range,
+        dropout_range,
+        learning_rate_range
+    )

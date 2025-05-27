@@ -118,7 +118,12 @@ def model_setup(
     # show a successful message
     info("🟢 Model setup completed.")
 
-    return device, criterion, model, optimizer
+    return (
+        device,
+        criterion,
+        model,
+        optimizer
+    )
 
 
 def _calculate_class_weights(targets, config_settings):

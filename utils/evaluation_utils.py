@@ -79,4 +79,9 @@ def evaluate_model(
     # show a successful message
     info("🟢 Model's evaluation completed.")
 
-    return avg_loss, metrics, all_outputs, all_vars
+    return (
+        avg_loss,
+        metrics,
+        all_outputs,
+        all_vars
+    )

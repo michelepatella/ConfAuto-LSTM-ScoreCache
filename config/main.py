@@ -1,6 +1,8 @@
 from config.Config import Config
-from config.data_params_validator import _validate_data_distribution_params, _validate_data_access_pattern_params, \
-    _validate_data_sequence_params, _validate_data_dataset_params
+from config.data_params_validator import \
+    _validate_data_sequence_params, _validate_data_dataset_params, _validate_data_access_temporal_pattern_params, \
+    _validate_data_access_behavior_pattern_params, _validate_data_access_pattern_zipf_params, \
+    _validate_data_distribution_params
 from config.evaluation_params_validator import _validate_evaluation_general_params
 from config.inference_params_validator import _validate_inference_confidence_intervals_params
 from config.model_params_validator import _validate_model_general_params, _validate_model_params
@@ -28,49 +30,110 @@ def prepare_config():
     config_file = load_config()
 
     # data config
-    (seed, distribution_type, num_requests,
-     num_keys, first_key, last_key) = (
-        _validate_data_distribution_params(config_file))
+    (
+        seed,
+        distribution_type,
+        num_requests,
+        num_keys,
+        first_key,
+        last_key
+    ) = _validate_data_distribution_params(config_file)
 
-    (zipf_alpha, zipf_alpha_start, zipf_alpha_end,
-     zipf_time_steps, burst_high, burst_low,
-     burst_hour_start, burst_hour_end,
-     periodic_base_scale, periodic_amplitude) = (
-        _validate_data_access_pattern_params(config_file))
+    (
+        zipf_alpha,
+        zipf_alpha_start,
+        zipf_alpha_end,
+        zipf_time_steps,
+    ) = _validate_data_access_pattern_zipf_params(config_file)
 
-    seq_len, embedding_dim, num_requests = (
-        _validate_data_sequence_params(config_file, num_requests))
+    (
+        repetition_interval,
+        repetition_offset,
+        toggle_interval,
+        cycle_base,
+        cycle_mod,
+        cycle_divisor,
+        distortion_interval,
+        noise_range,
+        memory_interval,
+        memory_offset,
+    ) = _validate_data_access_behavior_pattern_params(config_file)
 
-    training_perc, validation_perc, static_save_path, dynamic_save_path = (
-        _validate_data_dataset_params(config_file))
+    (
+        burst_high,
+        burst_low,
+        burst_hour_start,
+        burst_hour_end,
+        periodic_base_scale,
+        periodic_amplitude
+    ) = _validate_data_access_temporal_pattern_params(config_file)
+
+    (
+        seq_len,
+        embedding_dim,
+        num_requests
+    ) = _validate_data_sequence_params(config_file, num_requests)
+
+    (
+        training_perc,
+        validation_perc,
+        static_save_path,
+        dynamic_save_path
+     ) = _validate_data_dataset_params(config_file)
 
     # model config
-    num_features, model_save_path = (
-        _validate_model_general_params(config_file))
+    (
+        num_features,
+        model_save_path
+    ) = _validate_model_general_params(config_file)
 
-    (model_params, hidden_size, num_layers,
-     bias, batch_first, dropout, bidirectional, proj_size) = (
-        _validate_model_params(config_file))
+    (
+        model_params,
+        hidden_size,
+        num_layers,
+        bias,
+        batch_first,
+        dropout,
+        bidirectional,
+        proj_size
+    ) = _validate_model_params(config_file)
 
     # training config
-    training_num_epochs, training_batch_size = (
-        _validate_training_general_params(config_file))
+    (
+        training_num_epochs,
+        training_batch_size
+    ) = _validate_training_general_params(config_file)
 
-    optimizer_type, learning_rate, weight_decay, momentum = (
-        _validate_training_optimizer_params(config_file))
+    (
+        optimizer_type,
+        learning_rate,
+        weight_decay,
+        momentum
+    ) = _validate_training_optimizer_params(config_file)
 
-    training_early_stopping_patience, training_early_stopping_delta = (
-        _validate_training_early_stopping_params(config_file))
+    (
+        training_early_stopping_patience,
+        training_early_stopping_delta
+    ) = _validate_training_early_stopping_params(config_file)
 
     # validation config
-    cv_num_folds, validation_num_epochs = (
-        _validate_cv_params(config_file))
+    (
+        cv_num_folds,
+        validation_num_epochs
+    ) = _validate_cv_params(config_file)
 
-    validation_early_stopping_patience, validation_early_stopping_delta = (
-        _validate_validation_early_stopping_params(config_file))
+    (
+        validation_early_stopping_patience,
+        validation_early_stopping_delta
+    ) = _validate_validation_early_stopping_params(config_file)
 
-    (search_space, hidden_size_range, num_layers_range, dropout_range,
-     learning_rate_range) = _validate_search_space_params(config_file)
+    (
+        search_space,
+        hidden_size_range,
+        num_layers_range,
+        dropout_range,
+        learning_rate_range
+    ) = _validate_search_space_params(config_file)
 
     # evaluation config
     top_k = _validate_evaluation_general_params(config_file)
@@ -79,9 +142,10 @@ def prepare_config():
     testing_batch_size = _validate_testing_general_params(config_file)
 
     # inference config
-    confidence_level, mc_dropout_num_samples = (
-        _validate_inference_confidence_intervals_params(config_file)
-    )
+    (
+        confidence_level,
+        mc_dropout_num_samples
+    ) = _validate_inference_confidence_intervals_params(config_file)
 
     # show a successful message
     info("✅ Config preparation completed.")
@@ -104,6 +168,16 @@ def prepare_config():
         burst_hour_end=burst_hour_end,
         periodic_base_scale=periodic_base_scale,
         periodic_amplitude=periodic_amplitude,
+        repetition_interval=repetition_interval,
+        repetition_offset=repetition_offset,
+        toggle_interval=toggle_interval,
+        cycle_base=cycle_base,
+        cycle_mod=cycle_mod,
+        cycle_divisor=cycle_divisor,
+        distortion_interval=distortion_interval,
+        noise_range=noise_range,
+        memory_interval=memory_interval,
+        memory_offset=memory_offset,
         seq_len=seq_len,
         embedding_dim=embedding_dim,
         training_perc=training_perc,

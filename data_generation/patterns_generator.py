@@ -16,56 +16,71 @@ def _generate_access_pattern_requests(
     :param current_time: The current time.
     :param history_keys: The history keys.
     :param config_settings: The configuration settings.
-    :return: The requested generate, following a specific access pattern.
+    :return: The requested generated.
     """
     # initial message
     info("🔄 Access pattern requests generation started...")
-
 
     hour = (current_time / 3600.0) % 24
     base = config_settings.first_key
     keys = list(range(base, config_settings.last_key))
     n_keys = len(keys)
-    range_size = config_settings.last_key - config_settings.first_key  # dimensione
+    range_size = config_settings.last_key - config_settings.first_key
+
+    # read required configuration data
+    ab = config_settings.access_behavior
+    rep_int = ab.repetition_interval
+    rep_off = ab.repetition_offset
+    toggle_int = ab.toggle_interval
+    cycle_base = ab.cycle_base
+    cycle_mod = ab.cycle_mod
+    cycle_div = ab.cycle_divisor
+    dist_int = ab.distortion_interval
+    noise_low, noise_high = ab.noise_range
+    mem_int = ab.memory_interval
+    mem_off = ab.memory_offset
 
     if len(history_keys) < 5:
         return np.random.choice(keys)
 
     idx = len(history_keys)
 
+    # ⏰ Night: 00:00 - 06:00
     if 0 <= hour < 6:
-        if idx % 7 == 0:
-            return history_keys[-3]
+        if idx % rep_int == 0:
+            return history_keys[-rep_off]
         return np.random.choice(keys[:n_keys // 3])
 
+    # 🌅 Morning: 06:00 - 12:00
     elif 6 <= hour < 12:
-        toggle = (idx // 10) % 2
+        toggle = (idx // toggle_int) % 2
         if toggle == 0:
-            # increment modulo corretto
             new_key = ((history_keys[-1] - base + 1) % range_size) + base
             return new_key
         else:
-            # decrement modulo corretto
             new_key = ((history_keys[-2] - base - 1) % range_size) + base
             return new_key
 
+    # 🌞 Afternoon: 12:00 - 18:00
     elif 12 <= hour < 18:
-        cycle_length = 5 + (idx // 50) % 3
+        cycle_length = cycle_base + (idx // cycle_div) % cycle_mod
         cycle = keys[:cycle_length]
         return cycle[idx % cycle_length]
 
+    # 🌇 Evening: 18:00 - 22:00
     elif 18 <= hour < 22:
-        if idx % 4 == 0:
+        if idx % dist_int == 0:
             new_key = ((history_keys[-4] - base + 2) % range_size) + base
             return new_key
         else:
-            noise = np.random.randint(-2, 3)
+            noise = np.random.randint(noise_low, noise_high + 1)
             new_key = ((history_keys[-1] - base + noise) % range_size) + base
             return new_key
 
+    # 🌙 Night: 22:00 - 00:00
     else:
-        if idx % 9 == 0:
-            return history_keys[-6]
+        if idx % mem_int == 0:
+            return history_keys[-mem_off]
         return np.random.choice(key_range, p=probs)
 
 
@@ -137,7 +152,6 @@ def _generate_pattern_requests(
 
     # initialize data
     requests = []
-    delta_times = []
     day = 0
     time_in_day = 0.0
     timestamps = [0.0]
@@ -180,6 +194,7 @@ def _generate_pattern_requests(
                 day += 1
                 time_in_day = 0
 
+            # increment
             time_in_day += delta_t
             total_time = day * period + time_in_day
 
@@ -192,6 +207,7 @@ def _generate_pattern_requests(
                 config_settings,
             )
 
+            # store data
             requests.append(request)
             timestamps.append(total_time)
 
@@ -206,17 +222,5 @@ def _generate_pattern_requests(
 
     # show a successful message
     info(f"🟢 Pattern requests generated.")
-
-    # zip requests e timestamps insieme
-    data = list(zip(timestamps, requests))
-
-    # ordina per giorno e poi per ora all'interno del giorno
-    data.sort(key=lambda x: (int(x[0] // period), x[0] % period))
-
-    # stampa ordinato
-    for ts, req in data:
-        day = int(ts // period)
-        hour = (ts % period) / 3600
-        print(f"Day {day}, Time {hour:.2f}h, Key: {req}")
 
     return requests, timestamps

@@ -167,4 +167,8 @@ class AccessLogsDataset(Dataset):
         # show a successful message
         info("🟢 AccessLogsDataset retrieved.")
 
-        return x_features, x_keys, y_key
+        return (
+            x_features,
+            x_keys,
+            y_key
+        )

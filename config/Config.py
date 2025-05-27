@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 
 @dataclass
@@ -14,6 +15,16 @@ class Config:
     zipf_alpha_start: float
     zipf_alpha_end: float
     zipf_time_steps: int
+    repetition_interval: int
+    repetition_offset: int
+    toggle_interval: int
+    cycle_base: int
+    cycle_mod: int
+    cycle_divisor: int
+    distortion_interval: int
+    noise_range: List[int]
+    memory_interval: int
+    memory_offset: int
     burst_high: float
     burst_low: float
     burst_hour_start: int

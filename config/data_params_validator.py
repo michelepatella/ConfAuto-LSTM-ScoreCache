@@ -21,130 +21,219 @@ def _check_distribution_params(
     :return:
     """
     # check seed
-    if seed < 0 or not isinstance(seed, int):
-        raise RuntimeError("❌ 'data.distribution.seed' must be an integer >= 0.")
+    if not (
+            isinstance(seed, int)
+            and seed >= 0
+    ):
+        raise RuntimeError("❌ 'data.distribution.seed' "
+                           "must be an integer >= 0.")
 
     # check distribution type
     if distribution_type not in {"static", "dynamic"}:
-        raise RuntimeError("❌ 'data.distribution.type' must be 'static' or 'dynamic'.")
+        raise RuntimeError("❌ 'data.distribution.type' "
+                           "must be 'static' or 'dynamic'.")
 
-    # check number of requests
-    if (
-        num_requests <= 0
-        or not isinstance(num_requests, int)
+    # check integer params with limits
+    for name, val, min_val in [
+        ("num_requests", num_requests, 1),
+        ("num_keys", num_keys, 2),
+    ]:
+        if not (
+                isinstance(val, int)
+                and val >= min_val
+        ):
+            raise RuntimeError(f"❌ 'data.distribution.{name}' "
+                               f"must be an integer >= {min_val}.")
+
+    # check first_key and last_key are ints and last_key > first_key
+    if not (
+            isinstance(first_key, int)
+            and isinstance(last_key, int)
+            and last_key > first_key
     ):
-        raise RuntimeError("❌ 'data.distribution.num_requests' must be an integer > 0.")
+        raise RuntimeError(
+            "❌ 'data.distribution.key_range.first_key' and"
+            " 'data.distribution.key_range.last_key' "
+            "must be integers with first_key < last_key."
+        )
 
-    # check number of keys
-    if not isinstance(num_keys, int) or num_keys <= 1:
-        raise RuntimeError("❌ 'data.distribution.num_keys' must be an integer > 1.")
+    # check num_keys matches the key range length
     if abs(last_key - first_key) != num_keys:
-        raise RuntimeError("❌ 'data.distribution.num_keys' must match the"
-                           " range defined by first_key and last_key.")
-
-    # check first key and last key
-    if (
-        not isinstance(first_key, int) or
-        not isinstance(last_key, int)
-        or last_key <= first_key
-    ):
-        raise RuntimeError("❌ 'data.distribution.key_range.first_key' and  "
-                           "'data.distribution.key_range.last_key' "
-                           "must be integers, with the first one "
-                           "< the second one.")
+        raise RuntimeError(
+            "❌ 'data.distribution.num_keys' must match the "
+            "range defined by first_key and last_key."
+        )
 
 
-def _check_access_pattern_params(
-            zipf_alpha,
-            zipf_alpha_start,
-            zipf_alpha_end,
-            zipf_time_steps,
-            burst_high,
-            burst_low,
-            burst_hour_start,
-            burst_hour_end,
-            periodic_base_scale,
-            periodic_amplitude
-    ):
+def _check_zipf_params(
+        zipf_alpha,
+        zipf_alpha_start,
+        zipf_alpha_end,
+        zipf_time_steps
+):
     """
-    Method to check data access pattern parameters.
-    :param zipf_alpha: Zipf alpha value.
-    :param zipf_alpha_start: Zipf alpha start value.
-    :param zipf_alpha_end: Zipf alpha end value.
-    :param zipf_time_steps: Zipf time steps value.
-    :param burst_high: The burst high value.
-    :param burst_low: The burst low value.
-    :param burst_hour_start: The burst hour start value.
-    :param burst_hour_end: The burst hour end value.
-    :param periodic_base_scale: The periodic base scale value.
-    :param periodic_amplitude: The periodic amplitude value.
+    Method to check Zipf parameters.
+    :param zipf_alpha: The Zipf parameter.
+    :param zipf_alpha_start: The initial Zipf parameter.
+    :param zipf_alpha_end: The final Zipf parameter.
+    :param zipf_time_steps: The time steps.
     :return:
     """
-    # check zipf alpha
+    # check alpha parameter
     if (
         not isinstance(zipf_alpha, float)
         or zipf_alpha <= 0
     ):
-        raise RuntimeError("❌ 'data.access_pattern.zipf.alpha' must be a float > 0.")
+        raise RuntimeError("❌ 'data.access_pattern.zipf.alpha'"
+                           " must be a float > 0.")
 
-    # check zipf alpha start and end
-    if(
-        not all(isinstance(v, float)
-        and v > 0 for v in [zipf_alpha_start, zipf_alpha_end])
+    # check alpha start and alpha end
+    if not all(
+            isinstance(v, float) and v > 0
+            for v in [zipf_alpha_start, zipf_alpha_end]
     ):
-        raise RuntimeError("❌ 'data.access_pattern.zipf.alpha_start' and "
-                           "'data.access_pattern.zipf.alpha_end' must be float > 0.")
+        raise RuntimeError(
+            "❌ 'data.access_pattern.zipf.alpha_start' and "
+            "'data.access_pattern.zipf.alpha_end' must be float > 0."
+        )
+
     if zipf_alpha_end < zipf_alpha_start:
-        raise RuntimeError("❌ 'data.access_pattern.zipf.alpha_end' must be"
-                           " >= 'data.access_pattern.zipf.alpha_start'.")
+        raise RuntimeError(
+            "❌ 'data.access_pattern.zipf.alpha_end' "
+            "must be >= 'data.access_pattern.zipf.alpha_start'."
+        )
 
     # check time steps
-    if (
-        not isinstance(zipf_time_steps, int)
-        or zipf_time_steps <= 0
+    if not (
+            isinstance(zipf_time_steps, int)
+            and zipf_time_steps > 0
     ):
-        raise RuntimeError("❌ 'data.access_pattern.zipf.time_steps"
-                           "' must be an integer > 0.")
+        raise RuntimeError(
+            "❌ 'data.access_pattern.zipf.time_steps' must be an integer > 0."
+        )
 
+
+def _check_access_behavior_params(
+    repetition_interval,
+    repetition_offset,
+    toggle_interval,
+    cycle_base,
+    cycle_mod,
+    cycle_divisor,
+    distortion_interval,
+    noise_range,
+    memory_interval,
+    memory_offset
+):
+    # check some values (that must be int >= 0)
+    for name, val in [
+        ("repetition_interval", repetition_interval),
+        ("repetition_offset", repetition_offset),
+        ("toggle_interval", toggle_interval),
+        ("distortion_interval", distortion_interval),
+        ("memory_interval", memory_interval),
+        ("memory_offset", memory_offset)
+    ]:
+        if not isinstance(val, int) or val < 0:
+            raise RuntimeError(f"❌ 'data.access_pattern.access_behavior.{name}'"
+                               f" must be an integer >= 0.")
+
+    # check cycle parameters
+    for name, val in [
+        ("cycle_base", cycle_base),
+        ("cycle_mod", cycle_mod),
+        ("cycle_divisor", cycle_divisor)
+    ]:
+        if not isinstance(val, int) or val <= 0:
+            raise RuntimeError(f"❌ 'data.access_pattern.access_behavior.{name}' "
+                               f"must be an integer > 0.")
+
+    # check noise range
+    if (
+        not isinstance(noise_range, (list, tuple))
+        or len(noise_range) != 2
+        or not all(isinstance(v, (int, float)) for v in noise_range)
+    ):
+        raise RuntimeError(
+            "❌ 'data.access_pattern.access_behavior.noise_range' "
+            "must be a list or tuple of two numbers.")
+
+
+def _check_temporal_pattern_params(
+    burst_high,
+    burst_low,
+    burst_hour_start,
+    burst_hour_end,
+    periodic_base_scale,
+    periodic_amplitude
+):
+    """
+    Method to check temporal pattern parameters.
+    :param burst_high: The burst high value.
+    :param burst_low: The burst low value.
+    :param burst_hour_start: The burst hour start value.
+    :param burst_hour_end: The burst hour end value.
+    :param periodic_base_scale: The periodic base scale.
+    :param periodic_amplitude: The periodic amplitude.
+    :return:
+    """
     # check burst high and low
-    for name, val in [("burst_high", burst_high), ("burst_low", burst_low)]:
-        if not isinstance(val, float) or val <= 0:
-            raise RuntimeError(f"'data.temporal_pattern.burstiness.{name}' must be a float > 0.")
+    for name, val in [
+        ("burst_high", burst_high),
+        ("burst_low", burst_low)
+    ]:
+        if not (
+                isinstance(val, float)
+                and val > 0
+        ):
+            raise RuntimeError(
+                f"❌ 'data.temporal_pattern.burstiness.{name}'"
+                f" must be a float > 0."
+            )
+
     if burst_high >= burst_low:
-        raise RuntimeError("❌ 'data.temporal_pattern.burstiness.burst_high'"
-                           " must be < 'data.temporal_pattern.burstiness.burst_low'.")
+        raise RuntimeError(
+            "❌ 'data.temporal_pattern.burstiness.burst_high' "
+            "must be < 'data.temporal_pattern.burstiness.burst_low'."
+        )
 
-    # check burst hour start and end
-    if (
-        not isinstance(burst_hour_start, int)
-        or not 0 <= burst_hour_start <= 23
+    # check burst start
+    if not (
+            isinstance(burst_hour_start, int)
+            and 0 <= burst_hour_start <= 23
     ):
-        raise RuntimeError("❌ 'data.temporal_pattern.burstiness.burst_hour_start'"
-                           " must be an integer in [0, 23].")
+        raise RuntimeError(
+            "❌ 'data.temporal_pattern.burstiness.burst_hour_start' "
+            "must be an integer in [0, 23]."
+        )
 
-    # check burst hour start and end
-    if (
-            not isinstance(burst_hour_end, int)
-            or not 0 <= burst_hour_end <= 23
+    # check burst end
+    if not (
+            isinstance(burst_hour_end, int)
+            and 0 <= burst_hour_end <= 23
     ):
-        raise RuntimeError("❌ 'data.temporal_pattern.burstiness.burst_hour_end'"
-                            " must be an integer in [0, 23].")
+        raise RuntimeError(
+            "❌ 'data.temporal_pattern.burstiness.burst_hour_end' "
+            "must be an integer in [0, 23]."
+        )
 
     # check periodic base scale
-    if (
-        not isinstance(periodic_base_scale, (int, float))
-        or periodic_base_scale <= 0
+    if not (
+            isinstance(periodic_base_scale, (int, float))
+            and periodic_base_scale > 0
     ):
-        raise RuntimeError("❌ 'data.temporal_pattern.periodic.base_scale'"
-                           " must be a number > 0.")
+        raise RuntimeError(
+            "❌ 'data.temporal_pattern.periodic.base_scale' must be a number > 0."
+        )
 
     # check periodic amplitude
-    if (
-        not isinstance(periodic_amplitude, (int, float))
-        or periodic_amplitude < 0
+    if not (
+            isinstance(periodic_amplitude, (int, float))
+            and periodic_amplitude >= 0
     ):
-        raise RuntimeError("❌ 'data.temporal_pattern.periodic.periodic_amplitude'"
-                           " must be a number >= 0.")
+        raise RuntimeError(
+            "❌ 'data.temporal_pattern.periodic.periodic_amplitude' must be a number >= 0."
+        )
 
 
 def _check_sequence_params(
@@ -159,23 +248,18 @@ def _check_sequence_params(
     :param num_requests: The number of requests.
     :return:
     """
-    # check sequence length
-    if (
-        not isinstance(seq_len, int)
-        or seq_len <= 0
-    ):
-        raise RuntimeError("❌ 'data.sequence.len' must be an integer > 0.")
+    # check sequence length and embedding dimension are integers > 0
+    for name, val in [("len", seq_len), ("embedding_dim", embedding_dim)]:
+        if not (
+                isinstance(val, int)
+                and val > 0
+        ):
+            raise RuntimeError(f"❌ 'data.sequence.{name}' must be an integer > 0.")
+
+    # check seq_len <= num_requests
     if seq_len > num_requests:
         raise RuntimeError("❌ 'data.sequence.len' must be"
                            " <= 'data.distribution.num_requests'.")
-
-    # check embedding dimension
-    if (
-        not isinstance(embedding_dim, int)
-        or embedding_dim <= 0
-    ):
-        raise RuntimeError("❌ 'data.sequence.embedding_dim'"
-                           " must be an integer > 0.")
 
 
 def _check_dataset_params(
@@ -193,28 +277,34 @@ def _check_dataset_params(
     :return:
     """
     # check training percentage
-    if (
-        not isinstance(training_perc, float)
-        or not (0.0 <= training_perc <= 1.0)
+    if not (
+            isinstance(training_perc, float)
+            and 0.0 <= training_perc <= 1.0
     ):
-        raise RuntimeError("❌ 'data.dataset.training_perc'"
-                           " must be a float between 0.0 and 1.0.")
+        raise RuntimeError(
+            "❌ 'data.dataset.training_perc' must be a "
+            "float between 0.0 and 1.0."
+        )
 
     # check validation percentage
-    if (
-        not isinstance(validation_perc, float)
-        or not (0.0 <= validation_perc < 1.0)
+    if not (
+            isinstance(validation_perc, float)
+            and 0.0 <= validation_perc < 1.0
     ):
-        raise RuntimeError("❌ 'data.dataset.validation_perc'"
-                            " must be a float between 0.0 and 1.0 (excluded).")
+        raise RuntimeError(
+            "❌ 'data.dataset.validation_perc' must be a "
+            "float between 0.0 and 1.0 (excluded)."
+        )
 
     # check dataset paths
-    if(
-        not isinstance(static_save_path, str)
-        or not isinstance(dynamic_save_path, str)
+    if not (
+            isinstance(static_save_path, str)
+            and isinstance(dynamic_save_path, str)
     ):
-        raise RuntimeError("❌ Both 'data.dataset.static_save_path' and "
-                           "'data.dataset.dynamic_save_path' must be strings.")
+        raise RuntimeError(
+            "❌ Both 'data.dataset.static_save_path' and "
+            "'data.dataset.dynamic_save_path' must be strings."
+        )
 
 
 def _validate_data_distribution_params(config):
@@ -265,18 +355,24 @@ def _validate_data_distribution_params(config):
     # show a successful message
     info("🟢 Data distribution params validated.")
 
-    return (seed, distribution_type, num_requests,
-            num_keys, first_key, last_key)
+    return (
+        seed,
+        distribution_type,
+        num_requests,
+        num_keys,
+        first_key,
+        last_key
+    )
 
 
-def _validate_data_access_pattern_params(config):
+def _validate_data_access_pattern_zipf_params(config):
     """
-    Method to validate access pattern parameters.
+    Method to validate data access pattern Zipf parameters.
     :param config: The configuration object.
-    :return: All the data access pattern parameters.
+    :return: All the data access pattern Zipf parameters.
     """
     # initial message
-    info("🔄 Data access pattern params validation started...")
+    info("🔄 Data access pattern Zipf params validation started...")
 
     # access pattern
     # zipf
@@ -296,6 +392,116 @@ def _validate_data_access_pattern_params(config):
         config,
         "data.access_pattern.zipf.time_steps"
     )
+
+    # check zipf parameters
+    _check_zipf_params(
+        zipf_alpha,
+        zipf_alpha_start,
+        zipf_alpha_end,
+        zipf_time_steps
+    )
+
+    # show a successful message
+    info("🟢 Data access pattern Zipf params validated.")
+
+    return (
+        zipf_alpha,
+        zipf_alpha_start,
+        zipf_alpha_end,
+        zipf_time_steps,
+    )
+
+
+def _validate_data_access_behavior_pattern_params(config):
+    """
+    Method to validate data access behavior pattern parameters.
+    :param config: The configuration object.
+    :return: All the data access behavior pattern parameters.
+    """
+    # initial message
+    info("🔄 Data access behavior pattern params validation started...")
+
+    # access behavior
+    repetition_interval = get_config_value(
+        config,
+        "data.access_pattern.access_behavior.repetition_interval"
+    )
+    repetition_offset = get_config_value(
+        config,
+        "data.access_pattern.access_behavior.repetition_offset"
+    )
+    toggle_interval = get_config_value(
+        config,
+        "data.access_pattern.access_behavior.toggle_interval"
+    )
+    cycle_base = get_config_value(
+        config,
+        "data.access_pattern.access_behavior.cycle_base"
+    )
+    cycle_mod = get_config_value(
+        config,
+        "data.access_pattern.access_behavior.cycle_mod"
+    )
+    cycle_divisor = get_config_value(
+        config,
+        "data.access_pattern.access_behavior.cycle_divisor"
+    )
+    distortion_interval = get_config_value(
+        config,
+        "data.access_pattern.access_behavior.distortion_interval"
+    )
+    noise_range = get_config_value(
+        config,
+        "data.access_pattern.access_behavior.noise_range"
+    )
+    memory_interval = get_config_value(
+        config,
+        "data.access_pattern.access_behavior.memory_interval"
+    )
+    memory_offset = get_config_value(
+        config,
+        "data.access_pattern.access_behavior.memory_offset"
+    )
+
+    # check access behavior pattern parameters
+    _check_access_behavior_params(
+        repetition_interval,
+        repetition_offset,
+        toggle_interval,
+        cycle_base,
+        cycle_mod,
+        cycle_divisor,
+        distortion_interval,
+        noise_range,
+        memory_interval,
+        memory_offset
+    )
+
+    # show a successful message
+    info("🟢 Data access behavior pattern params validated.")
+
+    return (
+        repetition_interval,
+        repetition_offset,
+        toggle_interval,
+        cycle_base,
+        cycle_mod,
+        cycle_divisor,
+        distortion_interval,
+        noise_range,
+        memory_interval,
+        memory_offset,
+    )
+
+
+def _validate_data_access_temporal_pattern_params(config):
+    """
+    Method to validate data access temporal pattern parameters.
+    :param config: The configuration object.
+    :return: All the data access temporal pattern parameters.
+    """
+    # initial message
+    info("🔄 Data access temporal pattern params validation started...")
 
     # temporal pattern
     # burstiness
@@ -325,12 +531,8 @@ def _validate_data_access_pattern_params(config):
         "data.temporal_pattern.periodic.amplitude"
     )
 
-    # check access pattern params
-    _check_access_pattern_params(
-        zipf_alpha,
-        zipf_alpha_start,
-        zipf_alpha_end,
-        zipf_time_steps,
+    # check temporal pattern params
+    _check_temporal_pattern_params(
         burst_high,
         burst_low,
         burst_hour_start,
@@ -340,11 +542,16 @@ def _validate_data_access_pattern_params(config):
     )
 
     # show a successful message
-    info("🟢 Data access pattern params validated.")
+    info("🟢 Data access temporal pattern params validated.")
 
-    return (zipf_alpha, zipf_alpha_start, zipf_alpha_end, zipf_time_steps,
-            burst_high, burst_low, burst_hour_start, burst_hour_end,
-            periodic_base_scale, periodic_amplitude)
+    return (
+        burst_high,
+        burst_low,
+        burst_hour_start,
+        burst_hour_end,
+        periodic_base_scale,
+        periodic_amplitude
+    )
 
 
 def _validate_data_sequence_params(config, num_requests):
@@ -377,7 +584,11 @@ def _validate_data_sequence_params(config, num_requests):
     # show a successful message
     info("🟢 Data sequence params validated.")
 
-    return seq_len, embedding_dim, num_requests
+    return (
+        seq_len,
+        embedding_dim,
+        num_requests
+    )
 
 
 def _validate_data_dataset_params(config):
@@ -418,4 +629,9 @@ def _validate_data_dataset_params(config):
     # show a successful message
     info("🟢 Dataset params validated.")
 
-    return training_perc, validation_perc, static_save_path, dynamic_save_path
+    return (
+        training_perc,
+        validation_perc,
+        static_save_path,
+        dynamic_save_path
+    )

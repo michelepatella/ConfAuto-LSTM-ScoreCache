@@ -13,9 +13,11 @@ def _check_general_model_params(
     :return:
     """
     # check number of features
-    if num_features <= 0 or not isinstance(num_features, int):
-        raise RuntimeError("❌ 'model.general.num_features'"
-                           " must be an integer > 0.")
+    if not (
+            isinstance(num_features, int)
+            and num_features > 0
+    ):
+        raise RuntimeError("❌ 'model.general.num_features' must be an integer > 0.")
 
     # check model save path
     if not isinstance(model_save_path, str):
@@ -42,50 +44,44 @@ def _check_model_params(
     :param proj_size: The projection size.
     :return:
     """
-    # check hidden size
-    if (
-        not isinstance(hidden_size, int)
-        or hidden_size <= 0
+    # check integer parameters > 0
+    for name, val in [
+        ("hidden_size", hidden_size),
+        ("num_layers", num_layers),
+    ]:
+        if not (
+                isinstance(val, int)
+                and val > 0
+        ):
+            raise RuntimeError(f"❌ 'model.params.{name}' must be an integer > 0.")
+
+    # check boolean parameters
+    for name, val in [
+        ("bias", bias),
+        ("batch_first", batch_first),
+        ("bidirectional", bidirectional),
+    ]:
+        if not isinstance(val, bool):
+            raise RuntimeError(f"❌ 'model.params.{name}' "
+                               f"must be a boolean.")
+
+    # check dropout float in [0.0, 1.0)
+    if not (
+            isinstance(dropout, float)
+            and 0.0 <= dropout < 1.0
     ):
-        raise RuntimeError("❌ 'model.params.hidden_size' must be an integer > 0.")
-
-    # check number of layers
-    if (
-        not isinstance(num_layers, int)
-        or num_layers <= 0
-    ):
-        raise RuntimeError("❌ 'model.params.num_layers' must be an integer > 0.")
-
-    # check bias
-    if not isinstance(bias, bool):
-        raise RuntimeError("❌ 'model.params.bias' must be a boolean.")
-
-    # check batch first
-    if not isinstance(batch_first, bool):
-        raise RuntimeError("❌ 'model.params.batch_first' must be a boolean.")
-
-    # check dropout
-    if (
-        not isinstance(dropout, float)
-        or not (0.0 <= dropout < 1.0)
-    ):
-        raise RuntimeError("❌ 'model.params.dropout' must be a "
-                           "float within [0.0, 1.0).")
+        raise RuntimeError("❌ 'model.params.dropout' must be a"
+                           " float within [0.0, 1.0).")
     if num_layers == 1 and dropout > 0:
         info("ℹ️ 'dropout' is ignored when 'num_layers' == 1.")
 
-    # check bidirectional
-    if not isinstance(bidirectional, bool):
-        raise RuntimeError("❌ 'model.params.bidirectional' must be a boolean.")
-
-    # check project size
-    if (
-        not isinstance(proj_size, int)
-        or proj_size < 0 or
-        proj_size > hidden_size
+    # check proj_size integer in [0, hidden_size]
+    if not (
+            isinstance(proj_size, int)
+            and 0 <= proj_size <= hidden_size
     ):
-        raise RuntimeError("❌ 'model.params.proj_size' must be an"
-                           " integer in [0, hidden_size].")
+        raise RuntimeError("❌ 'model.params.proj_size' must be an "
+                           "integer in [0, hidden_size].")
 
 
 def _validate_model_general_params(config):
@@ -176,5 +172,13 @@ def _validate_model_params(config):
     # show a successful message
     info("🟢 Model params validated.")
 
-    return (model_params, hidden_size, num_layers, bias,
-            batch_first, dropout, bidirectional, proj_size)
+    return (
+        model_params,
+        hidden_size,
+        num_layers,
+        bias,
+        batch_first,
+        dropout,
+        bidirectional,
+        proj_size
+    )

@@ -12,21 +12,15 @@ def _check_general_training_params(
     :param training_batch_size: The size of the training batch.
     :return:
     """
-    # check number of epochs
-    if (
-        not isinstance(training_num_epochs, int)
-        or training_num_epochs <= 0
-    ):
-        raise RuntimeError("❌ 'training.general.num_epochs' "
-                           "must be an integer > 0.")
-
-    # check training batch size
-    if (
-        not isinstance(training_batch_size, int)
-        or training_batch_size <= 0
-    ):
-        raise RuntimeError("❌ 'training.general.batch_size' "
-                           "must be an integer > 0.")
+    # check number of epochs and
+    # training batch size are integers > 0
+    for name, val in [
+        ("num_epochs", training_num_epochs),
+        ("batch_size", training_batch_size)
+    ]:
+        if not (isinstance(val, int) and val > 0):
+            raise RuntimeError(f"❌ 'training.general.{name}' "
+                               f"must be an integer > 0.")
 
 
 def _check_optimizer_params(
@@ -128,7 +122,10 @@ def _validate_training_general_params(config):
     # show a successful message
     info("🟢 Training general params validated.")
 
-    return training_num_epochs, training_batch_size
+    return (
+        training_num_epochs,
+        training_batch_size
+    )
 
 
 def _validate_training_optimizer_params(config):
@@ -169,7 +166,12 @@ def _validate_training_optimizer_params(config):
     # show a successful message
     info("🟢 Training optimizer params validated.")
 
-    return optimizer_type, learning_rate, weight_decay, momentum
+    return (
+        optimizer_type,
+        learning_rate,
+        weight_decay,
+        momentum
+    )
 
 
 def _validate_training_early_stopping_params(config):
@@ -200,4 +202,7 @@ def _validate_training_early_stopping_params(config):
     # show a successful message
     info("🟢 Training early stopping params validated.")
 
-    return training_early_stopping_patience, training_early_stopping_delta
+    return (
+        training_early_stopping_patience,
+        training_early_stopping_delta
+    )

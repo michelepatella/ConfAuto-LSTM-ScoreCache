@@ -22,8 +22,8 @@ def _check_confidence_intervals_params(
 
     # check MC dropout no. of samples
     if (
-            not isinstance(mc_dropout_num_samples, int)
-            or not mc_dropout_num_samples > 0
+        not isinstance(mc_dropout_num_samples, int)
+        or not mc_dropout_num_samples > 0
     ):
         raise RuntimeError("❌ 'inference.mc_dropout.num_samples'"
                            " must be an integer > 0.")

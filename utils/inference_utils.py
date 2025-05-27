@@ -129,8 +129,13 @@ def _infer_batch(
     # show a successful message
     info("🟢 Batch inferred.")
 
-    return (total_loss, all_preds,
-            all_targets, all_outputs, all_vars)
+    return (
+        total_loss,
+        all_preds,
+        all_targets,
+        all_outputs,
+        all_vars
+    )
 
 
 def infer_single_sample(
