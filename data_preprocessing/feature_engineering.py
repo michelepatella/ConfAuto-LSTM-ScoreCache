@@ -4,8 +4,7 @@ from utils.log_utils import info
 
 def _encode_time_trigonometrically(
         df,
-        time_column,
-        period=24
+        time_column
 ):
     """
     Replace the time column with two new columns representing
@@ -17,6 +16,8 @@ def _encode_time_trigonometrically(
     """
     # show initial message
     info("🔄 Encoding time column trigonometrically started...")
+
+    period = 24
 
     try:
         # normalize time to [0, 2pi]

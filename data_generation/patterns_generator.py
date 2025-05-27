@@ -28,60 +28,62 @@ def _generate_access_pattern_requests(
     range_size = config_settings.last_key - config_settings.first_key
 
     # read required configuration data
-    ab = config_settings.access_behavior
-    rep_int = ab.repetition_interval
-    rep_off = ab.repetition_offset
-    toggle_int = ab.toggle_interval
-    cycle_base = ab.cycle_base
-    cycle_mod = ab.cycle_mod
-    cycle_div = ab.cycle_divisor
-    dist_int = ab.distortion_interval
-    noise_low, noise_high = ab.noise_range
-    mem_int = ab.memory_interval
-    mem_off = ab.memory_offset
+    rep_int = config_settings.repetition_interval
+    rep_off = config_settings.repetition_offset
+    toggle_int = config_settings.toggle_interval
+    cycle_base = config_settings.cycle_base
+    cycle_mod = config_settings.cycle_mod
+    cycle_div = config_settings.cycle_divisor
+    dist_int = config_settings.distortion_interval
+    noise_low, noise_high = config_settings.noise_range
+    mem_int = config_settings.memory_interval
+    mem_off = config_settings.memory_offset
 
     if len(history_keys) < 5:
         return np.random.choice(keys)
 
     idx = len(history_keys)
 
-    # ⏰ Night: 00:00 - 06:00
+    # night pattern (00:00 - 06:00)
     if 0 <= hour < 6:
         if idx % rep_int == 0:
-            return history_keys[-rep_off]
-        return np.random.choice(keys[:n_keys // 3])
+            new_key = history_keys[-rep_off]
+        else:
+            new_key = np.random.choice(keys[:n_keys // 3])
 
-    # 🌅 Morning: 06:00 - 12:00
+    # morning pattern (06:00 - 12:00)
     elif 6 <= hour < 12:
         toggle = (idx // toggle_int) % 2
         if toggle == 0:
             new_key = ((history_keys[-1] - base + 1) % range_size) + base
-            return new_key
         else:
             new_key = ((history_keys[-2] - base - 1) % range_size) + base
-            return new_key
 
-    # 🌞 Afternoon: 12:00 - 18:00
+    # afternoon pattern (12:00 - 18:00)
     elif 12 <= hour < 18:
         cycle_length = cycle_base + (idx // cycle_div) % cycle_mod
         cycle = keys[:cycle_length]
-        return cycle[idx % cycle_length]
+        new_key = cycle[idx % cycle_length]
 
-    # 🌇 Evening: 18:00 - 22:00
+    # evening pattern (18:00 - 22:00)
     elif 18 <= hour < 22:
         if idx % dist_int == 0:
             new_key = ((history_keys[-4] - base + 2) % range_size) + base
-            return new_key
         else:
             noise = np.random.randint(noise_low, noise_high + 1)
             new_key = ((history_keys[-1] - base + noise) % range_size) + base
-            return new_key
 
-    # 🌙 Night: 22:00 - 00:00
+    # night pattern, again (22:00 - 00:00)
     else:
         if idx % mem_int == 0:
-            return history_keys[-mem_off]
-        return np.random.choice(key_range, p=probs)
+            new_key = history_keys[-mem_off]
+        else:
+            new_key = np.random.choice(key_range, p=probs)
+
+    # show a successful message
+    info(f"🟢 Requests access pattern generated.")
+
+    return new_key
 
 
 def _generate_temporal_access_pattern_requests(
@@ -154,7 +156,12 @@ def _generate_pattern_requests(
     requests = []
     day = 0
     time_in_day = 0.0
-    timestamps = [0.0]
+
+    if not timestamps:
+        timestamps = [0.0]
+    else:
+        timestamps = list(timestamps)
+
     key_range = np.arange(
         config_settings.first_key,
         config_settings.last_key
@@ -190,11 +197,11 @@ def _generate_pattern_requests(
             )
 
             if time_in_day + delta_t > period:
-                # next day
+                # move on the next day
                 day += 1
                 time_in_day = 0
 
-            # increment
+            # increment time
             time_in_day += delta_t
             total_time = day * period + time_in_day
 
