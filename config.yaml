@@ -10,9 +10,9 @@ data:
   access_pattern:
     zipf:
       alpha: 0.8 #
-      alpha_start: 0.8 #
-      alpha_end: 1.2 #
-      time_steps: 10 #
+      alpha_start: 0.5 #
+      alpha_end: 2.0 #
+      time_steps: 5 #
     access_behavior:
       repetition_interval: 7
       repetition_offset: 3
@@ -31,8 +31,8 @@ data:
       burst_hour_start: 10
       burst_hour_end: 18
     periodic:
-      base_scale: 25 #
-      amplitude: 10 #
+      base_scale: 120 #
+      amplitude: 50 #
   sequence:
     len: 25 #
     embedding_dim: 32 #

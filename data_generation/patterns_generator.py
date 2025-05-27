@@ -44,29 +44,29 @@ def _generate_access_pattern_requests(
 
     idx = len(history_keys)
 
-    # night pattern (00:00 - 06:00)
-    if 0 <= hour < 6:
+    # 06:00 - 09:00 pattern
+    if 5 <= hour < 9:
         if idx % rep_int == 0:
             new_key = history_keys[-rep_off]
         else:
             new_key = np.random.choice(keys[:n_keys // 3])
 
-    # morning pattern (06:00 - 12:00)
-    elif 6 <= hour < 12:
+    # 09:00 - 12:00 pattern
+    elif 9 <= hour < 12:
         toggle = (idx // toggle_int) % 2
         if toggle == 0:
             new_key = ((history_keys[-1] - base + 1) % range_size) + base
         else:
             new_key = ((history_keys[-2] - base - 1) % range_size) + base
 
-    # afternoon pattern (12:00 - 18:00)
+    # 12:00 - 18:00 pattern
     elif 12 <= hour < 18:
         cycle_length = cycle_base + (idx // cycle_div) % cycle_mod
         cycle = keys[:cycle_length]
         new_key = cycle[idx % cycle_length]
 
-    # evening pattern (18:00 - 22:00)
-    elif 18 <= hour < 22:
+    # 18:00 - 21:00 pattern
+    elif 18 <= hour < 23:
         if idx % dist_int == 0:
             new_key = ((history_keys[-4] - base + 2) % range_size) + base
         else:
@@ -197,12 +197,10 @@ def _generate_pattern_requests(
             )
 
             if time_in_day + delta_t > period:
-                # move on the next day
                 day += 1
-                time_in_day = 0
-
-            # increment time
-            time_in_day += delta_t
+                time_in_day = (time_in_day + delta_t) - period
+            else:
+                time_in_day += delta_t
             total_time = day * period + time_in_day
 
             # generate request
