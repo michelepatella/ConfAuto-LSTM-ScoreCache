@@ -84,9 +84,11 @@ def model_setup(
 
     try:
         # define the device to use
+        """"
         device = torch.device("cuda" if torch.cuda.is_available()
                               else "cpu")
-
+        """
+        device = torch.device("cpu")
         # get the class weights
         class_weights = _calculate_class_weights(
             targets,
