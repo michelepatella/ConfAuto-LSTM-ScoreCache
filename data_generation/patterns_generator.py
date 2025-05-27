@@ -21,49 +21,49 @@ def _generate_access_pattern_requests(
     # initial message
     info("🔄 Access pattern requests generation started...")
 
+
     hour = (current_time / 3600.0) % 24
     base = config_settings.first_key
     keys = list(range(base, config_settings.last_key))
     n_keys = len(keys)
+    range_size = config_settings.last_key - config_settings.first_key  # dimensione
 
-    # Create temporal blocks but less rigid
     if len(history_keys) < 5:
         return np.random.choice(keys)
 
-    # Introduce pseudo-periodic dependencies requiring memory
     idx = len(history_keys)
 
-    # 1. Repetition with offset (requires remembering previous key)
     if 0 <= hour < 6:
-        # every 7th request is the same as 3 steps before
         if idx % 7 == 0:
             return history_keys[-3]
         return np.random.choice(keys[:n_keys // 3])
 
-    # 2. Toggle state every N accesses (learnable only with temporal memory)
     elif 6 <= hour < 12:
-        toggle = (idx // 10) % 2  # switches every 10 steps
+        toggle = (idx // 10) % 2
         if toggle == 0:
-            return (history_keys[-1] + 1) % config_settings.last_key
+            # increment modulo corretto
+            new_key = ((history_keys[-1] - base + 1) % range_size) + base
+            return new_key
         else:
-            return (history_keys[-2] - 1) % config_settings.last_key
+            # decrement modulo corretto
+            new_key = ((history_keys[-2] - base - 1) % range_size) + base
+            return new_key
 
-    # 3. Conditional loop that changes over time
     elif 12 <= hour < 18:
-        cycle_length = 5 + (idx // 50) % 3  # cycle length changes slowly
+        cycle_length = 5 + (idx // 50) % 3
         cycle = keys[:cycle_length]
         return cycle[idx % cycle_length]
 
-    # 4. Repetition with distortion
     elif 18 <= hour < 22:
         if idx % 4 == 0:
-            return (history_keys[-4] + 2) % config_settings.last_key
+            new_key = ((history_keys[-4] - base + 2) % range_size) + base
+            return new_key
         else:
             noise = np.random.randint(-2, 3)
-            return (history_keys[-1] + noise) % config_settings.last_key
+            new_key = ((history_keys[-1] - base + noise) % range_size) + base
+            return new_key
 
-    # 5. Zipf-like + memory injection
-    else:  # 22–24 (night)
+    else:
         if idx % 9 == 0:
             return history_keys[-6]
         return np.random.choice(key_range, p=probs)
