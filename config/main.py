@@ -34,7 +34,7 @@ def prepare_config():
 
     (zipf_alpha, zipf_alpha_start, zipf_alpha_end,
      zipf_time_steps, burst_high, burst_low,
-    burst_every, burst_peak, burst_hour_start, burst_hour_end,
+     burst_hour_start, burst_hour_end,
      periodic_base_scale, periodic_amplitude) = (
         _validate_data_access_pattern_params(config_file))
 
@@ -100,8 +100,6 @@ def prepare_config():
         zipf_time_steps=zipf_time_steps,
         burst_high=burst_high,
         burst_low=burst_low,
-        burst_every=burst_every,
-        burst_peak=burst_peak,
         burst_hour_start=burst_hour_start,
         burst_hour_end=burst_hour_end,
         periodic_base_scale=periodic_base_scale,

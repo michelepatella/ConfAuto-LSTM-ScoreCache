@@ -21,45 +21,52 @@ def _generate_access_pattern_requests(
     # initial message
     info("🔄 Access pattern requests generation started...")
 
-    hour = current_time % 24
-    base = config_settings.first_key  # 1
-    key_blocks = {
-        (0, 4): list(range(base, base + 5)),  # 1-5
-        (4, 8): list(range(base + 5, base + 10)),  # 6-10
-        (8, 12): list(range(base + 10, base + 15)),  # 11-15
-        (12, 16): list(range(base + 15, base + 20)),  # 16-20
-        (16, 20): list(range(base + 20, base + 25)),  # 21-25
-        (20, 24): list(range(base + 25, base + 30))  # 26-30
-    }
+    hour = (current_time / 3600.0) % 24
+    base = config_settings.first_key
+    keys = list(range(base, config_settings.last_key))
+    n_keys = len(keys)
 
-    for (start, end), keys in key_blocks.items():
-        if start <= hour < end:
-            if (start, end) == (0, 4):
-                idx = len(history_keys) % len(keys)
-                return keys[idx]
-            elif (start, end) == (4, 8):
-                return np.random.choice(keys, p=np.ones(len(keys)) / len(keys))
-            elif (start, end) == (8, 12):
-                if len(history_keys) % 2 == 0:
-                    return keys[::2][len(history_keys) % len(keys[::2])]
-                else:
-                    return keys[1::2][len(history_keys) % len(keys[1::2])]
-            elif (start, end) == (12, 16):
-                cycle = [keys[0], keys[2], keys[4]]
-                return cycle[len(history_keys) % len(cycle)]
-            elif (start, end) == (16, 20):
-                if len(history_keys) % 3 == 0:
-                    return keys[len(history_keys) % len(keys)]
-                else:
-                    return np.random.choice(keys)
-            elif (start, end) == (20, 24):
-                return np.random.choice(key_range, p=probs)
+    # Create temporal blocks but less rigid
+    if len(history_keys) < 5:
+        return np.random.choice(keys)
 
-    # show a successful message
-    info(f"🟢 Access pattern requests generated.")
+    # Introduce pseudo-periodic dependencies requiring memory
+    idx = len(history_keys)
 
-    # Default fallback
-    return np.random.choice(key_range, p=probs)
+    # 1. Repetition with offset (requires remembering previous key)
+    if 0 <= hour < 6:
+        # every 7th request is the same as 3 steps before
+        if idx % 7 == 0:
+            return history_keys[-3]
+        return np.random.choice(keys[:n_keys // 3])
+
+    # 2. Toggle state every N accesses (learnable only with temporal memory)
+    elif 6 <= hour < 12:
+        toggle = (idx // 10) % 2  # switches every 10 steps
+        if toggle == 0:
+            return (history_keys[-1] + 1) % config_settings.last_key
+        else:
+            return (history_keys[-2] - 1) % config_settings.last_key
+
+    # 3. Conditional loop that changes over time
+    elif 12 <= hour < 18:
+        cycle_length = 5 + (idx // 50) % 3  # cycle length changes slowly
+        cycle = keys[:cycle_length]
+        return cycle[idx % cycle_length]
+
+    # 4. Repetition with distortion
+    elif 18 <= hour < 22:
+        if idx % 4 == 0:
+            return (history_keys[-4] + 2) % config_settings.last_key
+        else:
+            noise = np.random.randint(-2, 3)
+            return (history_keys[-1] + noise) % config_settings.last_key
+
+    # 5. Zipf-like + memory injection
+    else:  # 22–24 (night)
+        if idx % 9 == 0:
+            return history_keys[-6]
+        return np.random.choice(key_range, p=probs)
 
 
 def _generate_temporal_access_pattern_requests(
@@ -77,13 +84,15 @@ def _generate_temporal_access_pattern_requests(
     # initial message
     info("🔄 Temporal access pattern requests generation started...")
 
-    # calculate periodic component for frequency scaling
-    periodic_scale = (config_settings.periodic_base_scale +
-                      config_settings.periodic_amplitude
-                      * np.cos(2 * np.pi * timestamps[-1]))
+    # extract hour of the day
+    hour_of_day = (timestamps[-1] % period) / 3600
 
-    # extract hour of the day from timestamp
-    hour_of_day = (timestamps[-1] % period)
+    # generate a periodic component
+    periodic_component = (
+            config_settings.periodic_base_scale +
+            config_settings.periodic_amplitude *
+            np.cos(2 * np.pi * (hour_of_day / 24))
+    )
 
     # generate burst middle of the day
     if config_settings.burst_hour_start <= hour_of_day <= config_settings.burst_hour_end:
@@ -92,7 +101,7 @@ def _generate_temporal_access_pattern_requests(
         bursty_scale = config_settings.burst_low
 
     # combine periodic and bursty scales
-    freq_scale = periodic_scale * bursty_scale
+    freq_scale = max(0.5, periodic_component * bursty_scale)
 
     # calculate delta time
     delta_t = np.random.exponential(scale=freq_scale)
@@ -129,6 +138,8 @@ def _generate_pattern_requests(
     # initialize data
     requests = []
     delta_times = []
+    day = 0
+    time_in_day = 0.0
     timestamps = [0.0]
     key_range = np.arange(
         config_settings.first_key,
@@ -136,7 +147,7 @@ def _generate_pattern_requests(
     )
 
     # define the day as period
-    period = 24
+    period = 24 * 60 * 60
 
     # debugging
     debug(f"⚙️ Period: {period}.")
@@ -157,29 +168,32 @@ def _generate_pattern_requests(
 
         # for each request
         for i in range(num_requests):
-
-            # generate a request following a specific
-            # access pattern
-            request = _generate_access_pattern_requests(
-                probs,
-                key_range,
-                timestamps[-1],
-                requests,
-                config_settings,
-            )
-
-            # generate a delta time following specific
-            # temporal access pattern
+            # generate the delta time
             delta_t = _generate_temporal_access_pattern_requests(
-                timestamps,
+                [timestamps[-1] % period],
                 period,
                 config_settings
             )
 
-            # store generated data
+            if time_in_day + delta_t > period:
+                # next day
+                day += 1
+                time_in_day = 0
+
+            time_in_day += delta_t
+            total_time = day * period + time_in_day
+
+            # generate request
+            request = _generate_access_pattern_requests(
+                probs,
+                key_range,
+                total_time,
+                requests,
+                config_settings,
+            )
+
             requests.append(request)
-            timestamps.append(timestamps[-1] + delta_t)
-            delta_times.append(delta_t)
+            timestamps.append(total_time)
 
             # debugging
             debug(f"⚙️ Number of request generated: {i+1}.")
@@ -192,5 +206,17 @@ def _generate_pattern_requests(
 
     # show a successful message
     info(f"🟢 Pattern requests generated.")
+
+    # zip requests e timestamps insieme
+    data = list(zip(timestamps, requests))
+
+    # ordina per giorno e poi per ora all'interno del giorno
+    data.sort(key=lambda x: (int(x[0] // period), x[0] % period))
+
+    # stampa ordinato
+    for ts, req in data:
+        day = int(ts // period)
+        hour = (ts % period) / 3600
+        print(f"Day {day}, Time {hour:.2f}h, Key: {req}")
 
     return requests, timestamps

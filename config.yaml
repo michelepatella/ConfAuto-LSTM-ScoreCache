@@ -15,15 +15,13 @@ data:
       time_steps: 10 #
   temporal_pattern:
     burstiness:
-      burst_high: 2.5 #
-      burst_low: 10.0 #
-      burst_every: 500 #
-      burst_peak: 50 #
-      burst_hour_start: 11
-      burst_hour_end: 15
+      burst_high: 0.8
+      burst_low: 1.2
+      burst_hour_start: 10
+      burst_hour_end: 18
     periodic:
-      base_scale: 20 #
-      amplitude: 15 #
+      base_scale: 25 #
+      amplitude: 10 #
   sequence:
     len: 25 #
     embedding_dim: 32 #

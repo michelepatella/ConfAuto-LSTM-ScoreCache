@@ -61,8 +61,6 @@ def _check_access_pattern_params(
             zipf_time_steps,
             burst_high,
             burst_low,
-            burst_every,
-            burst_peak,
             burst_hour_start,
             burst_hour_end,
             periodic_base_scale,
@@ -76,8 +74,6 @@ def _check_access_pattern_params(
     :param zipf_time_steps: Zipf time steps value.
     :param burst_high: The burst high value.
     :param burst_low: The burst low value.
-    :param burst_every: The burst every value.
-    :param burst_peak: The burst peak value.
     :param burst_hour_start: The burst hour start value.
     :param burst_hour_end: The burst hour end value.
     :param periodic_base_scale: The periodic base scale value.
@@ -117,22 +113,6 @@ def _check_access_pattern_params(
     if burst_high >= burst_low:
         raise RuntimeError("❌ 'data.temporal_pattern.burstiness.burst_high'"
                            " must be < 'data.temporal_pattern.burstiness.burst_low'.")
-
-    # check burst every
-    if (
-        not isinstance(burst_every, int)
-        or burst_every <= 0
-    ):
-        raise RuntimeError("❌ 'data.temporal_pattern.burstiness.burst_every'"
-                           " must be an integer > 0.")
-
-    # check burst peak
-    if (
-        not isinstance(burst_peak, int)
-        or burst_peak < 0
-    ):
-        raise RuntimeError("❌ 'data.temporal_pattern.burstiness.burst_peak'"
-                           " must be an integer >= 0.")
 
     # check burst hour start and end
     if (
@@ -327,14 +307,6 @@ def _validate_data_access_pattern_params(config):
         config,
         "data.temporal_pattern.burstiness.burst_low"
     )
-    burst_every = get_config_value(
-        config,
-        "data.temporal_pattern.burstiness.burst_every"
-    )
-    burst_peak = get_config_value(
-        config,
-        "data.temporal_pattern.burstiness.burst_peak"
-    )
     burst_hour_start = get_config_value(
         config,
         "data.temporal_pattern.burstiness.burst_hour_start"
@@ -361,8 +333,6 @@ def _validate_data_access_pattern_params(config):
         zipf_time_steps,
         burst_high,
         burst_low,
-        burst_every,
-        burst_peak,
         burst_hour_start,
         burst_hour_end,
         periodic_base_scale,
@@ -373,8 +343,7 @@ def _validate_data_access_pattern_params(config):
     info("🟢 Data access pattern params validated.")
 
     return (zipf_alpha, zipf_alpha_start, zipf_alpha_end, zipf_time_steps,
-            burst_high, burst_low, burst_every,
-            burst_peak, burst_hour_start, burst_hour_end,
+            burst_high, burst_low, burst_hour_start, burst_hour_end,
             periodic_base_scale, periodic_amplitude)
 
 

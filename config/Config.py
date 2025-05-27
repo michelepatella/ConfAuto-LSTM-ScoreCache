@@ -16,8 +16,6 @@ class Config:
     zipf_time_steps: int
     burst_high: float
     burst_low: float
-    burst_every: int
-    burst_peak: int
     burst_hour_start: int
     burst_hour_end: int
     periodic_base_scale: int
