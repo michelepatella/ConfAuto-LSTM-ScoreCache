@@ -48,8 +48,7 @@ def _check_validation_early_stopping_params(
     ]:
         if not (isinstance(val, t) and val >= min_val):
             raise RuntimeError(f"❌ '{name}' must be a "
-                               f"{'number' if t == (int, float) else
-                               'integer'} >= {min_val}.")
+                               f"{'number' if t == (int, float) else 'integer'} >= {min_val}.")
 
 
 def _check_search_space_params(
