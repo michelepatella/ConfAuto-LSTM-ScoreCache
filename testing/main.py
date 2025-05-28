@@ -1,8 +1,8 @@
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.log_utils import info, phase_var
 from utils.evaluation_utils import evaluate_model
-from utils.dataloader_utils import dataloader_setup, extract_targets_from_dataloader
-from utils.model_utils import load_model, model_setup
+from utils.dataloader_utils import dataloader_setup
+from utils.model_utils import trained_model_setup
 
 
 def testing(config_settings):
@@ -27,21 +27,11 @@ def testing(config_settings):
     )
 
     # setup for testing
-    device, criterion, model, _ = (
-        model_setup(
-            config_settings.model_params,
-            config_settings.learning_rate,
-            extract_targets_from_dataloader(testing_loader),
-            config_settings
-        )
-    )
-
-    # load the trained model
-    model = load_model(
-        model,
+    (
         device,
-        config_settings
-    )
+        criterion,
+        model
+    ) = trained_model_setup(testing_loader, config_settings)
 
     model.eval()
 

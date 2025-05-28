@@ -21,10 +21,14 @@ def data_generation(config_settings):
 
     if config_settings.distribution_type == "static":
         # generate static requests and timestamps
-        requests, timestamps = _generate_static_requests(config_settings)
+        requests, timestamps = _generate_static_requests(
+            config_settings
+        )
     else:
         # generate dynamic requests and timestamps
-        requests, timestamps = _generate_dynamic_requests(config_settings)
+        requests, timestamps = _generate_dynamic_requests(
+            config_settings
+        )
 
     # create dataframe
     df = create_dataframe(

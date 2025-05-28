@@ -1,33 +1,56 @@
 from simulation.policy_handlers import handle_random_policy, handle_default_policy, handle_lstm_policy
 from simulation.preprocessing import preprocess_data
-from simulation.setup import simulation_setup
+from utils.AccessLogsDataset import AccessLogsDataset
+from utils.dataloader_utils import dataloader_setup
+from utils.model_utils import trained_model_setup
 
 
-def simulate(cache, policy_name):
+def simulate(
+        cache,
+        policy_name,
+        config_settings
+):
     """
     Method to orchestrate cache simulation.
     :param cache: The cache to simulate.
     :param policy_name: The cache policy name to use.
+    :param config_settings: The configuration settings.
     :return: The hit rate and miss rate in terms of %.
     """
-    # setup for simulation
-    (
-        CACHE_SIZE,
-        TTL,
-        df,
-        hits,
-        misses,
-        time_map,
-        access_counter,
-        PREDICTION_INTERVAL,
-        all_keys_seen
-    ) = simulation_setup()
+    # initialize data
+    global device, criterion, model
+    counters = {'hits': 0, 'misses': 0}
+    state = {'access_counter': 0}
+
+    # get the testing set
+    testing_set, testing_loader = dataloader_setup(
+        "testing",
+        config_settings.testing_batch_size,
+        False,
+        config_settings,
+        AccessLogsDataset
+    )
+
+    # initial model setup, in case of LSTM cache
+    if policy_name == 'LSTM':
+        # setup for lstm cache
+        (
+            device,
+            criterion,
+            model
+        ) = trained_model_setup(testing_loader, config_settings)
+
+        model.eval()
+        model.to(device)
 
     # for each request
-    for _, row in df.iterrows():
+    for idx in range(len(testing_set)):
 
-        # extrapolate key and timestamp
-        key, current_time = preprocess_data(row)
+        # extract the row
+        row = testing_set[idx]
+
+        # extrapolate timestamp and key
+        current_time, key = preprocess_data(row)
 
         # if the LSTM cache is being used
         if policy_name == 'LSTM':
@@ -35,21 +58,23 @@ def simulate(cache, policy_name):
                 cache,
                 key,
                 current_time,
-                access_counter,
-                PREDICTION_INTERVAL,
-                hits,
-                misses
+                state,
+                counters,
+                device,
+                criterion,
+                model,
+                testing_loader,
+                testing_set,
+                config_settings
             )
-
         # if the random cache is being used
-        if policy_name == 'RANDOM':
+        elif policy_name == 'RANDOM':
             handle_random_policy(
                 cache,
                 key,
                 current_time,
-                TTL,
-                hits,
-                misses
+                counters,
+                config_settings
             )
         else:
             # all the other caching policies (LRU, LFU, and FIFO)
@@ -57,21 +82,19 @@ def simulate(cache, policy_name):
                 cache,
                 key,
                 current_time,
-                TTL,
-                time_map,
-                hits,
-                misses
+                counters,
+                config_settings
             )
 
     # calculate hit rate and miss rate in terms of %
-    total = hits + misses
-    hit_rate = hits / total * 100
-    miss_rate = misses / total * 100
+    total = counters['hits'] + counters['misses']
+    hit_rate = counters['hits'] / total * 100
+    miss_rate = counters['misses'] / total * 100
 
     return {
         'policy': policy_name,
         'hit_rate': hit_rate,
         'miss_rate': miss_rate,
-        'hits': hits,
-        'misses': misses
+        'hits': counters['hits'],
+        'misses': counters['misses']
     }

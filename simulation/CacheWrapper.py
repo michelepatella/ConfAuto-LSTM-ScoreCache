@@ -1,13 +1,16 @@
 class CacheWrapper:
 
-    def __init__(self, cache_class, maxsize):
+    def __init__(self, cache_class, config_settings):
         """
         Method to initialize a CacheWrapper, used
-        to manage baseseline caching strategies.
+        to manage baseline caching strategies.
         :param cache_class: The type of the cache.
-        :param maxsize: The maximum size of the cache.
+        :param config_settings: The configuration settings.
+        :return:
         """
-        self.cache = cache_class(maxsize=maxsize)
+        self.cache = cache_class(
+            maxsize=config_settings.cache_size
+        )
         self.expiry = {}
 
 

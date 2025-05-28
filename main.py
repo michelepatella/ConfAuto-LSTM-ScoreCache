@@ -2,6 +2,7 @@ from config import prepare_config
 from data_generation import data_generation
 from data_preprocessing.main import data_preprocessing
 from simulation import simulate
+from simulation.CacheWrapper import CacheWrapper
 from testing import testing
 from training import training
 from validation import validation
@@ -16,50 +17,44 @@ config_settings = prepare_config()
 
 #data_preprocessing(config_settings)
 
-config_settings = validation(config_settings)
+#config_settings = validation(config_settings)
 
 #training(config_settings)
 
 #avg_loss, metrics = testing(config_settings)
-""""
-print("----------------------------- Model Standalone Evaluation -----------------------------")
-
-print(f"Average Loss: {avg_loss}")
-
-print(f"📉 Class Report per Class:")
-print(f"{metrics['class_report']}")
-
-print(f"Top-k Accuracy: {metrics['top_k_accuracy']}")
-print(f"Kappa Statistic: {metrics['kappa_statistic']}")
-
-print("---------------------------------------------------------------------------------------")
 """
-""""
+print("\n" + "="*85)
+print(" " * 30 + "Model Standalone Evaluation Report")
+print("="*85 + "\n")
+print(f"Average Loss:       {avg_loss:.4f}\n")
+print("📉 Class Report per Class:")
+print(metrics['class_report'] + "\n")
+print(f"Top-k Accuracy:     {metrics['top_k_accuracy']:.4f}")
+print(f"Kappa Statistic:    {metrics['kappa_statistic']:.4f}")
+print("\n" + "="*85 + "\n")
+"""
+
 # setup cache strategies
 strategies = {
-    'LRU': LRUCache(maxsize=CACHE_SIZE),
-    'LFU': LFUCache(maxsize=CACHE_SIZE),
-    'FIFO': FIFOCache(maxsize=CACHE_SIZE),
-    'RANDOM': RandomCache(maxsize=CACHE_SIZE),
-    'LSTM': LSTMCache(
-        maxsize=CACHE_SIZE,
-        threshold_prob=0.6,
-        confidence_threshold=0.6,
-        ttl_base=60,
-        alpha=1.0,
-        beta=1.0
-    ),
+    'LRU': CacheWrapper(LRUCache, config_settings),
+    'LFU': CacheWrapper(LFUCache, config_settings),
+    'FIFO': CacheWrapper(FIFOCache, config_settings),
+    'RANDOM': RandomCache(config_settings),
+    #'LSTM': LSTMCache(config_settings),
 }
 
 # run simulation
 results = []
 for policy, cache in strategies.items():
-    result = simulate(cache, policy)
+    result = simulate(cache, policy, config_settings)
     results.append(result)
 
-# visualize results
-print("------------------------------ Overall System Evaluation ------------------------------")
+# show results
+print("\n" + "="*90)
+print(" " * 30 + "Overall System Evaluation Report")
+print("="*90 + "\n")
+print(f"{'Policy':<25} | {'Hit Rate (%)':>12} | {'Miss Rate (%)':>13}")
+print("-"*90)
 for res in results:
-    print(f"{res['policy']}: Hit Rate = {res['hit_rate']:.2f}%, Miss Rate = {res['miss_rate']:.2f}%")
-print("---------------------------------------------------------------------------------------")
-"""
+    print(f"{res['policy']:<25} | {res['hit_rate']:>12.2f} | {res['miss_rate']:>13.2f}")
+print("\n" + "="*90 + "\n")

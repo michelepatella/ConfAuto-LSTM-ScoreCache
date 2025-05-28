@@ -3,12 +3,12 @@ import random
 
 class RandomCache:
 
-    def __init__(self, maxsize):
+    def __init__(self, config_settings):
         """
         Method to initialize a random cache of size maxsize.
-        :param maxsize: The maximum size of the cache.
+        :param config_settings: The configuration settings.
         """
-        self.maxsize = maxsize
+        self.maxsize = config_settings.cache_size
         self.store = {}
         self.expiry = {}
 
@@ -50,6 +50,7 @@ class RandomCache:
         if self.contains(key, current_time):
             # update the expiration time of the key
             self.expiry[key] = current_time + ttl
+            return
         # check if the cache is full
         elif len(self.store) >= self.maxsize:
             # evict a key randomly

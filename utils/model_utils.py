@@ -2,6 +2,7 @@ import numpy as np
 import torch
 from sklearn.utils import compute_class_weight
 from utils.LSTM import LSTM
+from utils.dataloader_utils import extract_targets_from_dataloader
 from utils.log_utils import info, debug
 
 
@@ -220,3 +221,37 @@ def _build_optimizer(model, learning_rate, config_settings):
     info("🟢 Optimizer building completed.")
 
     return optimizer
+
+
+def trained_model_setup(
+        loader,
+        config_settings
+):
+    """
+    Method to set up the trained model.
+    :param loader: The loader to be used.
+    :param config_settings: The configuration settings.
+    :return: The device to use, the loss function, and the model.
+    """
+    # setup for the model
+    device, criterion, model, _ = (
+        model_setup(
+            config_settings.model_params,
+            config_settings.learning_rate,
+            extract_targets_from_dataloader(loader),
+            config_settings
+        )
+    )
+
+    # load the trained model
+    model = load_model(
+        model,
+        device,
+        config_settings
+    )
+
+    return (
+        device,
+        criterion,
+        model
+    )

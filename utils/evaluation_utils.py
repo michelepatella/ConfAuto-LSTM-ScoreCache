@@ -29,8 +29,13 @@ def evaluate_model(
     info("🔄 Model's evaluation started...")
 
     # infer the batch
-    (total_loss, all_preds, all_targets,
-    all_outputs, all_vars) = _infer_batch(
+    (
+        total_loss,
+        all_preds,
+        all_targets,
+        all_outputs,
+        all_vars
+    ) = _infer_batch(
         model,
         loader,
         criterion,

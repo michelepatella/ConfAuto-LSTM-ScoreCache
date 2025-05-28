@@ -1,79 +1,150 @@
+from torch.nn.functional import softmax
+from utils.inference_utils import _infer_batch, calculate_confidence_intervals
+from utils.log_utils import info
+
+
 def handle_lstm_policy(
         cache,
         key,
         current_time,
-        access_counter,
-        PREDICTION_INTERVAL,
-        hits,
-        misses
+        state,
+        counters,
+        device,
+        criterion,
+        model,
+        testing_loader,
+        testing_set,
+        config_settings
 ):
-    access_counter += 1
+    """
+    Method to handle the confident-aware LSTM-based cache.
+    :param cache: The cache.
+    :param key: The current key.
+    :param current_time: The current time.
+    :param state: The state variable.
+    :param counters: The hits and misses counters.
+    :param device: The device to be used while inferring.
+    :param criterion: The loss function to be used while inferring.
+    :param model: The model to infer.
+    :param testing_loader: The testing loader.
+    :param testing_set: The testing set.
+    :param config_settings: The configuration settings.
+    :return:
+    """
+    # increase the counter of LSTM cache usage
+    state['access_counter'] += 1
 
     # check if the cache contains the key
     if cache.contains(key, current_time):
         # increment cache hits
-        hits += 1
-        print(f"Time: {current_time:.2f} | Key: {key} | HIT")
+        counters['hits'] += 1
+        info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | HIT")
     else:
         # increment cache misses
-        misses += 1
-        print(f"Time: {current_time:.2f} | Key: {key} | MISS")
+        counters['misses'] += 1
+        info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
 
-        # make a prediction using LSTM model
-        predictions = mock_lstm_model_predict([key])
-        prob, conf_int = predictions[key]
-        cache.put(key, prob, conf_int, current_time)
+    # if it's time to infer
+    if state['access_counter'] >= config_settings.prediction_interval:
+        # make inference
+        _, _, _, all_outputs, all_vars = _infer_batch(
+            model,
+            testing_loader,
+            criterion,
+            device,
+            config_settings.mc_dropout_num_samples
+        )
 
-    # if the access counter exceeds the
-    # interval, make a prediction and update probs
-    # and CIs of predictions
-    if access_counter >= PREDICTION_INTERVAL:
-        batch_preds = mock_lstm_model_predict(all_keys_seen)
-        cache.update_predictions(batch_preds)
-        access_counter = 0
+        # calculate CIs
+        lower_ci, upper_ci = calculate_confidence_intervals(
+            all_outputs, all_vars, config_settings
+        )
+
+        # update the cache for each key
+        for idx, (output, low_ci, high_ci) in (
+                enumerate(zip(all_outputs, lower_ci, upper_ci))):
+
+            # extract the probability by applying softmax
+            prob = (
+                softmax(output, dim=0)
+                    .cpu().numpy()
+            )
+
+            # extract the key id and the related probability
+            key_id = testing_set.iloc[idx]['request']
+            prob = prob[key_id]
+
+            # update the cache
+            cache.update_prediction_for_key(
+                key_id,
+                prob,
+                (high_ci - low_ci).mean().item(),
+                current_time
+            )
+
+        # reset the counter of LSTM cache usage
+        state['access_counter'] = 0
 
 
 def handle_random_policy(
         cache,
         key,
         current_time,
-        TTL,
-        hits,
-        misses
+        counters,
+        config_settings
 ):
+    """
+    Method to handle the Random cache.
+    :param cache: The cache.
+    :param key: The current key.
+    :param current_time: The current time.
+    :param counters: Hits and misses counters.
+    :param config_settings: The configuration settings.
+    :return:
+    """
     # check if the key is in the cache
     if cache.contains(key, current_time):
         # increment cache hits
-        hits += 1
-        print(f"Time: {current_time:.2f} | Key: {key} | HIT")
+        counters['hits'] += 1
+        info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | HIT")
     else:
         # increment cache misses
-        misses += 1
-        print(f"Time: {current_time:.2f} | Key: {key} | MISS")
+        counters['misses'] += 1
+        info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
     # put the key in the cache
-    cache.put(key, TTL, current_time)
+    cache.put(
+        key,
+        config_settings.ttl_base,
+        current_time
+    )
 
 
 def handle_default_policy(
         cache,
         key,
         current_time,
-        TTL,
-        time_map,
-        hits,
-        misses
+        counters,
+        config_settings
 ):
+    """
+    Method to handle the LRU, LFU, and LIFO caches.
+    :param cache: The cache.
+    :param key: The current key.
+    :param current_time: The current time.
+    :param counters: Hits and misses counters.
+    :param config_settings: The configuration settings.
+    :return:
+    """
     # check if the key is in the cache and
     # its TTL is not expired
-    if key in cache and time_map.get(key, 0) > current_time:
+    if cache.contains(key, current_time):
         # increment cache hits
-        hits += 1
-        print(f"Time: {current_time:.2f} | Key: {key} | HIT")
+        counters['hits'] += 1
+        info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | HIT")
     else:
         # increment cache misses, set the key into the cache,
         # and assign it a TTL
-        misses += 1
-        cache[key] = key
-        time_map[key] = current_time + TTL
+        counters['misses'] += 1
+        cache.put(key, config_settings.ttl_base, current_time)
 
-        print(f"Time: {current_time:.2f} | Key: {key} | MISS")
+        info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
