@@ -6,6 +6,8 @@ from config.data_params_validator import \
 from config.evaluation_params_validator import _validate_evaluation_general_params
 from config.inference_params_validator import _validate_inference_confidence_intervals_params
 from config.model_params_validator import _validate_model_general_params, _validate_model_params
+from config.simulation_params_validator import _validate_simulation_general_params, \
+    _validate_simulation_traditional_cache_params, _validate_simulation_lstm_cache_params
 from config.testing_params_validator import _validate_testing_general_params
 from config.training_params_validator import _validate_training_general_params, _validate_training_optimizer_params, \
     _validate_training_early_stopping_params
@@ -147,6 +149,20 @@ def prepare_config():
         mc_dropout_num_samples
     ) = _validate_inference_confidence_intervals_params(config_file)
 
+    # simulation config
+    cache_size = _validate_simulation_general_params(config_file)
+
+    fixed_ttl = _validate_simulation_traditional_cache_params(config_file)
+
+    (
+        prediction_interval,
+        threshold_prob,
+        threshold_ci,
+        ttl_base,
+        alpha_ttl,
+        beta_ttl
+    ) = _validate_simulation_lstm_cache_params(config_file)
+
     # show a successful message
     info("✅ Config preparation completed.")
 
@@ -214,5 +230,13 @@ def prepare_config():
         top_k=top_k,
         testing_batch_size=testing_batch_size,
         confidence_level=confidence_level,
-        mc_dropout_num_samples=mc_dropout_num_samples
+        mc_dropout_num_samples=mc_dropout_num_samples,
+        cache_size=cache_size,
+        fixed_ttl=fixed_ttl,
+        prediction_interval=prediction_interval,
+        threshold_prob=threshold_prob,
+        threshold_ci=threshold_ci,
+        ttl_base=ttl_base,
+        alpha_ttl=alpha_ttl,
+        beta_ttl=beta_ttl
     )

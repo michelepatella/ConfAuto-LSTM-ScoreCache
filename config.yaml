@@ -99,3 +99,15 @@ inference:
     confidence_level: 0.95
   mc_dropout:
     num_samples: 50
+simulation:
+  general:
+    cache_size: 10
+  traditional_cache:
+    ttl: 120.0
+  lstm_cache:
+    prediction_interval: 20
+    threshold_prob: 0.6
+    threshold_ci: 0.6
+    ttl_base: 60.0
+    alpha: 1.0
+    beta: 1.0

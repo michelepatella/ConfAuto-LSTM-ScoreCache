@@ -68,3 +68,11 @@ class Config:
     testing_batch_size: int
     confidence_level: float
     mc_dropout_num_samples: int
+    cache_size: int
+    fixed_ttl: float
+    prediction_interval: int
+    threshold_prob: float
+    threshold_ci: float
+    ttl_base: float
+    alpha_ttl: float
+    beta_ttl: float
