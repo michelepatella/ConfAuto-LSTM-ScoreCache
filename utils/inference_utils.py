@@ -17,6 +17,8 @@ def _enable_mc_dropout(model):
         for module in model.modules():
             if isinstance(module, torch.nn.Dropout):
                 module.train()
+        # enable dropout output
+        model.use_mc_dropout = True
     except (AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 

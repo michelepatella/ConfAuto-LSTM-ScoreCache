@@ -40,7 +40,7 @@ strategies = {
     'LFU': CacheWrapper(LFUCache, config_settings),
     'FIFO': CacheWrapper(FIFOCache, config_settings),
     'RANDOM': RandomCache(config_settings),
-    #'LSTM': LSTMCache(config_settings),
+    'LSTM': LSTMCache(config_settings),
 }
 
 # run simulation

@@ -79,6 +79,8 @@ class LSTM(nn.Module):
 
         super(LSTM, self).__init__()
 
+        self.use_mc_dropout = False
+
         # set model's parameters
         self._set_fields(params, config_settings)
 
@@ -102,6 +104,10 @@ class LSTM(nn.Module):
         except (TypeError, ValueError, KeyError) as e:
             raise RuntimeError(f"❌ Error while instantiating LSTM model: {e}.")
 
+        try:
+            self.mc_dropout_layer = nn.Dropout(p=self.dropout)
+        except (TypeError, AttributeError) as e:
+            raise RuntimeError(f"❌ Error while instantiating the Dropout layer: {e}.")
         try:
             # fully-connected layer (linear)
             self.fc = nn.Linear(self.hidden_size, self.num_keys)
@@ -167,6 +173,14 @@ class LSTM(nn.Module):
 
             # pass the features to the LSTM
             lstm_out, _ = self.lstm(x)
+
+            # check if use dropout
+            if self.use_mc_dropout:
+                lstm_out = self.mc_dropout_layer(lstm_out)
+
+            # pass through the fully-connected layer
+            logits = self.fc(lstm_out[:, -1, :])
+
         except (AttributeError, TypeError, ValueError) as e:
             raise RuntimeError(f"❌ Error while passing data through LSTM: {e}.")
 

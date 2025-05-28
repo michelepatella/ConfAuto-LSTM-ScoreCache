@@ -172,3 +172,11 @@ class AccessLogsDataset(Dataset):
             x_keys,
             y_key
         )
+
+
+    @classmethod
+    def from_dataframe(cls, df, config_settings):
+        instance = cls.__new__(cls)
+        instance.data = df.copy()
+        instance._set_fields(df, config_settings)
+        return instance

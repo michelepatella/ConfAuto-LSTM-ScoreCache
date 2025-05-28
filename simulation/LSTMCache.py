@@ -22,7 +22,7 @@ class LSTMCache:
             self,
             key,
             prob,
-            conf_int,
+            confidence,
             current_time
     ):
         """
@@ -30,7 +30,7 @@ class LSTMCache:
         logic of prefetching, TTL assigment, and eviction.
         :param key: The key.
         :param prob: The probability of the key of being accessed.
-        :param conf_int: The confidence intervals related to the prediction.
+        :param confidence: The confidence related to the prediction.
         :param current_time: The current time.
         :return:
         """
@@ -38,7 +38,7 @@ class LSTMCache:
         # probability or unreliable prediction
         if (
             prob < self.threshold_prob or
-            conf_int < self.confidence_threshold
+            confidence < self.confidence_threshold
         ):
             # remove the key from the cache
             self.store.pop(key, None)
@@ -48,7 +48,7 @@ class LSTMCache:
             return
 
         # compute TTL dynamically
-        ttl = self.ttl_base * (1 + self.alpha * prob) * (1 + self.beta * conf_int)
+        ttl = self.ttl_base * (1 + self.alpha * prob) * (1 + self.beta * confidence)
         if ttl <= 0:
             ttl = self.ttl_base
 
@@ -85,7 +85,7 @@ class LSTMCache:
         self.store[key] = key
         self.expiry[key] = current_time + ttl
         self.probs[key] = prob
-        self.confidences[key] = conf_int
+        self.confidences[key] = confidence
 
 
     def contains(self, key, current_time):
@@ -118,21 +118,21 @@ class LSTMCache:
             self,
             key,
             prob,
-            conf_int,
+            confidence,
             current_time
     ):
         """
         Method to orchestrate putting a key into the cache.
         :param key: The key to put.
         :param prob: The probability of the key of being accessed.
-        :param conf_int: The confidence intervals related to the prediction.
+        :param confidence: The confidence related to the prediction.
         :param current_time: The current time.
         :return:
         """
         self._insert_or_update_entry(
             key,
             prob,
-            conf_int,
+            confidence,
             current_time
         )
 
@@ -141,14 +141,14 @@ class LSTMCache:
             self,
             key,
             prob,
-            conf_int,
+            confidence,
             current_time
     ):
         """
         Method to update the prediction for a key.
         :param key: The key to update.
         :param prob: The probability of the key of being accessed.
-        :param conf_int: The confidence intervals related to the prediction.
+        :param confidence: The confidence related to the prediction.
         :param current_time: The current time.
         :return:
         """
@@ -156,6 +156,6 @@ class LSTMCache:
             self._insert_or_update_entry(
                 key,
                 prob,
-                conf_int,
+                confidence,
                 current_time
             )
