@@ -1,4 +1,4 @@
-from .main import simulate
+from .main import run_simulations
 
 
-__all__ = ['simulate']
+__all__ = ['run_simulations']

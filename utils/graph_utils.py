@@ -2,7 +2,6 @@ from sklearn.metrics import precision_recall_curve, average_precision_score
 from utils.log_utils import info
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import seaborn as sns
 from collections import Counter
 from sklearn.preprocessing import label_binarize
@@ -217,41 +216,6 @@ def plot_precision_recall_curve(targets, outputs, num_keys):
     info("🟢 Precision-Recall curve built.")
 
 
-def plot_class_report(class_report):
-    """
-    Method to plot the class report.
-    :param class_report: The computed class report.
-    :return:
-    """
-    # initial message
-    info("🔄 Class report plot building started...")
-
-    try:
-        # extract precision, recall, and f1-score
-        class_report_filtered = {
-            k: v for k, v in class_report.items()
-            if k.isdigit() or isinstance(k, int)
-        }
-
-        # transform to dataframe
-        df = pd.DataFrame(class_report_filtered).T
-
-        (df[['precision', 'recall', 'f1-score']].
-            plot(kind='bar', figsize=(12, 10))
-         )
-        plt.title("Classification Report Metrics per Class")
-        plt.xlabel("Class")
-        plt.ylabel("Score")
-        plt.ylim(0, 1)
-        plt.show()
-        plt.close()
-
-        # show a successful message
-        info("🟢 Class report plot built.")
-    except (AttributeError, TypeError, ValueError, KeyError) as e:
-        raise RuntimeError(f"❌ Error while building the class report plot: {e}.")
-
-
 def plot_confusion_matrix(confusion_matrix):
     """
     Method to plot the confusion matrix.
@@ -280,3 +244,70 @@ def plot_confusion_matrix(confusion_matrix):
 
     # show a successful message
     info("🟢 Confusion matrix built.")
+
+
+def plot_hit_miss_rate_over_time(results):
+    """
+    Method to plot the hit rate and the miss rate over the time.
+    :param results: The timeline results.
+    :return:
+    """
+    # initial message
+    info("🔄 Hit rate and miss rate plot building started...")
+
+    try:
+        plt.figure(figsize=(12, 10))
+
+        # first subplot: hit rate
+        plt.subplot(2, 1, 1)
+        for result in results:
+            # extract hit rate results
+            policy = result['policy']
+            timeline = result['timeline']
+            x = [point['index'] for point in timeline]
+            y_hit = [point['instant_hit_rate'] for point in timeline]
+            plt.plot(
+                x,
+                y_hit,
+                label=f"{policy} (hit)",
+                linestyle='--',
+                alpha=0.7
+            )
+
+        # plot hit rate
+        plt.title("Instant Hit Rate Over Time")
+        plt.xlabel("Request Index")
+        plt.ylabel("Hit Rate (%)")
+        plt.legend()
+
+        # second subplot: miss rate
+        plt.subplot(2, 1, 2)
+        for result in results:
+            # extract results
+            policy = result['policy']
+            timeline = result['timeline']
+            x = [point['index'] for point in timeline]
+            y_miss = [100 - point['instant_hit_rate'] for point in timeline]
+            plt.plot(
+                x,
+                y_miss,
+                label=f"{policy} (miss)",
+                linestyle='-',
+                alpha=0.7
+            )
+
+        # plot miss rate
+        plt.title("Instant Miss Rate Over Time")
+        plt.xlabel("Request Index")
+        plt.ylabel("Miss Rate (%)")
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+        plt.close()
+
+    except (KeyError, TypeError, ValueError, AttributeError) as e:
+        raise RuntimeError(f"❌ Error while building the hit "
+                           f"rate and miss rate plot: {e}.")
+
+    # show a successful message
+    info("🟢 Hit rate and miss rate plot built.")

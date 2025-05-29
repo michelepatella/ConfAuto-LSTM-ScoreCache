@@ -243,6 +243,9 @@ def autoregressive_rollout(
     :param config_settings: The configuration settings.
     :return: All the outputs and the variances.
     """
+    # initial message
+    info("🔄 Autoregressive rollout started...")
+
     try:
         # prepare data
         x_features_seq, x_keys_seq, _ = seed_sequence
@@ -277,5 +280,8 @@ def autoregressive_rollout(
     except (AttributeError, IndexError, TypeError, ValueError) as e:
         raise RuntimeError(f"❌ Error while performing "
                            f"autoregressive rollout: {e}.")
+
+    # show a successful message
+    info("🟢 Autoregressive rollout completed.")
 
     return all_outputs, all_vars

@@ -233,6 +233,9 @@ def trained_model_setup(
     :param config_settings: The configuration settings.
     :return: The device to use, the loss function, and the model.
     """
+    # initial message
+    info("🔄 Trained model setup started...")
+
     # setup for the model
     device, criterion, model, _ = (
         model_setup(
@@ -249,6 +252,9 @@ def trained_model_setup(
         device,
         config_settings
     )
+
+    # show a successful message
+    info("🟢 Trained model setup completed.")
 
     return (
         device,

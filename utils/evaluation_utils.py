@@ -1,6 +1,4 @@
-import torch
 import numpy as np
-from utils.graph_utils import plot_precision_recall_curve, plot_class_report, plot_confusion_matrix
 from utils.inference_utils import _infer_batch
 from utils.log_utils import info, debug
 from utils.metrics_utils import _compute_metrics
@@ -22,8 +20,8 @@ def evaluate_model(
     :param device: Device to use.
     :param config_settings: The configuration settings.
     :param compute_metrics: Whether to compute metrics or not.
-    :return: The average loss, the metrics, all the outputs
-    and the all the variances.
+    :return: The average loss, the metrics, all the outputs,
+    all the targets, and the all the variances.
     """
     # initial message
     info("🔄 Model's evaluation started...")
@@ -70,17 +68,6 @@ def evaluate_model(
         info(f"📉 Top-k Accuracy: {metrics['top_k_accuracy']}")
         info(f"📉 Kappa Statistic: {metrics['kappa_statistic']}")
 
-        # show some plots
-        plot_precision_recall_curve(
-            all_targets,
-            torch.stack(all_outputs).numpy(),
-            config_settings.num_keys
-        )
-
-        plot_class_report(metrics["class_report"])
-
-        plot_confusion_matrix(metrics["confusion_matrix"])
-
     # show a successful message
     info("🟢 Model's evaluation completed.")
 
@@ -88,5 +75,6 @@ def evaluate_model(
         avg_loss,
         metrics,
         all_outputs,
+        all_targets,
         all_vars
     )
