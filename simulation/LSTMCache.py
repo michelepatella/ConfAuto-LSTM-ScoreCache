@@ -94,7 +94,7 @@ class LSTMCache:
                 return
 
             # compute TTL dynamically
-            ttl = self.ttl_base * math.log1p(score * 10)
+            ttl = self.ttl_base * (1 + math.log1p(score))
             # use the TTL base in case the dynamic TTL <= 0
             if ttl <= 0:
                 ttl = self.ttl_base

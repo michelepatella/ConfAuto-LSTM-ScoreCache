@@ -34,7 +34,7 @@ def _calculate_key_scores(
                 # probability of a key of being used, CIs related
                 # to that prediction, and how distant the event is
                 # w.r.t. the current time
-                score += prob_matrix[t, k] * conf_matrix[t, k] * decay
+                score += prob_matrix[t, k] * np.log1p(conf_matrix[t, k]) * decay
             scores[k] = score
 
         # normalize scores in [0,1]
@@ -95,7 +95,7 @@ def _find_key_candidates(
             ).cpu().numpy()
 
             # calculate the confidence at time step t
-            conf = (1 / (upper_ci[t] - lower_ci[t])).cpu().numpy()
+            conf = (1 / (upper_ci[t] - lower_ci[t] + 1e-6)).cpu().numpy()
 
             # fill both matrices
             prob_matrix[t] = probs
