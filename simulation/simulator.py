@@ -1,4 +1,5 @@
 from tqdm import tqdm
+import time
 from simulation.lstm_policy_handler import handle_lstm_cache_policy
 from simulation.traditional_policy_handler import handle_traditional_cache_policy
 from simulation.preprocessing import preprocess_data
@@ -38,6 +39,7 @@ def simulate_cache_policy(
     }
     timeline = []
     recent_hits = []
+    latencies = []
     window = config_settings.prediction_interval
 
     # get the testing set
@@ -70,6 +72,8 @@ def simulate_cache_policy(
             range(len(testing_set)),
             desc=f"Simulating {policy_name}"
     ):
+        # keep track of the start time
+        start_time = time.perf_counter()
 
         try:
             # extract the row from the dataset
@@ -110,6 +114,11 @@ def simulate_cache_policy(
                 counters,
                 config_settings
             )
+
+        # at the end, calculate the latency
+        end_time = time.perf_counter()
+        latency = end_time - start_time
+        latencies.append(latency)
 
         try:
             # keep track of the number of hits each time
@@ -152,5 +161,6 @@ def simulate_cache_policy(
         'miss_rate': miss_rate,
         'hits': counters['hits'],
         'misses': counters['misses'],
+        'avg_latency': sum(latencies)/len(latencies),
         'timeline': timeline
     }

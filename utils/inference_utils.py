@@ -256,7 +256,7 @@ def autoregressive_rollout(
         all_vars = []
 
         # for each future sequence
-        for _ in range(config_settings.mc_dropout_num_samples):
+        for _ in range(config_settings.prediction_interval):
             # compute MC forward pass
             outputs_mean, outputs_var, _ = mc_forward_passes(
                 model,

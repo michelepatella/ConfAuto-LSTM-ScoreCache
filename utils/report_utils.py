@@ -79,13 +79,13 @@ def print_system_evaluation_report(results):
         print("=" * 90 + "\n")
 
         # header
-        header = f"{'Policy':<25} | {'Hit Rate (%)':>12} | {'Miss Rate (%)':>13}"
+        header = f"{'Policy':<25} | {'Hit Rate (%)':>12} | {'Miss Rate (%)':>13} | {'Average Latency (s)':>13}"
         print(header)
         print("-" * len(header))
 
         # results
         for res in results:
-            print(f"{res['policy']:<25} | {res['hit_rate']:12.2f} | {res['miss_rate']:13.2f}")
+            print(f"{res['policy']:<25} | {res['hit_rate']:12.2f} | {res['miss_rate']:13.2f} | {res['avg_latency']:13.8f}")
         print("\n" + "=" * 90 + "\n")
     except (TypeError, KeyError, ValueError) as e:
         raise RuntimeError(f"❌ Error while printing system simulation report: {e}.")
