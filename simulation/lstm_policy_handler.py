@@ -193,9 +193,8 @@ def handle_lstm_cache_policy(
             all_outputs, all_vars = autoregressive_rollout(
                 model,
                 seed_seq,
-                config_settings,
-                30,
-                device
+                device,
+                config_settings
             )
 
             # calculate CIs related to the predictions

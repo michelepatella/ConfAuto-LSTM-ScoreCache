@@ -17,13 +17,87 @@ def _enable_mc_dropout(model):
         for module in model.modules():
             if isinstance(module, torch.nn.Dropout):
                 module.train()
-        # enable dropout output
+                # debugging
+                debug(f"⚙️ Dropout enabled.")
+
+        # set dropout enabled
         model.use_mc_dropout = True
     except (AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
     # show a successful message
     info("🟢 MC dropout enabled.")
+
+
+def mc_forward_passes(
+        model,
+        inputs,
+        device,
+        mc_dropout_samples=1
+):
+    """
+    Method to perform forward passes with MC dropout (if enabled).
+    :param model: The model for which to perform forward passes.
+    :param inputs: The inputs to the model.
+    :param device: The device to be used.
+    :param mc_dropout_samples: The number of MC dropout samples.
+    :return: The mean of outputs, the output variance, and
+    the output tensors.
+    """
+    # initial message
+    info("🔄 MC forward passes started...")
+
+    # if more than one MC dropout sample
+    if mc_dropout_samples > 1:
+        # enable dropout at inference time
+        _enable_mc_dropout(model)
+    else:
+        model.eval()
+
+    try:
+        # infer for each MC dropout sample
+        outputs_mc = []
+        with (torch.no_grad()):
+            for _ in range(mc_dropout_samples):
+                # check the type of input before inferring
+                if (
+                    isinstance(inputs, tuple) and
+                    len(inputs) == 3
+                ):
+                    _, outputs = _compute_forward(
+                        inputs,
+                        model,
+                        None,
+                        device
+                    )
+                else:
+                    outputs = model(*inputs)
+
+                # store the output
+                outputs_mc.append(outputs.unsqueeze(0))
+
+        # calculate tensor, mean, and variance of outputs
+        outputs_mc_tensor = torch.cat(
+            outputs_mc,
+            dim=0
+        )
+        outputs_mean = outputs_mc_tensor.mean(dim=0)
+        outputs_var = outputs_mc_tensor.var(
+            dim=0,
+            unbiased=False
+        ) if mc_dropout_samples > 1 else None
+
+    except (TypeError, AttributeError, IndexError, ValueError) as e:
+        raise ValueError(f"❌ Error while computing MC forward passes: {e}.")
+
+    # show a successful message
+    info("🟢 MC dropout enabled.")
+
+    return (
+            outputs_mean,
+            outputs_var,
+            outputs_mc_tensor
+    )
 
 
 def _infer_batch(
@@ -72,37 +146,14 @@ def _infer_batch(
                 x_keys = x_keys.to(device)
                 y_key = y_key.to(device)
 
-                # if there is more than one MC sample
-                # enable MC dropout
-                if mc_dropout_samples > 1:
-                    _enable_mc_dropout(model)
+                outputs_mean, outputs_var, _ = mc_forward_passes(
+                    model,
+                    (x_features, x_keys, y_key),
+                    device,
+                    mc_dropout_samples
+                )
 
-                outputs_mc = []
-                # for each MC sample
-                for _ in range(mc_dropout_samples):
-
-                    # calculate loss and outputs through forward pass
-                    _, outputs = _compute_forward(
-                        (x_features, x_keys, y_key),
-                        model,
-                        None,
-                        device
-                    )
-
-                    # store the output
-                    outputs_mc.append(outputs.unsqueeze(0))
-
-                # save the mean of the outputs of the model
-                # for a specific input
-                outputs_mc_tensor = torch.cat(outputs_mc, dim=0)
-                outputs_mean = outputs_mc_tensor.mean(dim=0)
-
-                if mc_dropout_samples > 1:
-                    # obtain and save the variance
-                    outputs_var = outputs_mc_tensor.var(
-                        dim=0,
-                        unbiased=False
-                    )
+                if outputs_var is not None:
                     all_vars.extend(outputs_var.cpu())
 
                 # compute the loss
@@ -110,7 +161,6 @@ def _infer_batch(
 
                 # debugging
                 debug(f"⚙️ Loss computed: {loss}.")
-                debug(f"⚙️ Outputs shape: {outputs.shape}.")
 
                 # check the loss
                 if loss is None:
@@ -182,40 +232,53 @@ def calculate_confidence_intervals(
 def autoregressive_rollout(
     model,
     seed_sequence,
-    config_settings,
-    rollout_steps,
-    device
+    device,
+    config_settings
 ):
+    """
+    Method to perform autoregressive rollout.
+    :param model: The model for which to perform autoregressive rollout.
+    :param seed_sequence: The seed sequence.
+    :param device: The device to be used.
+    :param config_settings: The configuration settings.
+    :return: All the outputs and the variances.
+    """
+    try:
+        # prepare data
+        x_features_seq, x_keys_seq, _ = seed_sequence
+        x_features_seq = x_features_seq.unsqueeze(0).to(device)
+        x_keys_seq = x_keys_seq.unsqueeze(0).to(device)
 
-    model.train()
+        all_outputs = []
+        all_vars = []
 
-    x_features_seq, x_keys_seq, _ = seed_sequence
-    x_features_seq = x_features_seq.unsqueeze(0).to(device)
-    x_keys_seq = x_keys_seq.unsqueeze(0).to(device)
+        # for each future sequence
+        for _ in range(config_settings.mc_dropout_samples):
+            # compute MC forward pass
+            outputs_mean, outputs_var, _ = mc_forward_passes(
+                model,
+                (x_features_seq, x_keys_seq),
+                device,
+                mc_dropout_samples=config_settings.mc_dropout_num_samples
+            )
 
-    all_outputs = []
-    all_vars = []
+            # store outputs and variances
+            all_outputs.append(outputs_mean.squeeze(0))
+            all_vars.append(outputs_var.squeeze(0))
 
-    for _ in range(rollout_steps):
-        mc_outputs = []
+            # get the predicted key as the most probable one
+            pred_key = (
+                outputs_mean.argmax(dim=-1).
+                unsqueeze(0).unsqueeze(0)
+            )
 
-        # MC samples
-        for _ in range(config_settings.mc_dropout_num_samples):
-            output_logits = model(x_features_seq, x_keys_seq)  # [1, num_classes]
-            mc_outputs.append(output_logits.detach())
-
-        mc_stack = torch.stack(mc_outputs)  # [num_samples, 1, num_classes]
-        mean_logits = mc_stack.mean(dim=0).squeeze(0)  # [num_classes]
-        var_logits = mc_stack.var(dim=0).squeeze(0)    # [num_classes]
-
-        all_outputs.append(mean_logits)
-        all_vars.append(var_logits)
-
-        # argmax del logit medio => nuovo token
-        pred_key = mean_logits.argmax().unsqueeze(0).unsqueeze(0)  # [1, 1]
-
-        # aggiorna la sequenza chiavi
-        x_keys_seq = torch.cat([x_keys_seq[:, 1:], pred_key], dim=1)
-        # Nota: puoi anche aggiornare x_features_seq se necessario
+            # add a new step using the predicted key
+            x_keys_seq = torch.cat(
+                [x_keys_seq[:, 1:], pred_key],
+                dim=1
+            )
+    except (AttributeError, IndexError, TypeError, ValueError) as e:
+        raise RuntimeError(f"❌ Error while performing "
+                           f"autoregressive rollout: {e}.")
 
     return all_outputs, all_vars
