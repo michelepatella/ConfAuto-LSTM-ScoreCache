@@ -174,12 +174,9 @@ class LSTM(nn.Module):
             # pass the features to the LSTM
             lstm_out, _ = self.lstm(x)
 
-            # check if use dropout
+            # check if using dropout
             if self.use_mc_dropout:
                 lstm_out = self.mc_dropout_layer(lstm_out)
-
-            # pass through the fully-connected layer
-            logits = self.fc(lstm_out[:, -1, :])
 
         except (AttributeError, TypeError, ValueError) as e:
             raise RuntimeError(f"❌ Error while passing data through LSTM: {e}.")

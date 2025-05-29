@@ -177,3 +177,45 @@ def calculate_confidence_intervals(
     info("🟢 Confidence intervals calculated.")
 
     return lower_ci, upper_ci
+
+
+def autoregressive_rollout(
+    model,
+    seed_sequence,
+    config_settings,
+    rollout_steps,
+    device
+):
+
+    model.train()
+
+    x_features_seq, x_keys_seq, _ = seed_sequence
+    x_features_seq = x_features_seq.unsqueeze(0).to(device)
+    x_keys_seq = x_keys_seq.unsqueeze(0).to(device)
+
+    all_outputs = []
+    all_vars = []
+
+    for _ in range(rollout_steps):
+        mc_outputs = []
+
+        # MC samples
+        for _ in range(config_settings.mc_dropout_num_samples):
+            output_logits = model(x_features_seq, x_keys_seq)  # [1, num_classes]
+            mc_outputs.append(output_logits.detach())
+
+        mc_stack = torch.stack(mc_outputs)  # [num_samples, 1, num_classes]
+        mean_logits = mc_stack.mean(dim=0).squeeze(0)  # [num_classes]
+        var_logits = mc_stack.var(dim=0).squeeze(0)    # [num_classes]
+
+        all_outputs.append(mean_logits)
+        all_vars.append(var_logits)
+
+        # argmax del logit medio => nuovo token
+        pred_key = mean_logits.argmax().unsqueeze(0).unsqueeze(0)  # [1, 1]
+
+        # aggiorna la sequenza chiavi
+        x_keys_seq = torch.cat([x_keys_seq[:, 1:], pred_key], dim=1)
+        # Nota: puoi anche aggiornare x_features_seq se necessario
+
+    return all_outputs, all_vars

@@ -1,4 +1,5 @@
 import random
+from utils.log_utils import debug
 
 
 class RandomCache:
@@ -8,9 +9,13 @@ class RandomCache:
         Method to initialize a random cache of size maxsize.
         :param config_settings: The configuration settings.
         """
+        # initialize data
         self.maxsize = config_settings.cache_size
         self.store = {}
         self.expiry = {}
+
+        # debugging
+        debug(f"⚙️Max cache size: {self.maxsize}.")
 
 
     def contains(self, key, current_time):
@@ -18,12 +23,22 @@ class RandomCache:
         Method to check if a key is in the cache.
         :param key: The key to check.
         :param current_time: The current time.
-        :return: True if the key is in the cache, False otherwise.
+        :return: True if the key is in the cache and
+        is not expired, False otherwise.
         """
-        return (
-                key in self.store and not
-                self._is_expired(key, current_time)
-        )
+        try:
+            is_contained = (
+                    key in self.store and not
+                    self._is_expired(key, current_time)
+            )
+        except (AttributeError, TypeError, KeyError) as e:
+            raise RuntimeError(f"❌ Error while checking if the key "
+                               f"is contained into the cache: {e}.")
+
+        # debugging
+        debug(f"⚙️Key: {key}, contained: {is_contained}.")
+
+        return is_contained
 
 
     def get(self, key, current_time):
@@ -33,9 +48,15 @@ class RandomCache:
         :param current_time: The current time.
         :return: The key from the cache if present, None otherwise.
         """
-        if self.contains(key, current_time):
-            return self.store[key]
-        return None
+        try:
+            if self.contains(key, current_time):
+                # debugging
+                debug(f"⚙️Key accessed (time: {current_time}): {key}.")
+                return self.store[key]
+            return None
+        except (AttributeError, KeyError, TypeError) as e:
+            raise RuntimeError(f"❌ Error while getting the key"
+                               f" from the cache: {e}.")
 
 
     def put(self, key, ttl, current_time):
@@ -46,22 +67,39 @@ class RandomCache:
         :param current_time: The current time.
         :return:
         """
-        # check if the key is in the cache
-        if self.contains(key, current_time):
-            # update the expiration time of the key
+        try:
+            # check if the key is in the cache
+            if self.contains(key, current_time):
+                # update the expiration time of the key
+                self.expiry[key] = current_time + ttl
+
+                # debugging
+                debug(f"⚙️Key {key} already in the cache, new TTL: {self.expiry[key]}.")
+                return
+
+            # check if the cache is full
+            elif len(self.store) >= self.maxsize:
+                # evict a key randomly
+                evict_key = random.choice(
+                    list(self.store.keys())
+                )
+
+                # debugging
+                debug(f"⚙️Full cache, evicting: {evict_key}.")
+
+                self.store.pop(evict_key)
+                self.expiry.pop(evict_key)
+
+            # store the key
+            self.store[key] = key
             self.expiry[key] = current_time + ttl
-            return
-        # check if the cache is full
-        elif len(self.store) >= self.maxsize:
-            # evict a key randomly
-            evict_key = random.choice(
-                list(self.store.keys())
-            )
-            self.store.pop(evict_key)
-            self.expiry.pop(evict_key)
-        # store the key
-        self.store[key] = key
-        self.expiry[key] = current_time + ttl
+
+            # debugging
+            debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")
+
+        except (AttributeError, TypeError, KeyError, IndexError, ValueError) as e:
+            raise RuntimeError(f"❌ Error while putting the key"
+                               f" into the cache: {e}.")
 
 
     def _is_expired(self, key, current_time):
@@ -71,4 +109,8 @@ class RandomCache:
         :param current_time: The current time.
         :return: True if the key is expired, False otherwise.
         """
-        return self.expiry.get(key, 0) < current_time
+        try:
+            return self.expiry.get(key, 0) < current_time
+        except (AttributeError, TypeError) as e:
+            raise RuntimeError(f"❌ Error while checking if the "
+                               f"key is expired: {e}.")

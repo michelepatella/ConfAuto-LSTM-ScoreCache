@@ -11,7 +11,6 @@ def _encode_time_trigonometrically(
     the time of day encoded trigonometrically (sin and cos).
     :param df: The dataframe to process.
     :param time_column: The name of the timestamp column.
-    :param period: The period of the cycle.
     :return: The augmented dataframe.
     """
     # show initial message

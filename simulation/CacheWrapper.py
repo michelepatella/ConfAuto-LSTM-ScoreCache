@@ -1,10 +1,13 @@
+from utils.log_utils import debug
+
+
 class CacheWrapper:
 
     def __init__(self, cache_class, config_settings):
         """
         Method to initialize a CacheWrapper, used
-        to manage baseline caching strategies.
-        :param cache_class: The type of the cache.
+        to manage baseline caching strategies (except Random).
+        :param cache_class: The cache object.
         :param config_settings: The configuration settings.
         :return:
         """
@@ -12,6 +15,9 @@ class CacheWrapper:
             maxsize=config_settings.cache_size
         )
         self.expiry = {}
+
+        # debugging
+        debug(f"⚙️Max cache size: {self.cache.maxsize}.")
 
 
     def _is_expired(self, key, current_time):
@@ -21,10 +27,14 @@ class CacheWrapper:
         :param current_time: The current time.
         :return: True if the key is expired, False otherwise.
         """
-        return (
-                key in self.expiry and
-                self.expiry[key] < current_time
-        )
+        try:
+            return (
+                    key in self.expiry and
+                    self.expiry[key] < current_time
+            )
+        except (AttributeError, TypeError, KeyError) as e:
+            raise RuntimeError(f"❌ Error while checking if the "
+                               f"key is expired: {e}.")
 
 
     def contains(self, key, current_time):
@@ -34,18 +44,29 @@ class CacheWrapper:
         :param current_time: The current time.
         :return: True if the key is contained into the cache, False otherwise.
         """
-        # check if the key is in the cache
-        if (
-            key in self.cache and
-            not self._is_expired(key, current_time)
-        ):
-            return True
-        else:
-            # if the key is expired, it's going to be removed
-            if key in self.cache:
-                self.cache.pop(key, None)
-                self.expiry.pop(key, None)
-            return False
+        try:
+            # check if the key is in the cache
+            if (
+                key in self.cache and
+                not self._is_expired(key, current_time)
+            ):
+                # debugging
+                debug(f"⚙️Key: {key}, contained: True.")
+
+                return True
+            else:
+                # if the key is expired, it's going to be removed
+                if key in self.cache:
+
+                    # debugging
+                    debug(f"⚙️Key {key} expired, it's going to be removed.")
+
+                    self.cache.pop(key, None)
+                    self.expiry.pop(key, None)
+                return False
+        except (AttributeError, TypeError, KeyError) as e:
+            raise RuntimeError(f"❌ Error while checking if the key "
+                               f"is contained into the cache: {e}.")
 
 
     def get(self, key, current_time):
@@ -55,11 +76,18 @@ class CacheWrapper:
         :param current_time: The current time.
         :return: The key from the cache if present, None otherwise.
         """
-        # check if the key is in the cache
-        if self.contains(key, current_time):
-            return self.cache[key]
-        else:
-            return None
+        try:
+            # check if the key is in the cache
+            if self.contains(key, current_time):
+                # debugging
+                debug(f"⚙️Key accessed (time: {current_time}): {key}.")
+
+                return self.cache[key]
+            else:
+                return None
+        except (AttributeError, TypeError, KeyError) as e:
+            raise RuntimeError(f"❌ Error while getting the key"
+                               f" from the cache: {e}.")
 
 
     def put(self, key, ttl, current_time):
@@ -70,7 +98,14 @@ class CacheWrapper:
         :param current_time: The current time.
         :return:
         """
-        # set the key into the cache
-        self.cache[key] = key
-        # set expiration time for the key
-        self.expiry[key] = current_time + ttl
+        try:
+            # set the key into the cache
+            self.cache[key] = key
+            # set expiration time for the key
+            self.expiry[key] = current_time + ttl
+
+            # debugging
+            debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")
+        except (AttributeError, TypeError) as e:
+            raise RuntimeError(f"❌ Error while putting the key"
+                               f" into the cache: {e}.")
