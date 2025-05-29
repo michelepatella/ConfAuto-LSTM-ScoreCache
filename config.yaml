@@ -103,11 +103,9 @@ simulation:
   general:
     cache_size: 15
   traditional_cache:
-    ttl: 60.0
+    ttl: 30.0
   lstm_cache:
     prediction_interval: 30
-    threshold_prob: 0.6
-    threshold_ci: 0.6
-    ttl_base: 60.0
-    alpha: 1.0
-    beta: 1.0
+    threshold_score: 0.1
+    time_decay: 0.1
+    ttl_base: 30.0

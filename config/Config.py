@@ -71,8 +71,6 @@ class Config:
     cache_size: int
     fixed_ttl: float
     prediction_interval: int
-    threshold_prob: float
-    threshold_ci: float
+    threshold_score: float
+    time_decay: float
     ttl_base: float
-    alpha_ttl: float
-    beta_ttl: float

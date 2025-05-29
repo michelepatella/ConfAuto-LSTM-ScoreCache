@@ -50,9 +50,15 @@ def _find_key_candidates(
     for k in range(num_keys):
         score = 0.0
         for t in range(num_steps):
-            decay = np.exp(-0.7 * t)
+            decay = np.exp(-config_settings.time_decay * t)
             score += prob_matrix[t, k] * conf_matrix[t, k] * decay
         scores[k] = score
+
+    # normalize scores in [0,1]
+    min_score = min(scores.values())
+    max_score = max(scores.values())
+    score_range = max_score - min_score if max_score != min_score else 1.0
+    scores = {k: (v - min_score) / score_range for k, v in scores.items()}
 
     # select top-cache_size keys
     top_keys = sorted(
@@ -61,7 +67,7 @@ def _find_key_candidates(
         reverse=True
     )[:config_settings.cache_size]
 
-    return top_keys, prob_matrix, conf_matrix
+    return top_keys, scores
 
 
 def handle_lstm_policy(
@@ -142,7 +148,7 @@ def handle_lstm_policy(
         )
 
         # identify candidate keys
-        top_keys, prob_matrix, conf_matrix = _find_key_candidates(
+        top_keys, scores = _find_key_candidates(
             all_outputs,
             upper_ci,
             lower_ci,
@@ -151,9 +157,8 @@ def handle_lstm_policy(
 
         # put the candidate keys into the cache
         for k in top_keys:
-            prob_agg = np.sum(prob_matrix[:, k]) / len(all_outputs)
-            conf_agg = np.mean(conf_matrix[:, k])
-            cache.put(k, prob_agg, conf_agg, current_time)
+            score = scores[k]
+            cache.put(k, score, current_time)
 
         # update state variables
         state['access_counter'] = 0

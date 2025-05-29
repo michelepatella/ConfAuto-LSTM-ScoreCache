@@ -34,20 +34,16 @@ def _check_simulation_traditional_cache_params(fixed_ttl):
 
 def _check_simulation_lstm_cache_params(
         prediction_interval,
-        threshold_prob,
-        threshold_ci,
-        ttl_base,
-        alpha_ttl,
-        beta_ttl
+        threshold_score,
+        time_decay,
+        ttl_base
 ):
     """
     Method to check simulation lstm cache parameters.
     :param prediction_interval: The prediction interval.
-    :param threshold_prob: The threshold for probabilities.
-    :param threshold_ci: The threshold for confidence intervala.
+    :param threshold_score: The threshold for the score of keys.
+    :param time_decay: The time decay to weight the score of keys.
     :param ttl_base: The TTL base value.
-    :param alpha_ttl: The alpha value to calculate TTL.
-    :param beta_ttl: The beta value to calculate TTL.
     :return:
     """
     # check prediction interval
@@ -58,34 +54,22 @@ def _check_simulation_lstm_cache_params(
         raise RuntimeError("❌ 'simulation.lstm_cache.prediction_interval' "
                            "must be a int > 0.")
 
-    # check thresholds
-    for name, val in [
-        ("threshold_prob", threshold_prob),
-        ("threshold_ci", threshold_ci),
-    ]:
-        if not (
-            isinstance(val, float)
-            and  0.0 <= val <= 1.0
-        ):
-            raise RuntimeError(f"❌ 'simulation.lstm_cache.{name}' "
-                               f"must be a float in [0.0, 1.0]")
-
-    # check ttl base
-    if (
-        not isinstance(ttl_base, float) or
-        ttl_base <= 0
+    # check threshold score
+    if not (
+            isinstance(threshold_score, float)
+            and 0.0 <= threshold_score <= 1.0
     ):
-        raise RuntimeError("❌ 'simulation.lstm_cache.ttl_base' "
-                           "must be a float > 0.")
+        raise RuntimeError(f"❌ 'simulation.lstm_cache.threshold_score' "
+                           f"must be a float in [0.0, 1.0]")
 
-    # check alpha and beta for TTL calculation
+    # check ttl base and time decay
     for name, val in [
-        ("alpha_ttl", alpha_ttl),
-        ("beta_ttl", beta_ttl),
+        ("ttl_base", ttl_base),
+        ("time_decay", time_decay),
     ]:
         if not (
             isinstance(val, float)
-            and val > 0
+            and val > 0.0
         ):
             raise RuntimeError(f"❌ 'simulation.lstm_cache.{name}' "
                                f"must be a float > 0.")
@@ -154,35 +138,25 @@ def _validate_simulation_lstm_cache_params(config):
         config,
         "simulation.lstm_cache.prediction_interval"
     )
-    threshold_prob = get_config_value(
+    threshold_score = get_config_value(
         config,
-        "simulation.lstm_cache.threshold_prob"
+        "simulation.lstm_cache.threshold_score"
     )
-    threshold_ci = get_config_value(
+    time_decay = get_config_value(
         config,
-        "simulation.lstm_cache.threshold_ci"
+        "simulation.lstm_cache.time_decay"
     )
     ttl_base = get_config_value(
         config,
         "simulation.lstm_cache.ttl_base"
     )
-    alpha_ttl = get_config_value(
-        config,
-        "simulation.lstm_cache.alpha"
-    )
-    beta_ttl = get_config_value(
-        config,
-        "simulation.lstm_cache.beta"
-    )
 
     # check simulation lstm cache params
     _check_simulation_lstm_cache_params(
         prediction_interval,
-        threshold_prob,
-        threshold_ci,
-        ttl_base,
-        alpha_ttl,
-        beta_ttl
+        threshold_score,
+        time_decay,
+        ttl_base
     )
 
     # show a successful message
@@ -190,9 +164,7 @@ def _validate_simulation_lstm_cache_params(config):
 
     return (
         prediction_interval,
-        threshold_prob,
-        threshold_ci,
-        ttl_base,
-        alpha_ttl,
-        beta_ttl
+        threshold_score,
+        time_decay,
+        ttl_base
     )

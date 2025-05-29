@@ -20,7 +20,10 @@ def simulate(
     # initialize data
     global device, criterion, model
     counters = {'hits': 0, 'misses': 0}
-    state = {'access_counter': 0, 'inference_start_idx': 0}
+    state = {
+        'access_counter': 0,
+        'inference_start_idx': 0,
+    }
 
     # get the testing set
     testing_set, testing_loader = dataloader_setup(
