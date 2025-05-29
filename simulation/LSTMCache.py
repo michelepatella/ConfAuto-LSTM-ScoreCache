@@ -138,13 +138,13 @@ class LSTMCache:
                     self.expiry.pop(key_to_evict, None)
                     self.scores.pop(key_to_evict, None)
 
-            # debugging
-            debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")
-
             # put the key
             self.store[key] = key
             self.expiry[key] = current_time + ttl
             self.scores[key] = score
+
+            # debugging
+            debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")
 
         except (AttributeError, TypeError, KeyError, ValueError) as e:
             raise RuntimeError(f"❌ Error while putting the key"

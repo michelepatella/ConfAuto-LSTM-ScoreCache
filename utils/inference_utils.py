@@ -253,13 +253,13 @@ def autoregressive_rollout(
         all_vars = []
 
         # for each future sequence
-        for _ in range(config_settings.mc_dropout_samples):
+        for _ in range(config_settings.mc_dropout_num_samples):
             # compute MC forward pass
             outputs_mean, outputs_var, _ = mc_forward_passes(
                 model,
                 (x_features_seq, x_keys_seq),
                 device,
-                mc_dropout_samples=config_settings.mc_dropout_num_samples
+                config_settings.mc_dropout_num_samples
             )
 
             # store outputs and variances
@@ -267,10 +267,7 @@ def autoregressive_rollout(
             all_vars.append(outputs_var.squeeze(0))
 
             # get the predicted key as the most probable one
-            pred_key = (
-                outputs_mean.argmax(dim=-1).
-                unsqueeze(0).unsqueeze(0)
-            )
+            pred_key = outputs_mean.argmax(dim=-1).unsqueeze(1)
 
             # add a new step using the predicted key
             x_keys_seq = torch.cat(
