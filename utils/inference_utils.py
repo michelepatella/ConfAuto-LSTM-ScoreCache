@@ -1,3 +1,5 @@
+import math
+
 import torch
 from scipy.stats import norm
 from utils.feedforward_utils import _compute_forward
@@ -255,6 +257,13 @@ def autoregressive_rollout(
         all_outputs = []
         all_vars = []
 
+        # initialize last time to current time
+        last_sin = x_features_seq[0, -1, 0].item()
+        last_cos = x_features_seq[0, -1, 1].item()
+        last_time = math.atan2(last_sin, last_cos)
+
+        # we increase the temporal features by 1 min
+        delta_t = 0.1
         # for each future sequence
         for _ in range(config_settings.prediction_interval):
             # compute MC forward pass
@@ -277,6 +286,21 @@ def autoregressive_rollout(
                 [x_keys_seq[:, 1:], pred_key],
                 dim=1
             )
+
+            # update features
+            last_time += delta_t
+            new_cos = math.cos(last_time)
+            new_sin = math.sin(last_time)
+            new_feature = torch.tensor(
+                [[new_sin, new_cos]],
+                device=device
+            ).unsqueeze(0)
+            x_features_seq = torch.cat(
+                [x_features_seq[:, 1:, :],
+                 new_feature],
+                dim=1
+            )
+
     except (AttributeError, IndexError, TypeError, ValueError) as e:
         raise RuntimeError(f"❌ Error while performing "
                            f"autoregressive rollout: {e}.")

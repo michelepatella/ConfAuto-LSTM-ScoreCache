@@ -187,7 +187,9 @@ def handle_lstm_cache_policy(
             )
 
             # extract seed from the testing window
-            seed_seq = testing_window_dataset.__getitem__(0)
+            seed_seq = testing_window_dataset.__getitem__(
+                len(testing_window_dataset) - 1
+            )
 
             # compute rollout
             all_outputs, all_vars = autoregressive_rollout(

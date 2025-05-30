@@ -175,9 +175,9 @@ def train_n_epochs(
     info("🟢 Train n-epochs completed.")
 
     # check if the avg loss needs to be returned
-    if validation_loader and num_epochs_run > 0:
+    if validation_loader:
         return (
-            tot_loss / num_epochs_run,
+            best_loss,
             model
          )
     else:
