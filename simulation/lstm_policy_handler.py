@@ -29,7 +29,7 @@ def _calculate_key_scores(
             score = 0.0
             for t in range(num_steps):
                 # the decay penalizes too distant temporal events
-                decay = 1 / (1 + t)
+                decay = 1
                 # calculate the final score as a combination of
                 # probability of a key of being used, CIs related
                 # to that prediction, and how distant the event is
@@ -61,10 +61,10 @@ def _calculate_key_scores(
 
 
 def _find_key_candidates(
-    all_outputs,
-    upper_ci,
-    lower_ci,
-    config_settings
+        all_outputs,
+        upper_ci,
+        lower_ci,
+        config_settings
 ):
     """
     Method to find key candidates to be inserted into the cache.
@@ -170,21 +170,33 @@ def handle_lstm_cache_policy(
             counters['misses'] += 1
             info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
 
-        # if it's time to infer and we can do it
+        state['inference_start_idx'] += config_settings.prediction_interval
+        window_size = config_settings.prediction_interval * 20
+
         if (
             state['access_counter'] >= config_settings.prediction_interval and
-            state['inference_start_idx'] < len(testing_set)
+            state['inference_start_idx'] + window_size + 1 <= len(testing_set)
         ):
             # define a mobile window sliding over the testing set
             start_idx = state.get('inference_start_idx', 0)
-            end_idx = start_idx + config_settings.prediction_interval
+            end_idx = start_idx + window_size + 1
             testing_window_df = testing_set.data.iloc[start_idx:end_idx]
+
+            if len(testing_window_df) < config_settings.seq_len + 1:
+                state['access_counter'] = 0
+                state['inference_start_idx'] += 1
+                return
 
             # create a dataset from this window
             testing_window_dataset = AccessLogsDataset.from_dataframe(
                 testing_window_df,
                 config_settings
             )
+
+            if len(testing_window_dataset) == 0:
+                state['access_counter'] = 0
+                state['inference_start_idx'] += 1
+                return
 
             # extract seed from the testing window
             seed_seq = testing_window_dataset.__getitem__(
@@ -222,7 +234,6 @@ def handle_lstm_cache_policy(
 
             # update state variables
             state['access_counter'] = 0
-            state['inference_start_idx'] = end_idx
 
     except (IndexError, KeyError, ValueError, AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while handling LSTM-based cache policy: {e}.")

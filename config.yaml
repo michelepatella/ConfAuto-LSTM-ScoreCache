@@ -101,10 +101,10 @@ inference:
     num_samples: 50 #
 simulation:
   general:
-    cache_size: 3
+    cache_size: 15
   traditional_cache:
     ttl: 60 #
   lstm_cache:
-    prediction_interval: 30 #
-    threshold_score: 0.5 #
+    prediction_interval: 5 #
+    threshold_score: 0.1 #
     ttl_base: 60 #
