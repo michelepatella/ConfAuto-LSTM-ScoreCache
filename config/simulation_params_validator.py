@@ -25,11 +25,11 @@ def _check_simulation_traditional_cache_params(fixed_ttl):
     """
     # check fixed ttl
     if (
-        not isinstance(fixed_ttl, float) or
+        not isinstance(fixed_ttl, int) or
         fixed_ttl <= 0
     ):
         raise RuntimeError("❌ 'simulation.traditional_cache.ttl' "
-                           "must be a float > 0.")
+                           "must be a int > 0.")
 
 
 def _check_simulation_lstm_cache_params(
@@ -62,17 +62,21 @@ def _check_simulation_lstm_cache_params(
         raise RuntimeError(f"❌ 'simulation.lstm_cache.threshold_score' "
                            f"must be a float in [0.0, 1.0]")
 
-    # check ttl base and time decay
-    for name, val in [
-        ("ttl_base", ttl_base),
-        ("time_decay", time_decay),
-    ]:
-        if not (
-            isinstance(val, float)
-            and val > 0.0
-        ):
-            raise RuntimeError(f"❌ 'simulation.lstm_cache.{name}' "
-                               f"must be a float > 0.")
+    # check ttl base
+    if (
+        not isinstance(ttl_base, int) or
+        ttl_base <= 0
+    ):
+        raise RuntimeError("❌ 'simulation.traditional_cache.ttl_base' "
+                           "must be a int > 0.")
+
+    # check time decay
+    if not (
+            isinstance(time_decay, float)
+            and time_decay > 0.0
+    ):
+        raise RuntimeError(f"❌ 'simulation.lstm_cache.time_decay "
+                           f"must be a float > 0.")
 
 
 def _validate_simulation_general_params(config):

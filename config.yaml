@@ -34,8 +34,8 @@ data:
       base_scale: 90 #
       amplitude: 50 #
   sequence:
-    len: 25
-    embedding_dim: 32
+    len: 25 #
+    embedding_dim: 32 #
   dataset:
     training_perc: 0.7 #
     validation_perc: 0.2 #
@@ -43,16 +43,16 @@ data:
     dynamic_save_path: data/dynamic_access_logs.csv #
 model:
   general:
-    num_features: 2
+    num_features: 2 #
     save_path: model/trained_lstm.pt #
   params:
-    hidden_size: 128
-    num_layers: 2
-    bias: false
-    batch_first: true
-    dropout: 0.3
-    bidirectional: false
-    proj_size: 0
+    hidden_size: 128 #
+    num_layers: 2 #
+    bias: false #
+    batch_first: true #
+    dropout: 0.3 #
+    bidirectional: false #
+    proj_size: 0 #
 validation:
   cross_validation:
     num_folds: 10 #
@@ -103,9 +103,9 @@ simulation:
   general:
     cache_size: 15
   traditional_cache:
-    ttl: 10.0
+    ttl: 100
   lstm_cache:
-    prediction_interval: 100
+    prediction_interval: 50
     threshold_score: 0.6
     time_decay: 0.3
-    ttl_base: 10.0
+    ttl_base: 100

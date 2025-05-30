@@ -115,8 +115,10 @@ def train_n_epochs(
             es = EarlyStopping(config_settings)
 
         # n-epochs learning
-        for epoch in range(epochs):
-            print(f"⏳ Epoch {epoch + 1}/{epochs}")
+        for _ in tqdm(
+                range(1, epochs + 1),
+                desc="Training"
+        ):
 
             # train the model
             _train_one_epoch(

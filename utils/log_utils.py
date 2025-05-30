@@ -23,12 +23,12 @@ file_handler.setFormatter(formatter)
 
 # show in terminal only ERROR-level logging messages
 stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.DEBUG)
+stream_handler.setLevel(logging.ERROR)
 stream_handler.setFormatter(formatter)
 
 # configuration of logging messages
 logging.basicConfig(
-    level=logging.ERROR,
+    level=logging.DEBUG,
     handlers=[file_handler, stream_handler]
 )
 

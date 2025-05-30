@@ -43,9 +43,18 @@ def plot_zipf_loglog(requests):
             frequencies,
             marker='o'
         )
-        plt.title("Zipf Distribution (Log-Log)")
-        plt.xlabel("Key")
-        plt.ylabel("Frequency")
+        plt.title(
+            "Zipf Distribution (Log-Log)",
+            fontsize=18
+        )
+        plt.xlabel(
+            "Key",
+            fontsize=16
+        )
+        plt.ylabel(
+            "Frequency",
+            fontsize=16
+        )
         plt.tight_layout()
         plt.show()
         plt.close()
@@ -84,10 +93,22 @@ def plot_daily_profile(timestamps, bin_size=0.5):
             align='edge',
             edgecolor='black'
         )
-        plt.xlabel("Hour of Day")
-        plt.ylabel("Number of Requests")
-        plt.title("Distribution of Requests Over 24 Hours")
-        plt.xticks(np.arange(0, 25, step=1))
+        plt.xlabel(
+            "Hour of Day",
+            fontsize=16
+        )
+        plt.ylabel(
+            "Number of Requests",
+            fontsize=16
+        )
+        plt.title(
+            "Distribution of Requests Over 24 Hours",
+            fontsize=18
+        )
+        plt.xticks(
+            np.arange(0, 25, step=1),
+            fontsize=16
+        )
         plt.tight_layout()
         plt.show()
         plt.close()
@@ -136,12 +157,22 @@ def plot_key_usage_heatmap(
             cmap='viridis'
         )
         plt.colorbar(label='Access Count')
-        plt.xlabel('Key')
-        plt.ylabel('Hour of Day')
-        plt.title('Heatmap of Key Access Frequency by Hour of Day')
+        plt.xlabel(
+            'Key',
+            fontsize=16
+        )
+        plt.ylabel(
+            'Hour of Day',
+            fontsize=16
+        )
+        plt.title(
+            'Heatmap of Key Access Frequency by Hour of Day',
+            fontsize=18
+        )
         plt.yticks(
             ticks=np.arange(24),
-            labels=[f"{h}:00" for h in range(24)]
+            labels=[f"{h}:00" for h in range(24)],
+            fontsize=16
         )
         plt.xticks(
             ticks=np.arange(
@@ -154,7 +185,9 @@ def plot_key_usage_heatmap(
                 config_settings.last_key,
                 max(1, config_settings.num_keys // 20)
             ),
-            rotation=90)
+            rotation=90,
+            fontsize=16
+        )
         plt.tight_layout()
         plt.show()
         plt.close()
@@ -203,9 +236,22 @@ def plot_precision_recall_curve(targets, outputs, num_keys):
                 label=f"Class {i} (AP = {avg_precision:.2f})"
             )
 
-        plt.xlabel("Recall")
-        plt.ylabel("Precision")
-        plt.title("Precision-Recall Curve")
+        plt.xlabel(
+            "Recall",
+            fontsize=16
+        )
+        plt.ylabel(
+            "Precision",
+            fontsize=16
+        )
+        plt.ylabel(
+            "Precision",
+            fontsize=16
+        )
+        plt.title(
+            "Precision-Recall Curve",
+            fontsize=18
+        )
         plt.show()
         plt.close()
 
@@ -233,9 +279,18 @@ def plot_confusion_matrix(confusion_matrix):
             fmt="d",
             cmap="Blues",
         )
-        plt.title("Confusion Matrix")
-        plt.ylabel("True Key")
-        plt.xlabel("Predicted Key")
+        plt.title(
+            "Confusion Matrix",
+            fontsize=18
+        )
+        plt.ylabel(
+            "True Key",
+            fontsize=16
+        )
+        plt.xlabel(
+            "Predicted Key",
+            fontsize=16
+        )
         plt.tight_layout()
         plt.show()
         plt.close()
@@ -275,9 +330,18 @@ def plot_hit_miss_rate_over_time(results):
             )
 
         # plot hit rate
-        plt.title("Instant Hit Rate Over Time")
-        plt.xlabel("Request Index")
-        plt.ylabel("Hit Rate (%)")
+        plt.title(
+            "Instant Hit Rate Over Time",
+            fontsize=18
+        )
+        plt.xlabel(
+            "Request Index",
+            fontsize=16
+        )
+        plt.ylabel(
+            "Hit Rate (%)",
+            fontsize=16
+        )
         plt.legend()
 
         # second subplot: miss rate
@@ -297,9 +361,18 @@ def plot_hit_miss_rate_over_time(results):
             )
 
         # plot miss rate
-        plt.title("Instant Miss Rate Over Time")
-        plt.xlabel("Request Index")
-        plt.ylabel("Miss Rate (%)")
+        plt.title(
+            "Instant Miss Rate Over Time",
+            fontsize=18
+        )
+        plt.xlabel(
+            "Request Index",
+            fontsize=16
+        )
+        plt.ylabel(
+            "Miss Rate (%)",
+            fontsize=16
+        )
         plt.legend()
         plt.tight_layout()
         plt.show()
