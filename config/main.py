@@ -157,7 +157,6 @@ def prepare_config():
     (
         prediction_interval,
         threshold_score,
-        time_decay,
         ttl_base,
     ) = _validate_simulation_lstm_cache_params(config_file)
 
@@ -233,6 +232,5 @@ def prepare_config():
         fixed_ttl=fixed_ttl,
         prediction_interval=prediction_interval,
         threshold_score=threshold_score,
-        time_decay=time_decay,
         ttl_base=ttl_base
     )

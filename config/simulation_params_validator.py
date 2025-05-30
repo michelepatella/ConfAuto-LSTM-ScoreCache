@@ -35,14 +35,12 @@ def _check_simulation_traditional_cache_params(fixed_ttl):
 def _check_simulation_lstm_cache_params(
         prediction_interval,
         threshold_score,
-        time_decay,
         ttl_base
 ):
     """
     Method to check simulation lstm cache parameters.
     :param prediction_interval: The prediction interval.
     :param threshold_score: The threshold for the score of keys.
-    :param time_decay: The time decay to weight the score of keys.
     :param ttl_base: The TTL base value.
     :return:
     """
@@ -69,14 +67,6 @@ def _check_simulation_lstm_cache_params(
     ):
         raise RuntimeError("❌ 'simulation.traditional_cache.ttl_base' "
                            "must be a int > 0.")
-
-    # check time decay
-    if not (
-            isinstance(time_decay, float)
-            and time_decay > 0.0
-    ):
-        raise RuntimeError(f"❌ 'simulation.lstm_cache.time_decay "
-                           f"must be a float > 0.")
 
 
 def _validate_simulation_general_params(config):
@@ -146,10 +136,6 @@ def _validate_simulation_lstm_cache_params(config):
         config,
         "simulation.lstm_cache.threshold_score"
     )
-    time_decay = get_config_value(
-        config,
-        "simulation.lstm_cache.time_decay"
-    )
     ttl_base = get_config_value(
         config,
         "simulation.lstm_cache.ttl_base"
@@ -159,7 +145,6 @@ def _validate_simulation_lstm_cache_params(config):
     _check_simulation_lstm_cache_params(
         prediction_interval,
         threshold_score,
-        time_decay,
         ttl_base
     )
 
@@ -169,6 +154,5 @@ def _validate_simulation_lstm_cache_params(config):
     return (
         prediction_interval,
         threshold_score,
-        time_decay,
         ttl_base
     )

@@ -93,7 +93,7 @@ def mc_forward_passes(
         raise ValueError(f"❌ Error while computing MC forward passes: {e}.")
 
     # show a successful message
-    info("🟢 MC dropout enabled.")
+    info("🟢 MC forward passes computed.")
 
     return (
             outputs_mean,
@@ -260,10 +260,10 @@ def autoregressive_rollout(
         # initialize last time to current time
         last_sin = x_features_seq[0, -1, 0].item()
         last_cos = x_features_seq[0, -1, 1].item()
-        last_time = math.atan2(last_sin, last_cos)
+        last_time = math.atan2(last_sin, last_cos) % (2 * math.pi)
 
         # we increase the temporal features by 1 min
-        delta_t = 0.1
+        delta_t = (1 / 144) * (2 * math.pi)
         # for each future sequence
         for _ in range(config_settings.prediction_interval):
             # compute MC forward pass
@@ -276,7 +276,12 @@ def autoregressive_rollout(
 
             # store outputs and variances
             all_outputs.append(outputs_mean.squeeze(0))
-            all_vars.append(outputs_var.squeeze(0))
+            if outputs_var is not None:
+                all_vars.append(outputs_var.squeeze(0))
+            else:
+                all_vars.append(torch.zeros_like(
+                    outputs_mean.squeeze(0)
+                ))
 
             # get the predicted key as the most probable one
             pred_key = outputs_mean.argmax(dim=-1).unsqueeze(1)
@@ -288,7 +293,7 @@ def autoregressive_rollout(
             )
 
             # update features
-            last_time += delta_t
+            last_time = (last_time + delta_t) % (2 * math.pi)
             new_cos = math.cos(last_time)
             new_sin = math.sin(last_time)
             new_feature = torch.tensor(

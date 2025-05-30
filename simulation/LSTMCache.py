@@ -107,21 +107,6 @@ class LSTMCache:
                 key not in self.store and
                 len(self.store) >= self.maxsize
             ):
-                # identify key candidates to be evicted
-                # as the ones whose score is less than the threshold
-                evict_candidates = [
-                    k for k in self.store
-                    if self.scores.get(k, 0) < self.threshold_score
-                ]
-
-                # debugging
-                debug(f"⚙️Full cache, evicting: {evict_candidates}.")
-
-                # evict all candidate keys
-                for k in evict_candidates:
-                    self.store.pop(k, None)
-                    self.expiry.pop(k, None)
-                    self.scores.pop(k, None)
 
                 # check if the cache is still full
                 while len(self.store) >= self.maxsize:

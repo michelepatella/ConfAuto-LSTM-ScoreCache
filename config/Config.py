@@ -72,5 +72,4 @@ class Config:
     fixed_ttl: int
     prediction_interval: int
     threshold_score: float
-    time_decay: float
     ttl_base: int
