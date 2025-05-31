@@ -1,5 +1,4 @@
-from random import random
-
+import random
 import numpy as np
 from torch.nn.functional import softmax
 from utils.AccessLogsDataset import AccessLogsDataset
