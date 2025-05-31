@@ -28,13 +28,10 @@ def _calculate_key_scores(
         for k in range(num_keys):
             score = 0.0
             for t in range(num_steps):
-                # the decay penalizes too distant temporal events
-                decay = 1
                 # calculate the final score as a combination of
-                # probability of a key of being used, CIs related
-                # to that prediction, and how distant the event is
-                # w.r.t. the current time
-                score += prob_matrix[t, k] * np.log1p(conf_matrix[t, k]) * decay
+                # probability of a key of being used and CIs related
+                # to that prediction
+                score += prob_matrix[t, k] * np.log1p(conf_matrix[t, k])
             scores[k] = score
 
         # normalize scores in [0,1]
@@ -132,7 +129,7 @@ def handle_lstm_cache_policy(
         cache,
         key,
         current_time,
-        state,
+        current_idx,
         counters,
         device,
         model,
@@ -144,7 +141,7 @@ def handle_lstm_cache_policy(
     :param cache: The cache.
     :param key: The current key.
     :param current_time: The current time.
-    :param state: The state variable.
+    :param current_idx: The current index.
     :param counters: The hits and misses counters.
     :param device: The device to be used while inferring.
     :param model: The model to use to infer.
@@ -157,9 +154,6 @@ def handle_lstm_cache_policy(
 
     try:
 
-        # increase the counter of LSTM cache usage
-        state['access_counter'] += 1
-
         # check if the cache contains the key
         if cache.contains(key, current_time):
             # increment cache hits
@@ -170,21 +164,14 @@ def handle_lstm_cache_policy(
             counters['misses'] += 1
             info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
 
-        state['inference_start_idx'] += config_settings.prediction_interval
-        window_size = config_settings.prediction_interval * 20
+        if current_idx >= config_settings.seq_len:
 
-        if (
-            state['access_counter'] >= config_settings.prediction_interval and
-            state['inference_start_idx'] + window_size + 1 <= len(testing_set)
-        ):
             # define a mobile window sliding over the testing set
-            start_idx = state.get('inference_start_idx', 0)
-            end_idx = start_idx + window_size + 1
+            start_idx = current_idx - (config_settings.seq_len + 1)
+            end_idx = current_idx + 2
             testing_window_df = testing_set.data.iloc[start_idx:end_idx]
 
             if len(testing_window_df) < config_settings.seq_len + 1:
-                state['access_counter'] = 0
-                state['inference_start_idx'] += 1
                 return
 
             # create a dataset from this window
@@ -194,8 +181,6 @@ def handle_lstm_cache_policy(
             )
 
             if len(testing_window_dataset) == 0:
-                state['access_counter'] = 0
-                state['inference_start_idx'] += 1
                 return
 
             # extract seed from the testing window
@@ -231,9 +216,6 @@ def handle_lstm_cache_policy(
             for k in top_keys:
                 score = scores[k]
                 cache.put(k, score, current_time)
-
-            # update state variables
-            state['access_counter'] = 0
 
     except (IndexError, KeyError, ValueError, AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while handling LSTM-based cache policy: {e}.")

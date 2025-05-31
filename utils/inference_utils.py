@@ -263,9 +263,9 @@ def autoregressive_rollout(
         last_time = math.atan2(last_sin, last_cos) % (2 * math.pi)
 
         # we increase the temporal features by 1 min
-        delta_t = (1 / 144) * (2 * math.pi)
+        delta_t = (0.2 / 144) * (2 * math.pi)
         # for each future sequence
-        for _ in range(config_settings.prediction_interval):
+        for i in range(config_settings.prediction_interval):
             # compute MC forward pass
             outputs_mean, outputs_var, _ = mc_forward_passes(
                 model,
@@ -305,6 +305,12 @@ def autoregressive_rollout(
                  new_feature],
                 dim=1
             )
+
+            # debugging
+            debug(f"⚙️ Step: {i}.")
+            debug(f"⚙️ New Prediction: {pred_key}.")
+            debug(f"⚙️ At time: {last_time}.")
+            debug(f"⚙️ Variance: {outputs_var}.")
 
     except (AttributeError, IndexError, TypeError, ValueError) as e:
         raise RuntimeError(f"❌ Error while performing "

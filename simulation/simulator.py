@@ -33,10 +33,6 @@ def simulate_cache_policy(
         'hits': 0,
         'misses': 0
     }
-    state = {
-        'access_counter': 0,
-        'inference_start_idx': 0
-    }
     timeline = []
     recent_hits = []
     latencies = []
@@ -97,7 +93,7 @@ def simulate_cache_policy(
                 cache,
                 key,
                 current_time,
-                state,
+                idx,
                 counters,
                 device,
                 model,
