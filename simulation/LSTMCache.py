@@ -65,6 +65,25 @@ class LSTMCache:
                                f" from the cache: {e}.")
 
 
+    def _remove_expired_keys(self, current_time):
+        """
+        Method to remove expired keys from the cache.
+        :param current_time: The current time.
+        :return:
+        """
+        # identify expired keys
+        expired_keys = [
+            k for k,
+            expiry_time in self.expiry.items()
+            if expiry_time <= current_time
+        ]
+        # remove expired keys
+        for k in expired_keys:
+            self.store.pop(k, None)
+            self.expiry.pop(k, None)
+            self.scores.pop(k, None)
+
+
     def put(
             self,
             key,
@@ -87,6 +106,9 @@ class LSTMCache:
         # in case its score is less than the threshold
         try:
             print(self.store)
+
+            # clean up the cache
+            self._remove_expired_keys(current_time)
 
             # if the start is overcome
             if not cold_start:

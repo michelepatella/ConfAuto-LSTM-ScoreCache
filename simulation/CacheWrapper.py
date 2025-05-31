@@ -90,6 +90,24 @@ class CacheWrapper:
                                f" from the cache: {e}.")
 
 
+    def _remove_expired_keys(self, current_time):
+        """
+        Method to remove expired keys from the cache.
+        :param current_time: The current time.
+        :return:
+        """
+        # identify expired keys
+        expired_keys = [
+            k for k,
+            exp_time in self.expiry.items()
+            if exp_time < current_time
+        ]
+        # remove expired keys
+        for k in expired_keys:
+            self.cache.pop(k, None)
+            self.expiry.pop(k, None)
+
+
     def put(self, key, ttl, current_time):
         """
         Method to put a key into the cache.
@@ -99,6 +117,9 @@ class CacheWrapper:
         :return:
         """
         try:
+            # clean up the cache
+            self._remove_expired_keys(current_time)
+
             # set the key into the cache
             self.cache[key] = key
             # set expiration time for the key
