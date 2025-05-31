@@ -165,7 +165,6 @@ def handle_lstm_cache_policy(
             counters['misses'] += 1
             info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
 
-
         if current_idx < config_settings.seq_len:
 
             all_possible_keys = list(range(config_settings.num_keys))
@@ -184,11 +183,11 @@ def handle_lstm_cache_policy(
         ):
 
             # define a mobile window sliding over the testing set
-            start_idx = current_idx - (config_settings.seq_len + 1)
-            end_idx = current_idx + 2
-            testing_window_df = testing_set.data.iloc[start_idx:end_idx]
+            start_idx = current_idx - config_settings.seq_len + 1
+            end_idx = current_idx + 1
+            testing_window_df = testing_set.data.iloc[start_idx:end_idx+1]
 
-            if len(testing_window_df) < config_settings.seq_len + 1:
+            if len(testing_window_df) < config_settings.seq_len:
                 return
 
             # create a dataset from this window

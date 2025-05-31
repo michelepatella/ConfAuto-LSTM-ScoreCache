@@ -262,8 +262,8 @@ def autoregressive_rollout(
         last_cos = x_features_seq[0, -1, 1].item()
         last_time = math.atan2(last_sin, last_cos) % (2 * math.pi)
 
-        # we increase the temporal features by 1 min
-        delta_t = (0.2 / 144) * (2 * math.pi)
+        # increase the temporal features
+        delta_t = (2 / 1440) * (2 * math.pi)
         # for each future sequence
         for i in range(config_settings.prediction_interval):
             # compute MC forward pass
