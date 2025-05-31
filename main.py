@@ -16,6 +16,6 @@ config_settings = prepare_config()
 
 #training(config_settings)
 
-#testing(config_settings)
+testing(config_settings)
 
-run_simulations(config_settings)
+#run_simulations(config_settings)

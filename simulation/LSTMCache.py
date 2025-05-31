@@ -1,4 +1,5 @@
 import math
+import random
 from utils.log_utils import debug
 
 
@@ -105,12 +106,11 @@ class LSTMCache:
         # check if the key must be removed
         # in case its score is less than the threshold
         try:
-            print(self.store)
 
             # clean up the cache
             self._remove_expired_keys(current_time)
 
-            # if the start is overcome
+            # if the cold-start is overcome
             if not cold_start:
                 if score < self.threshold_score:
                     # debugging
@@ -149,16 +149,43 @@ class LSTMCache:
                         self.store.pop(key_to_evict, None)
                         self.expiry.pop(key_to_evict, None)
                         self.scores.pop(key_to_evict, None)
+                    else:
+                        return
 
                 # put the key
                 self.store[key] = key
                 self.expiry[key] = current_time + ttl
                 self.scores[key] = score
+
             else:
-                # cold start -> insert the random key
+                # cold-start management
+
+                # check if the key is in the cache
+                if self.contains(key, current_time):
+                    # update the expiration time of the key
+                    self.expiry[key] = current_time + config_settings.fixed_ttl
+
+                    # debugging
+                    debug(f"⚙️ Key {key} already in the cache, new TTL: {self.expiry[key]}.")
+                    return
+
+                # check if the cache is full
+                elif len(self.store) >= self.maxsize:
+                    # evict a key randomly
+                    evict_key = random.choice(
+                        list(self.store.keys())
+                    )
+
+                    # debugging
+                    debug(f"⚙️Full cache, evicting: {evict_key}.")
+
+                    self.store.pop(evict_key)
+                    self.expiry.pop(evict_key)
+
+                # store the key
                 self.store[key] = key
-                self.expiry[key] = config_settings.fixed_ttl
                 self.scores[key] = score
+                self.expiry[key] = current_time + config_settings.fixed_ttl
 
             # debugging
             debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")

@@ -137,13 +137,13 @@ class AccessLogsDataset(Dataset):
             # get the feature sequence of length seq_len
             seq_data = self.data.iloc[idx: idx + self.seq_len]
 
-            # Extract numerical features
+            # extract numerical features
             x_features = torch.tensor(
                 seq_data[self.features].values.astype(float),
                 dtype=torch.float
             )
 
-            # Extract key IDs (request IDs)
+            # extract key IDs
             x_keys = torch.tensor(
                 seq_data[self.target].values.astype(int),
                 dtype=torch.long
