@@ -1,3 +1,5 @@
+from random import random
+
 import numpy as np
 from torch.nn.functional import softmax
 from utils.AccessLogsDataset import AccessLogsDataset
@@ -164,7 +166,20 @@ def handle_lstm_cache_policy(
             counters['misses'] += 1
             info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
 
-        if (
+
+        if current_idx < config_settings.seq_len:
+
+            all_possible_keys = list(range(config_settings.num_keys))
+
+            random_keys = random.sample(
+                all_possible_keys,
+                min(config_settings.cache_size, len(all_possible_keys))
+            )
+
+            for k in random_keys:
+                cache.put(k, config_settings.ttl_base, current_time)
+
+        elif (
             current_idx >= config_settings.seq_len and
             current_idx % config_settings.prediction_interval == 0
         ):
