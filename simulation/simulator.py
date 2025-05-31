@@ -25,10 +25,10 @@ def simulate_cache_policy(
     info(f"🔄 {policy_name} policy simulation started...")
 
     # debugging
-    debug(f"⚙️Policy: {policy_name}.")
+    debug(f"⚙️ Policy: {policy_name}.")
 
     # initialize data
-    global device, criterion, model
+    device, criterion, model = None, None, None
     counters = {
         'hits': 0,
         'misses': 0

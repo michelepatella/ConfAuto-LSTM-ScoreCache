@@ -101,7 +101,7 @@ inference:
     num_samples: 50 #
 simulation:
   general:
-    cache_size: 15
+    cache_size: 5 #
   traditional_cache:
     ttl: 60 #
   lstm_cache:

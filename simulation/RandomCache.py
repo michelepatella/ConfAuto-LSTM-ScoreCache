@@ -95,7 +95,7 @@ class RandomCache:
                 self.expiry[key] = current_time + ttl
 
                 # debugging
-                debug(f"⚙️Key {key} already in the cache, new TTL: {self.expiry[key]}.")
+                debug(f"⚙️ Key {key} already in the cache, new TTL: {self.expiry[key]}.")
                 return
 
             # check if the cache is full

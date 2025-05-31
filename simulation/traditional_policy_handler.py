@@ -40,15 +40,6 @@ def handle_traditional_cache_policy(
                 current_time
             )
 
-        # the key should be always put in the random cache
-        if policy_name == "RANDOM":
-            # put the key in the cache
-            cache.put(
-                key,
-                config_settings.ttl_base,
-                current_time
-            )
-
     except (AttributeError, KeyError, TypeError, NameError, ValueError) as e:
         raise RuntimeError(f"❌ Error while handling {policy_name} policy: {e}.")
 

@@ -17,7 +17,7 @@ class CacheWrapper:
         self.expiry = {}
 
         # debugging
-        debug(f"⚙️Max cache size: {self.cache.maxsize}.")
+        debug(f"⚙️ Max cache size: {self.cache.maxsize}.")
 
 
     def _is_expired(self, key, current_time):
@@ -80,7 +80,7 @@ class CacheWrapper:
             # check if the key is in the cache
             if self.contains(key, current_time):
                 # debugging
-                debug(f"⚙️Key accessed (time: {current_time}): {key}.")
+                debug(f"⚙️ Key accessed (time: {current_time}): {key}.")
 
                 return self.cache[key]
             else:
