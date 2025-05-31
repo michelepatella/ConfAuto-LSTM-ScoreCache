@@ -164,7 +164,10 @@ def handle_lstm_cache_policy(
             counters['misses'] += 1
             info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
 
-        if current_idx >= config_settings.seq_len:
+        if (
+            current_idx >= config_settings.seq_len and
+            current_idx % config_settings.prediction_interval == 0
+        ):
 
             # define a mobile window sliding over the testing set
             start_idx = current_idx - (config_settings.seq_len + 1)

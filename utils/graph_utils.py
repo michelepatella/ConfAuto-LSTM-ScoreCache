@@ -376,6 +376,7 @@ def plot_hit_miss_rate_over_time(results):
         plt.legend()
         plt.tight_layout()
         plt.show()
+        plt.savefig("hit_miss_plot.pdf", format='pdf')
         plt.close()
 
     except (KeyError, TypeError, ValueError, AttributeError) as e:
