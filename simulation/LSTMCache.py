@@ -69,7 +69,9 @@ class LSTMCache:
             self,
             key,
             score,
-            current_time
+            current_time,
+            cold_start=False,
+            config_settings=None
     ):
         """
         Method to put a key into the cache, containing the full
@@ -77,39 +79,39 @@ class LSTMCache:
         :param key: The key to put.
         :param score: The score associated with the key.
         :param current_time: The current time.
+        :param cold_start: Specifies whether the key is cold or not.
+        :param config_settings: The configuration settings.
         :return:
         """
         # check if the key must be removed
         # in case its score is less than the threshold
         try:
+            print(self.store)
 
-            if score < self.threshold_score:
+            # if the start is overcome
+            if not cold_start:
+                if score < self.threshold_score:
+                    # debugging
+                    debug(f"⚙️Key: {key}, Score: {score}.")
+
+                    # remove the key from the cache
+                    self.store.pop(key, None)
+                    self.expiry.pop(key, None)
+                    self.scores.pop(key, None)
+                    return
+
+                # compute TTL dynamically
+                ttl = self.ttl_base * (1 + math.log1p(score))
+
                 # debugging
-                debug(f"⚙️Key: {key}, Score: {score}.")
+                debug(f"⚙️Key: {key}, Dynamic TTL: {ttl}.")
 
-                # remove the key from the cache
-                self.store.pop(key, None)
-                self.expiry.pop(key, None)
-                self.scores.pop(key, None)
-                return
+                # if the key is new and the cache is full, evict something
+                if (
+                    key not in self.store and
+                    len(self.store) >= self.maxsize
+                ):
 
-            # compute TTL dynamically
-            ttl = self.ttl_base * (1 + math.log1p(score))
-            # use the TTL base in case the dynamic TTL <= 0
-            if ttl <= 0:
-                ttl = self.ttl_base
-
-            # debugging
-            debug(f"⚙️Key: {key}, Dynamic TTL: {ttl}.")
-
-            # if the key is new and the cache is full, evict something
-            if (
-                key not in self.store and
-                len(self.store) >= self.maxsize
-            ):
-
-                # check if the cache is still full
-                while len(self.store) >= self.maxsize:
                     # evict the key with the lowest score
                     key_to_evict = min(
                         self.store.keys(),
@@ -119,14 +121,22 @@ class LSTMCache:
                     # debugging
                     debug(f"⚙️Cache still full, evicting: {key_to_evict}.")
 
-                    self.store.pop(key_to_evict, None)
-                    self.expiry.pop(key_to_evict, None)
-                    self.scores.pop(key_to_evict, None)
+                    # evict the key if its score is less than
+                    # the one of the key to be inserted
+                    if self.scores.get(key_to_evict, 0) <= score:
+                        self.store.pop(key_to_evict, None)
+                        self.expiry.pop(key_to_evict, None)
+                        self.scores.pop(key_to_evict, None)
 
-            # put the key
-            self.store[key] = key
-            self.expiry[key] = current_time + ttl
-            self.scores[key] = score
+                # put the key
+                self.store[key] = key
+                self.expiry[key] = current_time + ttl
+                self.scores[key] = score
+            else:
+                # cold start -> insert the random key
+                self.store[key] = key
+                self.expiry[key] = config_settings.fixed_ttl
+                self.scores[key] = score
 
             # debugging
             debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")

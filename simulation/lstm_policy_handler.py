@@ -61,15 +61,13 @@ def _calculate_key_scores(
 def _find_key_candidates(
         all_outputs,
         upper_ci,
-        lower_ci,
-        config_settings
+        lower_ci
 ):
     """
     Method to find key candidates to be inserted into the cache.
     :param all_outputs: The outputs from the model.
     :param upper_ci: The upper confidence interval bound.
     :param lower_ci: The lower confidence interval bound.
-    :param config_settings: The configuration settings.
     :return: The key candidates.
     """
     # initial message
@@ -107,12 +105,8 @@ def _find_key_candidates(
             conf_matrix
         )
 
-        # select top-cache_size keys
-        top_keys = sorted(
-            scores,
-            key=scores.get,
-            reverse=True
-        )[:config_settings.cache_size]
+        # select the keys
+        keys = list(scores.keys())
 
     except (
             IndexError, ZeroDivisionError, TypeError,
@@ -123,7 +117,7 @@ def _find_key_candidates(
     # print a successful message
     info("🟢 Key candidates found.")
 
-    return top_keys, scores
+    return keys, scores
 
 
 def handle_lstm_cache_policy(
@@ -165,17 +159,23 @@ def handle_lstm_cache_policy(
             counters['misses'] += 1
             info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
 
+        # if it's not time to prefetch (no enough data)
         if current_idx < config_settings.seq_len:
-
+            # fill the cache randomly
             all_possible_keys = list(range(config_settings.num_keys))
-
             random_keys = random.sample(
                 all_possible_keys,
                 min(config_settings.cache_size, len(all_possible_keys))
             )
-
+            # assign a score 0.0 to these keys
             for k in random_keys:
-                cache.put(k, config_settings.ttl_base, current_time)
+                cache.put(
+                    k,
+                    0.0,
+                    current_time,
+                    cold_start=True,
+                    config_settings=config_settings
+                )
 
         elif (
             current_idx >= config_settings.seq_len and
@@ -196,6 +196,7 @@ def handle_lstm_cache_policy(
                 config_settings
             )
 
+            # check if there is at least one element
             if len(testing_window_dataset) == 0:
                 return
 
@@ -219,19 +220,21 @@ def handle_lstm_cache_policy(
                 config_settings
             )
 
-            # identify candidate keys to be inserted
-            # into the cache
-            top_keys, scores = _find_key_candidates(
+            # identify keys and scores thereof
+            keys, scores = _find_key_candidates(
                 all_outputs,
                 upper_ci,
-                lower_ci,
-                config_settings
+                lower_ci
             )
 
-            # put the candidate keys into the cache
-            for k in top_keys:
+            # put the keys into the cache
+            for k in keys:
                 score = scores[k]
-                cache.put(k, score, current_time)
+                cache.put(
+                    k,
+                    score,
+                    current_time
+                )
 
     except (IndexError, KeyError, ValueError, AttributeError, TypeError) as e:
         raise RuntimeError(f"❌ Error while handling LSTM-based cache policy: {e}.")
