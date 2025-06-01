@@ -29,7 +29,11 @@ def create_data_loader(
             batch_size=batch_size,
             shuffle=shuffle
         )
-    except (TypeError, ValueError, AttributeError) as e:
+    except (
+            TypeError,
+            ValueError,
+            AttributeError
+    ) as e:
         raise RuntimeError(f"❌ Error while creating data loader: {e}.")
 
     # show a successful message
@@ -74,7 +78,14 @@ def dataloader_setup(
             batch_size=batch_size,
             shuffle=shuffle
         )
-    except (FileNotFoundError, IOError, OSError, ValueError, TypeError, AttributeError) as e:
+    except (
+            FileNotFoundError,
+            IOError,
+            OSError,
+            ValueError,
+            TypeError,
+            AttributeError
+    ) as e:
         raise RuntimeError(f"❌ Error while set upping the loader: {e}.")
 
     # show a successful message
@@ -97,7 +108,11 @@ def extract_targets_from_dataloader(data_loader):
         # extract targets from data loader
         for _, _, targets in data_loader:
             all_targets.append(targets)
-    except (TypeError, ValueError, IndexError) as e:
+    except (
+            TypeError,
+            ValueError,
+            IndexError
+    ) as e:
         raise RuntimeError(f"❌ Error while extracting targets from loader: {e}.")
 
     # debugging

@@ -21,8 +21,7 @@ def _get_config_abs_path():
         )
         abs_path = os.path.abspath(path)
     except (NameError, TypeError, AttributeError, OSError) as e:
-        raise RuntimeError(f"❌ Error while getting the config "
-                           f"absolute path: {e}.")
+        raise RuntimeError(f"❌ Error while getting the config absolute path: {e}.")
 
     # debugging
     debug(f"⚙️ Absolute path of config file: {abs_path}.")

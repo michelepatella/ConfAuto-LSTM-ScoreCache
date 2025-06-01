@@ -17,13 +17,11 @@ def _check_general_model_params(
             isinstance(num_features, int)
             and num_features > 0
     ):
-        raise RuntimeError("❌ 'model.general.num_features' must"
-                           " be an integer > 0.")
+        raise RuntimeError("❌ 'model.general.num_features' must be an integer > 0.")
 
     # check model save path
     if not isinstance(model_save_path, str):
-        raise RuntimeError("❌ 'model.general.save_path' must "
-                           "be a string.")
+        raise RuntimeError("❌ 'model.general.save_path' must be a string.")
 
 
 def _check_model_params(
@@ -55,8 +53,7 @@ def _check_model_params(
                 isinstance(val, int)
                 and val > 0
         ):
-            raise RuntimeError(f"❌ 'model.params.{name}' must be"
-                               f" an integer > 0.")
+            raise RuntimeError(f"❌ 'model.params.{name}' must be an integer > 0.")
 
     # check boolean parameters
     for name, val in [
@@ -65,16 +62,14 @@ def _check_model_params(
         ("bidirectional", bidirectional),
     ]:
         if not isinstance(val, bool):
-            raise RuntimeError(f"❌ 'model.params.{name}' "
-                               f"must be a boolean.")
+            raise RuntimeError(f"❌ 'model.params.{name}' must be a boolean.")
 
     # check dropout float in [0.0, 1.0)
     if not (
             isinstance(dropout, float)
             and 0.0 <= dropout < 1.0
     ):
-        raise RuntimeError("❌ 'model.params.dropout' must be a"
-                           " float within [0.0, 1.0).")
+        raise RuntimeError("❌ 'model.params.dropout' must be a float within [0.0, 1.0).")
     if num_layers == 1 and dropout > 0:
         info("ℹ️ 'dropout' is ignored when 'num_layers' == 1.")
 
@@ -83,8 +78,7 @@ def _check_model_params(
             isinstance(proj_size, int)
             and 0 <= proj_size <= hidden_size
     ):
-        raise RuntimeError("❌ 'model.params.proj_size' must be an "
-                           "integer in [0, hidden_size].")
+        raise RuntimeError("❌ 'model.params.proj_size' must be an integer in [0, hidden_size].")
 
 
 def _validate_model_general_params(config):

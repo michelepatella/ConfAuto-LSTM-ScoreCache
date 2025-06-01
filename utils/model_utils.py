@@ -6,7 +6,10 @@ from utils.dataloader_utils import extract_targets_from_dataloader
 from utils.log_utils import info, debug
 
 
-def save_model(model, config_settings):
+def save_model(
+        model,
+        config_settings
+):
     """
     Method to save a model.
     :param model: The model to be saved.
@@ -25,14 +28,25 @@ def save_model(model, config_settings):
             model.state_dict(),
             config_settings.model_save_path
         )
-    except (KeyError, TypeError, ValueError, AttributeError, FileNotFoundError, PermissionError) as e:
+    except (
+            KeyError,
+            TypeError,
+            ValueError,
+            AttributeError,
+            FileNotFoundError,
+            PermissionError
+    ) as e:
         raise RuntimeError(f"❌ Error while saving the model: {e}.")
 
     # show a successful message
     info(f"🟢 Model save to '{config_settings.model_save_path}'.")
 
 
-def load_model(model, device, config_settings):
+def load_model(
+        model,
+        device,
+        config_settings
+):
     """
     Method to load a model.
     :param model: The initialization of the model.
@@ -52,7 +66,13 @@ def load_model(model, device, config_settings):
             config_settings.model_save_path,
             map_location=device
         ))
-    except (FileNotFoundError, PermissionError, AttributeError, ValueError, TypeError) as e:
+    except (
+            FileNotFoundError,
+            PermissionError,
+            AttributeError,
+            ValueError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error while loading the model: {e}.")
 
     # show a successful message
@@ -85,8 +105,10 @@ def model_setup(
 
     try:
         # define the device to use
-        device = torch.device("cuda" if torch.cuda.is_available()
-                              else "cpu")
+        device = torch.device(
+            "cuda" if torch.cuda.is_available()
+            else "cpu"
+        )
         # get the class weights
         class_weights = _calculate_class_weights(
             targets,
@@ -103,8 +125,12 @@ def model_setup(
         )
 
         # define the LSTM model
-        model = (LSTM(model_params, config_settings)
-        .to(device))
+        model = (
+            LSTM(
+                model_params,
+                config_settings
+            ).to(device)
+        )
 
         # define the optimizer
         optimizer = _build_optimizer(
@@ -112,7 +138,11 @@ def model_setup(
             learning_rate,
             config_settings
         )
-    except (TypeError, ValueError, KeyError) as e:
+    except (
+            TypeError,
+            ValueError,
+            KeyError
+    ) as e:
         raise RuntimeError(f"❌ Error while setting up the model: {e}.")
 
     # show a successful message
@@ -126,7 +156,10 @@ def model_setup(
     )
 
 
-def _calculate_class_weights(targets, config_settings):
+def _calculate_class_weights(
+        targets,
+        config_settings
+):
     """
     Method to calculate the class weights.
     :param targets: The targets for which to calculate the class weights.
@@ -141,8 +174,8 @@ def _calculate_class_weights(targets, config_settings):
         debug(f"⚙️ Number of classes: {config_settings.num_keys}.")
 
         # be sure targets is a numpy array and shift them
-        targets = targets.cpu().numpy() if (
-            isinstance(targets, torch.Tensor)) \
+        targets = targets.cpu().numpy() \
+            if isinstance(targets, torch.Tensor)\
             else targets
 
         # get the classes appearing in target list
@@ -165,10 +198,17 @@ def _calculate_class_weights(targets, config_settings):
         )
 
         # update weights for appearing classes
-        for cls, weight in zip(present_classes, computed_weights):
+        for cls, weight in zip(
+                present_classes,
+                computed_weights
+        ):
             class_weights[cls] = weight
 
-    except (ValueError, TypeError, IndexError) as e:
+    except (
+            ValueError,
+            TypeError,
+            IndexError
+    ) as e:
         raise RuntimeError(f"❌ Error while calculating the class weights: {e}.")
 
     # show a successful message
@@ -177,7 +217,11 @@ def _calculate_class_weights(targets, config_settings):
     return class_weights
 
 
-def _build_optimizer(model, learning_rate, config_settings):
+def _build_optimizer(
+        model,
+        learning_rate,
+        config_settings
+):
     """
     Method to build the optimizer.
     :param model: Model for which the optimizer will be built.
@@ -211,7 +255,13 @@ def _build_optimizer(model, learning_rate, config_settings):
                 lr=learning_rate,
                 momentum=config_settings.momentum
             )
-    except (ValueError, TypeError, UnboundLocalError, KeyError, AssertionError) as e:
+    except (
+            ValueError,
+            TypeError,
+            UnboundLocalError,
+            KeyError,
+            AssertionError
+    ) as e:
         raise RuntimeError(f"❌ Error while building optimizer: {e}.")
 
     # show a successful message

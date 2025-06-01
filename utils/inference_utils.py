@@ -1,5 +1,4 @@
 import math
-
 import torch
 from scipy.stats import norm
 from utils.feedforward_utils import _compute_forward
@@ -17,14 +16,20 @@ def _enable_mc_dropout(model):
 
     try:
         for module in model.modules():
-            if isinstance(module, torch.nn.Dropout):
+            if isinstance(
+                    module,
+                    torch.nn.Dropout
+            ):
                 module.train()
                 # debugging
                 debug(f"⚙️ Dropout enabled.")
 
         # set dropout enabled
         model.use_mc_dropout = True
-    except (AttributeError, TypeError) as e:
+    except (
+            AttributeError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
     # show a successful message
@@ -76,7 +81,9 @@ def mc_forward_passes(
                     outputs = model(*inputs)
 
                 # store the output
-                outputs_mc.append(outputs.unsqueeze(0))
+                outputs_mc.append(
+                    outputs.unsqueeze(0)
+                )
 
         # calculate tensor, mean, and variance of outputs
         outputs_mc_tensor = torch.cat(
@@ -89,7 +96,12 @@ def mc_forward_passes(
             unbiased=False
         ) if mc_dropout_samples > 1 else None
 
-    except (TypeError, AttributeError, IndexError, ValueError) as e:
+    except (
+            TypeError,
+            AttributeError,
+            IndexError,
+            ValueError
+    ) as e:
         raise ValueError(f"❌ Error while computing MC forward passes: {e}.")
 
     # show a successful message
@@ -159,7 +171,10 @@ def _infer_batch(
                     all_vars.extend(outputs_var.cpu())
 
                 # compute the loss
-                loss = criterion(outputs_mean, y_key)
+                loss = criterion(
+                    outputs_mean,
+                    y_key
+                )
 
                 # debugging
                 debug(f"⚙️ Loss computed: {loss}.")
@@ -172,12 +187,27 @@ def _infer_batch(
                 total_loss += loss.item()
 
                 # store predictions and target for metrics
-                preds = torch.argmax(outputs_mean, dim=1)
-                all_preds.extend(preds.cpu().numpy())
-                all_targets.extend(y_key.cpu().numpy())
-                all_outputs.extend(outputs_mean.cpu())
+                preds = torch.argmax(
+                    outputs_mean,
+                    dim=1
+                )
+                all_preds.extend(
+                    preds.cpu().numpy()
+                )
+                all_targets.extend(
+                    y_key.cpu().numpy()
+                )
+                all_outputs.extend(
+                    outputs_mean.cpu()
+                )
 
-    except (IndexError, ValueError, KeyError, AttributeError, TypeError) as e:
+    except (
+            IndexError,
+            ValueError,
+            KeyError,
+            AttributeError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
 
     # show a successful message
@@ -209,21 +239,35 @@ def calculate_confidence_intervals(
 
     try:
         # calculate the z-score
-        z_score = norm.ppf(1 - (1 - config_settings.confidence_level) / 2)
+        z_score = norm.ppf(
+            1 - (1 - config_settings.confidence_level) / 2
+        )
 
         # debugging
         debug(f"⚙️ Z-score for CIs: {z_score}.")
 
         # calculate the standard deviation
-        outputs_std = torch.sqrt(torch.stack(all_vars))
+        outputs_std = torch.sqrt(
+            torch.stack(all_vars)
+        )
 
         # calculate lower and upper CIs boundaries
-        lower_ci = torch.stack(all_outputs) - z_score * outputs_std
-        upper_ci = torch.stack(all_outputs) + z_score * outputs_std
+        lower_ci = (
+                torch.stack(all_outputs) -
+                z_score * outputs_std
+        )
+        upper_ci = torch.stack(
+            all_outputs +
+            z_score * outputs_std
+        )
 
-    except (NameError, TypeError, ValueError, IndexError) as e:
-        raise RuntimeError(f"❌ Error while calculating "
-                           f"confidence intervals: {e}.")
+    except (
+            NameError,
+            TypeError,
+            ValueError,
+            IndexError
+    ) as e:
+        raise RuntimeError(f"❌ Error while calculating confidence intervals: {e}.")
 
     # show a successful message
     info("🟢 Confidence intervals calculated.")
@@ -240,7 +284,7 @@ def autoregressive_rollout(
 ):
     """
     Method to perform autoregressive rollout.
-    :param model: The model for which to perform autoregressive rollout.
+    :param model: The model to use.
     :param seed_sequence: The seed sequence.
     :param device: The device to be used.
     :param config_settings: The configuration settings.
@@ -252,9 +296,15 @@ def autoregressive_rollout(
 
     try:
         # prepare data
-        x_features_seq, x_keys_seq, _ = seed_sequence
-        x_features_seq = x_features_seq.unsqueeze(0).to(device)
-        x_keys_seq = x_keys_seq.unsqueeze(0).to(device)
+        x_features_seq, x_keys_seq, _ = (
+            seed_sequence
+        )
+        x_features_seq = (
+            x_features_seq.unsqueeze(0).to(device)
+        )
+        x_keys_seq = (
+            x_keys_seq.unsqueeze(0).to(device)
+        )
 
         all_outputs = []
         all_vars = []
@@ -262,13 +312,19 @@ def autoregressive_rollout(
         # initialize last time to current time
         last_sin = x_features_seq[0, -1, 0].item()
         last_cos = x_features_seq[0, -1, 1].item()
-        last_time = math.atan2(last_sin, last_cos) % (2 * math.pi)
+        last_time = (
+                math.atan2(last_sin, last_cos)
+                % (2 * math.pi)
+        )
 
         # check if the model is confidence-aware or not
         if confidence_aware:
-            num_samples = config_settings.mc_dropout_num_samples
+            num_samples = (
+                config_settings.mc_dropout_num_samples
+            )
         else:
             num_samples = 1
+
         # increase the temporal features
         delta_t = (2 / 1440) * (2 * math.pi)
         # for each future sequence
@@ -282,16 +338,22 @@ def autoregressive_rollout(
             )
 
             # store outputs and variances
-            all_outputs.append(outputs_mean.squeeze(0))
+            all_outputs.append(
+                outputs_mean.squeeze(0)
+            )
             if outputs_var is not None:
-                all_vars.append(outputs_var.squeeze(0))
+                all_vars.append(
+                    outputs_var.squeeze(0)
+                )
             else:
                 all_vars.append(torch.zeros_like(
                     outputs_mean.squeeze(0)
                 ))
 
             # get the predicted key as the most probable one
-            pred_key = outputs_mean.argmax(dim=-1).unsqueeze(1)
+            pred_key = (
+                outputs_mean.argmax(dim=-1).unsqueeze(1)
+            )
 
             # add a new step using the predicted key
             x_keys_seq = torch.cat(
@@ -300,7 +362,10 @@ def autoregressive_rollout(
             )
 
             # update features
-            last_time = (last_time + delta_t) % (2 * math.pi)
+            last_time = (
+                    (last_time + delta_t) %
+                    (2 * math.pi)
+            )
             new_cos = math.cos(last_time)
             new_sin = math.sin(last_time)
             new_feature = torch.tensor(
@@ -319,9 +384,13 @@ def autoregressive_rollout(
             debug(f"⚙️ At time: {last_time}.")
             debug(f"⚙️ Variance: {outputs_var}.")
 
-    except (AttributeError, IndexError, TypeError, ValueError) as e:
-        raise RuntimeError(f"❌ Error while performing "
-                           f"autoregressive rollout: {e}.")
+    except (
+            AttributeError,
+            IndexError,
+            TypeError,
+            ValueError
+    ) as e:
+        raise RuntimeError(f"❌ Error while performing autoregressive rollout: {e}.")
 
     # show a successful message
     info("🟢 Autoregressive rollout completed.")

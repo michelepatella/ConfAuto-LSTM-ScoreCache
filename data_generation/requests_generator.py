@@ -19,8 +19,7 @@ def _timestamps_to_hours(timestamps):
         TypeError,
         ValueError
     ) as e:
-        raise RuntimeError(f"❌ Error while converting timestamps "
-                           f"to hours of the day: {e}.")
+        raise RuntimeError(f"❌ Error while converting timestamps to hours of the day: {e}.")
 
     return timestamps
 
@@ -87,11 +86,9 @@ def _generate_dynamic_requests(config_settings):
 
         # check validity of generated alpha values
         if len(alpha_values) != config_settings.zipf_time_steps:
-            raise ValueError("❌ alpha_values length must"
-                             " match time_steps.")
+            raise ValueError("❌ alpha_values length must match time_steps.")
         if any(alpha <= 0 for alpha in alpha_values):
-            raise ValueError("❌ All alpha values must "
-                             "be positive.")
+            raise ValueError("❌ All alpha values must be positive.")
 
         # calculate the time step duration
         time_step_duration = (

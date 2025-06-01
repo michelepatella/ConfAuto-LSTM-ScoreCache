@@ -25,8 +25,7 @@ def _remove_missing_values(df):
             ValueError,
             KeyError
     ) as e:
-        raise RuntimeError(f"❌ Error while removing missing values"
-                           f" from the dataset: {e}.")
+        raise RuntimeError(f"❌ Error while removing missing values from the dataset: {e}.")
 
     # debugging
     debug(f"⚙️Number of rows with missing values: {initial_len - final_len}.")

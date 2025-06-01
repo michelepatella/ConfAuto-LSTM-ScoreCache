@@ -25,17 +25,15 @@ def _train_one_epoch(
     # initial message
     info("🔄 Epoch training started...")
 
-    model.train()
-
     # to show the progress bar
-    """
     training_loader = tqdm(
         training_loader,
         desc="🧠 Training Progress",
         leave=False
     )
-    """
     try:
+        model.train()
+
         for x_features, x_keys, y_key in training_loader:
             # reset the gradients
             optimizer.zero_grad()
@@ -50,16 +48,25 @@ def _train_one_epoch(
 
             # check loss
             if loss is None:
-                raise ValueError("❌ Error while training the "
-                                 "model due to None loss returned.")
+                raise ValueError("❌ Error while training the model due to None loss returned.")
 
             # backward pass
-            _compute_backward(loss, optimizer)
+            _compute_backward(
+                loss,
+                optimizer
+            )
 
-            training_loader.set_postfix(loss=loss.item())
+            training_loader.set_postfix(
+                loss=loss.item()
+            )
 
-    except (AttributeError, TypeError, ValueError,
-            StopIteration, AssertionError) as e:
+    except (
+            AttributeError,
+            TypeError,
+            ValueError,
+            StopIteration,
+            AssertionError
+    ) as e:
         raise RuntimeError(f"❌ Error while training the model (one-epoch): {e}.")
 
     # show a successful message
@@ -102,14 +109,16 @@ def train_n_epochs(
     debug(f"⚙️ Early stopping: {'Enabled' if early_stopping else 'Disabled'}.")
     debug(f"⚙️ Validation loader: {'Received' if validation_loader is not None else 'Not received'}.")
 
-    # initialize data
-    tot_loss = 0.0
-    num_epochs_run = 0
-    best_model_wts = copy.deepcopy(model.state_dict())
-    best_loss = float('inf')
-
     try:
+        # initialize data
+        tot_loss = 0.0
+        num_epochs_run = 0
+        best_model_wts = copy.deepcopy(
+            model.state_dict()
+        )
+        best_loss = float('inf')
         es = None
+
         # instantiate early stopping object (if needed)
         if early_stopping:
             es = EarlyStopping(config_settings)
@@ -146,10 +155,15 @@ def train_n_epochs(
                 # save the model weights if it is the new best one
                 if avg_loss < best_loss:
                     best_loss = avg_loss
-                    best_model_wts = copy.deepcopy(model.state_dict())
+                    best_model_wts = copy.deepcopy(
+                        model.state_dict()
+                    )
 
                 # early stopping logic
-                if early_stopping and avg_loss is not None:
+                if (
+                    early_stopping and
+                    avg_loss is not None
+                ):
                     es(avg_loss)
                     # check whether to stop
                     if es.early_stop:
@@ -165,7 +179,13 @@ def train_n_epochs(
             # load best weights to the model
             model.load_state_dict(best_model_wts)
 
-    except (NameError, AttributeError, TypeError, ValueError, LookupError) as e:
+    except (
+            NameError,
+            AttributeError,
+            TypeError,
+            ValueError,
+            LookupError
+    ) as e:
         raise RuntimeError(f"❌ Error while training the model (n-epochs): {e}.")
 
     # debugging

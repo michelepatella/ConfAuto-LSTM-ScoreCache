@@ -5,7 +5,11 @@ from utils.log_utils import debug, info
 
 class LSTM(nn.Module):
 
-    def _set_fields(self, params, config_settings):
+    def _set_fields(
+            self,
+            params,
+            config_settings
+    ):
         """
         Method to set the model's parameters.
         :param params: The model's parameters.
@@ -30,16 +34,30 @@ class LSTM(nn.Module):
             # for each required parameter
             for param in self.required_parameters:
                 # check if it is passed to the model
-                if param in params and params[param] is not None:
+                if (
+                    param in params and
+                    params[param] is not None
+                ):
                     debug(f"⚙️ '{param}' found. Using the specified value ({params[param]}).")
                     # set the parameter to the specified value
-                    setattr(self, param, params[param])
+                    setattr(
+                        self,
+                        param,
+                        params[param]
+                    )
                 else:
                     # otherwise, take the parameter from configuration settings
-                    config_value = getattr(config_settings, param)
+                    config_value = getattr(
+                        config_settings,
+                        param
+                    )
                     debug(f"⚙️ '{param}' not found or is None. Using config value ({config_value}).")
                     # and set the parameter to that value
-                    setattr(self, param, config_value)
+                    setattr(
+                        self,
+                        param,
+                        config_value
+                    )
 
             # apply dropout only if num_layers > 1
             if self.num_layers > 1:
@@ -61,14 +79,23 @@ class LSTM(nn.Module):
                 self.embedding_dim
             )
 
-        except (AttributeError, KeyError, TypeError, ValueError) as e:
+        except (
+                AttributeError,
+                KeyError,
+                TypeError,
+                ValueError
+        ) as e:
             raise RuntimeError(f"❌ Error while setting class fields: {e}.")
 
         # show a successful message
         info("🟢 LSTM fields set.")
 
 
-    def __init__(self, params, config_settings):
+    def __init__(
+            self,
+            params,
+            config_settings
+    ):
         """
         Method to initialize the LSTM model.
         :param params: The hyperparameters of the model.
@@ -79,10 +106,14 @@ class LSTM(nn.Module):
 
         super(LSTM, self).__init__()
 
+        # by default
         self.use_mc_dropout = False
 
         # set model's parameters
-        self._set_fields(params, config_settings)
+        self._set_fields(
+            params,
+            config_settings
+        )
 
         # debugging
         for param in self.required_parameters:
@@ -101,24 +132,43 @@ class LSTM(nn.Module):
                 bidirectional=self.bidirectional,
                 proj_size=self.proj_size
             )
-        except (TypeError, ValueError, KeyError) as e:
+        except (
+                TypeError,
+                ValueError,
+                KeyError
+        ) as e:
             raise RuntimeError(f"❌ Error while instantiating LSTM model: {e}.")
 
         try:
-            self.mc_dropout_layer = nn.Dropout(p=self.dropout)
-        except (TypeError, AttributeError) as e:
+            self.mc_dropout_layer = nn.Dropout(
+                p=self.dropout
+            )
+        except (
+                TypeError,
+                AttributeError
+        ) as e:
             raise RuntimeError(f"❌ Error while instantiating the Dropout layer: {e}.")
         try:
             # fully-connected layer (linear)
-            self.fc = nn.Linear(self.hidden_size, self.num_keys)
-        except (TypeError, ValueError) as e:
+            self.fc = nn.Linear(
+                self.hidden_size,
+                self.num_keys
+            )
+        except (
+                TypeError,
+                ValueError
+        ) as e:
             raise RuntimeError(f"❌ Error while instantiating the FC layer: {e}.")
 
         # show a successful message
         info("🟢 LSTM initialized.")
 
 
-    def _get_lstm_input(self, x_features, x_keys):
+    def _get_lstm_input(
+            self,
+            x_features,
+            x_keys
+    ):
         """
         Method to prepare and return the LSTM input.
         :param x_features: The features to pass to the model.
@@ -129,7 +179,10 @@ class LSTM(nn.Module):
         info("🔄 LSTM input retrieval started...")
 
         # check the inputs validity
-        if x_features is None or x_keys is None:
+        if (
+            x_features is None or
+            x_keys is None
+        ):
             raise ValueError("❌ Input features cannot be None.")
 
         # debugging
@@ -148,7 +201,10 @@ class LSTM(nn.Module):
                 (x_features, embedded_keys),
                 dim=-1
             )
-        except (RuntimeError, TypeError) as e:
+        except (
+                RuntimeError,
+                TypeError
+        ) as e:
             raise RuntimeError(f"❌ Error while constructing the LSTM input: {e}.")
 
         # show a successful message
@@ -157,7 +213,11 @@ class LSTM(nn.Module):
         return x
 
 
-    def forward(self, x_features, x_keys):
+    def forward(
+            self,
+            x_features,
+            x_keys
+    ):
         """
         Method to perform the forward pass through the LSTM.
         :param x_features: The features.
@@ -169,7 +229,10 @@ class LSTM(nn.Module):
 
         try:
             # get the input of the LSTM
-            x = self._get_lstm_input(x_features, x_keys)
+            x = self._get_lstm_input(
+                x_features,
+                x_keys
+            )
 
             # pass the features to the LSTM
             lstm_out, _ = self.lstm(x)
@@ -178,7 +241,11 @@ class LSTM(nn.Module):
             if self.use_mc_dropout:
                 lstm_out = self.mc_dropout_layer(lstm_out)
 
-        except (AttributeError, TypeError, ValueError) as e:
+        except (
+                AttributeError,
+                TypeError,
+                ValueError
+        ) as e:
             raise RuntimeError(f"❌ Error while passing data through LSTM: {e}.")
 
         # debugging
@@ -187,7 +254,10 @@ class LSTM(nn.Module):
         try:
             # get the logits from the LSTM output
             logits = self.fc(lstm_out[:, -1, :])
-        except (IndexError, AttributeError) as e:
+        except (
+                IndexError,
+                AttributeError
+        ) as e:
             raise RuntimeError(f"❌ Error while processing LSTM output: {e}.")
 
         # debugging

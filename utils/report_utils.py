@@ -56,7 +56,12 @@ def print_evaluation_report(
         print(f"Weighted Avg F1-Score:        {weighted.get('f1-score', 0):.4f}")
 
         print("\n" + "=" * 85 + "\n")
-    except (TypeError, AttributeError, KeyError, ValueError) as e:
+    except (
+            TypeError,
+            AttributeError,
+            KeyError,
+            ValueError
+    ) as e:
         raise RuntimeError(f"❌ Error while printing evaluation report: {e}.")
 
     # print a successful message
@@ -103,7 +108,11 @@ def print_system_evaluation_report(results):
             )
         print("\n" + "=" * 115 + "\n")
 
-    except (TypeError, KeyError, ValueError) as e:
+    except (
+            TypeError,
+            KeyError,
+            ValueError
+    ) as e:
         raise RuntimeError(f"❌ Error while printing system simulation report: {e}.")
 
     # print a successful message

@@ -10,7 +10,9 @@ phase_var = contextvars.ContextVar(
 )
 
 # define a global formatter
-formatter = logging.Formatter('[%(phase)s] %(levelname)s: %(message)s')
+formatter = logging.Formatter(
+    '[%(phase)s] %(levelname)s: %(message)s'
+)
 
 # all logging messages from INFO-level must be written in a file
 file_handler = RotatingFileHandler(
@@ -33,7 +35,11 @@ logging.basicConfig(
 )
 
 
-def info(msg, *args, **kwargs):
+def info(
+        msg,
+        *args,
+        **kwargs
+):
     """
     Method to print a logging info message.
     :param msg: The message to print.
@@ -48,11 +54,21 @@ def info(msg, *args, **kwargs):
             extra={"phase": phase_var.get()},
             **kwargs
         )
-    except (KeyError, ValueError, LookupError, TypeError, AttributeError) as e:
+    except (
+            KeyError,
+            ValueError,
+            LookupError,
+            TypeError,
+            AttributeError
+    ) as e:
         raise RuntimeError(f"❌ Error while logging info message: {e}.")
 
 
-def debug(msg, *args, **kwargs):
+def debug(
+        msg,
+        *args,
+        **kwargs
+):
     """
     Method to print a logging debug message.
     :param msg: The message to print.
@@ -67,5 +83,11 @@ def debug(msg, *args, **kwargs):
             extra={"phase": phase_var.get()},
             **kwargs
         )
-    except (KeyError, ValueError, LookupError, TypeError, AttributeError) as e:
+    except (
+            KeyError,
+            ValueError,
+            LookupError,
+            TypeError,
+            AttributeError
+    ) as e:
         raise RuntimeError(f"❌ Error while logging debug message: {e}.")

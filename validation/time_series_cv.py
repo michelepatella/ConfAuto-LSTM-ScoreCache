@@ -38,8 +38,7 @@ def _compute_time_series_cv(
             ValueError,
             TypeError
     ) as e:
-        raise RuntimeError(f"❌ Error while instantiating"
-                           f" Time Series Split: {e}.")
+        raise RuntimeError(f"❌ Error while instantiating Time Series Split: {e}.")
 
     fold_losses = []
     # iterate over the training set
@@ -67,8 +66,7 @@ def _compute_time_series_cv(
                 ValueError,
                 AttributeError
         ) as e:
-            raise RuntimeError(f"❌ Error while defining training and"
-                               f" validation sets: {e}.")
+            raise RuntimeError(f"❌ Error while defining training and validation sets: {e}.")
 
         # debugging
         debug(f"⚙️ Training size (Time series CV): {len(training_dataset)}.")
@@ -100,8 +98,7 @@ def _compute_time_series_cv(
             AttributeError,
             ValueError
         ) as e:
-            raise RuntimeError(f"❌ Error while performing setup"
-                               f" for training: {e}.")
+            raise RuntimeError(f"❌ Error while performing setup for training: {e}.")
 
         # train the model
         avg_loss, _ = train_n_epochs(
@@ -138,7 +135,6 @@ def _compute_time_series_cv(
         TypeError,
         ValueError
     ) as e:
-        raise RuntimeError(f"❌ Error while calculating final "
-                           f"average loss: {e}.")
+        raise RuntimeError(f"❌ Error while calculating final average loss: {e}.")
 
     return final_avg_loss

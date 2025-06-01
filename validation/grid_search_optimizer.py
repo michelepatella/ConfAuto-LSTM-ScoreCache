@@ -47,8 +47,7 @@ def _flatten_search_space(d, parent_key=()):
             RecursionError,
             AttributeError
     ) as e:
-        raise RuntimeError(f"❌ Error while making flatten"
-                           f" the search space: {e}.")
+        raise RuntimeError(f"❌ Error while making flatten the search space: {e}.")
 
     # show a successful message
     info("🟢 Search space flatten.")
@@ -96,8 +95,7 @@ def _set_nested_dict(d, keys, value):
             IndexError,
             KeyError
     ) as e:
-        raise RuntimeError(f"❌ Error while setting a value "
-                           f"in a nested dictionary: {e}.")
+        raise RuntimeError(f"❌ Error while setting a value in a nested dictionary: {e}.")
 
     # show a successful message
     info("🟢 Nested dictionary setting completed.")

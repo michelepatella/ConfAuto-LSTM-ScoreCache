@@ -27,9 +27,12 @@ class AccessLogsDataset(Dataset):
             # define the splitting's index
             split_idx = int(len(self.data) *
             config_settings.training_perc)
-        except (AttributeError, TypeError, ValueError) as e:
-            raise RuntimeError(f"❌ Error while defining the dataset"
-                               f" splitting's index: {e}.")
+        except (
+                AttributeError,
+                TypeError,
+                ValueError
+        ) as e:
+            raise RuntimeError(f"❌ Error while defining the dataset splitting's index: {e}.")
 
         # debugging
         debug(f"⚙️ Split index: {split_idx}.")
@@ -40,14 +43,22 @@ class AccessLogsDataset(Dataset):
                 self.data = self.data[:split_idx]
             else:
                 self.data = self.data[split_idx:]
-        except (TypeError, IndexError, AttributeError) as e:
+        except (
+                TypeError,
+                IndexError,
+                AttributeError
+        ) as e:
             raise RuntimeError(f"❌ Error while splitting the dataset: {e}.")
 
         # show a successful message
         info("🟢 Dataset split.")
 
 
-    def _set_fields(self, data, config_settings):
+    def _set_fields(
+            self,
+            data,
+            config_settings
+    ):
         """
         Method to set the fields of the dataset.
         :param data: The data from which the fields are extracted.
@@ -72,14 +83,22 @@ class AccessLogsDataset(Dataset):
             debug(f"⚙️ Target: {self.target}.")
             debug(f"⚙️ Sequence length: {self.seq_len}.")
 
-        except (AttributeError, TypeError, IndexError) as e:
+        except (
+                AttributeError,
+                TypeError,
+                IndexError
+        ) as e:
             raise RuntimeError(f"❌ Error setting the class fields: {e}.")
 
         # show a successful message
         info("🟢 AccessLogsDataset fields set.")
 
 
-    def __init__(self, dataset_type, config_settings):
+    def __init__(
+            self,
+            dataset_type,
+            config_settings
+    ):
         """
         Method to instantiate the access logs dataset.
         :param dataset_type: The type of dataset requested ("training" or "testing").
@@ -90,24 +109,36 @@ class AccessLogsDataset(Dataset):
 
         # load the dataset
         df = load_dataset(config_settings)
-        # shift target column (requests)
-        df[df.columns[-1]] = df[df.columns[-1]].astype(int) - 1
 
         # debugging
         debug(f"⚙️ Dataset shape: {df.shape}.")
 
         try:
+            # shift target column (requests)
+            df[df.columns[-1]] = df[df.columns[-1]].astype(int) - 1
             # set data
             self.data = df.copy()
-        except (AttributeError, TypeError, MemoryError) as e:
-            raise RuntimeError(f"❌ Error setting data of the dataset "
-                               f"by copying it: {e}.")
+        except (
+                AttributeError,
+                KeyError,
+                ValueError,
+                TypeError,
+                IndexError,
+                MemoryError
+        ) as e:
+            raise RuntimeError(f"❌ Error setting data of the dataset by copying it: {e}.")
 
         # split the dataset to assign data properly
-        self._split_dataset(dataset_type, config_settings)
+        self._split_dataset(
+            dataset_type,
+            config_settings
+        )
 
         # set the fields of the dataset
-        self._set_fields(self.data, config_settings)
+        self._set_fields(
+            self.data,
+            config_settings
+        )
 
         # show a successful message
         info("🟢 AccessLogsDataset initialized.")
@@ -161,7 +192,13 @@ class AccessLogsDataset(Dataset):
             debug(f"⚙️ Key shape: {x_keys.shape}")
             debug(f"⚙️ Target: {y_key.item()}.")
 
-        except (IndexError, KeyError, ValueError, TypeError, AttributeError) as e:
+        except (
+                IndexError,
+                KeyError,
+                ValueError,
+                TypeError,
+                AttributeError
+        ) as e:
             raise RuntimeError(f"❌ Error retrieving item at index {idx}: {e}.")
 
         # show a successful message

@@ -58,14 +58,23 @@ def plot_zipf_loglog(requests):
         plt.tight_layout()
         plt.show()
         plt.close()
-    except (NameError, AttributeError, TypeError, ValueError, IndexError) as e:
+    except (
+            NameError,
+            AttributeError,
+            TypeError,
+            ValueError,
+            IndexError
+    ) as e:
         raise RuntimeError(f"❌ Error while building Zipg log-log plot: {e}.")
 
     # show a successful message
     info("🟢 Zipf log-log plot built.")
 
 
-def plot_daily_profile(timestamps, bin_size=0.5):
+def plot_daily_profile(
+        timestamps,
+        bin_size=0.5
+):
     """
     Method to plot the distribution of requests over a 24-hour day.
     :param timestamps: Timestamps (in hours).
@@ -80,10 +89,17 @@ def plot_daily_profile(timestamps, bin_size=0.5):
 
         # define bins
         num_bins = int(24 / bin_size)
-        bins = np.linspace(0, 24, num_bins + 1)
+        bins = np.linspace(
+            0,
+            24,
+            num_bins + 1
+        )
 
         # define the histogram
-        counts, _ = np.histogram(hours, bins=bins)
+        counts, _ = np.histogram(
+            hours,
+            bins=bins
+        )
 
         plt.figure(figsize=(12, 10))
         plt.bar(
@@ -141,7 +157,10 @@ def plot_key_usage_heatmap(
         )
 
         # fill the heatmap
-        for key, ts in zip(requests, timestamps):
+        for key, ts in zip(
+                requests,
+                timestamps
+        ):
             hour = int(ts)
             key_idx = key - config_settings.first_key
             if (
@@ -191,14 +210,23 @@ def plot_key_usage_heatmap(
         plt.tight_layout()
         plt.show()
         plt.close()
-    except (AttributeError, TypeError, ValueError, IndexError) as e:
+    except (
+            AttributeError,
+            TypeError,
+            ValueError,
+            IndexError
+    ) as e:
         raise RuntimeError(f"❌ Error while building the confusion matrix plot: {e}.")
 
     # show successful message
     info("🟢 Key usage heatmap for all 24 hours plotted.")
 
 
-def plot_precision_recall_curve(targets, outputs, num_keys):
+def plot_precision_recall_curve(
+        targets,
+        outputs,
+        num_keys
+):
     """
     Method to plot the precision and recall curve.
     :param targets: The targets.
@@ -255,7 +283,11 @@ def plot_precision_recall_curve(targets, outputs, num_keys):
         plt.show()
         plt.close()
 
-    except (ValueError, TypeError, IndexError) as e:
+    except (
+            ValueError,
+            TypeError,
+            IndexError
+    ) as e:
         raise RuntimeError(f"❌ Error while building the precision-recall curve: {e}.")
 
     # show a successful message
@@ -294,7 +326,11 @@ def plot_confusion_matrix(confusion_matrix):
         plt.tight_layout()
         plt.show()
         plt.close()
-    except (AttributeError, TypeError, ValueError) as e:
+    except (
+            AttributeError,
+            TypeError,
+            ValueError
+    ) as e:
         raise RuntimeError(f"❌ Error while building the confusion matrix plot: {e}.")
 
     # show a successful message
@@ -319,8 +355,14 @@ def plot_hit_miss_rate_over_time(results):
             # extract hit rate results
             policy = result['policy']
             timeline = result['timeline']
-            x = [point['index'] for point in timeline]
-            y_hit = [point['instant_hit_rate'] for point in timeline]
+            x = [
+                point['index']
+                for point in timeline
+            ]
+            y_hit = [
+                point['instant_hit_rate']
+                for point in timeline
+            ]
             plt.plot(
                 x,
                 y_hit,
@@ -350,8 +392,14 @@ def plot_hit_miss_rate_over_time(results):
             # extract results
             policy = result['policy']
             timeline = result['timeline']
-            x = [point['index'] for point in timeline]
-            y_miss = [100 - point['instant_hit_rate'] for point in timeline]
+            x = [
+                point['index']
+                for point in timeline
+            ]
+            y_miss = [
+                100 - point['instant_hit_rate']
+                for point in timeline
+            ]
             plt.plot(
                 x,
                 y_miss,
@@ -376,12 +424,19 @@ def plot_hit_miss_rate_over_time(results):
         plt.legend()
         plt.tight_layout()
         plt.show()
-        plt.savefig("hit_miss_plot.png", format='png')
+        plt.savefig(
+            "hit_miss_plot.png",
+            format='png'
+        )
         plt.close()
 
-    except (KeyError, TypeError, ValueError, AttributeError) as e:
-        raise RuntimeError(f"❌ Error while building the hit "
-                           f"rate and miss rate plot: {e}.")
+    except (
+            KeyError,
+            TypeError,
+            ValueError,
+            AttributeError
+    ) as e:
+        raise RuntimeError(f"❌ Error while building the hit rate and miss rate plot: {e}.")
 
     # show a successful message
     info("🟢 Hit rate and miss rate plot built.")

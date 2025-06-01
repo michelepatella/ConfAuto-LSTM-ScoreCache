@@ -17,16 +17,14 @@ def _check_cv_params(
         cv_num_folds <= 1 or
         not isinstance(cv_num_folds, int)
     ):
-        raise RuntimeError("❌ 'validation.cross_validation.num_folds' "
-                           "must be an integer > 1.")
+        raise RuntimeError("❌ 'validation.cross_validation.num_folds' must be an integer > 1.")
 
     # check number of epochs
     if (
         validation_num_epochs <= 0 or
         not isinstance(validation_num_epochs, int)
     ):
-        raise RuntimeError("❌ 'validation.cross_validation.num_epochs' "
-                           "must be an integer > 0.")
+        raise RuntimeError("❌ 'validation.cross_validation.num_epochs' must be an integer > 0.")
 
 
 def _check_validation_early_stopping_params(

@@ -47,7 +47,13 @@ def _calculate_top_k_accuracy(
         # calculate the accuracy
         accuracy = correct / len(targets)
 
-    except (RuntimeError, IndexError, TypeError, ZeroDivisionError, ValueError) as e:
+    except (
+            RuntimeError,
+            IndexError,
+            TypeError,
+            ZeroDivisionError,
+            ValueError
+    ) as e:
         raise RuntimeError(f"❌ Error while computing top-k accuracy: {e}.")
 
     # show a successful message
@@ -56,7 +62,10 @@ def _calculate_top_k_accuracy(
     return accuracy
 
 
-def _calculate_kappa_statistic(targets, predictions):
+def _calculate_kappa_statistic(
+        targets,
+        predictions
+):
     """
     Method to calculate the kappa statistic.
     :param targets: The targets.
@@ -68,8 +77,14 @@ def _calculate_kappa_statistic(targets, predictions):
 
     try:
         # calculate kappa statistic
-        kappa = cohen_kappa_score(targets, predictions)
-    except (ValueError, TypeError) as e:
+        kappa = cohen_kappa_score(
+            targets,
+            predictions
+        )
+    except (
+            ValueError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error while calculating kappa statistic: {e}.")
 
     # show a successful message
@@ -112,7 +127,10 @@ def _compute_metrics(
         )
 
         # compute the confusion matrix
-        conf_matrix = confusion_matrix(targets, predictions)
+        conf_matrix = confusion_matrix(
+            targets,
+            predictions
+        )
 
         # calculate kappa statistic
         kappa_statistic = _calculate_kappa_statistic(
@@ -120,7 +138,10 @@ def _compute_metrics(
             predictions
         )
 
-    except (ValueError, TypeError) as e:
+    except (
+            ValueError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error while computing metrics: {e}.")
 
     # collect metrics
@@ -143,18 +164,32 @@ def compute_eviction_mistake_rate(metrics_logger):
     :param metrics_logger: The metrics logger.
     :return: The eviction mistake rate.
     """
-    # initialize data
-    mistakes = 0
-    total = len(metrics_logger.evicted_keys)
+    # initial message
+    info("🔄 Eviction mistake rate calculation started...")
 
-    # count mistakes due to wrongly evictions
-    for key, eviction_time in metrics_logger.evicted_keys.items():
-        future_accesses = [
-            t for t in metrics_logger.access_events.get(key, [])
-            if t > eviction_time
-        ]
-        if future_accesses:
-            mistakes += 1
+    try:
+        # initialize data
+        mistakes = 0
+        total = len(metrics_logger.evicted_keys)
+
+        # count mistakes due to wrongly evictions
+        for key, eviction_time in metrics_logger.evicted_keys.items():
+            future_accesses = [
+                t for t in metrics_logger.access_events.get(key, [])
+                if t > eviction_time
+            ]
+            if future_accesses:
+                mistakes += 1
+
+    except (
+        AttributeError,
+        TypeError,
+        ZeroDivisionError
+    ) as e:
+        raise RuntimeError(f"❌ Error while computing eviction mistake rate: {e}.")
+
+    # show a successful message
+    info("🟢 Eviction mistake rate computed.")
 
     return mistakes / total if total > 0 else 0
 
@@ -169,20 +204,35 @@ def compute_prefetch_hit_rate(
     :param window_size: The window size.
     :return: The prefetch hit rate.
     """
+    # initial message
+    info("🔄 Prefetch hit rate calculation started...")
+
     # initialize data
     hits = 0
     total = 0
 
-    # count prefetched keys have been hit
-    for t, predicted_keys in metrics_logger.prefetch_predictions.items():
-        if not isinstance(predicted_keys, (list, set, tuple)):
-            predicted_keys = [predicted_keys]
-        total += len(predicted_keys)
-        for key in predicted_keys:
-            for access_time in metrics_logger.access_events.get(key, []):
-                if t < access_time <= t + window_size:
-                    hits += 1
-                    break
+    try:
+        # count prefetched keys have been hit
+        for t, predicted_keys in metrics_logger.prefetch_predictions.items():
+            if not isinstance(predicted_keys, (list, set, tuple)):
+                predicted_keys = [predicted_keys]
+            total += len(predicted_keys)
+            for key in predicted_keys:
+                for access_time in metrics_logger.access_events.get(key, []):
+                    if t < access_time <= t + window_size:
+                        hits += 1
+                        break
+    except (
+        AttributeError,
+        TypeError,
+        ValueError,
+        ZeroDivisionError,
+        NameError
+    ) as e:
+        raise RuntimeError(f"❌ Error while computing prefetch hit rate: {e}.")
+
+    # show a successful message
+    info("🟢 Prefetch hit rate computed.")
 
     return hits / total if total > 0 else 0
 
@@ -193,14 +243,30 @@ def compute_ttl_mae(metrics_logger):
     :param metrics_logger: The metrics logger.
     :return: The MAE.
     """
+    # initial message
+    info("🔄 TTL MAE calculation started...")
+
     errors = []
 
-    # calculate MAE on TTL assigned
-    for key, (put_time, predicted_ttl) in metrics_logger.put_events.items():
-        actual_accesses = metrics_logger.access_events.get(key, [])
-        if actual_accesses:
-            last_use = max([t for t in actual_accesses if t >= put_time], default=None)
-            if last_use:
-                true_ttl = last_use - put_time
-                errors.append(abs(true_ttl - predicted_ttl))
+    try:
+        # calculate MAE on TTL assigned
+        for key, (put_time, predicted_ttl) in metrics_logger.put_events.items():
+            actual_accesses = metrics_logger.access_events.get(key, [])
+            if actual_accesses:
+                last_use = max([t for t in actual_accesses if t >= put_time], default=None)
+                if last_use:
+                    true_ttl = last_use - put_time
+                    errors.append(abs(true_ttl - predicted_ttl))
+    except (
+        AttributeError,
+        TypeError,
+        ValueError,
+        KeyError,
+        NameError
+    ) as e:
+        raise RuntimeError(f"❌ Error while computing TTL MAE: {e}.")
+
+    # show a successful message
+    info("🟢 TTL MAE computed.")
+
     return np.mean(errors) if errors else None

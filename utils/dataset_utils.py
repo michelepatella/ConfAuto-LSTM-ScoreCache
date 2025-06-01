@@ -20,7 +20,10 @@ def create_dataframe(columns):
 
         # create the dataframe
         df = pd.DataFrame(columns)
-    except (ValueError, TypeError) as e:
+    except (
+            ValueError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error while creating the dataframe: {e}.")
 
     # show a successful message
@@ -29,7 +32,10 @@ def create_dataframe(columns):
     return df
 
 
-def save_dataset(df, config_settings):
+def save_dataset(
+        df,
+        config_settings
+):
     """
     Method to save the dataset.
     :param df: Dataframe to save.
@@ -48,11 +54,20 @@ def save_dataset(df, config_settings):
 
     try:
         # convert dataframe to CSV file
-        df.to_csv(dataset_path, index=False)
+        df.to_csv(
+            dataset_path,
+            index=False
+        )
 
         # show a successful message
         info(f"🟢 Dataset saved to '{dataset_path}'.")
-    except (OSError, PermissionError, FileNotFoundError, ValueError, TypeError) as e:
+    except (
+            OSError,
+            PermissionError,
+            FileNotFoundError,
+            ValueError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error while saving the dataset: {e}.")
 
 
@@ -102,7 +117,12 @@ def load_dataset(config_settings):
     try:
         # load the dataset
         df = pd.read_csv(dataset_path)
-    except (ValueError, EmptyDataError, ParserError, UnicodeDecodeError) as e:
+    except (
+            ValueError,
+            EmptyDataError,
+            ParserError,
+            UnicodeDecodeError
+    ) as e:
         raise RuntimeError(f"❌ Error while loading dataset: {e}.")
 
     # debugging
@@ -164,8 +184,7 @@ def split_training_set(
         IndexError,
         NameError
     ) as e:
-        raise RuntimeError(f"❌ Error while splitting training set into "
-                           f"training and validation sets: {e}.")
+        raise RuntimeError(f"❌ Error while splitting training set into training and validation sets: {e}.")
 
     return (
         final_training_set,

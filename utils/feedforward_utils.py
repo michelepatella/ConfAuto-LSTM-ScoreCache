@@ -25,7 +25,10 @@ def _compute_forward(
 
         # debugging
         debug(f"⚙️ Target batch: {y_key}.")
-    except (ValueError, TypeError) as e:
+    except (
+            ValueError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error while error unpacking data: {e}.")
 
     try:
@@ -33,29 +36,44 @@ def _compute_forward(
         x_features = x_features.to(device)
         x_keys = x_keys.to(device)
         y_key = y_key.to(device)
-    except (AttributeError, TypeError) as e:
+    except (
+            AttributeError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error while moving data to device: {e}.")
 
     try:
         # calculate the outputs
-        outputs = model(x_features, x_keys)
+        outputs = model(
+            x_features,
+            x_keys
+        )
 
         # debugging
         debug(f"⚙️ Input batch shape: {x_features.shape}.")
         debug(f"⚙️ Input keys shape: {x_keys.shape}")
         debug(f"⚙️ Model output shape: {outputs.shape}.")
-    except (TypeError, AttributeError) as e:
+    except (
+            TypeError,
+            AttributeError
+    ) as e:
         raise RuntimeError(f"❌ Error during model inference: {e}.")
 
     loss = None
     if criterion is not None:
         try:
             # calculate the loss and update the total one
-            loss = criterion(outputs, y_key)
+            loss = criterion(
+                outputs,
+                y_key
+            )
 
             # debugging
             debug(f"⚙️ Loss: {loss.item()}.")
-        except (TypeError, ValueError) as e:
+        except (
+                TypeError,
+                ValueError
+        ) as e:
             raise RuntimeError(f"❌ Error while calculating loss: {e}.")
 
     # show a successful message
@@ -80,7 +98,10 @@ def _compute_backward(loss, optimizer):
 
         # optimize backward pass
         optimizer.step()
-    except (AttributeError, TypeError) as e:
+    except (
+            AttributeError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error during backpropagation: {e}.")
 
     # show a successful message
