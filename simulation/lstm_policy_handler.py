@@ -154,7 +154,6 @@ def handle_lstm_cache_policy(
     :return:
     """
     # initial message
-    global upper_ci, lower_ci
     info(f"🔄 LSTM-based cache policy management started...")
 
     try:
@@ -224,6 +223,7 @@ def handle_lstm_cache_policy(
                 confidence_aware
             )
 
+            upper_ci, lower_ci = None, None
             if confidence_aware:
                 # calculate CIs related to the predictions
                 lower_ci, upper_ci = calculate_confidence_intervals(
