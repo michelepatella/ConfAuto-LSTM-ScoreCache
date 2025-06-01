@@ -7,8 +7,8 @@ class CacheWrapper:
     def __init__(
             self,
             cache_class,
-            config_settings,
-            metrics_logger
+            metrics_logger,
+            config_settings
     ):
         """
         Method to initialize a CacheWrapper, used

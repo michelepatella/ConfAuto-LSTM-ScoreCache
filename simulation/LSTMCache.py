@@ -9,8 +9,8 @@ class LSTMCache:
 
     def __init__(
             self,
-            config_settings,
-            metrics_logger
+            metrics_logger,
+            config_settings
     ):
         """
         Method to initialize the LSTM cache.
