@@ -180,6 +180,9 @@ class LSTMCache:
                 # trace event
                 self.metrics_logger.log_prefetch_prediction(current_time, key)
 
+                # trace event
+                self.metrics_logger.log_put(key, current_time, current_time + ttl)
+
             else:
                 # cold-start management
 
@@ -187,6 +190,9 @@ class LSTMCache:
                 if self.contains(key, current_time):
                     # update the expiration time of the key
                     self.expiry[key] = current_time + config_settings.fixed_ttl
+
+                    # trace event
+                    self.metrics_logger.log_put(key, current_time, current_time + config_settings.fixed_ttl)
 
                     # debugging
                     debug(f"⚙️ Key {key} already in the cache, new TTL: {self.expiry[key]}.")
@@ -213,11 +219,11 @@ class LSTMCache:
                 self.scores[key] = score
                 self.expiry[key] = current_time + config_settings.fixed_ttl
 
+                # trace event
+                self.metrics_logger.log_put(key, current_time, current_time + config_settings.fixed_ttl)
+
             # debugging
             debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")
-
-            # trace event
-            self.metrics_logger.log_put(key, current_time, ttl)
 
         except (AttributeError, TypeError, KeyError, ValueError) as e:
             raise RuntimeError(f"❌ Error while putting the key"
