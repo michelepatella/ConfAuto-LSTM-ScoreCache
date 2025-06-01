@@ -154,6 +154,7 @@ def handle_lstm_cache_policy(
     :return:
     """
     # initial message
+    global upper_ci, lower_ci
     info(f"🔄 LSTM-based cache policy management started...")
 
     try:
