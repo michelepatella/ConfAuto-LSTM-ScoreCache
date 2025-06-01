@@ -18,42 +18,35 @@ def run_simulations(config_settings):
     info("🔄 Cache simulations started...")
 
     try:
-        # define cache sizes and TTL values
-        cache_size = {
-            'small': 5,
-            'medium': 10,
-            'large': 15
-        }
-        ttl = {
-            'small': 30,
-            'medium': 60,
-            'large': 120
+        # setup cache strategies
+        strategies = {
+            'LRU': CacheWrapper(
+                LRUCache,
+                config_settings
+            ),
+            'LFU': CacheWrapper(
+                LFUCache,
+                config_settings
+            ),
+            'FIFO': CacheWrapper(
+                FIFOCache,
+                config_settings
+            ),
+            'RANDOM': RandomCache(config_settings),
+            'LSTM': LSTMCache(config_settings),
+            'LSTM+CI': LSTMCache(config_settings)
         }
 
         # run simulations
         results = []
-        for (size_key, size_val), (_, ttl_val) in zip(cache_size.items(), ttl.items()):
-            # change config
-            config_settings.cache_size = size_val
-            config_settings.fixed_ttl = ttl_val
-            config_settings.ttl_base = ttl_val
-
-            # define strategies
-            strategies = {
-                'LRU': CacheWrapper(LRUCache, config_settings),
-                'LFU': CacheWrapper(LFUCache, config_settings),
-                'FIFO': CacheWrapper(FIFOCache, config_settings),
-                'RANDOM': RandomCache(config_settings),
-                'LSTM': LSTMCache(config_settings)
-            }
-
+        for policy, cache in strategies.items():
             # simulate a cache policy and save results
-            for policy, cache in strategies.items():
-                # simulate and store result
-                result = simulate_cache_policy(cache, policy, config_settings)
-                result['cache_size'] = size_val
-                result['ttl'] = ttl_val
-                results.append(result)
+            result = simulate_cache_policy(
+                cache,
+                policy,
+                config_settings
+            )
+            results.append(result)
 
     except (KeyError, TypeError, ValueError, AttributeError) as e:
         raise RuntimeError(f"❌ Error while running cache simulations: {e}.")

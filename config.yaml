@@ -1,110 +1,110 @@
 data:
   distribution:
-    seed: 42 #
-    type: dynamic #
-    num_requests: 30000 #
-    num_keys: 30 #
+    seed: 42
+    type: dynamic
+    num_requests: 30000
+    num_keys: 30
     key_range:
-      first_key: 1 #
-      last_key: 30 #
+      first_key: 1
+      last_key: 30
   access_pattern:
     zipf:
-      alpha: 0.8 #
-      alpha_start: 0.5 #
-      alpha_end: 2.0 #
-      time_steps: 5 #
+      alpha: 0.8
+      alpha_start: 0.5
+      alpha_end: 2.0
+      time_steps: 5
     access_behavior:
-      repetition_interval: 7 #
-      repetition_offset: 3 #
-      toggle_interval: 10 #
-      cycle_base: 5 #
-      cycle_mod: 3 #
-      cycle_divisor: 50 #
-      distortion_interval: 4 #
-      noise_range: [ -2, 3 ] #
-      memory_interval: 9 #
-      memory_offset: 6 #
+      repetition_interval: 7
+      repetition_offset: 3
+      toggle_interval: 10
+      cycle_base: 5
+      cycle_mod: 3
+      cycle_divisor: 50
+      distortion_interval: 4
+      noise_range: [ -2, 3 ]
+      memory_interval: 9
+      memory_offset: 6
   temporal_pattern:
     burstiness:
-      burst_high: 0.8 #
-      burst_low: 1.2 #
-      burst_hour_start: 10 #
-      burst_hour_end: 18 #
+      burst_high: 0.8
+      burst_low: 1.2
+      burst_hour_start: 10
+      burst_hour_end: 18
     periodic:
-      base_scale: 90 #
-      amplitude: 50 #
+      base_scale: 90
+      amplitude: 50
   sequence:
-    len: 25 #
-    embedding_dim: 32 #
+    len: 25
+    embedding_dim: 32
   dataset:
-    training_perc: 0.7 #
-    validation_perc: 0.25 #
-    static_save_path: data/static_access_logs.csv #
-    dynamic_save_path: data/dynamic_access_logs.csv #
+    training_perc: 0.7
+    validation_perc: 0.25
+    static_save_path: data/static_access_logs.csv
+    dynamic_save_path: data/dynamic_access_logs.csv
 model:
   general:
-    num_features: 2 #
-    save_path: model/trained_lstm.pt #
+    num_features: 2
+    save_path: model/trained_lstm.pt
   params:
-    hidden_size: 128 #
-    num_layers: 2 #
-    bias: false #
-    batch_first: true #
-    dropout: 0.3 #
-    bidirectional: false #
-    proj_size: 0 #
+    hidden_size: 128
+    num_layers: 2
+    bias: false
+    batch_first: true
+    dropout: 0.3
+    bidirectional: false
+    proj_size: 0
 validation:
   cross_validation:
-    num_folds: 10 #
-    num_epochs: 15 #
+    num_folds: 10
+    num_epochs: 15
   early_stopping:
-    patience: 5 #
-    delta: 0.0005 #
+    patience: 5
+    delta: 0.0005
   search_space:
     model:
       params:
         hidden_size_range:
-        - 128 #
-        - 256 #
+        - 128
+        - 256
         num_layers_range:
-        - 2 #
-        - 3 #
+        - 2
+        - 3
         dropout_range:
-        - 0.1 #
-        - 0.3 #
+        - 0.1
+        - 0.3
     training:
       optimizer:
         learning_rate_range:
-        - 0.001 #
-        - 0.005 #
+        - 0.001
+        - 0.005
 training:
   general:
-    num_epochs: 500 #
-    batch_size: 64 #
+    num_epochs: 500
+    batch_size: 64
   optimizer:
-    type: adamw #
-    learning_rate: 0.005 #
-    weight_decay: 0.05 #
-    momentum: 0.9 #
+    type: adamw
+    learning_rate: 0.005
+    weight_decay: 0.05
+    momentum: 0.9
   early_stopping:
-    patience: 20 #
-    delta: 0.0001 #
+    patience: 20
+    delta: 0.0001
 testing:
   general:
-    batch_size: 64 #
+    batch_size: 64
 evaluation:
-  top_k: 3 #
+  top_k: 3
 inference:
   confidence_intervals:
-    confidence_level: 0.95 #
+    confidence_level: 0.95
   mc_dropout:
-    num_samples: 50 #
+    num_samples: 50
 simulation:
   general:
-    cache_size: 5 #
+    cache_size: 5
   traditional_cache:
-    ttl: 60 #
+    ttl: 60
   lstm_cache:
-    prediction_interval: 5 #
-    threshold_score: 0.6 #
-    ttl_base: 60 #
+    prediction_interval: 5
+    threshold_score: 0.6
+    ttl_base: 60

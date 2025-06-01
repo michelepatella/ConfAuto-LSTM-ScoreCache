@@ -235,7 +235,8 @@ def autoregressive_rollout(
     model,
     seed_sequence,
     device,
-    config_settings
+    config_settings,
+    confidence_aware
 ):
     """
     Method to perform autoregressive rollout.
@@ -243,6 +244,7 @@ def autoregressive_rollout(
     :param seed_sequence: The seed sequence.
     :param device: The device to be used.
     :param config_settings: The configuration settings.
+    :param confidence_aware: Specifies whether to use CIs.
     :return: All the outputs and the variances.
     """
     # initial message
@@ -262,6 +264,11 @@ def autoregressive_rollout(
         last_cos = x_features_seq[0, -1, 1].item()
         last_time = math.atan2(last_sin, last_cos) % (2 * math.pi)
 
+        # check if the model is confidence-aware or not
+        if confidence_aware:
+            num_samples = config_settings.mc_dropout_num_samples
+        else:
+            num_samples = 1
         # increase the temporal features
         delta_t = (2 / 1440) * (2 * math.pi)
         # for each future sequence
@@ -271,7 +278,7 @@ def autoregressive_rollout(
                 model,
                 (x_features_seq, x_keys_seq),
                 device,
-                config_settings.mc_dropout_num_samples
+                num_samples
             )
 
             # store outputs and variances
