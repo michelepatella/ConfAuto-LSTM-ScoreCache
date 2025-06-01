@@ -55,22 +55,33 @@ def testing(config_settings):
         compute_metrics=True
     )
 
-    # show results
-    print_evaluation_report(
-        metrics["class_report"],
-        metrics["top_k_accuracy"],
-        metrics["kappa_statistic"],
-        avg_loss,
-        config_settings
-    )
+    try:
+        # show results
+        print_evaluation_report(
+            metrics["class_report"],
+            metrics["top_k_accuracy"],
+            metrics["kappa_statistic"],
+            avg_loss,
+            config_settings
+        )
 
-    # show some plots
-    plot_precision_recall_curve(
-        all_targets,
-        torch.stack(all_outputs).numpy(),
-        config_settings.num_keys
-    )
-    plot_confusion_matrix(metrics["confusion_matrix"])
+        # show some plots
+        plot_precision_recall_curve(
+            all_targets,
+            torch.stack(all_outputs).numpy(),
+            config_settings.num_keys
+        )
+        plot_confusion_matrix(
+            metrics["confusion_matrix"]
+        )
+    except (
+        KeyError,
+        NameError,
+        TypeError,
+        AttributeError,
+        ValueError,
+    ) as e:
+        raise RuntimeError(f"❌ Error while showing testing results: {e}.")
 
     # print a successful message
     info("✅ Testing completed.")

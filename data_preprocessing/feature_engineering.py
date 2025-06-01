@@ -31,7 +31,8 @@ def _encode_time_trigonometrically(
         df = df.drop(columns=[time_column])
 
     except KeyError as e:
-        raise RuntimeError(f"❌ Error during trigonometrical encoding: {e}.")
+        raise RuntimeError(f"❌ Error during trigonometrical "
+                           f"encoding: {e}.")
 
     # show successful message
     info("🟢 Time column encoded trigonometrically.")
@@ -56,15 +57,26 @@ def build_features(
 
     try:
         # build new features
-        df = _encode_time_trigonometrically(df, time_column)
+        df = _encode_time_trigonometrically(
+            df,
+            time_column
+        )
 
         # reorder column s.t. target column is the last one
-        features = [col for col in df.columns if col != target_column]
+        features = [
+            col for col in df.columns
+            if col != target_column
+        ]
         df = df[features + [target_column]]
 
         # show successful message
         info("🟢 Feature engineering completed.")
 
         return df
-    except (KeyError, TypeError, ValueError, AttributeError) as e:
+    except (
+            KeyError,
+            TypeError,
+            ValueError,
+            AttributeError
+    ) as e:
         raise RuntimeError(f"❌ Error during feature engineering: {e}.")

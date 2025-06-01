@@ -10,18 +10,23 @@ def _remove_missing_values(df):
     # initial message
     info("🔄 Missing values remotion started...")
 
-    # size of the original dataset
-    initial_len = len(df)
-
     try:
+        # size of the original dataset
+        initial_len = len(df)
+
         # remove rows with missing values
         df = df.dropna(axis=0, how='any')
-    except (AttributeError, TypeError, ValueError, KeyError) as e:
+
+        # size of the dataset without missing values
+        final_len = len(df)
+    except (
+            AttributeError,
+            TypeError,
+            ValueError,
+            KeyError
+    ) as e:
         raise RuntimeError(f"❌ Error while removing missing values"
                            f" from the dataset: {e}.")
-
-    # size of the dataset without missing values
-    final_len = len(df)
 
     # debugging
     debug(f"⚙️Number of rows with missing values: {initial_len - final_len}.")

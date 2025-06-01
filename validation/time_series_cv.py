@@ -23,21 +23,29 @@ def _compute_time_series_cv(
     # initial message
     info("🔄 Time Series Cross-Validation started...")
 
-    # get the no. of samples in the dataset
-    n_samples = len(training_set)
-
-    # debugging
-    debug(f"⚙️ No. of samples in the training set: {n_samples}.")
-
     try:
+        # get the no. of samples in the dataset
+        n_samples = len(training_set)
+
+        # debugging
+        debug(f"⚙️ No. of samples in the training set: {n_samples}.")
+
         # setup for Time Series Split
-        tscv = TimeSeriesSplit(n_splits=config_settings.cv_num_folds)
-    except (ValueError, TypeError) as e:
-        raise RuntimeError(f"❌ Error while instantiating Time Series Split: {e}.")
+        tscv = TimeSeriesSplit(
+            n_splits=config_settings.cv_num_folds
+        )
+    except (
+            ValueError,
+            TypeError
+    ) as e:
+        raise RuntimeError(f"❌ Error while instantiating"
+                           f" Time Series Split: {e}.")
 
     fold_losses = []
     # iterate over the training set
-    for train_idx, val_idx in tscv.split(np.arange(n_samples)):
+    for train_idx, val_idx in tscv.split(
+            np.arange(n_samples)
+    ):
 
         # debugging
         debug(f"⚙️ Training idx (Time series CV): {train_idx}.")
@@ -45,10 +53,22 @@ def _compute_time_series_cv(
 
         try:
             # define training and validation sets
-            training_dataset = Subset(training_set, train_idx)
-            validation_dataset = Subset(training_set, val_idx)
-        except (TypeError, IndexError, ValueError, AttributeError) as e:
-            raise RuntimeError(f"❌ Error while defining training and validation sets: {e}.")
+            training_dataset = Subset(
+                training_set,
+                train_idx
+            )
+            validation_dataset = Subset(
+                training_set,
+                val_idx
+            )
+        except (
+                TypeError,
+                IndexError,
+                ValueError,
+                AttributeError
+        ) as e:
+            raise RuntimeError(f"❌ Error while defining training and"
+                               f" validation sets: {e}.")
 
         # debugging
         debug(f"⚙️ Training size (Time series CV): {len(training_dataset)}.")
@@ -66,13 +86,22 @@ def _compute_time_series_cv(
             False
         )
 
-        # setup for training
-        device, criterion, model, optimizer = model_setup(
-            params["model"]["params"],
-            params["training"]["optimizer"]["learning_rate"],
-            extract_targets_from_dataloader(training_loader),
-            config_settings
-        )
+        try:
+            # setup for training
+            device, criterion, model, optimizer = model_setup(
+                params["model"]["params"],
+                params["training"]["optimizer"]["learning_rate"],
+                extract_targets_from_dataloader(training_loader),
+                config_settings
+            )
+        except (
+            KeyError,
+            TypeError,
+            AttributeError,
+            ValueError
+        ) as e:
+            raise RuntimeError(f"❌ Error while performing setup"
+                               f" for training: {e}.")
 
         # train the model
         avg_loss, _ = train_n_epochs(
@@ -86,13 +115,30 @@ def _compute_time_series_cv(
             validation_loader=validation_loader,
             early_stopping=True
         )
-        if avg_loss is not None:
-            fold_losses.append(avg_loss)
+
+        try:
+            # save avg loss
+            if avg_loss is not None:
+                fold_losses.append(avg_loss)
+        except (
+            NameError,
+            AttributeError,
+            TypeError
+        ) as e:
+            raise RuntimeError(f"❌ Error while saving average loss: {e}.")
 
     # show a successful message
     info("🟢 Time Series Cross-Validation completed.")
 
-    # calculate the average of loss
-    final_avg_loss = np.mean(fold_losses)
+    try:
+        # calculate the average of loss
+        final_avg_loss = np.mean(fold_losses)
+    except (
+        NameError,
+        TypeError,
+        ValueError
+    ) as e:
+        raise RuntimeError(f"❌ Error while calculating final "
+                           f"average loss: {e}.")
 
     return final_avg_loss

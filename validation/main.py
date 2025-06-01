@@ -33,7 +33,10 @@ def validation(config_settings):
     )
 
     # set the best parameters and get new config settings
-    new_config_settings = _save_best_params(best_params, config_settings)
+    new_config_settings = _save_best_params(
+        best_params,
+        config_settings
+    )
 
     # print a successful message
     info("✅ Validation successfully completed.")

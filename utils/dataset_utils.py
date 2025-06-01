@@ -1,4 +1,5 @@
 import pandas as pd
+from torch.utils.data import Subset
 from pandas.errors import EmptyDataError, ParserError
 from utils.log_utils import info, debug
 
@@ -111,3 +112,62 @@ def load_dataset(config_settings):
     info("🟢 Dataset loaded.")
 
     return df
+
+
+def split_training_set(
+        training_set,
+        config_settings
+):
+    """
+    Method to split the dataset into training and validation sets.
+    :param training_set: The training set to split.
+    :param config_settings: The configuration settings.
+    :return: The training and validation sets.
+    """
+    try:
+        # calculate total training set size
+        total_training_size = len(training_set)
+
+        # calculate training and validation size
+        training_size = int(
+            (1.0 - config_settings.validation_perc) *
+            total_training_size
+        )
+        validation_size = int(
+            config_settings.validation_perc *
+            total_training_size
+        )
+
+        # create indexes for training and validation
+        training_indices = list(range(
+            0,
+            training_size
+        ))
+        validation_indices = list(range(
+            training_size,
+            training_size + validation_size
+        ))
+
+        # split the training set into training and validation set
+        final_training_set = Subset(
+            training_set,
+            training_indices
+        )
+        final_validation_set = Subset(
+            training_set,
+            validation_indices
+        )
+    except (
+        TypeError,
+        ValueError,
+        AttributeError,
+        IndexError,
+        NameError
+    ) as e:
+        raise RuntimeError(f"❌ Error while splitting training set into "
+                           f"training and validation sets: {e}.")
+
+    return (
+        final_training_set,
+        final_validation_set
+    )

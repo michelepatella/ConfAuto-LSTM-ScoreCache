@@ -17,11 +17,13 @@ def _check_general_model_params(
             isinstance(num_features, int)
             and num_features > 0
     ):
-        raise RuntimeError("❌ 'model.general.num_features' must be an integer > 0.")
+        raise RuntimeError("❌ 'model.general.num_features' must"
+                           " be an integer > 0.")
 
     # check model save path
     if not isinstance(model_save_path, str):
-        raise RuntimeError("❌ 'model.general.save_path' must be a string.")
+        raise RuntimeError("❌ 'model.general.save_path' must "
+                           "be a string.")
 
 
 def _check_model_params(
@@ -53,7 +55,8 @@ def _check_model_params(
                 isinstance(val, int)
                 and val > 0
         ):
-            raise RuntimeError(f"❌ 'model.params.{name}' must be an integer > 0.")
+            raise RuntimeError(f"❌ 'model.params.{name}' must be"
+                               f" an integer > 0.")
 
     # check boolean parameters
     for name, val in [

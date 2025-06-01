@@ -21,23 +21,19 @@ def _generate_access_pattern_requests(
     # initial message
     info("🔄 Access pattern requests generation started...")
 
+    # set data
     hour = (current_time / 3600.0) % 24
     base = config_settings.first_key
-    keys = list(range(base, config_settings.last_key))
+    keys = list(range(
+        base,
+        config_settings.last_key
+    ))
     n_keys = len(keys)
-    range_size = config_settings.last_key - config_settings.first_key
-
-    # read required configuration data
-    rep_int = config_settings.repetition_interval
-    rep_off = config_settings.repetition_offset
-    toggle_int = config_settings.toggle_interval
-    cycle_base = config_settings.cycle_base
-    cycle_mod = config_settings.cycle_mod
-    cycle_div = config_settings.cycle_divisor
-    dist_int = config_settings.distortion_interval
+    range_size = (
+            config_settings.last_key -
+            config_settings.first_key
+    )
     noise_low, noise_high = config_settings.noise_range
-    mem_int = config_settings.memory_interval
-    mem_off = config_settings.memory_offset
 
     if len(history_keys) < 5:
         return np.random.choice(keys)
@@ -46,39 +42,63 @@ def _generate_access_pattern_requests(
 
     # 05:00 - 09:00 repetition pattern
     if 5 <= hour < 9:
-        if idx % rep_int == 0:
-            new_key = history_keys[-rep_off]
+        if idx % config_settings.repetition_interval == 0:
+            new_key = history_keys[-config_settings.repetition_offset]
         else:
-            new_key = np.random.choice(keys[:n_keys // 3])
+            new_key = np.random.choice(
+                keys[:n_keys // 3]
+            )
 
     # 09:00 - 12:00 toggle pattern
     elif 9 <= hour < 12:
-        toggle = (idx // toggle_int) % 2
+        toggle = (idx // config_settings.toggle_interval) % 2
         if toggle == 0:
-            new_key = ((history_keys[-1] - base + 1) % range_size) + base
+            new_key = ((
+                    (history_keys[-1] - base + 1) % range_size)
+                    + base
+            )
         else:
-            new_key = ((history_keys[-2] - base - 1) % range_size) + base
+            new_key = ((
+                    (history_keys[-2] - base - 1) % range_size)
+                    + base
+            )
 
     # 12:00 - 18:00 cyclic scanning
     elif 12 <= hour < 18:
-        cycle_length = cycle_base + (idx // cycle_div) % cycle_mod
+        cycle_length = (
+                config_settings.cycle_base +
+                (idx // config_settings.cycle_divisor)
+                % config_settings.cycle_mod
+        )
         cycle = keys[:cycle_length]
         new_key = cycle[idx % cycle_length]
 
     # 18:00 - 23:00 distorted history
     elif 18 <= hour < 23:
-        if idx % dist_int == 0:
-            new_key = ((history_keys[-4] - base + 2) % range_size) + base
+        if idx % config_settings.distortion_interval == 0:
+            new_key = ((
+                    (history_keys[-4] - base + 2) % range_size)
+                    + base
+            )
         else:
-            noise = np.random.randint(noise_low, noise_high + 1)
-            new_key = ((history_keys[-1] - base + noise) % range_size) + base
+            noise = np.random.randint(
+                noise_low,
+                noise_high + 1
+            )
+            new_key = ((
+                    (history_keys[-1] - base + noise) % range_size)
+                    + base
+            )
 
     # 23:00 - 05:00 pattern
     else:
-        if idx % mem_int == 0:
-            new_key = history_keys[-mem_off]
+        if idx % config_settings.memory_interval == 0:
+            new_key = history_keys[-config_settings.memory_offset]
         else:
-            new_key = np.random.choice(key_range, p=probs)
+            new_key = np.random.choice(
+                key_range,
+                p=probs
+            )
 
     # show a successful message
     info(f"🟢 Requests access pattern generated.")
@@ -111,17 +131,25 @@ def _generate_temporal_access_pattern_requests(
             np.cos(2 * np.pi * (hour_of_day / 24))
     )
 
-    # generate burst middle of the day
-    if config_settings.burst_hour_start <= hour_of_day <= config_settings.burst_hour_end:
+    # generate mid-day burst
+    if (
+        config_settings.burst_hour_start <= hour_of_day
+        <= config_settings.burst_hour_end
+    ):
         bursty_scale = config_settings.burst_high
     else:
         bursty_scale = config_settings.burst_low
 
     # combine periodic and bursty scales
-    freq_scale = max(0.5, periodic_component * bursty_scale)
+    freq_scale = max(
+        0.5,
+        periodic_component * bursty_scale
+    )
 
     # calculate delta time
-    delta_t = np.random.exponential(scale=freq_scale)
+    delta_t = np.random.exponential(
+        scale=freq_scale
+    )
 
     # show a successful message
     info(f"🟢 Temporal access pattern requests generated.")
@@ -162,6 +190,7 @@ def _generate_pattern_requests(
     else:
         timestamps = list(timestamps)
 
+    # get the range of all possible keys
     key_range = np.arange(
         config_settings.first_key,
         config_settings.last_key
@@ -183,7 +212,6 @@ def _generate_pattern_requests(
         raise ValueError("❌ probs must be a numpy array summing to 1.")
 
     try:
-
         # to make the process deterministic
         np.random.seed(config_settings.seed)
 
@@ -221,8 +249,14 @@ def _generate_pattern_requests(
             debug(f"⚙️ Request generated: {request}.")
             debug(f"⚙️ Timestamps generated: {timestamps}.")
 
-    except (ValueError, TypeError, IndexError, ZeroDivisionError,
-            AttributeError, MemoryError) as e:
+    except (
+            ValueError,
+            TypeError,
+            IndexError,
+            ZeroDivisionError,
+            AttributeError,
+            MemoryError
+    ) as e:
         raise RuntimeError(f"❌ Error while generating data access pattern: {e}.")
 
     # show a successful message

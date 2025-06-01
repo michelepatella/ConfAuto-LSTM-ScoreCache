@@ -32,7 +32,11 @@ def _save_best_params(best_params, config_settings):
             # update parameter
             config_settings.config_file[section].update(params)
 
-    except (KeyError, TypeError, ValueError) as e:
+    except (
+            KeyError,
+            TypeError,
+            ValueError
+    ) as e:
         raise RuntimeError(f"❌ Error while saving the best parameters: {e}.")
 
     # update the best parameters on the config file

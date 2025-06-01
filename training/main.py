@@ -1,5 +1,5 @@
-from torch.utils.data import Subset
 from utils.AccessLogsDataset import AccessLogsDataset
+from utils.dataset_utils import split_training_set
 from utils.log_utils import info, phase_var
 from utils.dataloader_utils import dataloader_setup, extract_targets_from_dataloader, create_data_loader
 from utils.training_utils import train_n_epochs
@@ -27,35 +27,13 @@ def training(config_settings):
         AccessLogsDataset
     )
 
-    # calculate total training set size
-    total_training_size = len(training_set)
-
-    # calculate training and validation size
-    training_size = int(
-        (1.0 - config_settings.validation_perc) * total_training_size
-    )
-    validation_size = int(
-        config_settings.validation_perc * total_training_size
-    )
-
-    # create indexes for training and validation
-    training_indices = list(range(
-        0,
-        training_size
-    ))
-    validation_indices = list(range(
-        training_size,
-        training_size + validation_size
-    ))
-
-    # split the training set into training and validation set
-    final_training_set = Subset(
+    # split training set into training and validation sets
+    (
+        final_training_set,
+        final_validation_set
+    ) = split_training_set(
         training_set,
-        training_indices
-    )
-    final_validation_set = Subset(
-        training_set,
-        validation_indices
+        config_settings
     )
 
     # create a loader for each set
@@ -94,7 +72,10 @@ def training(config_settings):
     )
 
     # save the best model trained
-    save_model(model, config_settings)
+    save_model(
+        model,
+        config_settings
+    )
 
     # print a successful message
     info("✅ Training successfully completed.")

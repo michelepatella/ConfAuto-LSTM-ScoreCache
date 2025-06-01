@@ -29,15 +29,26 @@ def _flatten_search_space(d, parent_key=()):
             # if the new value is another dictionary
             # apply recursively this method
             if isinstance(v, dict):
-                items.extend(_flatten_search_space(v, new_key))
+                items.extend(_flatten_search_space(
+                    v,
+                    new_key
+                ))
             else:
                 # convert the value to list
                 values = v if isinstance(v, list) else [v]
 
                 # add the couple (key, values) to the final list
-                items.append((new_key, values))
-    except (TypeError, RecursionError, AttributeError) as e:
-        raise RuntimeError(f"❌ Error while making flatten the search space: {e}.")
+                items.append((
+                    new_key,
+                    values
+                ))
+    except (
+            TypeError,
+            RecursionError,
+            AttributeError
+    ) as e:
+        raise RuntimeError(f"❌ Error while making flatten"
+                           f" the search space: {e}.")
 
     # show a successful message
     info("🟢 Search space flatten.")
@@ -68,8 +79,10 @@ def _set_nested_dict(d, keys, value):
 
             # if there is not the key, or
             # it is not a dictionary, make it one
-            if (k not in current or not
-            isinstance(current[k], dict)):
+            if (
+                k not in current or not
+                isinstance(current[k], dict)
+            ):
                 current[k] = {}
 
             # go down a level more
@@ -78,8 +91,13 @@ def _set_nested_dict(d, keys, value):
         # set the desired value in the last position
         # indicate by the sequence
         current[keys[-1]] = value
-    except (TypeError, IndexError, KeyError) as e:
-        raise RuntimeError(f"❌ Error while setting a value in a nested dictionary: {e}.")
+    except (
+            TypeError,
+            IndexError,
+            KeyError
+    ) as e:
+        raise RuntimeError(f"❌ Error while setting a value "
+                           f"in a nested dictionary: {e}.")
 
     # show a successful message
     info("🟢 Nested dictionary setting completed.")
@@ -98,28 +116,44 @@ def _get_parameters_combination(config_settings):
 
     try:
         # iterate over all the sections in the search space
-        for section, params_dict in config_settings.search_space.items():
+        for section, params_dict in (
+                config_settings.search_space.items()
+        ):
             # make the sections flatten
-            flat_params = _flatten_search_space(params_dict)
+            flat_params = _flatten_search_space(
+                params_dict
+            )
 
             # extrapolate the flatten keys and their values
             keys = [key for key, _ in flat_params]
             value_lists = [v for _, v in flat_params]
 
             # generate all the possible parameter combinations
-            combinations = list(itertools.product(*value_lists))
+            combinations = list(itertools.product(
+                *value_lists)
+            )
 
             section_values = []
             # reconstruct the original nested structure
             # for each combination generated
             for values in combinations:
                 combo = {}
-                for key_path, value in zip(keys, values):
-                    _set_nested_dict(combo, key_path, value)
+                for key_path, value in zip(
+                        keys,
+                        values
+                ):
+                    _set_nested_dict(
+                        combo,
+                        key_path,
+                        value
+                    )
                 section_values.append(combo)
 
             # store all the combinations
-            section_combinations.append((section, section_values))
+            section_combinations.append((
+                section,
+                section_values
+            ))
 
         # generate all the final combinations
         all_combos = list(itertools.product(
@@ -131,8 +165,13 @@ def _get_parameters_combination(config_settings):
         param_combinations = []
         for combo in all_combos:
             full_dict = {}
-            for (section, _), section_dict in zip(section_combinations, combo):
-                full_dict[section] = copy.deepcopy(section_dict)
+            for (section, _), section_dict in zip(
+                    section_combinations,
+                    combo
+            ):
+                full_dict[section] = copy.deepcopy(
+                    section_dict
+                )
 
             param_combinations.append(full_dict)
 
@@ -148,7 +187,11 @@ def _get_parameters_combination(config_settings):
 
         return param_combinations
 
-    except (KeyError, TypeError, ValueError) as e:
+    except (
+            KeyError,
+            TypeError,
+            ValueError
+    ) as e:
         raise RuntimeError(f"❌ Error while generating parameter combinations: {e}.")
 
 
@@ -170,7 +213,9 @@ def _compute_grid_search(training_set, config_settings):
     best_avg_loss = float("inf")
 
     # get the parameters combination
-    param_combinations = _get_parameters_combination(config_settings)
+    param_combinations = _get_parameters_combination(
+        config_settings
+    )
 
     # grid search
     with tqdm(

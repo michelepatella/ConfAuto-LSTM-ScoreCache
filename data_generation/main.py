@@ -30,13 +30,20 @@ def data_generation(config_settings):
             config_settings
         )
 
-    # create dataframe
-    df = create_dataframe(
-        {
-            "timestamp": timestamps[:len(requests)],
-            "request": requests,
-        }
-    )
+    try:
+        # create dataframe
+        df = create_dataframe(
+            {
+                "timestamp": timestamps[:len(requests)],
+                "request": requests,
+            }
+        )
+    except (
+        NameError,
+        TypeError,
+        IndexError
+    ) as e:
+        raise RuntimeError(f"❌ Error while creating the dataframe: {e}.")
 
     # save the dataset
     save_dataset(df, config_settings)

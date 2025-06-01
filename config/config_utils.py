@@ -21,7 +21,8 @@ def _get_config_abs_path():
         )
         abs_path = os.path.abspath(path)
     except (NameError, TypeError, AttributeError, OSError) as e:
-        raise RuntimeError(f"❌ Error while getting the config absolute path: {e}.")
+        raise RuntimeError(f"❌ Error while getting the config "
+                           f"absolute path: {e}.")
 
     # debugging
     debug(f"⚙️ Absolute path of config file: {abs_path}.")
@@ -47,7 +48,13 @@ def load_config():
         # load the file
         with open(config_path, "r") as f:
             config_file = yaml.safe_load(f)
-    except (FileNotFoundError, PermissionError, IsADirectoryError, OSError, YAMLError) as e:
+    except (
+            FileNotFoundError,
+            PermissionError,
+            IsADirectoryError,
+            OSError,
+            YAMLError
+    ) as e:
         raise RuntimeError(f"❌ Error while loading config file: {e}.")
 
     # show a successful message
@@ -87,7 +94,12 @@ def _merge_config(config, updates):
                 _merge_config(config[key], value)
             else:
                 config[key] = value
-    except (AttributeError, TypeError, KeyError, RecursionError) as e:
+    except (
+            AttributeError,
+            TypeError,
+            KeyError,
+            RecursionError
+    ) as e:
         raise RuntimeError(f"❌ Error while merging config file: {e}.")
 
     # show a successful message
@@ -132,7 +144,12 @@ def update_config(updated_config, prepare_config):
                 sort_keys=False,
                 allow_unicode=True
             )
-    except (FileNotFoundError, PermissionError, IsADirectoryError, OSError) as e:
+    except (
+            FileNotFoundError,
+            PermissionError,
+            IsADirectoryError,
+            OSError
+    ) as e:
         raise RuntimeError(f"❌ Error while updating the config file: {e}.")
 
     # show a successful message
@@ -172,5 +189,11 @@ def get_config_value(config, keys):
         info(f"🟢 {keys} read.")
 
         return value
-    except (KeyError, TypeError, IndexError, AttributeError, ValueError) as e:
+    except (
+            KeyError,
+            TypeError,
+            IndexError,
+            AttributeError,
+            ValueError
+    ) as e:
         raise RuntimeError(f"❌ Error while reading config file: {e}.")

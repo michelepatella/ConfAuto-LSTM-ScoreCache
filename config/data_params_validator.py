@@ -109,7 +109,8 @@ def _check_zipf_params(
             and zipf_time_steps > 0
     ):
         raise RuntimeError(
-            "❌ 'data.access_pattern.zipf.time_steps' must be an integer > 0."
+            "❌ 'data.access_pattern.zipf.time_steps' must "
+            "be an integer > 0."
         )
 
 
@@ -223,7 +224,8 @@ def _check_temporal_pattern_params(
             and periodic_base_scale > 0
     ):
         raise RuntimeError(
-            "❌ 'data.temporal_pattern.periodic.base_scale' must be a number > 0."
+            "❌ 'data.temporal_pattern.periodic.base_scale' "
+            "must be a number > 0."
         )
 
     # check periodic amplitude
@@ -232,7 +234,8 @@ def _check_temporal_pattern_params(
             and periodic_amplitude >= 0
     ):
         raise RuntimeError(
-            "❌ 'data.temporal_pattern.periodic.periodic_amplitude' must be a number >= 0."
+            "❌ 'data.temporal_pattern.periodic.periodic_amplitude' "
+            "must be a number >= 0."
         )
 
 
@@ -249,7 +252,10 @@ def _check_sequence_params(
     :return:
     """
     # check sequence length and embedding dimension are integers > 0
-    for name, val in [("len", seq_len), ("embedding_dim", embedding_dim)]:
+    for name, val in [
+        ("len", seq_len),
+        ("embedding_dim", embedding_dim)
+    ]:
         if not (
                 isinstance(val, int)
                 and val > 0

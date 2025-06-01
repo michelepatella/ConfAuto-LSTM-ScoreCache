@@ -29,7 +29,10 @@ def data_preprocessing(config_settings):
     )
 
     # save the preprocessed dataset
-    save_dataset(df_final, config_settings)
+    save_dataset(
+        df_final,
+        config_settings
+    )
 
     # print a successful message
     info("✅ Data preprocessing successfully completed.")
