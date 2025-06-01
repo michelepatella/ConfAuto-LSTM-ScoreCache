@@ -1,5 +1,4 @@
 from cachetools import LRUCache, LFUCache, FIFOCache
-
 from simulation.CacheMetricsLogger import CacheMetricsLogger
 from simulation.LSTMCache import LSTMCache
 from simulation.RandomCache import RandomCache
