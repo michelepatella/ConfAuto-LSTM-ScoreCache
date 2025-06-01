@@ -175,6 +175,8 @@ def compute_prefetch_hit_rate(
 
     # count prefetched keys have been hit
     for t, predicted_keys in metrics_logger.prefetch_predictions.items():
+        if not isinstance(predicted_keys, (list, set, tuple)):
+            predicted_keys = [predicted_keys]
         total += len(predicted_keys)
         for key in predicted_keys:
             for access_time in metrics_logger.access_events.get(key, []):

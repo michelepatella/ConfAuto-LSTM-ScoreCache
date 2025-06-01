@@ -14,7 +14,11 @@ def _get_config_abs_path():
 
     try:
         # define the absolute path of the config file
-        path = os.path.join(os.path.dirname(__file__), '..', 'config.yaml')
+        path = os.path.join(
+            os.path.dirname(__file__),
+            '..',
+            'config.yaml'
+        )
         abs_path = os.path.abspath(path)
     except (NameError, TypeError, AttributeError, OSError) as e:
         raise RuntimeError(f"❌ Error while getting the config absolute path: {e}.")
@@ -76,7 +80,10 @@ def _merge_config(config, updates):
             # debugging
             debug(f"⚙️ Merging (key-value): ({key} - {value}).")
 
-            if isinstance(value, dict) and isinstance(config.get(key), dict):
+            if (
+                isinstance(value, dict) and
+                isinstance(config.get(key), dict)
+            ):
                 _merge_config(config[key], value)
             else:
                 config[key] = value
