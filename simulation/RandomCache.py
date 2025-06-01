@@ -35,6 +35,9 @@ class RandomCache:
         is not expired, False otherwise.
         """
         try:
+            # trace event
+            self.metrics_logger.log_get(key, current_time)
+
             is_contained = (
                     key in self.store and not
                     self._is_expired(key, current_time)
@@ -57,9 +60,6 @@ class RandomCache:
         :return: The key from the cache if present, None otherwise.
         """
         try:
-            # trace event
-            self.metrics_logger.log_get(key, current_time)
-
             if self.contains(key, current_time):
                 # debugging
                 debug(f"⚙️Key accessed (time: {current_time}): {key}.")

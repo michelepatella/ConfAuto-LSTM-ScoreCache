@@ -53,6 +53,9 @@ class CacheWrapper:
         :return: True if the key is contained into the cache, False otherwise.
         """
         try:
+            # trace event
+            self.metrics_logger.log_get(key, current_time)
+
             # check if the key is in the cache
             if (
                 key in self.cache and
@@ -88,8 +91,6 @@ class CacheWrapper:
         :return: The key from the cache if present, None otherwise.
         """
         try:
-            # trace event
-            self.metrics_logger.log_get(key, current_time)
 
             # check if the key is in the cache
             if self.contains(key, current_time):

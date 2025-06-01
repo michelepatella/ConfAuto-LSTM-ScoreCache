@@ -41,6 +41,9 @@ class LSTMCache:
         :return: True if the key is in the cache, False otherwise.
         """
         try:
+            # trace event
+            self.metrics_logger.log_get(key, current_time)
+
             is_contained = (
                     key in self.store and
                     self.expiry.get(key, 0) > current_time
@@ -63,9 +66,6 @@ class LSTMCache:
         :return: The key from the cache if present, None otherwise.
         """
         try:
-            # trace event
-            self.metrics_logger.log_get(key, current_time)
-
             # check if the key is in the cache
             if self.contains(key, current_time):
                 # debugging

@@ -18,37 +18,35 @@ def run_simulations(config_settings):
     # initial message
     info("🔄 Cache simulations started...")
 
-    metrics_logger = CacheMetricsLogger()
-
     try:
         # setup cache strategies
         strategies = {
             'LRU': CacheWrapper(
                 LRUCache,
-                metrics_logger,
+                CacheMetricsLogger(),
                 config_settings,
 
             ),
             'LFU': CacheWrapper(
                 LFUCache,
-                metrics_logger,
+                CacheMetricsLogger(),
                 config_settings
             ),
             'FIFO': CacheWrapper(
                 FIFOCache,
-                metrics_logger,
+                CacheMetricsLogger(),
                 config_settings
             ),
             'RANDOM': RandomCache(
-                metrics_logger,
+                CacheMetricsLogger(),
                 config_settings
             ),
             'LSTM': LSTMCache(
-                metrics_logger,
+                CacheMetricsLogger(),
                 config_settings
             ),
             'LSTM+CI': LSTMCache(
-                metrics_logger,
+                CacheMetricsLogger(),
                 config_settings
             )
         }
@@ -60,12 +58,17 @@ def run_simulations(config_settings):
             result = simulate_cache_policy(
                 cache,
                 policy,
-                metrics_logger,
+                cache.metrics_logger,
                 config_settings
             )
             results.append(result)
 
-    except (KeyError, TypeError, ValueError, AttributeError) as e:
+    except (
+            KeyError,
+            TypeError,
+            ValueError,
+            AttributeError
+    ) as e:
         raise RuntimeError(f"❌ Error while running cache simulations: {e}.")
 
     # show results

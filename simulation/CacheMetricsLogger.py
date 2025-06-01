@@ -12,7 +12,12 @@ class CacheMetricsLogger:
         self.prefetch_predictions = {}
 
 
-    def log_put(self, key, time, ttl):
+    def log_put(
+            self,
+            key,
+            time,
+            ttl
+    ):
         """
         Method to trace keys inserted into the cache
         :param key: The key inserted into the cache.
@@ -23,7 +28,11 @@ class CacheMetricsLogger:
         self.put_events[key] = (time, ttl)
 
 
-    def log_get(self, key, time):
+    def log_get(
+            self,
+            key,
+            time
+    ):
         """
         Method to trace key accesses from the cache.
         :param key: The key accesses from the cache.
@@ -33,7 +42,11 @@ class CacheMetricsLogger:
         self.access_events[key].append(time)
 
 
-    def log_eviction(self, key, time):
+    def log_eviction(
+            self,
+            key,
+            time
+    ):
         """
         Method to trace key evictions from the cache.
         :param key: The key evicted from the cache.
@@ -43,7 +56,11 @@ class CacheMetricsLogger:
         self.evicted_keys[key] = time
 
 
-    def log_prefetch_prediction(self, time, predicted_keys):
+    def log_prefetch_prediction(
+            self,
+            time,
+            predicted_keys
+    ):
         """
         Method to trace keys prefetching.
         :param time: The time the key was prefetched.
