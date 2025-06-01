@@ -1,14 +1,21 @@
 import math
 import random
+
+from simulation.CacheMetricsLogger import CacheMetricsLogger
 from utils.log_utils import debug
 
 
 class LSTMCache:
 
-    def __init__(self, config_settings):
+    def __init__(
+            self,
+            config_settings,
+            metrics_logger
+    ):
         """
         Method to initialize the LSTM cache.
         :param config_settings: The configuration settings.
+        :param metrics_logger: The metrics logger.
         :return:
         """
         # initialize data
@@ -18,6 +25,7 @@ class LSTMCache:
         self.maxsize = config_settings.cache_size
         self.threshold_score = config_settings.threshold_score
         self.ttl_base = config_settings.ttl_base
+        self.metrics_logger = metrics_logger
 
         # debugging
         debug(f"⚙️Max cache size: {self.maxsize}.")
@@ -55,6 +63,9 @@ class LSTMCache:
         :return: The key from the cache if present, None otherwise.
         """
         try:
+            # trace event
+            self.metrics_logger.log_get(key, current_time)
+
             # check if the key is in the cache
             if self.contains(key, current_time):
                 # debugging
@@ -83,6 +94,8 @@ class LSTMCache:
             self.store.pop(k, None)
             self.expiry.pop(k, None)
             self.scores.pop(k, None)
+            # trace event
+            self.metrics_logger.log_eviction(k, current_time)
 
 
     def put(
@@ -120,6 +133,10 @@ class LSTMCache:
                     self.store.pop(key, None)
                     self.expiry.pop(key, None)
                     self.scores.pop(key, None)
+
+                    # trace event
+                    self.metrics_logger.log_eviction(key, current_time)
+
                     return
 
                 # compute TTL dynamically
@@ -149,6 +166,9 @@ class LSTMCache:
                         self.store.pop(key_to_evict, None)
                         self.expiry.pop(key_to_evict, None)
                         self.scores.pop(key_to_evict, None)
+
+                        # trace event
+                        self.metrics_logger.log_eviction(key_to_evict, current_time)
                     else:
                         return
 
@@ -156,6 +176,9 @@ class LSTMCache:
                 self.store[key] = key
                 self.expiry[key] = current_time + ttl
                 self.scores[key] = score
+
+                # trace event
+                self.metrics_logger.log_prefetch_prediction(current_time, key)
 
             else:
                 # cold-start management
@@ -182,6 +205,9 @@ class LSTMCache:
                     self.store.pop(evict_key)
                     self.expiry.pop(evict_key)
 
+                    # trace event
+                    self.metrics_logger.log_eviction(evict_key, current_time)
+
                 # store the key
                 self.store[key] = key
                 self.scores[key] = score
@@ -189,6 +215,9 @@ class LSTMCache:
 
             # debugging
             debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")
+
+            # trace event
+            self.metrics_logger.log_put(key, current_time, ttl)
 
         except (AttributeError, TypeError, KeyError, ValueError) as e:
             raise RuntimeError(f"❌ Error while putting the key"

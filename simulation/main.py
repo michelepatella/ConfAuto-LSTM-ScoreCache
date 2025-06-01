@@ -1,4 +1,6 @@
 from cachetools import LRUCache, LFUCache, FIFOCache
+
+from simulation.CacheMetricsLogger import CacheMetricsLogger
 from simulation.LSTMCache import LSTMCache
 from simulation.RandomCache import RandomCache
 from simulation.CacheWrapper import CacheWrapper
@@ -17,24 +19,39 @@ def run_simulations(config_settings):
     # initial message
     info("🔄 Cache simulations started...")
 
+    metrics_logger = CacheMetricsLogger()
+
     try:
         # setup cache strategies
         strategies = {
             'LRU': CacheWrapper(
                 LRUCache,
-                config_settings
+                metrics_logger,
+                config_settings,
+
             ),
             'LFU': CacheWrapper(
                 LFUCache,
+                metrics_logger,
                 config_settings
             ),
             'FIFO': CacheWrapper(
                 FIFOCache,
+                metrics_logger,
                 config_settings
             ),
-            'RANDOM': RandomCache(config_settings),
-            'LSTM': LSTMCache(config_settings),
-            'LSTM+CI': LSTMCache(config_settings)
+            'RANDOM': RandomCache(
+                metrics_logger,
+                config_settings
+            ),
+            'LSTM': LSTMCache(
+                metrics_logger,
+                config_settings
+            ),
+            'LSTM+CI': LSTMCache(
+                metrics_logger,
+                config_settings
+            )
         }
 
         # run simulations
@@ -44,6 +61,7 @@ def run_simulations(config_settings):
             result = simulate_cache_policy(
                 cache,
                 policy,
+                metrics_logger,
                 config_settings
             )
             results.append(result)

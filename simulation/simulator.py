@@ -6,18 +6,21 @@ from simulation.preprocessing import preprocess_data
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.dataloader_utils import dataloader_setup
 from utils.log_utils import info, debug
+from utils.metrics_utils import compute_eviction_mistake_rate, compute_ttl_mae, compute_prefetch_hit_rate
 from utils.model_utils import trained_model_setup
 
 
 def simulate_cache_policy(
         cache,
         policy_name,
+        metrics_logger,
         config_settings
 ):
     """
     Method to simulate a cache policy.
     :param cache: The cache object to simulate.
     :param policy_name: The cache policy name to use.
+    :param metrics_logger: The metrics logger.
     :param config_settings: The configuration settings.
     :return: The hit rate and miss rate in terms of %.
     """
@@ -152,6 +155,14 @@ def simulate_cache_policy(
     info(f"🎯 Hit Rate ({policy_name}): {hit_rate:.2f}%)")
     info(f"🚫 Miss Rate ({policy_name}): {miss_rate:.2f}%)")
 
+    # component evaluation individually
+    prefetch_hit_rate = compute_prefetch_hit_rate(
+        metrics_logger,
+        window_size=config_settings.prediction_interval
+    )
+    ttl_mae = compute_ttl_mae(metrics_logger)
+    eviction_mistake_rate = compute_eviction_mistake_rate(metrics_logger)
+
     # print a successful message
     info(f"🟢 {policy_name} policy simulation completed.")
 
@@ -162,5 +173,8 @@ def simulate_cache_policy(
         'hits': counters['hits'],
         'misses': counters['misses'],
         'avg_latency': sum(latencies)/len(latencies),
-        'timeline': timeline
+        'timeline': timeline,
+        'prefetch_hit_rate': prefetch_hit_rate,
+        'ttl_mae': ttl_mae,
+        'eviction_mistake_rate': eviction_mistake_rate
     }

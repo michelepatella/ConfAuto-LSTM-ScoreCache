@@ -74,19 +74,35 @@ def print_system_evaluation_report(results):
 
     try:
         # title
-        print("\n" + "=" * 90)
+        print("\n" + "=" * 115)
         print(" " * 30 + "Overall System Evaluation Report")
-        print("=" * 90 + "\n")
+        print("=" * 115 + "\n")
 
-        # header
-        header = f"{'Policy':<25} | {'Hit Rate (%)':>12} | {'Miss Rate (%)':>13} | {'Average Latency (s)':>13}"
+        # header with additional metrics
+        header = (
+            f"{'Policy':<25} | {'Hit Rate (%)':>12} | {'Miss Rate (%)':>13} | "
+            f"{'Average Latency (s)':>18} | {'Eviction Mistake Rate':>22} | "
+            f"{'Prefetch Hit Rate':>18} | {'TTL MAE':>10}"
+        )
         print(header)
         print("-" * len(header))
 
-        # results
+        # results including new metrics
         for res in results:
-            print(f"{res['policy']:<25} | {res['hit_rate']:12.2f} | {res['miss_rate']:13.2f} | {res['avg_latency']:13.8f}")
-        print("\n" + "=" * 90 + "\n")
+            eviction_rate = f"{res.get('eviction_mistake_rate', 0):.4f}" if res.get('eviction_mistake_rate') is not None else "N/A"
+            prefetch_rate = f"{res.get('prefetch_hit_rate', 0):.4f}" if res.get('prefetch_hit_rate') is not None else "N/A"
+            ttl_mae = f"{res.get('ttl_mae', 0):.4f}" if res.get('ttl_mae') is not None else "N/A"
+            print(
+                f"{res['policy']:<25} | "
+                f"{res['hit_rate']:12.2f} | "
+                f"{res['miss_rate']:13.2f} | "
+                f"{res['avg_latency']:18.8f} | "
+                f"{eviction_rate:22} | "
+                f"{prefetch_rate:18} | "
+                f"{ttl_mae:10}"
+            )
+        print("\n" + "=" * 115 + "\n")
+
     except (TypeError, KeyError, ValueError) as e:
         raise RuntimeError(f"❌ Error while printing system simulation report: {e}.")
 

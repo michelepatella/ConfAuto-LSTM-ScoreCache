@@ -1,20 +1,28 @@
+from simulation.CacheMetricsLogger import CacheMetricsLogger
 from utils.log_utils import debug
 
 
 class CacheWrapper:
 
-    def __init__(self, cache_class, config_settings):
+    def __init__(
+            self,
+            cache_class,
+            config_settings,
+            metrics_logger
+    ):
         """
         Method to initialize a CacheWrapper, used
         to manage baseline caching strategies (except Random).
         :param cache_class: The cache object.
         :param config_settings: The configuration settings.
+        :param metrics_logger: The metrics logger.
         :return:
         """
         self.cache = cache_class(
             maxsize=config_settings.cache_size
         )
         self.expiry = {}
+        self.metrics_logger = metrics_logger
 
         # debugging
         debug(f"⚙️ Max cache size: {self.cache.maxsize}.")
@@ -63,6 +71,9 @@ class CacheWrapper:
 
                     self.cache.pop(key, None)
                     self.expiry.pop(key, None)
+
+                    # trace event
+                    self.metrics_logger.log_eviction(key, current_time)
                 return False
         except (AttributeError, TypeError, KeyError) as e:
             raise RuntimeError(f"❌ Error while checking if the key "
@@ -77,6 +88,9 @@ class CacheWrapper:
         :return: The key from the cache if present, None otherwise.
         """
         try:
+            # trace event
+            self.metrics_logger.log_get(key, current_time)
+
             # check if the key is in the cache
             if self.contains(key, current_time):
                 # debugging
@@ -107,6 +121,9 @@ class CacheWrapper:
             self.cache.pop(k, None)
             self.expiry.pop(k, None)
 
+            # trace event
+            self.metrics_logger.log_eviction(k, current_time)
+
 
     def put(self, key, ttl, current_time):
         """
@@ -117,6 +134,9 @@ class CacheWrapper:
         :return:
         """
         try:
+            # trace event
+            self.metrics_logger.log_put(key, current_time, ttl)
+
             # clean up the cache
             self._remove_expired_keys(current_time)
 

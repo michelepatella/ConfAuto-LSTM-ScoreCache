@@ -1,18 +1,26 @@
 import random
+
+from simulation.CacheMetricsLogger import CacheMetricsLogger
 from utils.log_utils import debug
 
 
 class RandomCache:
 
-    def __init__(self, config_settings):
+    def __init__(
+            self,
+            metrics_logger,
+            config_settings
+    ):
         """
         Method to initialize a random cache of size maxsize.
         :param config_settings: The configuration settings.
+        :param metrics_logger: The metrics logger.
         """
         # initialize data
         self.maxsize = config_settings.cache_size
         self.store = {}
         self.expiry = {}
+        self.metrics_logger = metrics_logger
 
         # debugging
         debug(f"⚙️Max cache size: {self.maxsize}.")
@@ -49,6 +57,9 @@ class RandomCache:
         :return: The key from the cache if present, None otherwise.
         """
         try:
+            # trace event
+            self.metrics_logger.log_get(key, current_time)
+
             if self.contains(key, current_time):
                 # debugging
                 debug(f"⚙️Key accessed (time: {current_time}): {key}.")
@@ -75,6 +86,8 @@ class RandomCache:
         for k in expired_keys:
             self.store.pop(k, None)
             self.expiry.pop(k, None)
+            # trace event
+            self.metrics_logger.log_eviction(k, current_time)
 
 
     def put(self, key, ttl, current_time):
@@ -86,6 +99,9 @@ class RandomCache:
         :return:
         """
         try:
+            # trace event
+            self.metrics_logger.log_put(key, current_time, ttl)
+
             # clean up the cache
             self._remove_expired_keys(current_time)
 
@@ -110,6 +126,9 @@ class RandomCache:
 
                 self.store.pop(evict_key)
                 self.expiry.pop(evict_key)
+
+                # trace event
+                self.metrics_logger.log_eviction(evict_key, current_time)
 
             # store the key
             self.store[key] = key

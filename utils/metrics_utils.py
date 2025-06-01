@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 from sklearn.metrics import classification_report, confusion_matrix, cohen_kappa_score
 from utils.log_utils import info
@@ -134,3 +135,70 @@ def _compute_metrics(
     info("🟢 Metrics computed.")
 
     return metrics
+
+
+def compute_eviction_mistake_rate(metrics_logger):
+    """
+    Method to compute eviction mistake rate.
+    :param metrics_logger: The metrics logger.
+    :return: The eviction mistake rate.
+    """
+    # initialize data
+    mistakes = 0
+    total = len(metrics_logger.evicted_keys)
+
+    # count mistakes due to wrongly evictions
+    for key, eviction_time in metrics_logger.evicted_keys.items():
+        future_accesses = [
+            t for t in metrics_logger.access_events.get(key, [])
+            if t > eviction_time
+        ]
+        if future_accesses:
+            mistakes += 1
+
+    return mistakes / total if total > 0 else 0
+
+
+def compute_prefetch_hit_rate(
+        metrics_logger,
+        window_size
+):
+    """
+    Method to compute prefetch hit rate.
+    :param metrics_logger: The metrics logger.
+    :param window_size: The window size.
+    :return: The prefetch hit rate.
+    """
+    # initialize data
+    hits = 0
+    total = 0
+
+    # count prefetched keys have been hit
+    for t, predicted_keys in metrics_logger.prefetch_predictions.items():
+        total += len(predicted_keys)
+        for key in predicted_keys:
+            for access_time in metrics_logger.access_events.get(key, []):
+                if t < access_time <= t + window_size:
+                    hits += 1
+                    break
+
+    return hits / total if total > 0 else 0
+
+
+def compute_ttl_mae(metrics_logger):
+    """
+    Method to compute TTL MAE.
+    :param metrics_logger: The metrics logger.
+    :return: The MAE.
+    """
+    errors = []
+
+    # calculate MAE on TTL assigned
+    for key, (put_time, predicted_ttl) in metrics_logger.put_events.items():
+        actual_accesses = metrics_logger.access_events.get(key, [])
+        if actual_accesses:
+            last_use = max([t for t in actual_accesses if t >= put_time], default=None)
+            if last_use:
+                true_ttl = last_use - put_time
+                errors.append(abs(true_ttl - predicted_ttl))
+    return np.mean(errors) if errors else None
