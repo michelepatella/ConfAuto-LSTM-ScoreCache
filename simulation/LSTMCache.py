@@ -178,10 +178,10 @@ class LSTMCache:
                 self.scores[key] = score
 
                 # trace event
-                self.metrics_logger.log_prefetch_prediction(current_time, key)
+                self.metrics_logger.log_prefetch_prediction(current_time, [key])
 
                 # trace event
-                self.metrics_logger.log_put(key, current_time, current_time + ttl)
+                self.metrics_logger.log_put(key, current_time, ttl)
 
             else:
                 # cold-start management
@@ -192,7 +192,7 @@ class LSTMCache:
                     self.expiry[key] = current_time + config_settings.fixed_ttl
 
                     # trace event
-                    self.metrics_logger.log_put(key, current_time, current_time + config_settings.fixed_ttl)
+                    self.metrics_logger.log_put(key, current_time, config_settings.fixed_ttl)
 
                     # debugging
                     debug(f"⚙️ Key {key} already in the cache, new TTL: {self.expiry[key]}.")
@@ -220,7 +220,7 @@ class LSTMCache:
                 self.expiry[key] = current_time + config_settings.fixed_ttl
 
                 # trace event
-                self.metrics_logger.log_put(key, current_time, current_time + config_settings.fixed_ttl)
+                self.metrics_logger.log_put(key, current_time, config_settings.fixed_ttl)
 
             # debugging
             debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")

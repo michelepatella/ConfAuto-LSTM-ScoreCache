@@ -252,17 +252,18 @@ def calculate_confidence_intervals(
         debug(f"⚙️ Z-score for CIs: {z_score}.")
 
         # calculate the standard deviation
+        outputs_tensor = torch.stack(all_outputs)
         outputs_std = torch.sqrt(
             torch.stack(all_vars)
         )
 
         # calculate lower and upper CIs boundaries
         lower_ci = (
-                torch.stack(all_outputs) -
+                outputs_tensor -
                 z_score * outputs_std
         )
-        upper_ci = torch.stack(
-            all_outputs +
+        upper_ci = (
+            outputs_tensor +
             z_score * outputs_std
         )
 
