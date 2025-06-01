@@ -40,6 +40,7 @@ def mc_forward_passes(
         model,
         inputs,
         device,
+        config_settings,
         mc_dropout_samples=1
 ):
     """
@@ -47,6 +48,7 @@ def mc_forward_passes(
     :param model: The model for which to perform forward passes.
     :param inputs: The inputs to the model.
     :param device: The device to be used.
+    :param config_settings: The configuration settings.
     :param mc_dropout_samples: The number of MC dropout samples.
     :return: The mean of outputs, the output variance, and
     the output tensors.
@@ -69,7 +71,7 @@ def mc_forward_passes(
                 # check the type of input before inferring
                 if (
                     isinstance(inputs, tuple) and
-                    len(inputs) == 3
+                    len(inputs) == config_settings.num_features+1
                 ):
                     _, outputs = _compute_forward(
                         inputs,
@@ -119,6 +121,7 @@ def _infer_batch(
         loader,
         criterion,
         device,
+        config_settings,
         mc_dropout_samples=1
 ):
     """
@@ -127,6 +130,7 @@ def _infer_batch(
     :param loader: The dataloader.
     :param criterion: The loss function.
     :param device: The device to be used.
+    :param config_settings: The configuration settings.
     :param mc_dropout_samples: The number of MC dropout
     samples (=1 means no MC dropout).
     :return: The total loss, all the predictions,
@@ -164,6 +168,7 @@ def _infer_batch(
                     model,
                     (x_features, x_keys, y_key),
                     device,
+                    config_settings,
                     mc_dropout_samples
                 )
 
@@ -305,7 +310,6 @@ def autoregressive_rollout(
         x_keys_seq = (
             x_keys_seq.unsqueeze(0).to(device)
         )
-
         all_outputs = []
         all_vars = []
 
@@ -325,8 +329,9 @@ def autoregressive_rollout(
         else:
             num_samples = 1
 
-        # increase the temporal features
+        # increase the temporal features (2 minutes)
         delta_t = (2 / 1440) * (2 * math.pi)
+
         # for each future sequence
         for i in range(config_settings.prediction_interval):
             # compute MC forward pass
@@ -334,6 +339,7 @@ def autoregressive_rollout(
                 model,
                 (x_features_seq, x_keys_seq),
                 device,
+                config_settings,
                 num_samples
             )
 

@@ -1,6 +1,8 @@
 import numpy as np
 from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
+
+from utils.dataset_utils import split_training_set
 from utils.log_utils import info, debug
 from utils.dataloader_utils import create_data_loader, extract_targets_from_dataloader
 from utils.model_utils import model_setup
@@ -50,23 +52,13 @@ def _compute_time_series_cv(
         debug(f"⚙️ Training idx (Time series CV): {train_idx}.")
         debug(f"⚙️ Validation idx (Time series CV): {val_idx}.")
 
-        try:
-            # define training and validation sets
-            training_dataset = Subset(
-                training_set,
-                train_idx
-            )
-            validation_dataset = Subset(
-                training_set,
-                val_idx
-            )
-        except (
-                TypeError,
-                IndexError,
-                ValueError,
-                AttributeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while defining training and validation sets: {e}.")
+        # define training and validation sets
+        training_dataset, validation_dataset = split_training_set(
+            training_set,
+            config_settings,
+            training_indices=train_idx,
+            validation_indices=val_idx
+        )
 
         # debugging
         debug(f"⚙️ Training size (Time series CV): {len(training_dataset)}.")

@@ -37,7 +37,8 @@ def evaluate_model(
         model,
         loader,
         criterion,
-        device
+        device,
+        config_settings
     )
 
     # debugging

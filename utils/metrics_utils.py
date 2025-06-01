@@ -214,7 +214,10 @@ def compute_prefetch_hit_rate(
     try:
         # count prefetched keys have been hit
         for t, predicted_keys in metrics_logger.prefetch_predictions.items():
-            if not isinstance(predicted_keys, (list, set, tuple)):
+            if not isinstance(
+                    predicted_keys,
+                    (list, set, tuple)
+            ):
                 predicted_keys = [predicted_keys]
             total += len(predicted_keys)
             for key in predicted_keys:
@@ -253,7 +256,11 @@ def compute_ttl_mae(metrics_logger):
         for key, (put_time, predicted_ttl) in metrics_logger.put_events.items():
             actual_accesses = metrics_logger.access_events.get(key, [])
             if actual_accesses:
-                last_use = max([t for t in actual_accesses if t >= put_time], default=None)
+                last_use = max([
+                    t for t in actual_accesses
+                    if t >= put_time],
+                    default=None
+                )
                 if last_use:
                     true_ttl = last_use - put_time
                     errors.append(abs(true_ttl - predicted_ttl))
