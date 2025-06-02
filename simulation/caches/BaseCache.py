@@ -118,6 +118,12 @@ class BaseCache(ABC):
         is not expired, False otherwise.
         """
         try:
+            # trace event
+            self.metrics_logger.log_get(
+                key,
+                current_time
+            )
+
             # check if the key is in the cache
             if (
                 self.cache is not None and
@@ -148,46 +154,6 @@ class BaseCache(ABC):
                 KeyError
         ) as e:
             raise RuntimeError(f"❌ Error while checking if the key is cached: {e}.")
-
-
-    def get(
-            self,
-            key,
-            current_time
-    ):
-        """
-        Method to get a key from the cache.
-        :param key: The key to get.
-        :param current_time: The current time.
-        :return: The key from the cache if present, None otherwise.
-        """
-        try:
-            # trace event
-            self.metrics_logger.log_get(
-                key,
-                current_time
-            )
-
-            # check if the key is in the cache
-            if self.contains(
-                    key,
-                    current_time
-            ):
-                # debugging
-                debug(f"⚙️ Key accessed (time: {current_time}): {key}.")
-
-                if self.cache is not None:
-                    return self.cache[key]
-                else:
-                    return self.store[key]
-            else:
-                return None
-        except (
-                AttributeError,
-                TypeError,
-                KeyError
-        ) as e:
-            raise RuntimeError(f"❌ Error while getting the key from the cache: {e}.")
 
 
     @abstractmethod

@@ -167,7 +167,10 @@ def compute_eviction_mistake_rate(metrics_logger):
     """
     # initial message
     info("🔄 Eviction mistake rate calculation started...")
-
+    print(metrics_logger.put_events)
+    print(metrics_logger.access_events)
+    print(metrics_logger.evicted_keys)
+    print(metrics_logger.prefetch_predictions)
     try:
         # initialize data
         mistakes = 0
