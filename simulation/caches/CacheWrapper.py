@@ -1,5 +1,5 @@
 from simulation.caches.BaseCache import BaseCache
-from utils.log_utils import debug
+from utils.log_utils import debug, info
 
 
 class CacheWrapper(BaseCache):
@@ -17,6 +17,9 @@ class CacheWrapper(BaseCache):
         :param current_time: The current time.
         :return:
         """
+        # initial message
+        info("🔄 Key insertion started...")
+
         try:
             # clean up the cache removing expired keys
             self._remove_expired_keys(
@@ -44,3 +47,6 @@ class CacheWrapper(BaseCache):
                 TypeError
         ) as e:
             raise RuntimeError(f"❌ Error while caching the key: {e}.")
+
+        # print a successful message
+        info("🟢 Key inserted.")

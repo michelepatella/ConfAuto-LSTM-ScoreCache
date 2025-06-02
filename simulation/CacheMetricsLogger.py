@@ -1,16 +1,31 @@
 from collections import defaultdict
 
+from utils.log_utils import info
+
+
 class CacheMetricsLogger:
 
     def __init__(self):
         """
         Method to initialize the cache metrics logger class.
         """
-        self.put_events = {}
-        self.access_events = defaultdict(list)
-        self.evicted_keys = {}
-        self.prefetch_predictions = {}
+        # initial message
+        info("🔄 CacheMetricsLogger initialization started...")
 
+        try:
+            self.put_events = {}
+            self.access_events = defaultdict(list)
+            self.evicted_keys = {}
+            self.prefetch_predictions = {}
+        except (
+            NameError,
+            TypeError,
+            AttributeError
+        ) as e:
+            raise RuntimeError(f"❌ Error while instantiating cache metrics logger: {e}.")
+
+        # print a successful message
+        info("🟢 CacheMetricsLogger initialized.")
 
     def log_put(
             self,
@@ -25,7 +40,20 @@ class CacheMetricsLogger:
         :param ttl: The TTL of the key.
         :return:
         """
-        self.put_events[key] = (time, ttl)
+        # initial message
+        info("🔄 Key insertion tracing started...")
+
+        try:
+            self.put_events[key] = (time, ttl)
+        except (
+            NameError,
+            TypeError,
+            AttributeError
+        ) as e:
+            raise RuntimeError(f"❌ Error while keeping track of put events: {e}.")
+
+        # print a successful message
+        info("🟢 Key insertion traced.")
 
 
     def log_get(
@@ -39,7 +67,20 @@ class CacheMetricsLogger:
         :param time: The time the key was accessed.
         :return:
         """
-        self.access_events[key].append(time)
+        # initial message
+        info("🔄 Key access tracing started...")
+
+        try:
+            self.access_events[key].append(time)
+        except (
+            AttributeError,
+            NameError,
+            TypeError
+        ) as e:
+            raise RuntimeError(f"❌ Error while keeping track of access events: {e}.")
+
+        # print a successful message
+        info("🟢 Key access traced.")
 
 
     def log_eviction(
@@ -53,7 +94,25 @@ class CacheMetricsLogger:
         :param time: The time the key was evicted.
         :return:
         """
-        self.evicted_keys[key] = time
+        # initial message
+        info("🔄 Key eviction tracing started...")
+
+        try:
+            # remove access events
+            self.access_events[key] = [
+                t for t in self.access_events.get(key, []) if t <= time
+            ]
+
+            self.evicted_keys[key] = time
+        except (
+            AttributeError,
+            NameError,
+            TypeError
+        ) as e:
+            raise RuntimeError(f"❌ Error while keeping track of evictions: {e}.")
+
+        # print a successful message
+        info("🟢 Key eviction traced.")
 
 
     def log_prefetch_prediction(
@@ -67,4 +126,17 @@ class CacheMetricsLogger:
         :param predicted_keys: The predicted key.
         :return:
         """
-        self.prefetch_predictions[time] = predicted_keys
+        # initial message
+        info("🔄 Key prefetching tracing started...")
+
+        try:
+            self.prefetch_predictions[time] = predicted_keys
+        except (
+            AttributeError,
+            TypeError,
+            NameError
+        ) as e:
+            raise RuntimeError(f"❌ Error while keeping track of prefetched predictions: {e}.")
+
+        # print a successful message
+        info("🟢 Key prefetching traced.")

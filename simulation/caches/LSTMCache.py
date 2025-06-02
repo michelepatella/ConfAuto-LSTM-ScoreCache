@@ -1,7 +1,7 @@
 import math
 import random
 from simulation.caches.BaseCache import BaseCache
-from utils.log_utils import debug
+from utils.log_utils import debug, info
 
 
 class LSTMCache(BaseCache):
@@ -18,6 +18,9 @@ class LSTMCache(BaseCache):
         :param metrics_logger: The metrics logger.
         :return:
         """
+        # initial message
+        info("🔄 LSTM-based cache initialization started...")
+
         # initialize data
         super().__init__(
             cache_class,
@@ -38,6 +41,9 @@ class LSTMCache(BaseCache):
         debug(f"⚙️Threshold score: {self.threshold_score}.")
         debug(f"⚙️TTL base: {self.ttl_base}.")
 
+        # print a successful message
+        info("🟢 LSTM-based cache initialized.")
+
 
     def _handle_cold_start(
             self,
@@ -54,6 +60,9 @@ class LSTMCache(BaseCache):
         :param config_settings: The configuration settings.
         :return:
         """
+        # initial message
+        info("🔄 Cold start management started...")
+
         # check if the key is in cache
         if self.contains(
                 key,
@@ -71,6 +80,8 @@ class LSTMCache(BaseCache):
 
             # debugging
             debug(f"⚙️ Key {key} already cached, new TTL: {self.expiry[key]}.")
+            # print a successful message
+            info("🟢 Cold start managed.")
             return
 
         # check if the cache is full
@@ -101,6 +112,9 @@ class LSTMCache(BaseCache):
             config_settings.fixed_ttl
         )
 
+        # print a successful message
+        info("🟢 Cold start managed.")
+
 
     def _evict_key(self, key):
         """
@@ -108,6 +122,9 @@ class LSTMCache(BaseCache):
         :param key: Key to evict.
         :return:
         """
+        # initial message
+        info("🔄 LSTM-based cache key eviction started...")
+
         try:
             self.store.pop(key, None)
             self.expiry.pop(key, None)
@@ -118,6 +135,9 @@ class LSTMCache(BaseCache):
             NameError
         ) as e:
             raise RuntimeError(f"❌ Error while evicting the key: {e}.")
+
+        # print a successful message
+        info("🟢 LSTM-based cache key evicted.")
 
 
     def _put_key(
@@ -135,16 +155,14 @@ class LSTMCache(BaseCache):
         :param ttl: The TTL of the key.
         :return:
         """
+        # initial message
+        info("🔄 LSTM-based cache key insertion started...")
+
         try:
             self.store[key] = key
             self.scores[key] = score
             self.expiry[key] = current_time + ttl
 
-            # trace events
-            self.metrics_logger.log_prefetch_prediction(
-                current_time,
-                [key]
-            )
             self.metrics_logger.log_put(
                 key,
                 current_time,
@@ -156,6 +174,9 @@ class LSTMCache(BaseCache):
             NameError
         ) as e:
             raise RuntimeError(f"❌ Error while putting the key in cache: {e}.")
+
+        # print a successful message
+        info("🟢 LSTM-based cache key inserted.")
 
 
     def put(
@@ -176,6 +197,9 @@ class LSTMCache(BaseCache):
         :param config_settings: The configuration settings.
         :return:
         """
+        # initial message
+        info("🔄 Key insertion started...")
+
         try:
             # clean up the cache removing expired keys
             self._remove_expired_keys(
@@ -199,6 +223,9 @@ class LSTMCache(BaseCache):
                         key,
                         current_time
                     )
+
+                    # print a successful message
+                    info("🟢 Key inserted.")
 
                     return
 
@@ -244,6 +271,12 @@ class LSTMCache(BaseCache):
                     ttl
                 )
 
+                # trace events
+                self.metrics_logger.log_prefetch_prediction(
+                    current_time,
+                    [key]
+                )
+
             else:
                 # cold-start management
                 self._handle_cold_start(
@@ -263,3 +296,6 @@ class LSTMCache(BaseCache):
                 ValueError
         ) as e:
             raise RuntimeError(f"❌ Error while putting the key into the cache: {e}.")
+
+        # print a successful message
+        info("🟢 Key inserted.")

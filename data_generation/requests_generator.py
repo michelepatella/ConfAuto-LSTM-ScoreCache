@@ -11,6 +11,9 @@ def _timestamps_to_hours(timestamps):
     :param timestamps: Timestamps to convert.
     :return: Timestamps as hours of the day.
     """
+    # initial message
+    info("🔄 Timestamp convertion started...")
+
     try:
         # consider timestamps as hours of the day
         timestamps = np.array(timestamps) / 3600.0
@@ -20,6 +23,9 @@ def _timestamps_to_hours(timestamps):
         ValueError
     ) as e:
         raise RuntimeError(f"❌ Error while converting timestamps to hours of the day: {e}.")
+
+    # show a successful message
+    info("🟢 Timestamps converted.")
 
     return timestamps
 

@@ -148,6 +148,9 @@ def split_training_set(
     :param validation_indices: Training set index.
     :return: The training and validation sets.
     """
+    # initial message
+    info("🔄 Training splitting started...")
+
     try:
         if (
             training_indices is None or
@@ -193,6 +196,9 @@ def split_training_set(
         NameError
     ) as e:
         raise RuntimeError(f"❌ Error while splitting training set into training and validation sets: {e}.")
+
+    # show a successful message
+    info("🟢 Training set split.")
 
     return (
         final_training_set,

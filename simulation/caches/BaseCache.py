@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from utils.log_utils import debug
+from utils.log_utils import debug, info
 
 
 class BaseCache(ABC):
@@ -16,6 +16,9 @@ class BaseCache(ABC):
         :param metrics_logger: The metrics logger object.
         :param config_settings: The configuration settings.
         """
+        # initial message
+        info("🔄 Base cache initialization started...")
+
         # initialize data
         try:
             if cache_class is not None:
@@ -37,6 +40,9 @@ class BaseCache(ABC):
         ) as e:
             raise RuntimeError(f"❌ Error while initializing the base cache: {e}.")
 
+        # print a successful message
+        info("🟢 Base cache initialized.")
+
 
     def _is_expired(
             self,
@@ -49,7 +55,13 @@ class BaseCache(ABC):
         :param current_time: The current time.
         :return: True if the key is expired, False otherwise.
         """
+        # initial message
+        info("🔄 Expiration check started...")
+
         try:
+            # print a successful message
+            info("🟢 Expiration check finished.")
+
             return (
                     key in self.expiry and
                     self.expiry[key] < current_time
@@ -71,6 +83,9 @@ class BaseCache(ABC):
         :param current_time: The current time.
         :return:
         """
+        # initial message
+        info("🔄 Expired key removal started...")
+
         try:
             # identify expired keys
             expired_keys = [
@@ -104,6 +119,9 @@ class BaseCache(ABC):
         ) as e:
             raise RuntimeError(f"❌ Error while removing expired keys from cache: {e}.")
 
+        # print a successful message
+        info("🟢 Expired key removed.")
+
 
     def contains(
             self,
@@ -117,6 +135,9 @@ class BaseCache(ABC):
         :return: True if the key is in the cache and
         is not expired, False otherwise.
         """
+        # initial message
+        info("🔄 Key access started...")
+
         try:
             # trace event
             self.metrics_logger.log_get(
@@ -135,6 +156,9 @@ class BaseCache(ABC):
             ):
                 # debugging
                 debug(f"⚙️Key: {key} contained in cache.")
+                # print a successful message
+                info("🟢 Key access finished.")
+
                 return True
             elif (
                 key in self.store and not
@@ -145,8 +169,14 @@ class BaseCache(ABC):
             ):
                 # debugging
                 debug(f"⚙️Key: {key} not contained in cache.")
+                # print a successful message
+                info("🟢 Key access finished.")
+
                 return True
             else:
+                # print a successful message
+                info("🟢 Key access finished.")
+
                 return False
         except (
                 AttributeError,

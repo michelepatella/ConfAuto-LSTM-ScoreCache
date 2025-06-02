@@ -1,6 +1,6 @@
 import random
 from simulation.caches.BaseCache import BaseCache
-from utils.log_utils import debug
+from utils.log_utils import debug, info
 
 
 class RandomCache(BaseCache):
@@ -18,6 +18,9 @@ class RandomCache(BaseCache):
         :param current_time: The current time.
         :return:
         """
+        # initial message
+        info("🔄 Key insertion started...")
+
         try:
             # clean up the cache removing expired keys
             self._remove_expired_keys(
@@ -41,6 +44,10 @@ class RandomCache(BaseCache):
 
                 # debugging
                 debug(f"⚙️ Key {key} already cached, new TTL: {self.expiry[key]}.")
+
+                # print a successful message
+                info("🟢 Key inserted.")
+
                 return
 
             # check if the cache is full
@@ -84,3 +91,6 @@ class RandomCache(BaseCache):
                 ValueError
         ) as e:
             raise RuntimeError(f"❌ Error while caching the key: {e}.")
+
+        # print a successful message
+        info("🟢 Key inserted.")
