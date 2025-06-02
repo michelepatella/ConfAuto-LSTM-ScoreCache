@@ -277,7 +277,7 @@ def _check_dataset_params(
         )
 
 
-def _validate_data_distribution_params(config):
+def validate_data_distribution_params(config):
     """
     Method to validate data distribution parameters.
     :param config: The configuration object.
@@ -335,7 +335,7 @@ def _validate_data_distribution_params(config):
     )
 
 
-def _validate_data_access_pattern_zipf_params(config):
+def validate_data_access_pattern_zipf_params(config):
     """
     Method to validate data access pattern Zipf parameters.
     :param config: The configuration object.
@@ -382,7 +382,7 @@ def _validate_data_access_pattern_zipf_params(config):
     )
 
 
-def _validate_data_access_behavior_pattern_params(config):
+def validate_data_access_behavior_pattern_params(config):
     """
     Method to validate data access behavior pattern parameters.
     :param config: The configuration object.
@@ -464,7 +464,7 @@ def _validate_data_access_behavior_pattern_params(config):
     )
 
 
-def _validate_data_access_temporal_pattern_params(config):
+def validate_data_access_temporal_pattern_params(config):
     """
     Method to validate data access temporal pattern parameters.
     :param config: The configuration object.
@@ -524,7 +524,7 @@ def _validate_data_access_temporal_pattern_params(config):
     )
 
 
-def _validate_data_sequence_params(config, num_requests):
+def validate_data_sequence_params(config, num_requests):
     """
     Method to validate data sequence parameters.
     :param config: The configuration object.
@@ -561,7 +561,7 @@ def _validate_data_sequence_params(config, num_requests):
     )
 
 
-def _validate_data_dataset_params(config):
+def validate_data_dataset_params(config):
     """
     Method to validate data dataset parameters.
     :param config: The configuration object.

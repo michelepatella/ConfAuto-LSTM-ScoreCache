@@ -1,5 +1,4 @@
 from tqdm import tqdm
-import time
 from simulation.lstm_policy_handler import handle_lstm_cache_policy
 from simulation.preprocessing import preprocess_data
 from utils.simulation_utils import search_key
@@ -7,7 +6,7 @@ from utils.AccessLogsDataset import AccessLogsDataset
 from utils.dataloader_utils import dataloader_setup
 from utils.log_utils import info, debug
 from utils.metrics_utils import compute_eviction_mistake_rate, compute_ttl_mae, compute_prefetch_hit_rate, \
-    calculate_hit_miss_rate, calculate_cache_latency
+    calculate_hit_miss_rate
 from utils.model_utils import trained_model_setup
 
 
@@ -36,7 +35,7 @@ def _setup_simulation(
     }
     timeline = []
     recent_hits = []
-    latencies = []
+    prefetching_latency = []
     window = config_settings.prediction_interval
 
     # get the testing set
@@ -83,7 +82,7 @@ def _setup_simulation(
         counters,
         timeline,
         recent_hits,
-        latencies,
+        prefetching_latency,
         window,
         testing_set,
         testing_loader,
@@ -171,7 +170,7 @@ def simulate_cache_policy(
         counters,
         timeline,
         recent_hits,
-        latencies,
+        autoregressive_latencies,
         window,
         testing_set,
         testing_loader,
@@ -189,9 +188,6 @@ def simulate_cache_policy(
             desc=f"Simulating {policy_name}"
     ):
         try:
-            # keep track of the start time
-            start_time = time.perf_counter()
-
             # extract the row from the dataset
             row = testing_set[idx]
 
@@ -218,7 +214,7 @@ def simulate_cache_policy(
             policy_name == 'LSTM' or
             policy_name == 'LSTM+CI'
         ):
-            handle_lstm_cache_policy(
+            autoregressive_latency = handle_lstm_cache_policy(
                 cache,
                 key,
                 current_time,
@@ -230,6 +226,12 @@ def simulate_cache_policy(
                 config_settings,
                 confidence_aware=(policy_name=='LSTM+CI')
             )
+
+            # calculate cache latency
+            autoregressive_latencies.append(
+                autoregressive_latency
+            )
+
         # if the traditional cache (LRU, LFU, FIFO, or RANDOM) is being used
         else:
             # search the key into the cache
@@ -246,12 +248,6 @@ def simulate_cache_policy(
                 config_settings.fixed_ttl,
                 current_time
             )
-
-        # calculate cache latency
-        latencies = calculate_cache_latency(
-            start_time,
-            latencies
-        )
 
         # update number of hits and misses
         recent_hits, timeline = _trace_hits_misses(
@@ -270,10 +266,6 @@ def simulate_cache_policy(
     ) = calculate_hit_miss_rate(
         counters
     )
-
-    # show results
-    info(f"🎯 Hit Rate ({policy_name}): {hit_rate:.2f}%)")
-    info(f"🚫 Miss Rate ({policy_name}): {miss_rate:.2f}%)")
 
     # component evaluation
     prefetch_hit_rate = compute_prefetch_hit_rate(
@@ -296,7 +288,7 @@ def simulate_cache_policy(
         'miss_rate': miss_rate,
         'hits': counters['hits'],
         'misses': counters['misses'],
-        'avg_latency': sum(latencies)/len(latencies),
+        'avg_prefetching_latency': sum(autoregressive_latencies)/len(autoregressive_latencies),
         'timeline': timeline,
         'prefetch_hit_rate': prefetch_hit_rate,
         'ttl_mae': ttl_mae,

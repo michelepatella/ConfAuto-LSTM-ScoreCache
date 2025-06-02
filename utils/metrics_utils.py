@@ -1,4 +1,3 @@
-import time
 import numpy as np
 import torch
 from sklearn.metrics import classification_report, confusion_matrix, cohen_kappa_score
@@ -306,34 +305,3 @@ def calculate_hit_miss_rate(counters):
     info("🟢 Hit and miss rate calculated.")
 
     return hit_rate, miss_rate
-
-
-def calculate_cache_latency(
-        start_time,
-        latencies
-):
-    """
-    Method to calculate cache latency.
-    :param start_time: Start time of simulation.
-    :param latencies: The past cache latencies.
-    :return: The updated cache latencies.
-    """
-    # initial message
-    info("🔄 Cache latency calculation started...")
-
-    try:
-        # at the end, calculate the latency
-        end_time = time.perf_counter()
-        latency = end_time - start_time
-        latencies.append(latency)
-    except (
-            NameError,
-            AttributeError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while calculating cache latency: {e}.")
-
-    # show a successful message
-    info("🟢 Cache latency calculated.")
-
-    return latencies

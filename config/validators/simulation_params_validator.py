@@ -64,7 +64,7 @@ def _check_simulation_lstm_cache_params(
         raise RuntimeError("❌ 'simulation.traditional_cache.ttl_base' must be a int > 0.")
 
 
-def _validate_simulation_general_params(config):
+def validate_simulation_general_params(config):
     """
     Method to validate simulation general parameters.
     :param config: The config object.
@@ -89,7 +89,7 @@ def _validate_simulation_general_params(config):
     return cache_size
 
 
-def _validate_simulation_traditional_cache_params(config):
+def validate_simulation_traditional_cache_params(config):
     """
     Method to validate simulation traditional cache parameters.
     :param config: The config object.
@@ -114,7 +114,7 @@ def _validate_simulation_traditional_cache_params(config):
     return fixed_ttl
 
 
-def _validate_simulation_lstm_cache_params(config):
+def validate_simulation_lstm_cache_params(config):
     """
     Method to validate simulation lstm cache parameters.
     :param config: The config object.

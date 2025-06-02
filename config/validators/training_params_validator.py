@@ -87,7 +87,7 @@ def _check_training_early_stopping_params(
         raise RuntimeError("❌ 'training.early_stopping.delta' must be a number >= 0.")
 
 
-def _validate_training_general_params(config):
+def validate_training_general_params(config):
     """
     Method to validate general training parameters.
     :param config: The config object.
@@ -121,7 +121,7 @@ def _validate_training_general_params(config):
     )
 
 
-def _validate_training_optimizer_params(config):
+def validate_training_optimizer_params(config):
     """
     Method to validate training optimizer parameters.
     :param config: The config object.
@@ -167,7 +167,7 @@ def _validate_training_optimizer_params(config):
     )
 
 
-def _validate_training_early_stopping_params(config):
+def validate_training_early_stopping_params(config):
     """
     Method to validate training early stopping parameters.
     :param config: Config object.

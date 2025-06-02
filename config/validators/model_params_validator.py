@@ -81,7 +81,7 @@ def _check_model_params(
         raise RuntimeError("❌ 'model.params.proj_size' must be an integer in [0, hidden_size].")
 
 
-def _validate_model_general_params(config):
+def validate_model_general_params(config):
     """
     Method to validate general model parameters.
     :param config: The config object.
@@ -112,7 +112,7 @@ def _validate_model_general_params(config):
     return num_features, model_save_path
 
 
-def _validate_model_params(config):
+def validate_model_params(config):
     """
     Method to validate model parameters.
     :param config: The config object.

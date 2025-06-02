@@ -1,7 +1,5 @@
 import numpy as np
-from torch.utils.data import Subset
 from sklearn.model_selection import TimeSeriesSplit
-
 from utils.dataset_utils import split_training_set
 from utils.log_utils import info, debug
 from utils.dataloader_utils import create_data_loader, extract_targets_from_dataloader

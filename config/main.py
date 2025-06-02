@@ -1,18 +1,18 @@
 from config.Config import Config
 from config.validators.data_params_validator import \
-    _validate_data_sequence_params, _validate_data_dataset_params, _validate_data_access_temporal_pattern_params, \
-    _validate_data_access_behavior_pattern_params, _validate_data_access_pattern_zipf_params, \
-    _validate_data_distribution_params
-from config.validators.evaluation_params_validator import _validate_evaluation_general_params
-from config.validators.inference_params_validator import _validate_inference_confidence_intervals_params
-from config.validators.model_params_validator import _validate_model_general_params, _validate_model_params
-from config.validators.simulation_params_validator import _validate_simulation_general_params, \
-    _validate_simulation_traditional_cache_params, _validate_simulation_lstm_cache_params
-from config.validators.testing_params_validator import _validate_testing_general_params
-from config.validators.training_params_validator import _validate_training_general_params, _validate_training_optimizer_params, \
-    _validate_training_early_stopping_params
-from config.validators.validation_params_validator import _validate_cv_params, _validate_validation_early_stopping_params, \
-    _validate_search_space_params
+    validate_data_sequence_params, validate_data_dataset_params, validate_data_access_temporal_pattern_params, \
+    validate_data_access_behavior_pattern_params, validate_data_access_pattern_zipf_params, \
+    validate_data_distribution_params
+from config.validators.evaluation_params_validator import validate_evaluation_general_params
+from config.validators.inference_params_validator import validate_inference_confidence_intervals_params
+from config.validators.model_params_validator import validate_model_general_params, validate_model_params
+from config.validators.simulation_params_validator import validate_simulation_general_params, \
+    validate_simulation_traditional_cache_params, validate_simulation_lstm_cache_params
+from config.validators.testing_params_validator import validate_testing_general_params
+from config.validators.training_params_validator import validate_training_general_params, validate_training_optimizer_params, \
+    validate_training_early_stopping_params
+from config.validators.validation_params_validator import validate_cv_params, validate_validation_early_stopping_params, \
+    validate_search_space_params
 from utils.config_utils import load_config
 from utils.log_utils import info, phase_var
 
@@ -40,14 +40,14 @@ def prepare_config():
             num_keys,
             first_key,
             last_key
-        ) = _validate_data_distribution_params(config_file)
+        ) = validate_data_distribution_params(config_file)
 
         (
             zipf_alpha,
             zipf_alpha_start,
             zipf_alpha_end,
             zipf_time_steps,
-        ) = _validate_data_access_pattern_zipf_params(config_file)
+        ) = validate_data_access_pattern_zipf_params(config_file)
 
         (
             repetition_interval,
@@ -60,7 +60,7 @@ def prepare_config():
             noise_range,
             memory_interval,
             memory_offset,
-        ) = _validate_data_access_behavior_pattern_params(config_file)
+        ) = validate_data_access_behavior_pattern_params(config_file)
 
         (
             burst_high,
@@ -69,13 +69,13 @@ def prepare_config():
             burst_hour_end,
             periodic_base_scale,
             periodic_amplitude
-        ) = _validate_data_access_temporal_pattern_params(config_file)
+        ) = validate_data_access_temporal_pattern_params(config_file)
 
         (
             seq_len,
             embedding_dim,
             num_requests
-        ) = _validate_data_sequence_params(
+        ) = validate_data_sequence_params(
             config_file,
             num_requests
         )
@@ -85,13 +85,13 @@ def prepare_config():
             validation_perc,
             static_save_path,
             dynamic_save_path
-         ) = _validate_data_dataset_params(config_file)
+         ) = validate_data_dataset_params(config_file)
 
         # model config
         (
             num_features,
             model_save_path
-        ) = _validate_model_general_params(config_file)
+        ) = validate_model_general_params(config_file)
 
         (
             model_params,
@@ -102,36 +102,36 @@ def prepare_config():
             dropout,
             bidirectional,
             proj_size
-        ) = _validate_model_params(config_file)
+        ) = validate_model_params(config_file)
 
         # training config
         (
             training_num_epochs,
             training_batch_size
-        ) = _validate_training_general_params(config_file)
+        ) = validate_training_general_params(config_file)
 
         (
             optimizer_type,
             learning_rate,
             weight_decay,
             momentum
-        ) = _validate_training_optimizer_params(config_file)
+        ) = validate_training_optimizer_params(config_file)
 
         (
             training_early_stopping_patience,
             training_early_stopping_delta
-        ) = _validate_training_early_stopping_params(config_file)
+        ) = validate_training_early_stopping_params(config_file)
 
         # validation config
         (
             cv_num_folds,
             validation_num_epochs
-        ) = _validate_cv_params(config_file)
+        ) = validate_cv_params(config_file)
 
         (
             validation_early_stopping_patience,
             validation_early_stopping_delta
-        ) = _validate_validation_early_stopping_params(config_file)
+        ) = validate_validation_early_stopping_params(config_file)
 
         (
             search_space,
@@ -139,30 +139,30 @@ def prepare_config():
             num_layers_range,
             dropout_range,
             learning_rate_range
-        ) = _validate_search_space_params(config_file)
+        ) = validate_search_space_params(config_file)
 
         # evaluation config
-        top_k = _validate_evaluation_general_params(config_file)
+        top_k = validate_evaluation_general_params(config_file)
 
         # testing config
-        testing_batch_size = _validate_testing_general_params(config_file)
+        testing_batch_size = validate_testing_general_params(config_file)
 
         # inference config
         (
             confidence_level,
             mc_dropout_num_samples
-        ) = _validate_inference_confidence_intervals_params(config_file)
+        ) = validate_inference_confidence_intervals_params(config_file)
 
         # simulation config
-        cache_size = _validate_simulation_general_params(config_file)
+        cache_size = validate_simulation_general_params(config_file)
 
-        fixed_ttl = _validate_simulation_traditional_cache_params(config_file)
+        fixed_ttl = validate_simulation_traditional_cache_params(config_file)
 
         (
             prediction_interval,
             threshold_score,
             ttl_base,
-        ) = _validate_simulation_lstm_cache_params(config_file)
+        ) = validate_simulation_lstm_cache_params(config_file)
 
         # show a successful message
         info("✅ Config preparation completed.")

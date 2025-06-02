@@ -27,7 +27,7 @@ def _check_confidence_intervals_params(
         raise RuntimeError("❌ 'inference.mc_dropout.num_samples' must be an integer > 0.")
 
 
-def _validate_inference_confidence_intervals_params(config):
+def validate_inference_confidence_intervals_params(config):
     """
     Method to validate confidence intervals params
     :param config: The config object.

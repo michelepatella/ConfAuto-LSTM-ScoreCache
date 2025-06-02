@@ -16,7 +16,7 @@ def _check_evaluation_params(top_k):
         raise RuntimeError("❌ 'evaluation.top_k' must be an integer > 0.")
 
 
-def _validate_evaluation_general_params(config):
+def validate_evaluation_general_params(config):
     """
     Method to validate evaluation general parameters.
     :param config:

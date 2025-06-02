@@ -16,7 +16,7 @@ def _check_testing_params(testing_batch_size):
         raise RuntimeError("❌ 'testing.general.batch_size' must be an integer > 0.")
 
 
-def _validate_testing_general_params(config):
+def validate_testing_general_params(config):
     """
     Method to validate testing general parameters.
     :param config: The config object.

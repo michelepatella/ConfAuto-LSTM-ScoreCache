@@ -89,7 +89,7 @@ def _check_search_space_params(
             raise RuntimeError(f"❌ '{name}' must be {msg}.")
 
 
-def _validate_cv_params(config):
+def validate_cv_params(config):
     """
     Method to validate cross validation parameters.
     :param config: Config object.
@@ -123,7 +123,7 @@ def _validate_cv_params(config):
     )
 
 
-def _validate_validation_early_stopping_params(config):
+def validate_validation_early_stopping_params(config):
     """
     Method to validate validation early stopping parameters.
     :param config: Config object.
@@ -157,7 +157,7 @@ def _validate_validation_early_stopping_params(config):
     )
 
 
-def _validate_search_space_params(config):
+def validate_search_space_params(config):
     """
     Method to validate search space parameters.
     :param config: Config object.

@@ -1,4 +1,6 @@
 import random
+import time
+
 import numpy as np
 from torch.nn.functional import softmax
 from utils.simulation_utils import search_key
@@ -310,6 +312,9 @@ def handle_lstm_cache_policy(
             current_idx >= config_settings.seq_len and
             current_idx % config_settings.prediction_interval == 0
         ):
+            # keep track of autoregression and CIs calculation time
+            start_time = time.perf_counter()
+
             # it's time to prefetch
             # extract seed sequence
             seed_seq = _extract_seed_seq(
@@ -361,6 +366,9 @@ def handle_lstm_cache_policy(
                     score,
                     current_time
                 )
+
+            return time.perf_counter() - start_time
+
     except (
             IndexError,
             KeyError,
