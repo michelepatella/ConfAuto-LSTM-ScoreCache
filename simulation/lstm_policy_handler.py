@@ -1,6 +1,7 @@
 import random
 import numpy as np
 from torch.nn.functional import softmax
+from utils.simulation_utils import search_key
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.inference_utils import calculate_confidence_intervals, autoregressive_rollout
 from utils.log_utils import info
@@ -52,8 +53,12 @@ def _calculate_key_scores(
         }
 
     except (
-            IndexError, ZeroDivisionError, ValueError,
-            TypeError, KeyError, AttributeError
+            IndexError,
+            ZeroDivisionError,
+            ValueError,
+            TypeError,
+            KeyError,
+            AttributeError
     ) as e:
         raise RuntimeError(f"❌ Error while calculating key scores: {e}.")
 
@@ -86,8 +91,14 @@ def _find_key_candidates(
         # confidence matrix: [t, k] -> confidence of the prediction k at time t
         num_steps = len(all_outputs)
         num_keys = len(all_outputs[0])
-        prob_matrix = np.zeros((num_steps, num_keys))
-        conf_matrix = np.zeros((num_steps, num_keys))
+        prob_matrix = np.zeros((
+            num_steps,
+            num_keys
+        ))
+        conf_matrix = np.zeros((
+            num_steps,
+            num_keys
+        ))
 
         # fill the matrices
         for t in range(num_steps):
@@ -100,7 +111,9 @@ def _find_key_candidates(
 
             if confidence_aware:
                 # calculate the confidence at time step t
-                conf = (1 / (upper_ci[t] - lower_ci[t] + 1e-6)).cpu().numpy()
+                conf = (
+                        1 / (upper_ci[t] - lower_ci[t] + 1e-6)
+                ).cpu().numpy()
                 conf_matrix[t] = conf
 
         # calculate scores for the keys
@@ -116,8 +129,11 @@ def _find_key_candidates(
         keys = list(scores.keys())
 
     except (
-            IndexError, ZeroDivisionError, TypeError,
-            KeyError, AttributeError
+            IndexError,
+            ZeroDivisionError,
+            TypeError,
+            KeyError,
+            AttributeError
     ) as e:
         raise RuntimeError(f"❌ Error while finding key candidates: {e}.")
 
@@ -125,6 +141,112 @@ def _find_key_candidates(
     info("🟢 Key candidates found.")
 
     return keys, scores
+
+
+def _handle_cold_start(
+        cache,
+        current_time,
+        config_settings
+):
+    """
+    Method to handle cache cold start.
+    :param cache: The cache for which to handle cold start.
+    :param current_time: The current time.
+    :param config_settings: The configuration settings.
+    :return:
+    """
+    # initial message
+    info("🔄 Cold start handling started...")
+
+    try:
+        # select random keys
+        all_possible_keys = list(range(
+            config_settings.num_keys
+        ))
+        random_keys = random.sample(
+            all_possible_keys,
+            min(
+                config_settings.cache_size,
+                len(all_possible_keys)
+            )
+        )
+
+        # fill the cache with these keys having 0 score
+        for k in random_keys:
+            cache.put(
+                k,
+                0.0,
+                current_time,
+                cold_start=True,
+                config_settings=config_settings
+            )
+    except (
+        NameError,
+        AttributeError,
+        TypeError,
+        ValueError,
+        KeyError
+    ) as e:
+        raise RuntimeError(f"❌ Error while handling cache cold start: {e}.")
+
+    # print a successful message
+    info("🟢 Cold start handled.")
+
+
+def _extract_seed_seq(
+        current_idx,
+        testing_set,
+        config_settings
+):
+    """
+    Method to extract seed sequence used by
+     autoregressive rollout.
+    :param current_idx: The current request index.
+    :param testing_set: The testing set.
+    :param config_settings: The configuration settings.
+    :return:
+    """
+    # initial message
+    info("🔄 Seed sequence extraction started...")
+
+    try:
+        # define a mobile window sliding over the testing set
+        start_idx = current_idx - config_settings.seq_len + 1
+        end_idx = current_idx + 1
+        testing_window_df = testing_set.data.iloc[start_idx:end_idx + 1]
+
+        # check if enough data contained in the sliding window
+        if len(testing_window_df) < config_settings.seq_len:
+            return
+
+        # create a dataset from the sliding window
+        testing_window_dataset = AccessLogsDataset.from_dataframe(
+            testing_window_df,
+            config_settings
+        )
+
+        # check if there is at least one element in the
+        # dataset created
+        if len(testing_window_dataset) == 0:
+            return
+
+        # extract seed from the testing window
+        seed_seq = testing_window_dataset.__getitem__(
+            len(testing_window_dataset) - 1
+        )
+
+    except (
+        NameError,
+        AttributeError,
+        TypeError,
+        IndexError
+    ) as e:
+        raise RuntimeError(f"❌ Error while extracting seed sequence: {e}.")
+
+    # print a successful message
+    info("🟢 Seed sequence extracted.")
+
+    return seed_seq
 
 
 def handle_lstm_cache_policy(
@@ -140,7 +262,7 @@ def handle_lstm_cache_policy(
         confidence_aware
 ):
     """
-    Method to handle the confident-aware LSTM-based cache policy.
+    Method to handle the LSTM-based cache policy.
     :param cache: The cache.
     :param key: The current key.
     :param current_time: The current time.
@@ -157,65 +279,41 @@ def handle_lstm_cache_policy(
     info(f"🔄 LSTM-based cache policy management started...")
 
     try:
-
-        # check if the cache contains the key
-        if cache.contains(key, current_time):
-            # increment cache hits
-            counters['hits'] += 1
-            info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | HIT")
-        else:
-            # increment cache misses
-            counters['misses'] += 1
-            info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
+        # search the key into the cache
+        search_key(
+            cache,
+            key,
+            current_time,
+            counters
+        )
 
         # if it's not time to prefetch (no enough data)
         if current_idx < config_settings.seq_len:
-            # fill the cache randomly
-            all_possible_keys = list(range(config_settings.num_keys))
-            random_keys = random.sample(
-                all_possible_keys,
-                min(config_settings.cache_size, len(all_possible_keys))
+
+            # handle cold start
+            _handle_cold_start(
+                cache,
+                current_time,
+                config_settings
             )
-            # assign a score 0.0 to these keys
-            for k in random_keys:
-                cache.put(
-                    k,
-                    0.0,
-                    current_time,
-                    cold_start=True,
-                    config_settings=config_settings
-                )
 
         elif (
             current_idx >= config_settings.seq_len and
             current_idx % config_settings.prediction_interval == 0
         ):
-
-            # define a mobile window sliding over the testing set
-            start_idx = current_idx - config_settings.seq_len + 1
-            end_idx = current_idx + 1
-            testing_window_df = testing_set.data.iloc[start_idx:end_idx+1]
-
-            if len(testing_window_df) < config_settings.seq_len:
-                return
-
-            # create a dataset from this window
-            testing_window_dataset = AccessLogsDataset.from_dataframe(
-                testing_window_df,
+            # it's time to prefetch
+            # extract seed sequence
+            seed_seq = _extract_seed_seq(
+                current_idx,
+                testing_set,
                 config_settings
             )
 
-            # check if there is at least one element
-            if len(testing_window_dataset) == 0:
-                return
-
-            # extract seed from the testing window
-            seed_seq = testing_window_dataset.__getitem__(
-                len(testing_window_dataset) - 1
-            )
-
             # compute rollout
-            all_outputs, all_vars = autoregressive_rollout(
+            (
+                all_outputs,
+                all_vars
+            ) = autoregressive_rollout(
                 model,
                 seed_seq,
                 device,
@@ -226,14 +324,20 @@ def handle_lstm_cache_policy(
             upper_ci, lower_ci = None, None
             if confidence_aware:
                 # calculate CIs related to the predictions
-                lower_ci, upper_ci = calculate_confidence_intervals(
+                (
+                    lower_ci,
+                    upper_ci
+                ) = calculate_confidence_intervals(
                     all_outputs,
                     all_vars,
                     config_settings
                 )
 
             # identify keys and scores thereof
-            keys, scores = _find_key_candidates(
+            (
+                keys,
+                scores
+            ) = _find_key_candidates(
                 all_outputs,
                 upper_ci,
                 lower_ci,
@@ -248,8 +352,13 @@ def handle_lstm_cache_policy(
                     score,
                     current_time
                 )
-
-    except (IndexError, KeyError, ValueError, AttributeError, TypeError) as e:
+    except (
+            IndexError,
+            KeyError,
+            ValueError,
+            AttributeError,
+            TypeError
+    ) as e:
         raise RuntimeError(f"❌ Error while handling LSTM-based cache policy: {e}.")
 
     # print a successful message

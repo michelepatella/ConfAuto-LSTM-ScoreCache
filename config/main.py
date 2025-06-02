@@ -13,7 +13,7 @@ from config.training_params_validator import _validate_training_general_params, 
     _validate_training_early_stopping_params
 from config.validation_params_validator import _validate_cv_params, _validate_validation_early_stopping_params, \
     _validate_search_space_params
-from config.config_utils import load_config
+from utils.config_utils import load_config
 from utils.log_utils import info, phase_var
 
 

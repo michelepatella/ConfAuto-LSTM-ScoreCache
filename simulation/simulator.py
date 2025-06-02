@@ -1,8 +1,8 @@
 from tqdm import tqdm
 import time
 from simulation.lstm_policy_handler import handle_lstm_cache_policy
-from simulation.traditional_policy_handler import handle_traditional_cache_policy
 from simulation.preprocessing import preprocess_data
+from utils.simulation_utils import search_key
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.dataloader_utils import dataloader_setup
 from utils.log_utils import info, debug
@@ -232,13 +232,12 @@ def simulate_cache_policy(
             )
         # if the traditional cache (LRU, LFU, FIFO, or RANDOM) is being used
         else:
-            handle_traditional_cache_policy(
+            # search the key into the cache
+            search_key(
                 cache,
-                policy_name,
                 key,
                 current_time,
-                counters,
-                config_settings
+                counters
             )
 
         # calculate cache latency

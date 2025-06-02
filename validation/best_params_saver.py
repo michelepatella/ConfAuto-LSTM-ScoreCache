@@ -1,6 +1,6 @@
 from config import prepare_config
 from utils.log_utils import info, debug
-from config.config_utils import update_config
+from utils.config_utils import update_config
 
 
 def _save_best_params(best_params, config_settings):
