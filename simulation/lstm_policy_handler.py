@@ -28,40 +28,34 @@ def _calculate_key_scores(
     info("🔄 Key scores calculation started...")
 
     try:
-        best_scores = {}
+        scores = {}
 
         # for each key calculate a score
         for k in range(num_keys):
-            cumulative_score = 0.0
             best_score = -1.0
             for t in range(num_steps):
                 # calculate the final score as a combination of
                 # probability of a key of being used and CIs related
                 # to that prediction
                 if confidence_aware:
-                    score_t = prob_matrix[t, k] * (1 + 1.5 * max(0, conf_matrix[t, k] - 0.3))
+                    score_t = prob_matrix[t, k] * (conf_matrix[t, k] + 0.5)
                 else:
                     score_t = prob_matrix[t, k]
 
-                cumulative_score += score_t
-
-                # keep track of the best score
                 if score_t > best_score:
                     best_score = score_t
 
-            best_scores[k] = best_score
+            scores[k] = best_score
 
         # normalize scores in [0,1]
-        raw_scores = [v[0] for v in best_scores.values()]
+        raw_scores = list(scores.values())
         min_score = min(raw_scores)
         max_score = max(raw_scores)
         score_range = max_score - min_score \
             if max_score != min_score \
             else 1.0
-        normalized_scores = {
-            k: ((v[0] - min_score) / score_range, v[1])
-            for k, v in best_scores.items()
-        }
+        for k in scores:
+            scores[k] = (scores[k] - min_score) / score_range
 
     except (
             IndexError,
@@ -76,7 +70,7 @@ def _calculate_key_scores(
     # print a successful message
     info("🟢 Key scores calculated.")
 
-    return normalized_scores
+    return scores
 
 
 def _find_key_candidates(
