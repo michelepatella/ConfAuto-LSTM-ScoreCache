@@ -6,7 +6,7 @@ from utils.AccessLogsDataset import AccessLogsDataset
 from utils.dataloader_utils import dataloader_setup
 from utils.log_utils import info, debug
 from utils.metrics_utils import compute_eviction_mistake_rate, compute_ttl_mae, compute_prefetch_hit_rate, \
-    calculate_hit_miss_rate
+    calculate_hit_miss_rate, calculate_prefetching_avg_latency
 from utils.model_utils import trained_model_setup
 
 
@@ -279,22 +279,10 @@ def simulate_cache_policy(
         metrics_logger
     )
 
-    try:
-        avg_prefetching_latency = 0
-        if len(autoregressive_latencies) != 0:
-            # calculate average prefetching latency
-            avg_prefetching_latency = (
-                    sum(autoregressive_latencies)/
-                    len(autoregressive_latencies)
-            )
-    except (
-        TypeError,
-        ZeroDivisionError,
-        AttributeError,
-        NameError,
-        ValueError,
-    ) as e:
-        raise RuntimeError(f"❌ Error while calculating average prefetching latency: {e}.")
+    # calculate avg prefetching average
+    avg_prefetching_latency = calculate_prefetching_avg_latency(
+        autoregressive_latencies
+    )
 
     # print a successful message
     info(f"🟢 {policy_name} policy simulation completed.")
