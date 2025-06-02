@@ -106,5 +106,5 @@ simulation:
     ttl: 120
   lstm_cache:
     prediction_interval: 5
-    threshold_score: 0.6
+    threshold_score: 0.5
     ttl_base: 120
