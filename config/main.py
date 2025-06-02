@@ -1,17 +1,17 @@
 from config.Config import Config
-from config.data_params_validator import \
+from config.validators.data_params_validator import \
     _validate_data_sequence_params, _validate_data_dataset_params, _validate_data_access_temporal_pattern_params, \
     _validate_data_access_behavior_pattern_params, _validate_data_access_pattern_zipf_params, \
     _validate_data_distribution_params
-from config.evaluation_params_validator import _validate_evaluation_general_params
-from config.inference_params_validator import _validate_inference_confidence_intervals_params
-from config.model_params_validator import _validate_model_general_params, _validate_model_params
-from config.simulation_params_validator import _validate_simulation_general_params, \
+from config.validators.evaluation_params_validator import _validate_evaluation_general_params
+from config.validators.inference_params_validator import _validate_inference_confidence_intervals_params
+from config.validators.model_params_validator import _validate_model_general_params, _validate_model_params
+from config.validators.simulation_params_validator import _validate_simulation_general_params, \
     _validate_simulation_traditional_cache_params, _validate_simulation_lstm_cache_params
-from config.testing_params_validator import _validate_testing_general_params
-from config.training_params_validator import _validate_training_general_params, _validate_training_optimizer_params, \
+from config.validators.testing_params_validator import _validate_testing_general_params
+from config.validators.training_params_validator import _validate_training_general_params, _validate_training_optimizer_params, \
     _validate_training_early_stopping_params
-from config.validation_params_validator import _validate_cv_params, _validate_validation_early_stopping_params, \
+from config.validators.validation_params_validator import _validate_cv_params, _validate_validation_early_stopping_params, \
     _validate_search_space_params
 from utils.config_utils import load_config
 from utils.log_utils import info, phase_var

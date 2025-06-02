@@ -103,8 +103,8 @@ simulation:
   general:
     cache_size: 5
   traditional_cache:
-    ttl: 180
+    ttl: 120
   lstm_cache:
     prediction_interval: 5
     threshold_score: 0.6
-    ttl_base: 180
+    ttl_base: 120

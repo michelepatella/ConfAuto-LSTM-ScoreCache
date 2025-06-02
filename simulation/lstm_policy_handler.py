@@ -28,6 +28,7 @@ def _calculate_key_scores(
 
     try:
         scores = {}
+
         # for each key calculate a score
         for k in range(num_keys):
             score = 0.0
@@ -36,7 +37,7 @@ def _calculate_key_scores(
                 # probability of a key of being used and CIs related
                 # to that prediction
                 if confidence_aware:
-                    score += prob_matrix[t, k] * (conf_matrix[t, k]**2)
+                    score += prob_matrix[t, k] * np.tanh(conf_matrix[t, k])
                 else:
                     score += prob_matrix[t, k]
             scores[k] = score
@@ -115,6 +116,14 @@ def _find_key_candidates(
                         1 / (upper_ci[t] - lower_ci[t] + 1e-6)
                 ).cpu().numpy()
                 conf_matrix[t] = conf
+
+        # normalize confidence matrix to [0,1]
+        min_conf = np.min(conf_matrix)
+        max_conf = np.max(conf_matrix)
+        conf_range = max_conf - min_conf \
+            if max_conf != min_conf \
+            else 1.0
+        conf_matrix = (conf_matrix - min_conf) / conf_range
 
         # calculate scores for the keys
         scores = _calculate_key_scores(

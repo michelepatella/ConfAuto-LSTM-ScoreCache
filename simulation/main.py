@@ -1,8 +1,8 @@
 from cachetools import LRUCache, LFUCache, FIFOCache
 from simulation.CacheMetricsLogger import CacheMetricsLogger
-from simulation.LSTMCache import LSTMCache
-from simulation.RandomCache import RandomCache
-from simulation.CacheWrapper import CacheWrapper
+from simulation.caches.LSTMCache import LSTMCache
+from simulation.caches.RandomCache import RandomCache
+from simulation.caches.CacheWrapper import CacheWrapper
 from simulation.simulator import simulate_cache_policy
 from utils.graph_utils import plot_hit_miss_rate_over_time
 from utils.log_utils import info
@@ -38,14 +38,17 @@ def run_simulations(config_settings):
                 config_settings
             ),
             'RANDOM': RandomCache(
+                None,
                 CacheMetricsLogger(),
                 config_settings
             ),
             'LSTM': LSTMCache(
+                None,
                 CacheMetricsLogger(),
                 config_settings
             ),
             'LSTM+CI': LSTMCache(
+                None,
                 CacheMetricsLogger(),
                 config_settings
             )

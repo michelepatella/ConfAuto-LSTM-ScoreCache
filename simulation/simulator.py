@@ -240,6 +240,13 @@ def simulate_cache_policy(
                 counters
             )
 
+            # put a key in cache
+            cache.put(
+                key,
+                config_settings.fixed_ttl,
+                current_time
+            )
+
         # calculate cache latency
         latencies = calculate_cache_latency(
             start_time,
