@@ -1,6 +1,5 @@
 import random
 import time
-
 import numpy as np
 from torch.nn.functional import softmax
 from utils.simulation_utils import search_key
@@ -29,30 +28,39 @@ def _calculate_key_scores(
     info("🔄 Key scores calculation started...")
 
     try:
-        scores = {}
+        best_scores = {}
 
         # for each key calculate a score
         for k in range(num_keys):
-            score = 0.0
+            cumulative_score = 0.0
+            best_score = -1.0
             for t in range(num_steps):
                 # calculate the final score as a combination of
                 # probability of a key of being used and CIs related
                 # to that prediction
                 if confidence_aware:
-                    score += prob_matrix[t, k] * (conf_matrix[t, k] + 0.5)
+                    score_t = prob_matrix[t, k] * (1 + 1.5 * max(0, conf_matrix[t, k] - 0.3))
                 else:
-                    score += prob_matrix[t, k]
-            scores[k] = score
+                    score_t = prob_matrix[t, k]
+
+                cumulative_score += score_t
+
+                # keep track of the best score
+                if score_t > best_score:
+                    best_score = score_t
+
+            best_scores[k] = best_score
 
         # normalize scores in [0,1]
-        min_score = min(scores.values())
-        max_score = max(scores.values())
+        raw_scores = [v[0] for v in best_scores.values()]
+        min_score = min(raw_scores)
+        max_score = max(raw_scores)
         score_range = max_score - min_score \
             if max_score != min_score \
             else 1.0
-        scores = {
-            k: (v - min_score) / score_range
-            for k, v in scores.items()
+        normalized_scores = {
+            k: ((v[0] - min_score) / score_range, v[1])
+            for k, v in best_scores.items()
         }
 
     except (
@@ -68,7 +76,7 @@ def _calculate_key_scores(
     # print a successful message
     info("🟢 Key scores calculated.")
 
-    return scores
+    return normalized_scores
 
 
 def _find_key_candidates(
