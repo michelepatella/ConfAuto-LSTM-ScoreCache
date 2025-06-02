@@ -329,8 +329,8 @@ def calculate_prefetching_avg_latency(autoregressive_latencies):
             if valid_latencies:
                 # calculate average prefetching latency
                 avg_prefetching_latency = (
-                        sum(autoregressive_latencies)/
-                        len(autoregressive_latencies)
+                        sum(valid_latencies)/
+                        len(valid_latencies)
                 )
     except (
         TypeError,
