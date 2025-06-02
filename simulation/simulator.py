@@ -279,6 +279,23 @@ def simulate_cache_policy(
         metrics_logger
     )
 
+    try:
+        avg_prefetching_latency = 0
+        if len(autoregressive_latencies) != 0:
+            # calculate average prefetching latency
+            avg_prefetching_latency = (
+                    sum(autoregressive_latencies)/
+                    len(autoregressive_latencies)
+            )
+    except (
+        TypeError,
+        ZeroDivisionError,
+        AttributeError,
+        NameError,
+        ValueError,
+    ) as e:
+        raise RuntimeError(f"❌ Error while calculating average prefetching latency: {e}.")
+
     # print a successful message
     info(f"🟢 {policy_name} policy simulation completed.")
 
@@ -288,7 +305,7 @@ def simulate_cache_policy(
         'miss_rate': miss_rate,
         'hits': counters['hits'],
         'misses': counters['misses'],
-        'avg_prefetching_latency': sum(autoregressive_latencies)/len(autoregressive_latencies),
+        'avg_prefetching_latency': avg_prefetching_latency,
         'timeline': timeline,
         'prefetch_hit_rate': prefetch_hit_rate,
         'ttl_mae': ttl_mae,
