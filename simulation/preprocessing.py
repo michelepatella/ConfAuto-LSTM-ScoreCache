@@ -13,7 +13,11 @@ def preprocess_data(row):
 
     try:
         # get the tuple
-        x_features, x_keys, y_key = row
+        (
+            x_features,
+            x_keys,
+            y_key
+        ) = row
 
         # extract the sin and cos time
         sin_time = x_features[0, 0].item()

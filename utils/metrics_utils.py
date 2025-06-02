@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import torch
 from sklearn.metrics import classification_report, confusion_matrix, cohen_kappa_score
@@ -93,7 +94,7 @@ def _calculate_kappa_statistic(
     return kappa
 
 
-def _compute_metrics(
+def _compute_model_standalone_metrics(
         targets,
         predictions,
         outputs,
@@ -277,3 +278,62 @@ def compute_ttl_mae(metrics_logger):
     info("🟢 TTL MAE computed.")
 
     return np.mean(errors) if errors else None
+
+
+def calculate_hit_miss_rate(counters):
+    """
+    Method to calculate hit and miss rate.
+    :param counters: A counter used while simulating a cache policy
+    :return: The hit and miss rate in terms of %.
+    """
+    # initial message
+    info("🔄 Hit and miss rate calculation started...")
+
+    try:
+        # calculate hit rate and miss rate in terms of %
+        total = counters['hits'] + counters['misses']
+        hit_rate = counters['hits'] / total * 100
+        miss_rate = counters['misses'] / total * 100
+    except (
+            KeyError,
+            ZeroDivisionError,
+            TypeError,
+            AttributeError
+    ) as e:
+        raise RuntimeError(f"❌ Error while calculating hit and miss rate: {e}.")
+
+    # show a successful message
+    info("🟢 Hit and miss rate calculated.")
+
+    return hit_rate, miss_rate
+
+
+def calculate_cache_latency(
+        start_time,
+        latencies
+):
+    """
+    Method to calculate cache latency.
+    :param start_time: Start time of simulation.
+    :param latencies: The past cache latencies.
+    :return: The updated cache latencies.
+    """
+    # initial message
+    info("🔄 Cache latency calculation started...")
+
+    try:
+        # at the end, calculate the latency
+        end_time = time.perf_counter()
+        latency = end_time - start_time
+        latencies.append(latency)
+    except (
+            NameError,
+            AttributeError,
+            TypeError
+    ) as e:
+        raise RuntimeError(f"❌ Error while calculating cache latency: {e}.")
+
+    # show a successful message
+    info("🟢 Cache latency calculated.")
+
+    return latencies

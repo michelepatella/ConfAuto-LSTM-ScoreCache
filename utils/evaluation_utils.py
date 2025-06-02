@@ -1,7 +1,7 @@
 import numpy as np
 from utils.inference_utils import _infer_batch
 from utils.log_utils import info, debug
-from utils.metrics_utils import _compute_metrics
+from utils.metrics_utils import _compute_model_standalone_metrics
 
 
 def evaluate_model(
@@ -51,7 +51,7 @@ def evaluate_model(
     metrics = None
     if compute_metrics:
         # compute metrics
-        metrics = _compute_metrics(
+        metrics = _compute_model_standalone_metrics(
             all_targets,
             all_preds,
             all_outputs,
