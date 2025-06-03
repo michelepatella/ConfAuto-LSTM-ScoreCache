@@ -270,6 +270,8 @@ def compute_ttl_hit_ratio(metrics_logger):
 
             total_accesses += len(accesses)
 
+        # success message
+        info("🟢 TTL Hit Ratio computed.")
         return hits_before_expiry / total_accesses
 
     except (
@@ -280,11 +282,6 @@ def compute_ttl_hit_ratio(metrics_logger):
         NameError
     ) as e:
         raise RuntimeError(f"❌ Error while computing TTL Hit Ratio: {e}.")
-
-    # success message
-    info("🟢 TTL Hit Ratio computed.")
-
-    return rate
 
 
 def calculate_hit_miss_rate(counters):
