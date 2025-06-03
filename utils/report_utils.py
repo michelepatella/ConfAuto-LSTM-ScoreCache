@@ -79,40 +79,45 @@ def print_system_evaluation_report(results):
 
     try:
         # title
-        print("\n" + "=" * 1145)
+        print("\n" + "=" * 145)
         print(" " * 30 + "Overall System Evaluation Report")
-        print("=" * 115 + "\n")
+        print("=" * 145 + "\n")
 
         # header with additional metrics
         header = (
             f"{'Policy':<25} | {'Hit Rate (%)':>12} | {'Miss Rate (%)':>13} | "
-            f"{'Avg Prefetching Latency (s)':>27} | {'Eviction Mistake Rate':>22} | "
-            f"{'Prefetch Hit Rate':>18} | {'TTL Success Rate':>10}"
+            f"{'Avg Prefetching Latency (s)':>27} | {'Eviction Mistake Rate (%)':>26} | "
+            f"{'Prefetch Hit Rate (%)':>22} | {'TTL Success Rate (%)':>20}"
         )
         print(header)
         print("-" * len(header))
 
-        # results including new metrics
+        # results including all metrics
         for res in results:
-            eviction_rate = f"{res.get('eviction_mistake_rate', 0):.4f}" if res.get('eviction_mistake_rate') is not None else "N/A"
-            prefetch_rate = f"{res.get('prefetch_hit_rate', 0):.4f}" if res.get('prefetch_hit_rate') is not None else "N/A"
-            ttl_success_rate = f"{res.get('ttl_success_rate', 0):.4f}" if res.get('ttl_success_rate') is not None else "N/A"
+            eviction_rate = (
+                f"{res['eviction_mistake_rate'] * 100:.2f}"
+                if res.get('eviction_mistake_rate') is not None else "N/A"
+            )
+            prefetch_rate = (
+                f"{res['prefetch_hit_rate'] * 100:.2f}"
+                if res.get('prefetch_hit_rate') is not None else "N/A"
+            )
+            ttl_success_rate = (
+                f"{res['ttl_success_rate'] * 100:.2f}"
+                if res.get('ttl_success_rate') is not None else "N/A"
+            )
             print(
                 f"{res['policy']:<25} | "
                 f"{res['hit_rate']:12.2f} | "
                 f"{res['miss_rate']:13.2f} | "
-                f"{res['avg_prefetching_latency']:27f} | "
-                f"{eviction_rate:22} | "
-                f"{prefetch_rate:18} | "
-                f"{ttl_success_rate:10}"
+                f"{res['avg_prefetching_latency']:27.6f} | "
+                f"{eviction_rate:26} | "
+                f"{prefetch_rate:22} | "
+                f"{ttl_success_rate:20}"
             )
-        print("\n" + "=" * 115 + "\n")
+        print("\n" + "=" * 145 + "\n")
 
-    except (
-            TypeError,
-            KeyError,
-            ValueError
-    ) as e:
+    except (TypeError, KeyError, ValueError) as e:
         raise RuntimeError(f"❌ Error while printing system simulation report: {e}.")
 
     # print a successful message
