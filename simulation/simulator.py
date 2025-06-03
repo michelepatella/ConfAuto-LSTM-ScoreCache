@@ -238,19 +238,20 @@ def simulate_cache_policy(
         # if the traditional cache (LRU, LFU, FIFO, or RANDOM) is being used
         else:
             # search the key into the cache
-            search_key(
+            is_hit = search_key(
                 cache,
                 key,
                 current_time,
                 counters
             )
 
-            # put a key in cache
-            cache.put(
-                key,
-                config_settings.fixed_ttl,
-                current_time
-            )
+            if not is_hit:
+                # put a key in cache
+                cache.put(
+                    key,
+                    config_settings.fixed_ttl,
+                    current_time
+                )
 
         # update number of hits and misses
         recent_hits, timeline = _trace_hits_misses(

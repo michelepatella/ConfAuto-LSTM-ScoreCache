@@ -27,10 +27,16 @@ def search_key(
             # increment cache hits
             counters['hits'] += 1
             info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | HIT")
+            # print a successful message
+            info(f"🟢 Key search completed.")
+            return True
         else:
             # increment cache misses
             counters['misses'] += 1
             info(f"ℹ️ Time: {current_time:.2f} | Key: {key} | MISS")
+            # print a successful message
+            info(f"🟢 Key search completed.")
+            return False
     except (
         NameError,
         TypeError,
@@ -38,6 +44,3 @@ def search_key(
         ValueError
     ) as e:
         raise RuntimeError(f"❌ Error while searching a key into the cache: {e}.")
-
-    # print a successful message
-    info(f"🟢 Key search completed.")

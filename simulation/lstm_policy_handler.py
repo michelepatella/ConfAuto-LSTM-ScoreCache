@@ -282,7 +282,7 @@ def handle_lstm_cache_policy(
         num_insertion = 0
 
         # search the key into the cache
-        search_key(
+        _ = search_key(
             cache,
             key,
             current_time,

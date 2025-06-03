@@ -155,6 +155,7 @@ class BaseCache(ABC):
                 )
             ):
                 _ = self.cache[key]
+
                 # debugging
                 debug(f"⚙️Key: {key} contained in cache.")
                 # print a successful message
