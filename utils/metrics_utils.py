@@ -220,7 +220,7 @@ def compute_prefetch_hit_rate(
 
         if tot_prefetch > 0:
             # calculate prefetch hit rate
-            prefetch_hit_rate = tot_prefetch / prefetch_hits
+            prefetch_hit_rate =  prefetch_hits / tot_prefetch
         else:
             prefetch_hit_rate = 0.0
 

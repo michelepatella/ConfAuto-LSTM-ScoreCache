@@ -202,7 +202,10 @@ def simulate_cache_policy(
             raise RuntimeError(f"❌ Error while running simulation: {e}.")
 
         # extrapolate timestamp and key from the row
-        current_time, key = preprocess_data(row)
+        (
+            current_time,
+            key
+        ) = preprocess_data(row)
 
         # debugging
         debug(f"⚙️Current time: {current_time} - Key: {key}.")
