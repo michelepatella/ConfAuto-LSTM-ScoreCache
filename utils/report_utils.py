@@ -87,7 +87,7 @@ def print_system_evaluation_report(results):
         header = (
             f"{'Policy':<25} | {'Hit Rate (%)':>12} | {'Miss Rate (%)':>13} | "
             f"{'Avg Prefetching Latency (s)':>27} | {'Eviction Mistake Rate':>22} | "
-            f"{'Prefetch Hit Rate':>18} | {'TTL MAE':>10}"
+            f"{'Prefetch Hit Rate':>18} | {'TTL Success Rate':>10}"
         )
         print(header)
         print("-" * len(header))
@@ -96,7 +96,7 @@ def print_system_evaluation_report(results):
         for res in results:
             eviction_rate = f"{res.get('eviction_mistake_rate', 0):.4f}" if res.get('eviction_mistake_rate') is not None else "N/A"
             prefetch_rate = f"{res.get('prefetch_hit_rate', 0):.4f}" if res.get('prefetch_hit_rate') is not None else "N/A"
-            ttl_mae = f"{res.get('ttl_mae', 0):.4f}" if res.get('ttl_mae') is not None else "N/A"
+            ttl_success_rate = f"{res.get('ttl_success_rate', 0):.4f}" if res.get('ttl_success_rate') is not None else "N/A"
             print(
                 f"{res['policy']:<25} | "
                 f"{res['hit_rate']:12.2f} | "
@@ -104,7 +104,7 @@ def print_system_evaluation_report(results):
                 f"{res['avg_prefetching_latency']:27f} | "
                 f"{eviction_rate:22} | "
                 f"{prefetch_rate:18} | "
-                f"{ttl_mae:10}"
+                f"{ttl_success_rate:10}"
             )
         print("\n" + "=" * 115 + "\n")
 

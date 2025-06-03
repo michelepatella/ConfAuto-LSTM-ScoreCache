@@ -280,7 +280,7 @@ def simulate_cache_policy(
         tot_prefetch,
         config_settings
     )
-    ttl_mae = compute_ttl_success_rate(
+    ttl_success_rate = compute_ttl_success_rate(
         metrics_logger
     )
     eviction_mistake_rate = compute_eviction_mistake_rate(
@@ -304,6 +304,6 @@ def simulate_cache_policy(
         'avg_prefetching_latency': avg_prefetching_latency,
         'timeline': timeline,
         'prefetch_hit_rate': prefetch_hit_rate,
-        'ttl_mae': ttl_mae,
+        'ttl_success_rate': ttl_success_rate,
         'eviction_mistake_rate': eviction_mistake_rate
     }
