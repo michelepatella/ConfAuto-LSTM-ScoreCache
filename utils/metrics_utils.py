@@ -160,7 +160,7 @@ def _compute_model_standalone_metrics(
 
 def compute_eviction_mistake_rate(
         metrics_logger,
-        mistake_window=120
+        mistake_window=500
 ):
     """
     Method to compute eviction mistake rate.
