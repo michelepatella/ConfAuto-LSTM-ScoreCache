@@ -213,14 +213,16 @@ def compute_prefetch_hit_rate(
 
     try:
         # count prefetched keys have been hit
-        for key, prefetch_times in (
+        for prefetch_time, keys_predicted in (
                 metrics_logger.prefetch_predictions.items()
         ):
-            for t in prefetch_times:
+            for key in keys_predicted:
                 access_times = metrics_logger.access_events.get(key, [])
-                # look for the first access in the window
                 access_time = next(
-                    (a for a in access_times if t < a <= t + window_size),
+                    (
+                        a for a in access_times
+                        if prefetch_time < a <= prefetch_time + window_size
+                     ),
                     None
                 )
                 if access_time is None:
