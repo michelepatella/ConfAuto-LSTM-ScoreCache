@@ -240,7 +240,7 @@ def compute_prefetch_hit_rate(
                     ttl in metrics_logger.put_events[key]
                     if pt == put_time
                 )
-                eviction_time = metrics_logger.eviction_events.get(
+                eviction_time = metrics_logger.evicted_keys.get(
                     key,
                     put_time + predicted_ttl
                 )
@@ -279,7 +279,7 @@ def compute_ttl_mae(metrics_logger):
         # calculate MAE on TTL assigned
         for key, puts in metrics_logger.put_events.items():
             for put_time, predicted_ttl in puts:
-                eviction_time = metrics_logger.eviction_events.get(
+                eviction_time = metrics_logger.evicted_keys.get(
                     key,
                     float('inf')
                 )
