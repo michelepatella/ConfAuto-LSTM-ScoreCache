@@ -229,9 +229,8 @@ def compute_prefetch_hit_rate(
                     continue
                 # look for the nearest put
                 valid_puts = [
-                    pt for pt,
-                    ttl in metrics_logger.put_events.get(key, [])
-                    if pt <= access_time
+                    pt for pt, ttl in metrics_logger.put_events.get(key, [])
+                    if prefetch_time <= pt <= access_time
                 ]
                 if not valid_puts:
                     continue
@@ -246,6 +245,8 @@ def compute_prefetch_hit_rate(
                     key,
                     put_time + predicted_ttl
                 )
+                if eviction_time < access_time:
+                    continue
                 if eviction_time >= access_time:
                     hits += 1
                 total += 1
