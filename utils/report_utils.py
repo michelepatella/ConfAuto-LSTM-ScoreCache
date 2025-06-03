@@ -79,9 +79,9 @@ def print_system_evaluation_report(results):
 
     try:
         # title
-        print("\n" + "=" * 155)
+        print("\n" + "=" * 160)
         print(" " * 30 + "Overall System Evaluation Report")
-        print("=" * 155 + "\n")
+        print("=" * 160 + "\n")
 
         # header with additional metrics
         header = (
@@ -115,7 +115,7 @@ def print_system_evaluation_report(results):
                 f"{prefetch_rate:22} | "
                 f"{ttl_success_rate:20}"
             )
-        print("\n" + "=" * 155 + "\n")
+        print("\n" + "=" * 160 + "\n")
 
     except (TypeError, KeyError, ValueError) as e:
         raise RuntimeError(f"❌ Error while printing system simulation report: {e}.")

@@ -98,10 +98,10 @@ inference:
   confidence_intervals:
     confidence_level: 0.95
   mc_dropout:
-    num_samples: 150
+    num_samples: 50
 simulation:
   general:
-    cache_size: 3
+    cache_size: 5
   traditional_cache:
     ttl: 120
   lstm_cache:

@@ -51,10 +51,7 @@ def _setup_simulation(
     )
 
     # initial model setup, in case of LSTM cache
-    if (
-        policy_name == 'LSTM' or
-        policy_name == 'LSTM+CI'
-    ):
+    if policy_name == 'LSTM':
         # setup for lstm cache
         (
             device,
@@ -211,10 +208,7 @@ def simulate_cache_policy(
         debug(f"⚙️Current time: {current_time} - Key: {key}.")
 
         # if the LSTM cache is being used
-        if (
-            policy_name == 'LSTM' or
-            policy_name == 'LSTM+CI'
-        ):
+        if policy_name == 'LSTM':
             (
                 autoregressive_latency,
                 num_prefetch
@@ -227,14 +221,13 @@ def simulate_cache_policy(
                 device,
                 model,
                 testing_set,
-                config_settings,
-                confidence_aware=(policy_name=='LSTM+CI')
+                config_settings
             )
 
             # update no. of prefetch
             tot_prefetch += num_prefetch
 
-            # calculate cache latency
+            # store cache latency
             autoregressive_latencies.append(
                 autoregressive_latency
             )

@@ -285,8 +285,7 @@ def autoregressive_rollout(
     model,
     seed_sequence,
     device,
-    config_settings,
-    confidence_aware
+    config_settings
 ):
     """
     Method to perform autoregressive rollout.
@@ -294,7 +293,6 @@ def autoregressive_rollout(
     :param seed_sequence: The seed sequence.
     :param device: The device to be used.
     :param config_settings: The configuration settings.
-    :param confidence_aware: Specifies whether to use CIs.
     :return: All the outputs and the variances.
     """
     # initial message
@@ -322,26 +320,18 @@ def autoregressive_rollout(
                 % (2 * math.pi)
         )
 
-        # check if the model is confidence-aware or not
-        if confidence_aware:
-            num_samples = (
-                config_settings.mc_dropout_num_samples
-            )
-        else:
-            num_samples = 1
-
         # increase the temporal features (2 minutes)
         delta_t = (2 / 1440) * (2 * math.pi)
 
         # for each future sequence
-        for i in range(config_settings.prediction_interval*2):
+        for i in range(config_settings.prediction_interval):
             # compute MC forward pass
             outputs_mean, outputs_var, _ = mc_forward_passes(
                 model,
                 (x_features_seq, x_keys_seq),
                 device,
                 config_settings,
-                num_samples
+                config_settings.mc_dropout_num_samples
             )
 
             # store outputs and variances

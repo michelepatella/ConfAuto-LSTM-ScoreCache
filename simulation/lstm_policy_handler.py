@@ -13,8 +13,7 @@ def _calculate_key_scores(
         num_keys,
         num_steps,
         prob_matrix,
-        conf_matrix,
-        confidence_aware
+        conf_matrix
 ):
     """
     Method to calculate key scores.
@@ -22,7 +21,6 @@ def _calculate_key_scores(
     :param num_steps: The number of steps.
     :param prob_matrix: The probability matrix.
     :param conf_matrix: The confidence matrix.
-    :param confidence_aware: Specifies whether to use CIs.
     :return: The key scores.
     """
     # initial message
@@ -38,10 +36,7 @@ def _calculate_key_scores(
                 # calculate the final score as a combination of
                 # probability of a key of being used and CIs related
                 # to that prediction
-                if confidence_aware:
-                    score += prob_matrix[t, k] * (1 + 1.5 * max(0, conf_matrix[t, k] - 0.3))
-                else:
-                    score += prob_matrix[t, k]
+                score += prob_matrix[t, k] * (1 + (conf_matrix[t, k] - 0.5))
             scores[k] = score
 
         # normalize scores in [0,1]
@@ -74,15 +69,13 @@ def _calculate_key_scores(
 def _find_key_candidates(
         all_outputs,
         upper_ci,
-        lower_ci,
-        confidence_aware
+        lower_ci
 ):
     """
     Method to find key candidates to be inserted into the cache.
     :param all_outputs: The outputs from the model.
     :param upper_ci: The upper confidence interval bound.
     :param lower_ci: The lower confidence interval bound.
-    :param confidence_aware: Specifies whether to use CIs.
     :return: The key candidates.
     """
     # initial message
@@ -112,12 +105,11 @@ def _find_key_candidates(
             ).cpu().numpy()
             prob_matrix[t] = probs
 
-            if confidence_aware:
-                # calculate the confidence at time step t
-                conf = (
-                        1 / (upper_ci[t] - lower_ci[t] + 1e-6)
-                ).cpu().numpy()
-                conf_matrix[t] = conf
+            # calculate the confidence at time step t
+            conf = (
+                    1 / (upper_ci[t] - lower_ci[t] + 1e-6)
+            ).cpu().numpy()
+            conf_matrix[t] = conf
 
         # normalize confidence matrix to [0,1]
         min_conf = np.min(conf_matrix)
@@ -132,8 +124,7 @@ def _find_key_candidates(
             num_keys,
             num_steps,
             prob_matrix,
-            conf_matrix,
-            confidence_aware
+            conf_matrix
         )
 
         # select the keys
@@ -269,8 +260,7 @@ def handle_lstm_cache_policy(
         device,
         model,
         testing_set,
-        config_settings,
-        confidence_aware
+        config_settings
 ):
     """
     Method to handle the LSTM-based cache policy.
@@ -283,7 +273,6 @@ def handle_lstm_cache_policy(
     :param model: The model to use to infer.
     :param testing_set: The testing set.
     :param config_settings: The configuration settings.
-    :param confidence_aware: Specifies whether to use CIs.
     :return:
     """
     # initial message
@@ -334,21 +323,19 @@ def handle_lstm_cache_policy(
                 model,
                 seed_seq,
                 device,
-                config_settings,
-                confidence_aware
+                config_settings
             )
 
-            upper_ci, lower_ci = None, None
-            if confidence_aware:
-                # calculate CIs related to the predictions
-                (
-                    lower_ci,
-                    upper_ci
-                ) = calculate_confidence_intervals(
-                    all_outputs,
-                    all_vars,
-                    config_settings
-                )
+            # calculate CIs related to the predictions
+            (
+                lower_ci,
+                upper_ci
+            ) = calculate_confidence_intervals(
+                all_outputs,
+                all_vars,
+                config_settings
+            )
+
 
             # identify keys and scores thereof
             (
@@ -357,8 +344,7 @@ def handle_lstm_cache_policy(
             ) = _find_key_candidates(
                 all_outputs,
                 upper_ci,
-                lower_ci,
-                confidence_aware
+                lower_ci
             )
 
             # put the keys into the cache

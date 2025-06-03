@@ -46,11 +46,6 @@ def run_simulations(config_settings):
                 None,
                 CacheMetricsLogger(),
                 config_settings
-            ),
-            'LSTM+CI': LSTMCache(
-                None,
-                CacheMetricsLogger(),
-                config_settings
             )
         }
 
