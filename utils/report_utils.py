@@ -79,7 +79,7 @@ def print_system_evaluation_report(results):
 
     try:
         # title
-        print("\n" + "=" * 115)
+        print("\n" + "=" * 1145)
         print(" " * 30 + "Overall System Evaluation Report")
         print("=" * 115 + "\n")
 

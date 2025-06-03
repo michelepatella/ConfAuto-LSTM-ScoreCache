@@ -1,5 +1,8 @@
 import math
 import random
+
+from fsspec.parquet import FastparquetEngine
+
 from simulation.caches.BaseCache import BaseCache
 from utils.log_utils import debug, info
 
@@ -184,6 +187,7 @@ class LSTMCache(BaseCache):
             key,
             score,
             current_time,
+            metrics_logger,
             cold_start=False,
             config_settings=None
     ):
@@ -195,7 +199,7 @@ class LSTMCache(BaseCache):
         :param current_time: The current time.
         :param cold_start: Specifies whether it's cold start or not.
         :param config_settings: The configuration settings.
-        :return:
+        :return: True if the key has been inserted, False otherwise.
         """
         # initial message
         info("🔄 Key insertion started...")
@@ -228,15 +232,17 @@ class LSTMCache(BaseCache):
                     )
 
                     # print a successful message
-                    info("🟢 Key inserted.")
+                    info("🟢 Key not inserted.")
 
-                    return
+                    return False
 
                 elif (
                     score < self.threshold_score and
                     key not in self.store
                 ):
-                    return
+                    # print a successful message
+                    info("🟢 Key not inserted.")
+                    return False
 
                 # compute TTL dynamically
                 ttl = self.ttl_base * (1 + math.log1p(score))
@@ -284,6 +290,10 @@ class LSTMCache(BaseCache):
                     [key]
                 )
 
+                # print a successful message
+                info("🟢 Key inserted.")
+                return True
+
             else:
                 # cold-start management
                 self._handle_cold_start(
@@ -293,8 +303,12 @@ class LSTMCache(BaseCache):
                     config_settings
                 )
 
-            # debugging
-            debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")
+                # debugging
+                debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")
+
+                # print a successful message
+                info("🟢 Key not inserted.")
+                return False
 
         except (
                 AttributeError,
@@ -303,6 +317,3 @@ class LSTMCache(BaseCache):
                 ValueError
         ) as e:
             raise RuntimeError(f"❌ Error while putting the key into the cache: {e}.")
-
-        # print a successful message
-        info("🟢 Key inserted.")

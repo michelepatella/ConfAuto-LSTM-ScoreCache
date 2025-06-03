@@ -195,59 +195,31 @@ def compute_eviction_mistake_rate(metrics_logger):
 
 
 def compute_prefetch_hit_rate(
-        metrics_logger,
-        window_size
+        num_hits,
+        tot_prefetch,
+        config_settings
 ):
     """
     Method to compute prefetch hit rate.
-    :param metrics_logger: The metrics logger.
-    :param window_size: The window size.
+    :param num_hits: The number of hits.
+    :param tot_prefetch: Total number of prefetches.
+    :param config_settings: The configuration settings.
     :return: The prefetch hit rate.
     """
     # initial message
     info("🔄 Prefetch hit rate calculation started...")
 
-    # initialize data
-    hits = 0
-    total = 0
-
     try:
-        # count prefetched keys have been hit
-        for prefetch_time, keys_predicted in (
-                metrics_logger.prefetch_predictions.items()
-        ):
-            for key in keys_predicted:
-                access_times = metrics_logger.access_events.get(key, [])
-                access_time = next(
-                    (
-                        a for a in access_times
-                        if prefetch_time < a <= prefetch_time + window_size
-                     ),
-                    None
-                )
-                if access_time is None:
-                    continue
-                # look for the nearest put
-                valid_puts = [
-                    pt for pt, ttl in metrics_logger.put_events.get(key, [])
-                    if prefetch_time <= pt <= access_time
-                ]
-                if not valid_puts:
-                    continue
-                # use the last but before the acces
-                put_time = max(valid_puts)
-                predicted_ttl = next(
-                    ttl for pt,
-                    ttl in metrics_logger.put_events[key]
-                    if pt == put_time
-                )
-                eviction_time = metrics_logger.evicted_keys.get(
-                    key,
-                    put_time + predicted_ttl
-                )
-                if eviction_time >= access_time:
-                    hits += 1
-                total += 1
+        # the no. of prefetch hits is given by removing
+        # the sequence length from the tot. no. of hits
+        # as the sequence length determines how long cold start is
+        prefetch_hits = num_hits - config_settings.seq_len
+
+        if tot_prefetch > 0:
+            # calculate prefetch hit rate
+            prefetch_hit_rate = prefetch_hits / tot_prefetch
+        else:
+            prefetch_hit_rate = 0.0
 
     except (
         AttributeError,
@@ -261,43 +233,36 @@ def compute_prefetch_hit_rate(
     # show a successful message
     info("🟢 Prefetch hit rate computed.")
 
-    return hits / total if total > 0 else 0.0
+    return prefetch_hit_rate
 
 
-def compute_ttl_mae(metrics_logger):
+def compute_ttl_success_rate(metrics_logger):
     """
-    Method to compute TTL MAE.
+    Method to compute TTL success rate.
     :param metrics_logger: The metrics logger.
-    :return: The MAE.
+    :return: The TTL success rate.
     """
     # initial message
-    info("🔄 TTL MAE calculation started...")
+    info("🔄 TTL success rate calculation started...")
 
-    total_error = 0
-    count = 0
+    # initialize data
+    success = 0
+    total = 0
 
     try:
-        # calculate MAE on TTL assigned
+        # calculate TTL success rate
         for key, puts in metrics_logger.put_events.items():
-            for put_time, predicted_ttl in puts:
-                eviction_time = metrics_logger.evicted_keys.get(
-                    key,
-                    float('inf')
-                )
-                actual_accesses = metrics_logger.access_events.get(key, [])
-                # accesses after put and before eviction
-                valid_accesses = [
-                    t for t in actual_accesses
-                    if put_time < t <= eviction_time
-                ]
-                if not valid_accesses:
-                    continue
-                # first access after put
-                access_time = min(valid_accesses)
-                true_ttl = access_time - put_time
-                error = abs(true_ttl - predicted_ttl)
-                total_error += error
-                count += 1
+            accesses = sorted(metrics_logger.access_events.get(key, []))
+            for put_time, ttl in puts:
+                expiry_time = put_time + ttl
+                for access_time in accesses:
+                    if put_time <= access_time <= expiry_time:
+                        success += 1
+                        break
+                total += 1
+
+        # calculate rate
+        rate = success / total if total > 0 else None
     except (
         AttributeError,
         TypeError,
@@ -308,9 +273,9 @@ def compute_ttl_mae(metrics_logger):
         raise RuntimeError(f"❌ Error while computing TTL MAE: {e}.")
 
     # show a successful message
-    info("🟢 TTL MAE computed.")
+    info("🟢 TTL success rate computed.")
 
-    return total_error / count if count > 0 else None
+    return rate
 
 
 def calculate_hit_miss_rate(counters):

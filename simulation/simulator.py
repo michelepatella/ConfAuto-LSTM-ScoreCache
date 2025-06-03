@@ -5,7 +5,7 @@ from utils.simulation_utils import search_key
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.dataloader_utils import dataloader_setup
 from utils.log_utils import info, debug
-from utils.metrics_utils import compute_eviction_mistake_rate, compute_ttl_mae, compute_prefetch_hit_rate, \
+from utils.metrics_utils import compute_eviction_mistake_rate, compute_ttl_success_rate, compute_prefetch_hit_rate, \
     calculate_hit_miss_rate, calculate_prefetching_avg_latency
 from utils.model_utils import trained_model_setup
 
@@ -182,6 +182,7 @@ def simulate_cache_policy(
         config_settings
     )
 
+    tot_prefetch = 0
     # for each request
     for idx in tqdm(
             range(len(testing_set)),
@@ -214,7 +215,10 @@ def simulate_cache_policy(
             policy_name == 'LSTM' or
             policy_name == 'LSTM+CI'
         ):
-            autoregressive_latency = handle_lstm_cache_policy(
+            (
+                autoregressive_latency,
+                num_prefetch
+            )= handle_lstm_cache_policy(
                 cache,
                 key,
                 current_time,
@@ -226,6 +230,9 @@ def simulate_cache_policy(
                 config_settings,
                 confidence_aware=(policy_name=='LSTM+CI')
             )
+
+            # update no. of prefetch
+            tot_prefetch += num_prefetch
 
             # calculate cache latency
             autoregressive_latencies.append(
@@ -269,10 +276,11 @@ def simulate_cache_policy(
 
     # component evaluation
     prefetch_hit_rate = compute_prefetch_hit_rate(
-        metrics_logger,
-        window_size=config_settings.prediction_interval
+        counters['hits'],
+        tot_prefetch,
+        config_settings
     )
-    ttl_mae = compute_ttl_mae(
+    ttl_mae = compute_ttl_success_rate(
         metrics_logger
     )
     eviction_mistake_rate = compute_eviction_mistake_rate(

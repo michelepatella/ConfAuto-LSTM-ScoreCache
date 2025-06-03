@@ -283,6 +283,7 @@ def handle_lstm_cache_policy(
     :param model: The model to use to infer.
     :param testing_set: The testing set.
     :param config_settings: The configuration settings.
+    :param metrics_logger: The metrics logger.
     :param confidence_aware: Specifies whether to use CIs.
     :return:
     """
@@ -291,6 +292,7 @@ def handle_lstm_cache_policy(
 
     try:
         start_time = None
+        num_insertion = 0
 
         # search the key into the cache
         search_key(
@@ -363,11 +365,15 @@ def handle_lstm_cache_policy(
             # put the keys into the cache
             for k in keys:
                 score = scores[k]
-                cache.put(
+                is_cached = cache.put(
                     k,
                     score,
-                    current_time
+                    current_time,
                 )
+
+                # increase the number of prefetched keys
+                if is_cached:
+                    num_insertion += 1
 
     except (
             IndexError,
@@ -382,6 +388,12 @@ def handle_lstm_cache_policy(
     info(f"🟢 LSTM-based cache policy management completed.")
 
     if start_time is not None:
-        return time.perf_counter() - start_time
+        return (
+            time.perf_counter() - start_time,
+            num_insertion
+        )
     else:
-        return 0
+        return (
+            0,
+            num_insertion
+        )
