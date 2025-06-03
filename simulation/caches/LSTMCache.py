@@ -99,7 +99,7 @@ class LSTMCache(BaseCache):
             debug(f"⚙️Full cache, evicting: {evict_key}.")
 
             # evict the key
-            self._evict_key(evict_key)
+            self.evict_key(evict_key)
 
             # trace event
             self.metrics_logger.log_eviction(
@@ -119,7 +119,7 @@ class LSTMCache(BaseCache):
         info("🟢 Cold start managed.")
 
 
-    def _evict_key(self, key):
+    def evict_key(self, key):
         """
         Method to evict the key from cache.
         :param key: Key to evict.
@@ -222,7 +222,7 @@ class LSTMCache(BaseCache):
                     key in self.store
                 ):
                     # remove the key from the cache
-                    self._evict_key(key)
+                    self.evict_key(key)
 
                     # trace event
                     self.metrics_logger.log_eviction(
@@ -267,7 +267,7 @@ class LSTMCache(BaseCache):
                     # the one of the key to be inserted
                     if self.scores.get(key_to_evict, 0) <= score:
                         # evict the key
-                        self._evict_key(key_to_evict)
+                        self.evict_key(key_to_evict)
 
                         # trace event
                         self.metrics_logger.log_eviction(

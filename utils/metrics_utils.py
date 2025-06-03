@@ -198,26 +198,19 @@ def compute_eviction_mistake_rate(
 
 
 def compute_prefetch_hit_rate(
-        num_hits,
+        prefetch_hits,
         tot_prefetch,
-        config_settings
 ):
     """
     Method to compute prefetch hit rate.
-    :param num_hits: The number of hits.
+    :param prefetch_hits: The number of prefetch hits.
     :param tot_prefetch: Total number of prefetches.
-    :param config_settings: The configuration settings.
     :return: The prefetch hit rate.
     """
     # initial message
     info("🔄 Prefetch hit rate calculation started...")
 
     try:
-        # the no. of prefetch hits is given by removing
-        # the sequence length from the tot. no. of hits
-        # as the sequence length determines how long cold start is
-        prefetch_hits = num_hits - config_settings.seq_len
-
         if tot_prefetch > 0:
             # calculate prefetch hit rate
             prefetch_hit_rate =  prefetch_hits / tot_prefetch

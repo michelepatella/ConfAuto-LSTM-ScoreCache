@@ -31,7 +31,8 @@ def _setup_simulation(
     ) = None, None, None
     counters = {
         'hits': 0,
-        'misses': 0
+        'misses': 0,
+        'hits_cold_start': 0
     }
     timeline = []
     recent_hits = []
@@ -272,9 +273,8 @@ def simulate_cache_policy(
 
     # component evaluation
     prefetch_hit_rate = compute_prefetch_hit_rate(
-        counters['hits'],
-        tot_prefetch,
-        config_settings
+        counters['hits']-counters['hits_cold_start'],
+        tot_prefetch
     )
     ttl_success_rate = compute_ttl_success_rate(
         metrics_logger
