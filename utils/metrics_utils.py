@@ -238,8 +238,6 @@ def compute_prefetch_hit_rate(
 def compute_ttl_hit_ratio(metrics_logger):
     """
     Method to compute the TTL Hit Ratio.
-    This metric represents the fraction of cache accesses that hit keys
-    before their TTL expires.
     :param metrics_logger: The metrics logger.
     :return: The TTL Hit Ratio or None if no puts.
     """
@@ -248,21 +246,21 @@ def compute_ttl_hit_ratio(metrics_logger):
 
     # initialize counters
     hits_before_expiry = 0
-    total_puts = 0
+    total_accesses = 0
 
     try:
-        # for each key and its put events
         for key, puts in metrics_logger.put_events.items():
-            # get the sorted list of access times for that key
+            # retrieve key accesses
             accesses = sorted(metrics_logger.access_events.get(key, []))
             used_access_indices = set()
 
+            # calculate expiration time for the current put
             for put_time, ttl in puts:
                 expiry_time = put_time + ttl
 
-                # check if there is at least one access before
-                # expiry that hasn't been counted yet
+                # for each key access
                 for i, access_time in enumerate(accesses):
+                    # check if the access occur while TTL was valid
                     if i in used_access_indices:
                         continue
                     if put_time <= access_time <= expiry_time:
@@ -270,9 +268,11 @@ def compute_ttl_hit_ratio(metrics_logger):
                         used_access_indices.add(i)
                         break
 
-                total_puts += 1
+            total_accesses += len(accesses)
 
-        rate = hits_before_expiry / total_puts if total_puts > 0 else None
+        return hits_before_expiry / total_accesses\
+            if total_accesses > 0\
+            else None
 
     except (
         AttributeError,
@@ -387,7 +387,7 @@ def compute_cache_metrics(
         counters['hits'] - counters['hits_cold_start'],
         tot_prefetch
     )
-    ttl_success_rate = compute_ttl_hit_ratio(
+    ttl_hit_ratio = compute_ttl_hit_ratio(
         metrics_logger
     )
     eviction_mistake_rate = compute_eviction_mistake_rate(
@@ -406,7 +406,7 @@ def compute_cache_metrics(
         hit_rate,
         miss_rate,
         prefetch_hit_rate,
-        ttl_success_rate,
+        ttl_hit_ratio,
         eviction_mistake_rate,
         avg_prefetching_latency
     )
