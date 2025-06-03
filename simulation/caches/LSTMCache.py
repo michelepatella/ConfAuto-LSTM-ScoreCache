@@ -187,7 +187,6 @@ class LSTMCache(BaseCache):
             key,
             score,
             current_time,
-            metrics_logger,
             cold_start=False,
             config_settings=None
     ):

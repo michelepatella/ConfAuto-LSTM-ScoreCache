@@ -283,7 +283,6 @@ def handle_lstm_cache_policy(
     :param model: The model to use to infer.
     :param testing_set: The testing set.
     :param config_settings: The configuration settings.
-    :param metrics_logger: The metrics logger.
     :param confidence_aware: Specifies whether to use CIs.
     :return:
     """
