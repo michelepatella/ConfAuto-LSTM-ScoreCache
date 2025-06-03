@@ -334,7 +334,7 @@ def autoregressive_rollout(
         delta_t = (2 / 1440) * (2 * math.pi)
 
         # for each future sequence
-        for i in range(config_settings.prediction_interval):
+        for i in range(config_settings.prediction_interval*2):
             # compute MC forward pass
             outputs_mean, outputs_var, _ = mc_forward_passes(
                 model,

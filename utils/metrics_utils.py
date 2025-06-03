@@ -158,10 +158,14 @@ def _compute_model_standalone_metrics(
     return metrics
 
 
-def compute_eviction_mistake_rate(metrics_logger):
+def compute_eviction_mistake_rate(
+        metrics_logger,
+        mistake_window=120
+):
     """
     Method to compute eviction mistake rate.
     :param metrics_logger: The metrics logger.
+    :param mistake_window: The mistake window to consider.
     :return: The eviction mistake rate.
     """
     # initial message
@@ -172,15 +176,14 @@ def compute_eviction_mistake_rate(metrics_logger):
         mistakes = 0
         total = len(metrics_logger.evicted_keys)
 
-        # count mistakes due to wrongly evictions
+        # count mistakes within a temporal window
         for key, eviction_time in metrics_logger.evicted_keys.items():
             future_accesses = [
                 t for t in metrics_logger.access_events.get(key, [])
-                if t > eviction_time
+                if t > eviction_time and t - eviction_time <= mistake_window
             ]
             if future_accesses:
                 mistakes += 1
-
     except (
         AttributeError,
         TypeError,
@@ -253,11 +256,17 @@ def compute_ttl_success_rate(metrics_logger):
         # calculate TTL success rate
         for key, puts in metrics_logger.put_events.items():
             accesses = sorted(metrics_logger.access_events.get(key, []))
+            used_access_indices = set()
             for put_time, ttl in puts:
                 expiry_time = put_time + ttl
-                for access_time in accesses:
+
+                # find the first valid access
+                for i, access_time in enumerate(accesses):
+                    if i in used_access_indices:
+                        continue
                     if put_time <= access_time <= expiry_time:
                         success += 1
+                        used_access_indices.add(i)
                         break
                 total += 1
 

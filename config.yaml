@@ -98,13 +98,13 @@ inference:
   confidence_intervals:
     confidence_level: 0.95
   mc_dropout:
-    num_samples: 50
+    num_samples: 150
 simulation:
   general:
-    cache_size: 5
+    cache_size: 3
   traditional_cache:
     ttl: 120
   lstm_cache:
-    prediction_interval: 10
-    threshold_score: 0.4
+    prediction_interval: 5
+    threshold_score: 0.5
     ttl_base: 120
