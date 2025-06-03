@@ -235,39 +235,45 @@ def compute_prefetch_hit_rate(
     return prefetch_hit_rate
 
 
-def compute_ttl_success_rate(metrics_logger):
+def compute_ttl_hit_ratio(metrics_logger):
     """
-    Method to compute TTL success rate.
+    Method to compute the TTL Hit Ratio.
+    This metric represents the fraction of cache accesses that hit keys
+    before their TTL expires.
     :param metrics_logger: The metrics logger.
-    :return: The TTL success rate.
+    :return: The TTL Hit Ratio or None if no puts.
     """
     # initial message
-    info("🔄 TTL success rate calculation started...")
+    info("🔄 TTL Hit Ratio calculation started...")
 
-    # initialize data
-    success = 0
-    total = 0
+    # initialize counters
+    hits_before_expiry = 0
+    total_puts = 0
 
     try:
-        # calculate TTL success rate
+        # for each key and its put events
         for key, puts in metrics_logger.put_events.items():
+            # get the sorted list of access times for that key
             accesses = sorted(metrics_logger.access_events.get(key, []))
             used_access_indices = set()
+
             for put_time, ttl in puts:
                 expiry_time = put_time + ttl
 
-                # find the first valid access
+                # check if there is at least one access before
+                # expiry that hasn't been counted yet
                 for i, access_time in enumerate(accesses):
                     if i in used_access_indices:
                         continue
                     if put_time <= access_time <= expiry_time:
-                        success += 1
+                        hits_before_expiry += 1
                         used_access_indices.add(i)
                         break
-                total += 1
 
-        # calculate rate
-        rate = success / total if total > 0 else None
+                total_puts += 1
+
+        rate = hits_before_expiry / total_puts if total_puts > 0 else None
+
     except (
         AttributeError,
         TypeError,
@@ -275,10 +281,10 @@ def compute_ttl_success_rate(metrics_logger):
         KeyError,
         NameError
     ) as e:
-        raise RuntimeError(f"❌ Error while computing TTL MAE: {e}.")
+        raise RuntimeError(f"❌ Error while computing TTL Hit Ratio: {e}.")
 
-    # show a successful message
-    info("🟢 TTL success rate computed.")
+    # success message
+    info("🟢 TTL Hit Ratio computed.")
 
     return rate
 
@@ -381,7 +387,7 @@ def compute_cache_metrics(
         counters['hits'] - counters['hits_cold_start'],
         tot_prefetch
     )
-    ttl_success_rate = compute_ttl_success_rate(
+    ttl_success_rate = compute_ttl_hit_ratio(
         metrics_logger
     )
     eviction_mistake_rate = compute_eviction_mistake_rate(

@@ -268,7 +268,7 @@ def simulate_cache_policy(
         hit_rate,
         miss_rate,
         prefetch_hit_rate,
-        ttl_success_rate,
+        ttl_hit_ratio,
         eviction_mistake_rate,
         avg_prefetching_latency
     ) = compute_cache_metrics(
@@ -290,6 +290,6 @@ def simulate_cache_policy(
         'avg_prefetching_latency': avg_prefetching_latency,
         'timeline': timeline,
         'prefetch_hit_rate': prefetch_hit_rate,
-        'ttl_success_rate': ttl_success_rate,
+        'tt_hit_ratio': ttl_hit_ratio,
         'eviction_mistake_rate': eviction_mistake_rate
     }
