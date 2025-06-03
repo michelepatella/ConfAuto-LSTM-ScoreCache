@@ -39,7 +39,7 @@ def _calculate_key_scores(
                 # probability of a key of being used and CIs related
                 # to that prediction
                 if confidence_aware:
-                    score += prob_matrix[t, k] * (conf_matrix[t, k] + 0.5)
+                    score += prob_matrix[t, k] * (1 + 1.5 * max(0, conf_matrix[t, k] - 0.3))
                 else:
                     score += prob_matrix[t, k]
             scores[k] = score
