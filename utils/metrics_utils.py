@@ -245,8 +245,6 @@ def compute_prefetch_hit_rate(
                     key,
                     put_time + predicted_ttl
                 )
-                if eviction_time < access_time:
-                    continue
                 if eviction_time >= access_time:
                     hits += 1
                 total += 1
@@ -312,7 +310,7 @@ def compute_ttl_mae(metrics_logger):
     # show a successful message
     info("🟢 TTL MAE computed.")
 
-    return np.mean(total_error) if total_error else None
+    return total_error / count if count > 0 else None
 
 
 def calculate_hit_miss_rate(counters):
