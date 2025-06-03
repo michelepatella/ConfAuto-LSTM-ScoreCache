@@ -270,9 +270,7 @@ def compute_ttl_hit_ratio(metrics_logger):
 
             total_accesses += len(accesses)
 
-        return hits_before_expiry / total_accesses\
-            if total_accesses > 0\
-            else None
+        return hits_before_expiry / total_accesses
 
     except (
         AttributeError,
