@@ -15,7 +15,7 @@ class CacheMetricsLogger:
         try:
             self.put_events = {}
             self.access_events = defaultdict(list)
-            self.evicted_keys = {}
+            self.evicted_keys = defaultdict(list)
             self.prefetch_predictions = {}
         except (
             NameError,
@@ -98,7 +98,7 @@ class CacheMetricsLogger:
         info("🔄 Key eviction tracing started...")
 
         try:
-            self.evicted_keys[key] = time
+            self.evicted_keys[key].append(time)
         except (
             AttributeError,
             NameError,

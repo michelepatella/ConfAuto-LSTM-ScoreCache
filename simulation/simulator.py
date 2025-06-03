@@ -5,8 +5,7 @@ from utils.simulation_utils import search_key
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.dataloader_utils import dataloader_setup
 from utils.log_utils import info, debug
-from utils.metrics_utils import compute_eviction_mistake_rate, compute_ttl_success_rate, compute_prefetch_hit_rate, \
-    calculate_hit_miss_rate, calculate_prefetching_avg_latency
+from utils.metrics_utils import compute_cache_metrics
 from utils.model_utils import trained_model_setup
 
 
@@ -263,29 +262,19 @@ def simulate_cache_policy(
             timeline
         )
 
-    # calculate hit rate and miss rate
+    # compute cache metrics
     (
         hit_rate,
-        miss_rate
-    ) = calculate_hit_miss_rate(
-        counters
-    )
-
-    # component evaluation
-    prefetch_hit_rate = compute_prefetch_hit_rate(
-        counters['hits']-counters['hits_cold_start'],
-        tot_prefetch
-    )
-    ttl_success_rate = compute_ttl_success_rate(
+        miss_rate,
+        prefetch_hit_rate,
+        ttl_success_rate,
+        eviction_mistake_rate,
+        avg_prefetching_latency
+    ) = compute_cache_metrics(
+        counters,
+        tot_prefetch,
+        autoregressive_latencies,
         metrics_logger
-    )
-    eviction_mistake_rate = compute_eviction_mistake_rate(
-        metrics_logger
-    )
-
-    # calculate avg prefetching average
-    avg_prefetching_latency = calculate_prefetching_avg_latency(
-        autoregressive_latencies
     )
 
     # print a successful message

@@ -160,7 +160,7 @@ def _compute_model_standalone_metrics(
 
 def compute_eviction_mistake_rate(
         metrics_logger,
-        mistake_window=500
+        mistake_window=200
 ):
     """
     Method to compute eviction mistake rate.
@@ -174,16 +174,19 @@ def compute_eviction_mistake_rate(
     try:
         # initialize data
         mistakes = 0
-        total = len(metrics_logger.evicted_keys)
+        total_eviction_events = 0
 
         # count mistakes within a temporal window
-        for key, eviction_time in metrics_logger.evicted_keys.items():
-            future_accesses = [
-                t for t in metrics_logger.access_events.get(key, [])
-                if t > eviction_time and t - eviction_time <= mistake_window
-            ]
-            if future_accesses:
-                mistakes += 1
+        for key, eviction_times in metrics_logger.evicted_keys.items():
+            for eviction_time in eviction_times:
+                total_eviction_events += 1
+                # look for any future access after the current eviction
+                future_accesses = [
+                    t for t in metrics_logger.access_events.get(key, [])
+                    if t > eviction_time and (t - eviction_time) <= mistake_window
+                ]
+                if future_accesses:
+                    mistakes += 1
     except (
         AttributeError,
         TypeError,
@@ -194,7 +197,7 @@ def compute_eviction_mistake_rate(
     # show a successful message
     info("🟢 Eviction mistake rate computed.")
 
-    return mistakes / total if total > 0 else 0
+    return mistakes / total_eviction_events if total_eviction_events > 0 else 0
 
 
 def compute_prefetch_hit_rate(
@@ -346,3 +349,58 @@ def calculate_prefetching_avg_latency(autoregressive_latencies):
     info("🟢 Prefetching average latency calculated.")
 
     return avg_prefetching_latency
+
+
+def compute_cache_metrics(
+        counters,
+        tot_prefetch,
+        autoregressive_latencies,
+        metrics_logger
+):
+    """
+    Method to orchestrate cache metrics calculation.
+    :param counters: A counter used while simulating a cache policy.
+    :param tot_prefetch: The total number of prefetches.
+    :param autoregressive_latencies: The autoregressive latencies.
+    :param metrics_logger: The metrics logger.
+    :return: All the computed cache metrics.
+    """
+    # initial message
+    info("🔄 Cache metrics calculation started...")
+
+    # calculate hit rate and miss rate
+    (
+        hit_rate,
+        miss_rate
+    ) = calculate_hit_miss_rate(
+        counters
+    )
+
+    # component evaluation
+    prefetch_hit_rate = compute_prefetch_hit_rate(
+        counters['hits'] - counters['hits_cold_start'],
+        tot_prefetch
+    )
+    ttl_success_rate = compute_ttl_success_rate(
+        metrics_logger
+    )
+    eviction_mistake_rate = compute_eviction_mistake_rate(
+        metrics_logger
+    )
+
+    # calculate avg prefetching average
+    avg_prefetching_latency = calculate_prefetching_avg_latency(
+        autoregressive_latencies
+    )
+
+    # show a successful message
+    info("🟢 Cache metrics calculated.")
+
+    return (
+        hit_rate,
+        miss_rate,
+        prefetch_hit_rate,
+        ttl_success_rate,
+        eviction_mistake_rate,
+        avg_prefetching_latency
+    )
