@@ -201,6 +201,9 @@ class LSTMCache(BaseCache):
         info("🔄 Key insertion started...")
 
         try:
+            # debugging
+            debug(f"⚙️Key: {key}, Score: {score}.")
+
             # clean up the cache removing expired keys
             self._remove_expired_keys(
                 current_time
@@ -211,10 +214,10 @@ class LSTMCache(BaseCache):
 
                 # evict if the key's score is less than
                 # the threshold
-                if score < self.threshold_score:
-                    # debugging
-                    debug(f"⚙️Key: {key}, Score: {score}.")
-
+                if (
+                    score < self.threshold_score and
+                    key in self.store
+                ):
                     # remove the key from the cache
                     self._evict_key(key)
 
@@ -229,6 +232,12 @@ class LSTMCache(BaseCache):
 
                     return
 
+                elif (
+                    score < self.threshold_score and
+                    key not in self.store
+                ):
+                    return
+
                 # compute TTL dynamically
                 ttl = self.ttl_base * (1 + math.log1p(score))
 
@@ -240,7 +249,6 @@ class LSTMCache(BaseCache):
                     key not in self.store and
                     len(self.store) >= self.maxsize
                 ):
-
                     # evict the key with the lowest score
                     key_to_evict = min(
                         self.store.keys(),
@@ -253,7 +261,6 @@ class LSTMCache(BaseCache):
                     # evict the key if its score is less than
                     # the one of the key to be inserted
                     if self.scores.get(key_to_evict, 0) <= score:
-
                         # evict the key
                         self._evict_key(key_to_evict)
 

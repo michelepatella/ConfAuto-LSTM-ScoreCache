@@ -44,7 +44,7 @@ class CacheMetricsLogger:
         info("🔄 Key insertion tracing started...")
 
         try:
-            self.put_events[key] = (time, ttl)
+            self.put_events.setdefault(key, []).append((time, ttl))
         except (
             NameError,
             TypeError,

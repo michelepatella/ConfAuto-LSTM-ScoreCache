@@ -213,18 +213,41 @@ def compute_prefetch_hit_rate(
 
     try:
         # count prefetched keys have been hit
-        for t, predicted_keys in metrics_logger.prefetch_predictions.items():
-            if not isinstance(
-                    predicted_keys,
-                    (list, set, tuple)
-            ):
-                predicted_keys = [predicted_keys]
-            total += len(predicted_keys)
-            for key in predicted_keys:
-                for access_time in metrics_logger.access_events.get(key, []):
-                    if t < access_time <= t + window_size:
-                        hits += 1
-                        break
+        for key, prefetch_times in (
+                metrics_logger.prefetch_predictions.items()
+        ):
+            for t in prefetch_times:
+                access_times = metrics_logger.access_events.get(key, [])
+                # look for the first access in the window
+                access_time = next(
+                    (a for a in access_times if t < a <= t + window_size),
+                    None
+                )
+                if access_time is None:
+                    continue
+                # look for the nearest put
+                valid_puts = [
+                    pt for pt,
+                    ttl in metrics_logger.put_events.get(key, [])
+                    if pt <= access_time
+                ]
+                if not valid_puts:
+                    continue
+                # use the last but before the acces
+                put_time = max(valid_puts)
+                predicted_ttl = next(
+                    ttl for pt,
+                    ttl in metrics_logger.put_events[key]
+                    if pt == put_time
+                )
+                eviction_time = metrics_logger.eviction_events.get(
+                    key,
+                    put_time + predicted_ttl
+                )
+                if eviction_time >= access_time:
+                    hits += 1
+                total += 1
+
     except (
         AttributeError,
         TypeError,
@@ -237,7 +260,7 @@ def compute_prefetch_hit_rate(
     # show a successful message
     info("🟢 Prefetch hit rate computed.")
 
-    return hits / total if total > 0 else 0
+    return hits / total if total > 0 else 0.0
 
 
 def compute_ttl_mae(metrics_logger):
@@ -249,21 +272,31 @@ def compute_ttl_mae(metrics_logger):
     # initial message
     info("🔄 TTL MAE calculation started...")
 
-    errors = []
+    total_error = 0
+    count = 0
 
     try:
         # calculate MAE on TTL assigned
-        for key, (put_time, predicted_ttl) in metrics_logger.put_events.items():
-            actual_accesses = metrics_logger.access_events.get(key, [])
-            if actual_accesses:
-                last_use = max([
-                    t for t in actual_accesses
-                    if t >= put_time],
-                    default=None
+        for key, puts in metrics_logger.put_events.items():
+            for put_time, predicted_ttl in puts:
+                eviction_time = metrics_logger.eviction_events.get(
+                    key,
+                    float('inf')
                 )
-                if last_use:
-                    true_ttl = last_use - put_time
-                    errors.append(abs(true_ttl - predicted_ttl))
+                actual_accesses = metrics_logger.access_events.get(key, [])
+                # accesses after put and before eviction
+                valid_accesses = [
+                    t for t in actual_accesses
+                    if put_time < t <= eviction_time
+                ]
+                if not valid_accesses:
+                    continue
+                # first access after put
+                access_time = min(valid_accesses)
+                true_ttl = access_time - put_time
+                error = abs(true_ttl - predicted_ttl)
+                total_error += error
+                count += 1
     except (
         AttributeError,
         TypeError,
@@ -276,7 +309,7 @@ def compute_ttl_mae(metrics_logger):
     # show a successful message
     info("🟢 TTL MAE computed.")
 
-    return np.mean(errors) if errors else None
+    return np.mean(total_error) if total_error else None
 
 
 def calculate_hit_miss_rate(counters):

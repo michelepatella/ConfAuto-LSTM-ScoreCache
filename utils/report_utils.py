@@ -86,7 +86,7 @@ def print_system_evaluation_report(results):
         # header with additional metrics
         header = (
             f"{'Policy':<25} | {'Hit Rate (%)':>12} | {'Miss Rate (%)':>13} | "
-            f"{'Avg Prefetching Latency (s)':>18} | {'Eviction Mistake Rate':>22} | "
+            f"{'Avg Prefetching Latency (s)':>25} | {'Eviction Mistake Rate':>22} | "
             f"{'Prefetch Hit Rate':>18} | {'TTL MAE':>10}"
         )
         print(header)
@@ -101,7 +101,7 @@ def print_system_evaluation_report(results):
                 f"{res['policy']:<25} | "
                 f"{res['hit_rate']:12.2f} | "
                 f"{res['miss_rate']:13.2f} | "
-                f"{res['avg_prefetching_latency']:18.8f} | "
+                f"{res['avg_prefetching_latency']:25f} | "
                 f"{eviction_rate:22} | "
                 f"{prefetch_rate:18} | "
                 f"{ttl_mae:10}"

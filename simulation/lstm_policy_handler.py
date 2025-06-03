@@ -290,6 +290,8 @@ def handle_lstm_cache_policy(
     info(f"🔄 LSTM-based cache policy management started...")
 
     try:
+        start_time = None
+
         # search the key into the cache
         search_key(
             cache,
@@ -367,8 +369,6 @@ def handle_lstm_cache_policy(
                     current_time
                 )
 
-            return time.perf_counter() - start_time
-
     except (
             IndexError,
             KeyError,
@@ -380,3 +380,8 @@ def handle_lstm_cache_policy(
 
     # print a successful message
     info(f"🟢 LSTM-based cache policy management completed.")
+
+    if start_time is not None:
+        return time.perf_counter() - start_time
+    else:
+        return 0
