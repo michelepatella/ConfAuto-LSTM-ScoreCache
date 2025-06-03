@@ -98,11 +98,6 @@ class CacheMetricsLogger:
         info("🔄 Key eviction tracing started...")
 
         try:
-            # remove access events
-            self.access_events[key] = [
-                t for t in self.access_events.get(key, []) if t <= time
-            ]
-
             self.evicted_keys[key] = time
         except (
             AttributeError,
