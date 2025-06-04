@@ -14,7 +14,7 @@ def get_config_abs_path():
         # define the absolute path of the config file
         path = os.path.join(
             os.path.dirname(__file__),
-            '..',
+            '../..',
             'config.yaml'
         )
         abs_path = os.path.abspath(path)

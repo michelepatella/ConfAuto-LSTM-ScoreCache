@@ -308,7 +308,6 @@ def handle_lstm_cache_policy(
             # save the number of hits of random policy
             # during cold start
             if current_idx == config_settings.seq_len:
-                print(counters['hits'])
                 # count the no. of hits during cold start
                 counters['hits_cold_start'] = counters['hits']
 

@@ -1,9 +1,9 @@
 import torch
+from testing.visualization.plotter import plot_precision_recall_curve, plot_confusion_matrix
 from utils.data.AccessLogsDataset import AccessLogsDataset
-from testing.visualization.graph_utils import plot_precision_recall_curve, plot_confusion_matrix
 from utils.logs.log_utils import info, phase_var
-from utils.model.evaluation import evaluate_model
 from utils.data.dataloader.dataloader_setup import dataloader_setup
+from utils.model.evaluation.evaluator import evaluate_model
 from utils.model.model_setup import trained_model_setup
 from testing.visualization.reporter import generate_model_evaluation_report
 

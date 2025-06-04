@@ -102,7 +102,7 @@ inference:
 simulation:
   general:
     cache_size: 5
-    ttl: 120
+    ttl: 180
   lstm_cache:
     prediction_interval: 5
     threshold_score: 0.5
