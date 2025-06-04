@@ -5,7 +5,7 @@ from utils.simulation_utils import search_key
 from utils.AccessLogsDataset import AccessLogsDataset
 from utils.dataloader_utils import dataloader_setup
 from utils.log_utils import info, debug
-from utils.metrics_utils import compute_cache_metrics
+from utils.evaluation_utils import compute_cache_metrics
 from utils.model_utils import trained_model_setup
 
 
@@ -208,7 +208,7 @@ def simulate_cache_policy(
         ) = preprocess_data(row)
 
         # debugging
-        debug(f"⚙️Current time: {current_time} - Key: {key}.")
+        debug(f"⚙️ Current time: {current_time} - Key: {key}.")
 
         # if the LSTM cache is being used
         if policy_name == 'LSTM':

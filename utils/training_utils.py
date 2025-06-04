@@ -3,7 +3,7 @@ from tqdm import tqdm
 from utils.log_utils import info, debug
 from utils.EarlyStopping import EarlyStopping
 from utils.evaluation_utils import evaluate_model
-from utils.feedforward_utils import _compute_forward, _compute_backward
+from utils.backpropagation_utils import _compute_forward, _compute_backward
 
 
 def _train_one_epoch(

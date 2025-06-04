@@ -19,6 +19,9 @@ class CacheWrapper(BaseCache):
         info("🔄 Key insertion started...")
 
         try:
+            # update the current time
+            self._last_put_time = current_time
+
             # clean up the cache removing expired keys
             self._remove_expired_keys(
                 current_time

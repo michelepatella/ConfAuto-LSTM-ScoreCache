@@ -194,7 +194,7 @@ class LSTMCache(BaseCache):
 
         try:
             # debugging
-            debug(f"⚙️Key: {key}, Score: {score}.")
+            debug(f"⚙️ Key: {key}, Score: {score}.")
 
             # clean up the cache removing expired keys
             self._remove_expired_keys(

@@ -23,7 +23,8 @@ class BaseCache(ABC):
         try:
             if cache_class is not None:
                 self.cache = cache_class(
-                    config_settings.cache_size
+                    config_settings.cache_size,
+                    callback=self._on_evict
                 )
             else:
                 self.cache = None
@@ -33,6 +34,7 @@ class BaseCache(ABC):
             self.store = {}
             self.expiry = {}
             self.scores = {}
+            self._last_put_time = None
         except (
             AttributeError,
             TypeError,
@@ -187,6 +189,29 @@ class BaseCache(ABC):
                 KeyError
         ) as e:
             raise RuntimeError(f"❌ Error while checking if the key is cached: {e}.")
+
+
+    def _on_evict(
+            self,
+            key
+    ):
+        """
+        Callback triggered by cachetools when a key is evicted.
+        :param key: The key to evict.
+        :return:
+        """
+        try:
+            # evict key
+            self.expiry.pop(key, None)
+
+            # trace event
+            self.metrics_logger.log_eviction(
+                key,
+                self._last_put_time
+            )
+            debug(f"⚙️ Key {key} evicted by cachetools.")
+        except Exception as e:
+            raise RuntimeError(f"❌ Error while logging cachetools eviction: {e}")
 
 
     @abstractmethod
