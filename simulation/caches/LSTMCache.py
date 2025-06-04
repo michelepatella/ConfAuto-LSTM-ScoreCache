@@ -287,8 +287,8 @@ class LSTMCache(BaseCache):
                 debug(f"⚙️ Key {key} put in the cache with expiration time: {self.expiry[key]}.")
 
                 # print a successful message
-                info("🟢 Key not inserted.")
-                return False
+                info("🟢 Key inserted.")
+                return True
 
         except (
                 AttributeError,
