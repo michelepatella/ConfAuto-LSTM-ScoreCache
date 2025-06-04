@@ -2,7 +2,7 @@ import math
 from utils.logs.log_utils import info, debug
 
 
-def preprocess_data(row):
+def preprocess_row(row):
     """
     Method to process data for the simulation.
     :param row: The current row.

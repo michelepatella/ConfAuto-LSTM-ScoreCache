@@ -1,4 +1,4 @@
-from data_preprocessing.cleaner import remove_missing_values
+from data_preprocessing.utils.cleaner import remove_missing_values
 from data_preprocessing.features_engineering import build_features
 from utils.logs.log_utils import info, phase_var
 from utils.data.dataset.dataset_loader import load_dataset

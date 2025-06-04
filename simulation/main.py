@@ -1,14 +1,14 @@
 from simulation.utils.CacheMetricsLogger import CacheMetricsLogger
-from simulation.caches.LSTMCache import LSTMCache
-from simulation.caches.RandomCache import RandomCache
-from simulation.caches.CacheWrapper import CacheWrapper
-from simulation.caches.FIFOCache import FIFOCache
-from simulation.caches.LFUCache import LFUCache
-from simulation.caches.LRUCache import LRUCache
-from simulation.simulator import simulate_cache_policy
-from simulation.evaluation.plotter import plot_hit_miss_rate_over_time
+from simulation.caches.lstm_cache.LSTMCache import LSTMCache
+from simulation.caches.baseline_caches.RandomCache import RandomCache
+from simulation.caches.utils.CacheWrapper import CacheWrapper
+from simulation.caches.baseline_caches.FIFOCache import FIFOCache
+from simulation.caches.baseline_caches.LFUCache import LFUCache
+from simulation.caches.baseline_caches.LRUCache import LRUCache
+from simulation.runner.simulation_runner import run_cache_simulation
+from simulation.evaluation.visualization.simulation_plotter import plot_hit_miss_rate_over_time
 from utils.logs.log_utils import info
-from simulation.evaluation.reporter import print_system_evaluation_report
+from simulation.evaluation.visualization.simulation_reporter import generate_caches_evaluation_report
 
 
 def run_simulations(config_settings):
@@ -55,7 +55,7 @@ def run_simulations(config_settings):
         results = []
         for policy, cache in strategies.items():
             # simulate a cache policy and save results
-            result = simulate_cache_policy(
+            result = run_cache_simulation(
                 cache,
                 policy,
                 cache.metrics_logger,
@@ -72,7 +72,7 @@ def run_simulations(config_settings):
         raise RuntimeError(f"❌ Error while running cache simulations: {e}.")
 
     # show results
-    print_system_evaluation_report(results)
+    generate_caches_evaluation_report(results)
 
     # show hit rate and miss rate plot
     plot_hit_miss_rate_over_time(results)

@@ -3,7 +3,7 @@ from scipy.stats import norm
 from utils.logs.log_utils import info, debug
 
 
-def calculate_confidence_intervals(
+def calculate_confidence_interval(
         all_outputs,
         all_vars,
         config_settings

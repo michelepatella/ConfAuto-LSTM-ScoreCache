@@ -1,6 +1,6 @@
 import torch
 from utils.logs.log_utils import info, debug
-from utils.model.forward_runner import mc_forward_passes
+from utils.model.forward.mc.mc_forward_runner import mc_forward_passes
 
 
 def infer_batch(
