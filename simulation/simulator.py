@@ -173,7 +173,7 @@ def simulate_cache_policy(
         testing_loader,
         device,
         criterion,
-        model,
+        model
     ) = _setup_simulation(
         policy_name,
         config_settings
@@ -249,12 +249,14 @@ def simulate_cache_policy(
                 # put a key in cache
                 cache.put(
                     key,
-                    config_settings.fixed_ttl,
                     current_time
                 )
 
         # update number of hits and misses
-        recent_hits, timeline = _trace_hits_misses(
+        (
+            recent_hits,
+            timeline
+        ) = _trace_hits_misses(
             counters,
             prev_hits,
             recent_hits,
@@ -268,7 +270,6 @@ def simulate_cache_policy(
         hit_rate,
         miss_rate,
         prefetch_hit_rate,
-        ttl_hit_ratio,
         eviction_mistake_rate,
         avg_prefetching_latency
     ) = compute_cache_metrics(
@@ -290,6 +291,5 @@ def simulate_cache_policy(
         'avg_prefetching_latency': avg_prefetching_latency,
         'timeline': timeline,
         'prefetch_hit_rate': prefetch_hit_rate,
-        'ttl_hit_ratio': ttl_hit_ratio,
         'eviction_mistake_rate': eviction_mistake_rate
     }

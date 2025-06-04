@@ -7,13 +7,11 @@ class CacheWrapper(BaseCache):
     def put(
             self,
             key,
-            ttl,
             current_time
     ):
         """
         Method to put a key into the cache.
         :param key: The key to put.
-        :param ttl: The TTL for the key.
         :param current_time: The current time.
         :return:
         """
@@ -26,21 +24,21 @@ class CacheWrapper(BaseCache):
                 current_time
             )
 
-            # put the key in  cache
+            # put the key in cache
             self.cache[key] = key
 
-            # set TTL for the key
-            self.expiry[key] = current_time + ttl
+            # set expiration time for the key
+            self.expiry[key] = current_time + self.ttl
 
             # trace event
             self.metrics_logger.log_put(
                 key,
                 current_time,
-                ttl
+                self.ttl
             )
 
             # debugging
-            debug(f"⚙️Key {key} cached with TTL: {self.expiry[key]}.")
+            debug(f"⚙️Key {key} cached.")
 
         except (
                 AttributeError,

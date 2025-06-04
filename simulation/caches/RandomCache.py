@@ -8,13 +8,11 @@ class RandomCache(BaseCache):
     def put(
             self,
             key,
-            ttl,
             current_time
     ):
         """
         Method to put a key in the random cache.
         :param key: The key to put.
-        :param ttl: The TTL of the key.
         :param current_time: The current time.
         :return:
         """
@@ -32,18 +30,18 @@ class RandomCache(BaseCache):
                     key,
                     current_time
             ):
-                # update TTL of the key
-                self.expiry[key] = current_time + ttl
+                # update expiration time of the key
+                self.expiry[key] = current_time + self.ttl
 
                 # trace event
                 self.metrics_logger.log_put(
                     key,
                     current_time,
-                    ttl
+                    self.ttl
                 )
 
                 # debugging
-                debug(f"⚙️ Key {key} already cached, new TTL: {self.expiry[key]}.")
+                debug(f"⚙️ Key {key} already cached, new expiration time: {self.expiry[key]}.")
 
                 # print a successful message
                 info("🟢 Key inserted.")
@@ -61,7 +59,7 @@ class RandomCache(BaseCache):
                 self.expiry.pop(evict_key)
 
                 # debugging
-                debug(f"⚙️Full cache, evicting: {evict_key}.")
+                debug(f"⚙️ Full cache, evicting: {evict_key}.")
 
                 # trace event
                 self.metrics_logger.log_eviction(
@@ -71,17 +69,17 @@ class RandomCache(BaseCache):
 
             # store the new key
             self.store[key] = key
-            self.expiry[key] = current_time + ttl
+            self.expiry[key] = current_time + self.ttl
 
             # trace event
             self.metrics_logger.log_put(
                 key,
                 current_time,
-                ttl
+                self.ttl
             )
 
             # debugging
-            debug(f"⚙️Key {key} cached with TTL: {self.expiry[key]}.")
+            debug(f"⚙️Key {key} cached with expiration time: {self.expiry[key]}.")
 
         except (
                 AttributeError,

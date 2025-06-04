@@ -4,7 +4,10 @@ from utils.log_utils import debug, info, phase_var
 
 class EarlyStopping:
 
-    def __init__(self, config_settings):
+    def __init__(
+            self,
+            config_settings
+    ):
         """
         Method to initialize the class.
         :param config_settings: The configuration settings.
@@ -42,7 +45,10 @@ class EarlyStopping:
         info(f"🟢 EarlyStopping initialized.")
 
 
-    def __call__(self, avg_loss):
+    def __call__(
+            self,
+            avg_loss
+    ):
         """
         Method called whenever Early Stopping object is invoked.
         :param avg_loss: The average loss value.

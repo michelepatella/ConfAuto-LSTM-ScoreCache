@@ -24,7 +24,7 @@ def preprocess_data(row):
         cos_time = x_features[0, 1].item()
 
         # debugging
-        debug(f"⚙️sin_time: {sin_time}, cos_time: {cos_time}.")
+        debug(f"⚙️ sin_time: {sin_time}, cos_time: {cos_time}.")
 
         # calculate timestamps in seconds from info extracted
         angle = math.atan2(

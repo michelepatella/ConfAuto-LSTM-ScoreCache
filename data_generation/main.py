@@ -46,7 +46,10 @@ def data_generation(config_settings):
         raise RuntimeError(f"❌ Error while creating the dataframe: {e}.")
 
     # save the dataset
-    save_dataset(df, config_settings)
+    save_dataset(
+        df,
+        config_settings
+    )
 
     # show some plots
     plot_zipf_loglog(requests)

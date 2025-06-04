@@ -62,7 +62,10 @@ def load_config():
     return config_file
 
 
-def _merge_config(config, updates):
+def _merge_config(
+        config,
+        updates
+):
     """
     Method merge an update config with the original config.
     :param config: The config object.
@@ -107,7 +110,10 @@ def _merge_config(config, updates):
     return config
 
 
-def update_config(updated_config, prepare_config):
+def update_config(
+        updated_config,
+        prepare_config
+):
     """
     Method to update the config file.
     :param prepare_config: Method to validate the config and
@@ -160,7 +166,10 @@ def update_config(updated_config, prepare_config):
     return new_config_settings
 
 
-def get_config_value(config, keys):
+def get_config_value(
+        config,
+        keys
+):
     """
     Method to get the config value from the config file.
     :param keys: Requested keys.

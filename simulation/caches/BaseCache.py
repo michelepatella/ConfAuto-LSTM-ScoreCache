@@ -28,10 +28,11 @@ class BaseCache(ABC):
             else:
                 self.cache = None
             self.maxsize = config_settings.cache_size
+            self.ttl = config_settings.ttl
+            self.metrics_logger = metrics_logger
             self.store = {}
             self.expiry = {}
             self.scores = {}
-            self.metrics_logger = metrics_logger
         except (
             AttributeError,
             TypeError,

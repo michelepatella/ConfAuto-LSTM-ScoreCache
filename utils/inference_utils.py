@@ -145,7 +145,11 @@ def _infer_batch(
 
     # initialize data
     total_loss = 0.0
-    all_preds, all_targets, all_outputs = [], [], []
+    (
+        all_preds,
+        all_targets,
+        all_outputs
+    ) = [], [], []
     all_vars = []
 
     model.eval()
@@ -164,7 +168,9 @@ def _infer_batch(
                 x_keys = x_keys.to(device)
                 y_key = y_key.to(device)
 
-                outputs_mean, outputs_var, _ = mc_forward_passes(
+                (
+                    outputs_mean,
+                    outputs_var, _) = mc_forward_passes(
                     model,
                     (x_features, x_keys, y_key),
                     device,
@@ -320,13 +326,15 @@ def autoregressive_rollout(
                 % (2 * math.pi)
         )
 
-        # increase the temporal features (2 minutes)
+        # increase the temporal features (by 2 minutes)
         delta_t = (2 / 1440) * (2 * math.pi)
 
         # for each future sequence
         for i in range(config_settings.prediction_interval):
             # compute MC forward pass
-            outputs_mean, outputs_var, _ = mc_forward_passes(
+            (
+                outputs_mean,
+                outputs_var, _) = mc_forward_passes(
                 model,
                 (x_features_seq, x_keys_seq),
                 device,

@@ -69,7 +69,6 @@ class Config:
     confidence_level: float
     mc_dropout_num_samples: int
     cache_size: int
-    fixed_ttl: int
+    ttl: int
     prediction_interval: int
     threshold_score: float
-    ttl_base: int

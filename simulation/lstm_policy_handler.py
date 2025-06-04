@@ -346,7 +346,6 @@ def handle_lstm_cache_policy(
                 config_settings
             )
 
-
             # identify keys and scores thereof
             (
                 keys,

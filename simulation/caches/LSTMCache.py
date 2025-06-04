@@ -1,8 +1,4 @@
-import math
 import random
-
-from fsspec.parquet import FastparquetEngine
-
 from simulation.caches.BaseCache import BaseCache
 from utils.log_utils import debug, info
 
@@ -32,7 +28,6 @@ class LSTMCache(BaseCache):
         )
         try:
             self.threshold_score = config_settings.threshold_score
-            self.ttl_base = config_settings.ttl_base
         except (
                 AttributeError,
                 TypeError,
@@ -42,7 +37,6 @@ class LSTMCache(BaseCache):
 
         # debugging
         debug(f"⚙️Threshold score: {self.threshold_score}.")
-        debug(f"⚙️TTL base: {self.ttl_base}.")
 
         # print a successful message
         info("🟢 LSTM-based cache initialized.")
@@ -52,15 +46,13 @@ class LSTMCache(BaseCache):
             self,
             key,
             score,
-            current_time,
-            config_settings
+            current_time
     ):
         """
         Method to put a key in cache when it's cold start.
         :param key: The key to put in cache.
         :param score: The score of the key.
         :param current_time: The current time.
-        :param config_settings: The configuration settings.
         :return:
         """
         # initial message
@@ -71,18 +63,18 @@ class LSTMCache(BaseCache):
                 key,
                 current_time
         ):
-            # update TTL of the key
-            self.expiry[key] = current_time + config_settings.fixed_ttl
+            # update expiration time of the key
+            self.expiry[key] = current_time + self.ttl
 
             # trace event
             self.metrics_logger.log_put(
                 key,
                 current_time,
-                config_settings.fixed_ttl
+                self.ttl
             )
 
             # debugging
-            debug(f"⚙️ Key {key} already cached, new TTL: {self.expiry[key]}.")
+            debug(f"⚙️ Key {key} already cached, new expiration time: {self.expiry[key]}.")
             # print a successful message
             info("🟢 Cold start managed.")
             return
@@ -96,7 +88,7 @@ class LSTMCache(BaseCache):
             )
 
             # debugging
-            debug(f"⚙️Full cache, evicting: {evict_key}.")
+            debug(f"⚙️ Full cache, evicting: {evict_key}.")
 
             # evict the key
             self.evict_key(evict_key)
@@ -111,8 +103,7 @@ class LSTMCache(BaseCache):
         self._put_key(
             key,
             score,
-            current_time,
-            config_settings.fixed_ttl
+            current_time
         )
 
         # print a successful message
@@ -148,14 +139,12 @@ class LSTMCache(BaseCache):
             key,
             score,
             current_time,
-            ttl
     ):
         """
         Method to put a key in cache.
         :param key: The key to put in cache.
         :param score: The score of the key.
         :param current_time: The current time.
-        :param ttl: The TTL of the key.
         :return:
         """
         # initial message
@@ -164,12 +153,12 @@ class LSTMCache(BaseCache):
         try:
             self.store[key] = key
             self.scores[key] = score
-            self.expiry[key] = current_time + ttl
+            self.expiry[key] = current_time + self.ttl
 
             self.metrics_logger.log_put(
                 key,
                 current_time,
-                ttl
+                self.ttl
             )
         except (
             AttributeError,
@@ -192,7 +181,7 @@ class LSTMCache(BaseCache):
     ):
         """
         Method to put a key in the LSTM-based cache. It contains
-        logic for prefetching, TTL assigment, and eviction.
+        logic for prefetching and eviction.
         :param key: The key to put.
         :param score: The score associated with the key.
         :param current_time: The current time.
@@ -243,12 +232,6 @@ class LSTMCache(BaseCache):
                     info("🟢 Key not inserted.")
                     return False
 
-                # compute TTL dynamically
-                ttl = self.ttl_base * (1 + math.log1p(score))
-
-                # debugging
-                debug(f"⚙️Key: {key}, Dynamic TTL: {ttl}.")
-
                 # if the key is new and the cache is full, evict something
                 if (
                     key not in self.store and
@@ -279,8 +262,7 @@ class LSTMCache(BaseCache):
                 self._put_key(
                     key,
                     score,
-                    current_time,
-                    ttl
+                    current_time
                 )
 
                 # trace events
@@ -298,12 +280,11 @@ class LSTMCache(BaseCache):
                 self._handle_cold_start(
                     key,
                     score,
-                    current_time,
-                    config_settings
+                    current_time
                 )
 
                 # debugging
-                debug(f"⚙️Key {key} put in the cache with TTL: {self.expiry[key]}.")
+                debug(f"⚙️ Key {key} put in the cache with expiration time: {self.expiry[key]}.")
 
                 # print a successful message
                 info("🟢 Key not inserted.")

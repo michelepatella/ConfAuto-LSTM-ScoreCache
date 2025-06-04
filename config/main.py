@@ -7,7 +7,7 @@ from config.validators.evaluation_params_validator import validate_evaluation_ge
 from config.validators.inference_params_validator import validate_inference_confidence_intervals_params
 from config.validators.model_params_validator import validate_model_general_params, validate_model_params
 from config.validators.simulation_params_validator import validate_simulation_general_params, \
-    validate_simulation_traditional_cache_params, validate_simulation_lstm_cache_params
+    validate_simulation_lstm_cache_params
 from config.validators.testing_params_validator import validate_testing_general_params
 from config.validators.training_params_validator import validate_training_general_params, validate_training_optimizer_params, \
     validate_training_early_stopping_params
@@ -154,14 +154,14 @@ def prepare_config():
         ) = validate_inference_confidence_intervals_params(config_file)
 
         # simulation config
-        cache_size = validate_simulation_general_params(config_file)
-
-        fixed_ttl = validate_simulation_traditional_cache_params(config_file)
+        (
+            cache_size,
+            ttl
+        ) = validate_simulation_general_params(config_file)
 
         (
             prediction_interval,
-            threshold_score,
-            ttl_base,
+            threshold_score
         ) = validate_simulation_lstm_cache_params(config_file)
 
         # show a successful message
@@ -233,10 +233,9 @@ def prepare_config():
             confidence_level=confidence_level,
             mc_dropout_num_samples=mc_dropout_num_samples,
             cache_size=cache_size,
-            fixed_ttl=fixed_ttl,
+            ttl=ttl,
             prediction_interval=prediction_interval,
             threshold_score=threshold_score,
-            ttl_base=ttl_base
         )
 
     except Exception as e:

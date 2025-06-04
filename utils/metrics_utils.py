@@ -197,7 +197,9 @@ def compute_eviction_mistake_rate(
     # show a successful message
     info("🟢 Eviction mistake rate computed.")
 
-    return mistakes / total_eviction_events if total_eviction_events > 0 else 0
+    return mistakes / total_eviction_events \
+        if total_eviction_events > 0 \
+        else 0
 
 
 def compute_prefetch_hit_rate(
@@ -233,55 +235,6 @@ def compute_prefetch_hit_rate(
     info("🟢 Prefetch hit rate computed.")
 
     return prefetch_hit_rate
-
-
-def compute_ttl_hit_ratio(metrics_logger):
-    """
-    Method to compute the TTL Hit Ratio.
-    :param metrics_logger: The metrics logger.
-    :return: The TTL Hit Ratio or None if no puts.
-    """
-    # initial message
-    info("🔄 TTL Hit Ratio calculation started...")
-
-    # initialize counters
-    hits_before_expiry = 0
-    total_accesses = 0
-
-    try:
-        for key, puts in metrics_logger.put_events.items():
-            # retrieve key accesses
-            accesses = sorted(metrics_logger.access_events.get(key, []))
-            used_access_indices = set()
-
-            # calculate expiration time for the current put
-            for put_time, ttl in puts:
-                expiry_time = put_time + ttl
-
-                # for each key access
-                for i, access_time in enumerate(accesses):
-                    # check if the access occur while TTL was valid
-                    if i in used_access_indices:
-                        continue
-                    if put_time <= access_time <= expiry_time:
-                        hits_before_expiry += 1
-                        used_access_indices.add(i)
-                        break
-
-            total_accesses += len(accesses)
-
-        # success message
-        info("🟢 TTL Hit Ratio computed.")
-        return hits_before_expiry / total_accesses
-
-    except (
-        AttributeError,
-        TypeError,
-        ValueError,
-        KeyError,
-        NameError
-    ) as e:
-        raise RuntimeError(f"❌ Error while computing TTL Hit Ratio: {e}.")
 
 
 def calculate_hit_miss_rate(counters):
@@ -382,9 +335,6 @@ def compute_cache_metrics(
         counters['hits'] - counters['hits_cold_start'],
         tot_prefetch
     )
-    ttl_hit_ratio = compute_ttl_hit_ratio(
-        metrics_logger
-    )
     eviction_mistake_rate = compute_eviction_mistake_rate(
         metrics_logger
     )
@@ -401,7 +351,6 @@ def compute_cache_metrics(
         hit_rate,
         miss_rate,
         prefetch_hit_rate,
-        ttl_hit_ratio,
         eviction_mistake_rate,
         avg_prefetching_latency
     )

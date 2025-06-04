@@ -2,10 +2,14 @@ from utils.config_utils import get_config_value
 from utils.log_utils import info
 
 
-def _check_simulation_general_params(cache_size):
+def _check_simulation_general_params(
+        cache_size,
+        ttl
+):
     """
     Method to check simulation general parameters.
     :param cache_size: The size of the cache.
+    :param ttl: The TTL of the cache.
     :return:
     """
     # check cache size
@@ -15,31 +19,22 @@ def _check_simulation_general_params(cache_size):
     ):
         raise RuntimeError("❌ 'simulation.general.cache_size' must be an integer > 0.")
 
-
-def _check_simulation_traditional_cache_params(fixed_ttl):
-    """
-    Method to check simulation traditional cache parameters.
-    :param fixed_ttl: The fixed value of TTL.
-    :return:
-    """
     # check fixed ttl
     if (
-        not isinstance(fixed_ttl, int) or
-        fixed_ttl <= 0
+        not isinstance(ttl, int) or
+        ttl <= 0
     ):
-        raise RuntimeError("❌ 'simulation.traditional_cache.ttl' must be a int > 0.")
+        raise RuntimeError("❌ 'simulation.general.ttl' must be a int > 0.")
 
 
 def _check_simulation_lstm_cache_params(
         prediction_interval,
-        threshold_score,
-        ttl_base
+        threshold_score
 ):
     """
     Method to check simulation lstm cache parameters.
     :param prediction_interval: The prediction interval.
     :param threshold_score: The threshold for the score of keys.
-    :param ttl_base: The TTL base value.
     :return:
     """
     # check prediction interval
@@ -56,13 +51,6 @@ def _check_simulation_lstm_cache_params(
     ):
         raise RuntimeError(f"❌ 'simulation.lstm_cache.threshold_score' must be a float in [0.0, 1.0]")
 
-    # check ttl base
-    if (
-        not isinstance(ttl_base, int) or
-        ttl_base <= 0
-    ):
-        raise RuntimeError("❌ 'simulation.traditional_cache.ttl_base' must be a int > 0.")
-
 
 def validate_simulation_general_params(config):
     """
@@ -77,41 +65,21 @@ def validate_simulation_general_params(config):
         config,
         "simulation.general.cache_size"
     )
+    ttl = get_config_value(
+        config,
+        "simulation.general.ttl"
+    )
 
     # check simulation general params
     _check_simulation_general_params(
-        cache_size
+        cache_size,
+        ttl
     )
 
     # show a successful message
     info("🟢 Simulation general params validated.")
 
-    return cache_size
-
-
-def validate_simulation_traditional_cache_params(config):
-    """
-    Method to validate simulation traditional cache parameters.
-    :param config: The config object.
-    :return: The simulation traditional cache parameters.
-    """
-    # initial message
-    info("🔄 Simulation traditional cache params validation started...")
-
-    fixed_ttl = get_config_value(
-        config,
-        "simulation.traditional_cache.ttl"
-    )
-
-    # check simulation traditional cache params
-    _check_simulation_traditional_cache_params(
-        fixed_ttl
-    )
-
-    # show a successful message
-    info("🟢 Simulation traditional cache params validated.")
-
-    return fixed_ttl
+    return cache_size, ttl
 
 
 def validate_simulation_lstm_cache_params(config):
@@ -131,16 +99,11 @@ def validate_simulation_lstm_cache_params(config):
         config,
         "simulation.lstm_cache.threshold_score"
     )
-    ttl_base = get_config_value(
-        config,
-        "simulation.lstm_cache.ttl_base"
-    )
 
     # check simulation lstm cache params
     _check_simulation_lstm_cache_params(
         prediction_interval,
-        threshold_score,
-        ttl_base
+        threshold_score
     )
 
     # show a successful message
@@ -148,6 +111,5 @@ def validate_simulation_lstm_cache_params(config):
 
     return (
         prediction_interval,
-        threshold_score,
-        ttl_base
+        threshold_score
     )
