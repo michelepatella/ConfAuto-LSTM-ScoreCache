@@ -1,4 +1,4 @@
-from simulation.utils.CacheMetricsLogger import CacheMetricsLogger
+from simulation.caches.utils.CacheMetricsLogger import CacheMetricsLogger
 from simulation.caches.lstm_cache.LSTMCache import LSTMCache
 from simulation.caches.baseline_caches.RandomCache import RandomCache
 from simulation.caches.utils.CacheWrapper import CacheWrapper
