@@ -1,5 +1,5 @@
-from utils.config_utils import get_config_value
-from utils.log_utils import info
+from config.config_io.config_reader import get_config
+from utils.logs.log_utils import info
 
 
 def _check_distribution_params(
@@ -287,27 +287,27 @@ def validate_data_distribution_params(config):
     info("🔄 Data distribution params validation started...")
 
     # distribution
-    seed = get_config_value(
+    seed = get_config(
         config,
         "data.distribution.seed"
     )
-    distribution_type = get_config_value(
+    distribution_type = get_config(
         config,
         "data.distribution.type"
     )
-    num_requests = get_config_value(
+    num_requests = get_config(
         config,
         "data.distribution.num_requests"
     )
-    num_keys = get_config_value(
+    num_keys = get_config(
         config,
         "data.distribution.num_keys"
     )
-    first_key = get_config_value(
+    first_key = get_config(
         config,
         "data.distribution.key_range.first_key"
     )
-    last_key = get_config_value(
+    last_key = get_config(
         config,
         "data.distribution.key_range.last_key"
     ) + 1
@@ -346,19 +346,19 @@ def validate_data_access_pattern_zipf_params(config):
 
     # access pattern
     # zipf
-    zipf_alpha = get_config_value(
+    zipf_alpha = get_config(
         config,
         "data.access_pattern.zipf.alpha"
     )
-    zipf_alpha_start = get_config_value(
+    zipf_alpha_start = get_config(
         config,
         "data.access_pattern.zipf.alpha_start"
     )
-    zipf_alpha_end = get_config_value(
+    zipf_alpha_end = get_config(
         config,
         "data.access_pattern.zipf.alpha_end"
     )
-    zipf_time_steps = get_config_value(
+    zipf_time_steps = get_config(
         config,
         "data.access_pattern.zipf.time_steps"
     )
@@ -392,43 +392,43 @@ def validate_data_access_behavior_pattern_params(config):
     info("🔄 Data access behavior pattern params validation started...")
 
     # access behavior
-    repetition_interval = get_config_value(
+    repetition_interval = get_config(
         config,
         "data.access_pattern.access_behavior.repetition_interval"
     )
-    repetition_offset = get_config_value(
+    repetition_offset = get_config(
         config,
         "data.access_pattern.access_behavior.repetition_offset"
     )
-    toggle_interval = get_config_value(
+    toggle_interval = get_config(
         config,
         "data.access_pattern.access_behavior.toggle_interval"
     )
-    cycle_base = get_config_value(
+    cycle_base = get_config(
         config,
         "data.access_pattern.access_behavior.cycle_base"
     )
-    cycle_mod = get_config_value(
+    cycle_mod = get_config(
         config,
         "data.access_pattern.access_behavior.cycle_mod"
     )
-    cycle_divisor = get_config_value(
+    cycle_divisor = get_config(
         config,
         "data.access_pattern.access_behavior.cycle_divisor"
     )
-    distortion_interval = get_config_value(
+    distortion_interval = get_config(
         config,
         "data.access_pattern.access_behavior.distortion_interval"
     )
-    noise_range = get_config_value(
+    noise_range = get_config(
         config,
         "data.access_pattern.access_behavior.noise_range"
     )
-    memory_interval = get_config_value(
+    memory_interval = get_config(
         config,
         "data.access_pattern.access_behavior.memory_interval"
     )
-    memory_offset = get_config_value(
+    memory_offset = get_config(
         config,
         "data.access_pattern.access_behavior.memory_offset"
     )
@@ -475,28 +475,28 @@ def validate_data_access_temporal_pattern_params(config):
 
     # temporal pattern
     # burstiness
-    burst_high = get_config_value(
+    burst_high = get_config(
         config,
         "data.temporal_pattern.burstiness.burst_high"
     )
-    burst_low = get_config_value(
+    burst_low = get_config(
         config,
         "data.temporal_pattern.burstiness.burst_low"
     )
-    burst_hour_start = get_config_value(
+    burst_hour_start = get_config(
         config,
         "data.temporal_pattern.burstiness.burst_hour_start"
     )
-    burst_hour_end = get_config_value(
+    burst_hour_end = get_config(
         config,
         "data.temporal_pattern.burstiness.burst_hour_end"
     )
     # periodic
-    periodic_base_scale = get_config_value(
+    periodic_base_scale = get_config(
         config,
         "data.temporal_pattern.periodic.base_scale"
     )
-    periodic_amplitude = get_config_value(
+    periodic_amplitude = get_config(
         config,
         "data.temporal_pattern.periodic.amplitude"
     )
@@ -535,11 +535,11 @@ def validate_data_sequence_params(config, num_requests):
     info("🔄 Data sequence params validation started...")
 
     # sequence
-    seq_len = get_config_value(
+    seq_len = get_config(
         config,
         "data.sequence.len"
     )
-    embedding_dim = get_config_value(
+    embedding_dim = get_config(
         config,
         "data.sequence.embedding_dim"
     )
@@ -571,19 +571,19 @@ def validate_data_dataset_params(config):
     info("🔄 Dataset params validation started...")
 
     # dataset
-    training_perc = get_config_value(
+    training_perc = get_config(
         config,
         "data.dataset.training_perc"
     )
-    validation_perc = get_config_value(
+    validation_perc = get_config(
         config,
         "data.dataset.validation_perc"
     )
-    static_save_path = get_config_value(
+    static_save_path = get_config(
         config,
         "data.dataset.static_save_path"
     )
-    dynamic_save_path = get_config_value(
+    dynamic_save_path = get_config(
         config,
         "data.dataset.dynamic_save_path"
     )

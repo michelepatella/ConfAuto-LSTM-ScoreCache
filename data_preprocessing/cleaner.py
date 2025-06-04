@@ -1,4 +1,4 @@
-from utils.log_utils import info, debug
+from utils.logs.log_utils import info, debug
 
 
 def _remove_missing_values(df):

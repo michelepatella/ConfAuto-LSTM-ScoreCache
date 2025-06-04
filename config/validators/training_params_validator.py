@@ -1,5 +1,5 @@
-from utils.config_utils import get_config_value
-from utils.log_utils import info
+from config.config_io.config_reader import get_config
+from utils.logs.log_utils import info
 
 
 def _check_general_training_params(
@@ -97,11 +97,11 @@ def validate_training_general_params(config):
     info("🔄 Training general params validation started...")
 
     # general
-    training_num_epochs = get_config_value(
+    training_num_epochs = get_config(
         config,
         "training.general.num_epochs"
     )
-    training_batch_size = get_config_value(
+    training_batch_size = get_config(
         config,
         "training.general.batch_size"
     )
@@ -131,19 +131,19 @@ def validate_training_optimizer_params(config):
     info("🔄 Training optimizer params validation started...")
 
     # optimizer
-    optimizer_type = get_config_value(
+    optimizer_type = get_config(
         config,
         "training.optimizer.type"
     )
-    learning_rate = get_config_value(
+    learning_rate = get_config(
         config,
         "training.optimizer.learning_rate"
     )
-    weight_decay = get_config_value(
+    weight_decay = get_config(
         config,
         "training.optimizer.weight_decay"
     )
-    momentum = get_config_value(
+    momentum = get_config(
         config,
         "training.optimizer.momentum"
     )
@@ -177,11 +177,11 @@ def validate_training_early_stopping_params(config):
     info("🔄 Training early stopping params validation started...")
 
     # early stopping
-    training_early_stopping_patience = get_config_value(
+    training_early_stopping_patience = get_config(
         config,
         "training.early_stopping.patience"
     )
-    training_early_stopping_delta = get_config_value(
+    training_early_stopping_delta = get_config(
         config,
         "training.early_stopping.delta"
     )

@@ -1,9 +1,10 @@
 import copy
 from tqdm import tqdm
-from utils.log_utils import info, debug
-from utils.model.EarlyStopping import EarlyStopping
-from utils.evaluation.evaluation_utils import evaluate_model
-from utils.model.backpropagation_utils import _compute_forward, _compute_backward
+from utils.logs.log_utils import info, debug
+from training.utils.EarlyStopping import EarlyStopping
+from utils.model.evaluation.evaluator import evaluate_model
+from utils.model.forward_runner import _compute_forward
+from training.utils.backward_runner import compute_backward
 
 
 def _train_one_epoch(
@@ -51,7 +52,7 @@ def _train_one_epoch(
                 raise ValueError("❌ Error while training the model due to None loss returned.")
 
             # backward pass
-            _compute_backward(
+            compute_backward(
                 loss,
                 optimizer
             )

@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import Dataset
-from utils.log_utils import debug, info
-from utils.data.dataset_utils import load_dataset
+from utils.logs.log_utils import debug, info
+from utils.data.dataset.dataset_loader import load_dataset
 
 
 class AccessLogsDataset(Dataset):

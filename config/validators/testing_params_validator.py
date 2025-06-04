@@ -1,5 +1,5 @@
-from utils.config_utils import get_config_value
-from utils.log_utils import info
+from config.config_io.config_reader import get_config
+from utils.logs.log_utils import info
 
 
 def _check_testing_params(testing_batch_size):
@@ -25,7 +25,7 @@ def validate_testing_general_params(config):
     # initial message
     info("🔄 Testing general params validation started...")
 
-    testing_batch_size = get_config_value(
+    testing_batch_size = get_config(
         config,
         "testing.general.batch_size"
     )

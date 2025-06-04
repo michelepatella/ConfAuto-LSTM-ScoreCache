@@ -1,13 +1,14 @@
 import numpy as np
 from sklearn.model_selection import TimeSeriesSplit
-from utils.data.dataset_utils import split_training_set
-from utils.log_utils import info, debug
-from utils.data.dataloader_utils import create_data_loader, extract_targets_from_dataloader
-from utils.model.model_utils import model_setup
+from utils.data.dataset.dataset_splitter import split_training_set
+from utils.logs.log_utils import info, debug
+from utils.data.dataloader.dataloader_utils import extract_targets_from_dataloader
+from utils.data.dataloader.dataloader_builder import create_data_loader
+from utils.model.model_setup import model_setup
 from utils.training.training_utils import train_n_epochs
 
 
-def _compute_time_series_cv(
+def compute_time_series_cv(
         training_set,
         params,
         config_settings

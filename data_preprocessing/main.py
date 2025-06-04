@@ -1,7 +1,8 @@
 from data_preprocessing.cleaner import _remove_missing_values
 from data_preprocessing.feature_engineering import build_features
-from utils.log_utils import info, phase_var
-from utils.data.dataset_utils import save_dataset, load_dataset
+from utils.logs.log_utils import info, phase_var
+from utils.data.dataset.dataset_loader import load_dataset
+from utils.data.dataset.dataset_saver import save_dataset
 
 
 def data_preprocessing(config_settings):

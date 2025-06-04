@@ -1,4 +1,4 @@
-from simulation.CacheMetricsLogger import CacheMetricsLogger
+from simulation.utils.CacheMetricsLogger import CacheMetricsLogger
 from simulation.caches.LSTMCache import LSTMCache
 from simulation.caches.RandomCache import RandomCache
 from simulation.caches.CacheWrapper import CacheWrapper
@@ -6,9 +6,9 @@ from simulation.caches.FIFOCache import FIFOCache
 from simulation.caches.LFUCache import LFUCache
 from simulation.caches.LRUCache import LRUCache
 from simulation.simulator import simulate_cache_policy
-from utils.evaluation.graph_utils import plot_hit_miss_rate_over_time
-from utils.log_utils import info
-from utils.evaluation.report_utils import print_system_evaluation_report
+from simulation.evaluation.plotter import plot_hit_miss_rate_over_time
+from utils.logs.log_utils import info
+from simulation.evaluation.reporter import print_system_evaluation_report
 
 
 def run_simulations(config_settings):

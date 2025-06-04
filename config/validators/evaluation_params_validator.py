@@ -1,5 +1,5 @@
-from utils.config_utils import get_config_value
-from utils.log_utils import info
+from config.config_io.config_reader import get_config
+from utils.logs.log_utils import info
 
 
 def _check_evaluation_params(top_k):
@@ -25,7 +25,7 @@ def validate_evaluation_general_params(config):
     # initial message
     info("🔄 Evaluation general params validation started...")
 
-    top_k = get_config_value(
+    top_k = get_config(
         config,
         "evaluation.top_k"
     )

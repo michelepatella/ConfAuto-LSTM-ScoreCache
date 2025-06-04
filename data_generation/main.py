@@ -1,7 +1,9 @@
-from data_generation.generators.requests_generator import _generate_static_requests, _generate_dynamic_requests
-from utils.evaluation.graph_utils import plot_zipf_loglog, plot_key_usage_heatmap, plot_daily_profile
-from utils.log_utils import info, debug, phase_var
-from utils.data.dataset_utils import save_dataset, create_dataframe
+from data_generation.generators.requests.static_requests_generator import generate_static_requests
+from data_generation.generators.requests.dynamic_requests_generator import generate_dynamic_requests
+from data_generation.utils.plotter import plot_zipf_loglog, plot_daily_profile, plot_key_usage_heatmap
+from utils.logs.log_utils import info, debug, phase_var
+from utils.data.dataset.dataset_saver import save_dataset
+from data_generation.utils.df_builder import create_dataframe
 
 
 def data_generation(config_settings):
@@ -21,12 +23,12 @@ def data_generation(config_settings):
 
     if config_settings.distribution_type == "static":
         # generate static requests and timestamps
-        requests, timestamps = _generate_static_requests(
+        requests, timestamps = generate_static_requests(
             config_settings
         )
     else:
         # generate dynamic requests and timestamps
-        requests, timestamps = _generate_dynamic_requests(
+        requests, timestamps = generate_dynamic_requests(
             config_settings
         )
 

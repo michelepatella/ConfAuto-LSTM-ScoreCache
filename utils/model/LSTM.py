@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from utils.log_utils import debug, info
+from utils.logs.log_utils import debug, info
 
 
 class LSTM(nn.Module):

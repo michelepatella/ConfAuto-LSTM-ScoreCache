@@ -1,11 +1,11 @@
 import torch
 from utils.data.AccessLogsDataset import AccessLogsDataset
-from utils.evaluation.graph_utils import plot_precision_recall_curve, plot_confusion_matrix
-from utils.log_utils import info, phase_var
-from utils.evaluation.evaluation_utils import evaluate_model
-from utils.data.dataloader_utils import dataloader_setup
-from utils.model.model_utils import trained_model_setup
-from utils.evaluation.report_utils import print_evaluation_report
+from testing.visualization.graph_utils import plot_precision_recall_curve, plot_confusion_matrix
+from utils.logs.log_utils import info, phase_var
+from utils.model.evaluation import evaluate_model
+from utils.data.dataloader.dataloader_setup import dataloader_setup
+from utils.model.model_setup import trained_model_setup
+from testing.visualization.reporter import generate_model_evaluation_report
 
 
 def testing(config_settings):
@@ -57,7 +57,7 @@ def testing(config_settings):
 
     try:
         # show results
-        print_evaluation_report(
+        generate_model_evaluation_report(
             metrics["class_report"],
             metrics["top_k_accuracy"],
             metrics["kappa_statistic"],

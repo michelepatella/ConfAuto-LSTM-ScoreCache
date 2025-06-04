@@ -1,5 +1,5 @@
-from utils.config_utils import get_config_value
-from utils.log_utils import info
+from config.config_io.config_reader import get_config
+from utils.logs.log_utils import info
 
 
 def _check_simulation_general_params(
@@ -61,11 +61,11 @@ def validate_simulation_general_params(config):
     # initial message
     info("🔄 Simulation general params validation started...")
 
-    cache_size = get_config_value(
+    cache_size = get_config(
         config,
         "simulation.general.cache_size"
     )
-    ttl = get_config_value(
+    ttl = get_config(
         config,
         "simulation.general.ttl"
     )
@@ -91,11 +91,11 @@ def validate_simulation_lstm_cache_params(config):
     # initial message
     info("🔄 Simulation lstm cache params validation started...")
 
-    prediction_interval = get_config_value(
+    prediction_interval = get_config(
         config,
         "simulation.lstm_cache.prediction_interval"
     )
-    threshold_score = get_config_value(
+    threshold_score = get_config(
         config,
         "simulation.lstm_cache.threshold_score"
     )

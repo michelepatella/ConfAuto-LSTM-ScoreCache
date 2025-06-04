@@ -1,5 +1,5 @@
-from utils.config_utils import get_config_value
-from utils.log_utils import info
+from config.config_io.config_reader import get_config
+from utils.logs.log_utils import info
 
 
 def _check_cv_params(
@@ -99,11 +99,11 @@ def validate_cv_params(config):
     info("🔄 CV params validation started...")
 
     # cross-validation
-    cv_num_folds = get_config_value(
+    cv_num_folds = get_config(
         config,
         "validation.cross_validation.num_folds"
     )
-    validation_num_epochs = get_config_value(
+    validation_num_epochs = get_config(
         config,
         "validation.cross_validation.num_epochs"
     )
@@ -133,11 +133,11 @@ def validate_validation_early_stopping_params(config):
     info("🔄 Validation early stopping params validation started...")
 
     # early stopping
-    validation_early_stopping_patience = get_config_value(
+    validation_early_stopping_patience = get_config(
         config,
         "validation.early_stopping.patience"
     )
-    validation_early_stopping_delta = get_config_value(
+    validation_early_stopping_delta = get_config(
         config,
         "validation.early_stopping.delta"
     )
@@ -167,23 +167,23 @@ def validate_search_space_params(config):
     info("🔄 Search space params validation started...")
 
     # search space
-    search_space = get_config_value(
+    search_space = get_config(
         config,
         "validation.search_space"
     )
-    hidden_size_range = get_config_value(
+    hidden_size_range = get_config(
         config,
         "validation.search_space.model.params.hidden_size_range"
     )
-    num_layers_range = get_config_value(
+    num_layers_range = get_config(
         config,
         "validation.search_space.model.params.num_layers_range"
     )
-    dropout_range = get_config_value(
+    dropout_range = get_config(
         config,
         "validation.search_space.model.params.dropout_range"
     )
-    learning_rate_range = get_config_value(
+    learning_rate_range = get_config(
         config,
         "validation.search_space.training.optimizer.learning_rate_range"
     )

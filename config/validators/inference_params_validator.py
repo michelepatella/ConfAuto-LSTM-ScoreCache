@@ -1,5 +1,5 @@
-from utils.config_utils import get_config_value
-from utils.log_utils import info
+from config.config_io.config_reader import get_config
+from utils.logs.log_utils import info
 
 
 def _check_confidence_intervals_params(
@@ -37,11 +37,11 @@ def validate_inference_confidence_intervals_params(config):
     info("🔄 Confidence intervals params validation started...")
 
     # params
-    confidence_level = get_config_value(
+    confidence_level = get_config(
         config,
         "inference.confidence_intervals.confidence_level",
     )
-    mc_dropout_num_samples = get_config_value(
+    mc_dropout_num_samples = get_config(
         config,
         "inference.mc_dropout.num_samples",
     )

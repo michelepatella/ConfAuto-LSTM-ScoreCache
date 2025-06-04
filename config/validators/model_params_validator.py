@@ -1,5 +1,5 @@
-from utils.config_utils import get_config_value
-from utils.log_utils import info
+from config.config_io.config_reader import get_config
+from utils.logs.log_utils import info
 
 
 def _check_general_model_params(
@@ -91,11 +91,11 @@ def validate_model_general_params(config):
     info("🔄 Model general params validation started...")
 
     # general
-    num_features = get_config_value(
+    num_features = get_config(
         config,
         "model.general.num_features"
     )
-    model_save_path = get_config_value(
+    model_save_path = get_config(
         config,
         "model.general.save_path"
     )
@@ -122,35 +122,35 @@ def validate_model_params(config):
     info("🔄 Model params validation started...")
 
     # params
-    model_params = get_config_value(
+    model_params = get_config(
         config,
         "model.params"
     )
-    hidden_size = get_config_value(
+    hidden_size = get_config(
         config,
         "model.params.hidden_size"
     )
-    num_layers = get_config_value(
+    num_layers = get_config(
         config,
         "model.params.num_layers"
     )
-    bias = get_config_value(
+    bias = get_config(
         config,
         "model.params.bias"
     )
-    batch_first = get_config_value(
+    batch_first = get_config(
         config,
         "model.params.batch_first"
     )
-    dropout = get_config_value(
+    dropout = get_config(
         config,
         "model.params.dropout"
     )
-    bidirectional = get_config_value(
+    bidirectional = get_config(
         config,
         "model.params.bidirectional"
     )
-    proj_size = get_config_value(
+    proj_size = get_config(
         config,
         "model.params.proj_size"
     )

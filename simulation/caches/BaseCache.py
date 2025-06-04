@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from utils.log_utils import debug, info
+from utils.logs.log_utils import debug, info
 
 
 class BaseCache(ABC):

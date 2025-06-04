@@ -1,5 +1,5 @@
 import numpy as np
-from utils.log_utils import info
+from utils.logs.log_utils import info
 
 
 def _encode_time_trigonometrically(

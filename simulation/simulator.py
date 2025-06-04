@@ -1,12 +1,12 @@
 from tqdm import tqdm
 from simulation.lstm_policy_handler import handle_lstm_cache_policy
-from simulation.preprocessing import preprocess_data
-from utils.simulation_utils import search_key
+from simulation.utils.row_preprocessor import preprocess_data
+from simulation.simulation_utils import search_key
 from utils.data.AccessLogsDataset import AccessLogsDataset
-from utils.data.dataloader_utils import dataloader_setup
-from utils.log_utils import info, debug
-from utils.evaluation.evaluation_utils import compute_cache_metrics
-from utils.model.model_utils import trained_model_setup
+from utils.data.dataloader.dataloader_setup import dataloader_setup
+from utils.logs.log_utils import info, debug
+from simulation.evaluation.evaluation_utils import evaluate_cache
+from utils.model.model_setup import trained_model_setup
 
 
 def _setup_simulation(
@@ -272,7 +272,7 @@ def simulate_cache_policy(
         prefetch_hit_rate,
         eviction_mistake_rate,
         avg_prefetching_latency
-    ) = compute_cache_metrics(
+    ) = evaluate_cache(
         counters,
         tot_prefetch,
         autoregressive_latencies,

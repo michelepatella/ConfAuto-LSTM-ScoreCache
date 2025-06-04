@@ -1,4 +1,4 @@
-from config.Config import Config
+from config.utils.Config import Config
 from config.validators.data_params_validator import \
     validate_data_sequence_params, validate_data_dataset_params, validate_data_access_temporal_pattern_params, \
     validate_data_access_behavior_pattern_params, validate_data_access_pattern_zipf_params, \
@@ -13,8 +13,8 @@ from config.validators.training_params_validator import validate_training_genera
     validate_training_early_stopping_params
 from config.validators.validation_params_validator import validate_cv_params, validate_validation_early_stopping_params, \
     validate_search_space_params
-from utils.config_utils import load_config
-from utils.log_utils import info, phase_var
+from config.config_io.config_loader import load_config
+from utils.logs.log_utils import info, phase_var
 
 
 def prepare_config():

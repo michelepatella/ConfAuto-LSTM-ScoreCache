@@ -1,5 +1,5 @@
 from simulation.caches.BaseCache import BaseCache
-from utils.log_utils import debug, info
+from utils.logs.log_utils import debug, info
 
 
 class CacheWrapper(BaseCache):

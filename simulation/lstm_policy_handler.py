@@ -2,10 +2,11 @@ import random
 import time
 import numpy as np
 from torch.nn.functional import softmax
-from utils.simulation_utils import search_key
+from simulation.simulation_utils import search_key
 from utils.data.AccessLogsDataset import AccessLogsDataset
-from utils.model.inference_utils import calculate_confidence_intervals, autoregressive_rollout
-from utils.log_utils import info
+from simulation.prefetching.autoregression import autoregressive_rollout
+from simulation.prefetching.confidence_interval_calculator import calculate_confidence_intervals
+from utils.logs.log_utils import info
 
 
 def _calculate_key_scores(
