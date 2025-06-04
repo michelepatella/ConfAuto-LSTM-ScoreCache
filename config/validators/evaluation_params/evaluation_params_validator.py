@@ -1,19 +1,6 @@
 from config.config_io.config_reader import get_config
+from config.validators.evaluation_params.evaluation_params_checker import check_evaluation_params
 from utils.logs.log_utils import info
-
-
-def _check_evaluation_params(top_k):
-    """
-    Method to check evaluation parameters.
-    :param top_k: The top-k value for computing top-k accuracy.
-    :return:
-    """
-    # check top-k
-    if (
-        not isinstance(top_k, int) or
-        top_k <= 0
-    ):
-        raise RuntimeError("❌ 'evaluation.top_k' must be an integer > 0.")
 
 
 def validate_evaluation_general_params(config):
@@ -31,7 +18,7 @@ def validate_evaluation_general_params(config):
     )
 
     # check evaluation params
-    _check_evaluation_params(
+    check_evaluation_params(
         top_k
     )
 

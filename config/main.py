@@ -1,17 +1,17 @@
 from config.utils.Config import Config
-from config.validators.data_params_validator import \
+from config.validators.data_params.data_params_validator import \
     validate_data_sequence_params, validate_data_dataset_params, validate_data_access_temporal_pattern_params, \
     validate_data_access_behavior_pattern_params, validate_data_access_pattern_zipf_params, \
     validate_data_distribution_params
-from config.validators.evaluation_params_validator import validate_evaluation_general_params
-from config.validators.inference_params_validator import validate_inference_confidence_intervals_params
-from config.validators.model_params_validator import validate_model_general_params, validate_model_params
-from config.validators.simulation_params_validator import validate_simulation_general_params, \
+from config.validators.evaluation_params.evaluation_params_validator import validate_evaluation_general_params
+from config.validators.inference_params.inference_params_validator import validate_inference_confidence_intervals_params
+from config.validators.model_params.model_params_validator import validate_model_general_params, validate_model_params
+from config.validators.simulation_params.simulation_params_validator import validate_simulation_general_params, \
     validate_simulation_lstm_cache_params
-from config.validators.testing_params_validator import validate_testing_general_params
-from config.validators.training_params_validator import validate_training_general_params, validate_training_optimizer_params, \
+from config.validators.testing_params.testing_params_validator import validate_testing_general_params
+from config.validators.training_params.training_params_validator import validate_training_general_params, validate_training_optimizer_params, \
     validate_training_early_stopping_params
-from config.validators.validation_params_validator import validate_cv_params, validate_validation_early_stopping_params, \
+from config.validators.validation_params.validation_params_validator import validate_cv_params, validate_validation_early_stopping_params, \
     validate_search_space_params
 from config.config_io.config_loader import load_config
 from utils.logs.log_utils import info, phase_var
