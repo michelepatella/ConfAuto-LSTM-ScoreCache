@@ -1,7 +1,7 @@
 import math
 import torch
 from scipy.stats import norm
-from utils.backpropagation_utils import _compute_forward
+from utils.model.backpropagation_utils import _compute_forward
 from utils.log_utils import info, debug
 
 

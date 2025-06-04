@@ -1,8 +1,8 @@
 import numpy as np
 import torch
 from sklearn.utils import compute_class_weight
-from utils.LSTM import LSTM
-from utils.dataloader_utils import extract_targets_from_dataloader
+from utils.model.LSTM import LSTM
+from utils.data.dataloader_utils import extract_targets_from_dataloader
 from utils.log_utils import info, debug
 
 

@@ -1,9 +1,9 @@
 import copy
 from tqdm import tqdm
 from utils.log_utils import info, debug
-from utils.EarlyStopping import EarlyStopping
-from utils.evaluation_utils import evaluate_model
-from utils.backpropagation_utils import _compute_forward, _compute_backward
+from utils.model.EarlyStopping import EarlyStopping
+from utils.evaluation.evaluation_utils import evaluate_model
+from utils.model.backpropagation_utils import _compute_forward, _compute_backward
 
 
 def _train_one_epoch(

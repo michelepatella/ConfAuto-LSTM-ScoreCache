@@ -1,9 +1,9 @@
-from utils.AccessLogsDataset import AccessLogsDataset
-from utils.dataset_utils import split_training_set
+from utils.data.AccessLogsDataset import AccessLogsDataset
+from utils.data.dataset_utils import split_training_set
 from utils.log_utils import info, phase_var
-from utils.dataloader_utils import dataloader_setup, extract_targets_from_dataloader, create_data_loader
-from utils.training_utils import train_n_epochs
-from utils.model_utils import save_model, model_setup
+from utils.data.dataloader_utils import dataloader_setup, extract_targets_from_dataloader, create_data_loader
+from utils.training.training_utils import train_n_epochs
+from utils.model.model_utils import save_model, model_setup
 
 
 def training(config_settings):

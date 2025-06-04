@@ -6,9 +6,9 @@ from simulation.caches.FIFOCache import FIFOCache
 from simulation.caches.LFUCache import LFUCache
 from simulation.caches.LRUCache import LRUCache
 from simulation.simulator import simulate_cache_policy
-from utils.graph_utils import plot_hit_miss_rate_over_time
+from utils.evaluation.graph_utils import plot_hit_miss_rate_over_time
 from utils.log_utils import info
-from utils.report_utils import print_system_evaluation_report
+from utils.evaluation.report_utils import print_system_evaluation_report
 
 
 def run_simulations(config_settings):

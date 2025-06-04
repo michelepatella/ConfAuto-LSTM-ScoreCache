@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 from sklearn.metrics import cohen_kappa_score, classification_report, confusion_matrix
-from utils.inference_utils import _infer_batch
+from utils.model.inference_utils import _infer_batch
 from utils.log_utils import info, debug
 
 
@@ -236,7 +236,7 @@ def _compute_model_standalone_metrics(
     return metrics
 
 
-def compute_eviction_mistake_rate(
+def _calculate_eviction_mistake_rate(
         metrics_logger,
         mistake_window=500
 ):
@@ -280,7 +280,7 @@ def compute_eviction_mistake_rate(
         else 0
 
 
-def compute_prefetch_hit_rate(
+def _calculate_prefetch_hit_rate(
         prefetch_hits,
         tot_prefetch,
 ):
@@ -315,7 +315,7 @@ def compute_prefetch_hit_rate(
     return prefetch_hit_rate
 
 
-def calculate_hit_miss_rate(counters):
+def _calculate_hit_miss_rate(counters):
     """
     Method to calculate hit and miss rate.
     :param counters: A counter used while simulating a cache policy
@@ -343,7 +343,9 @@ def calculate_hit_miss_rate(counters):
     return hit_rate, miss_rate
 
 
-def calculate_prefetching_avg_latency(autoregressive_latencies):
+def _calculate_prefetching_avg_latency(
+        autoregressive_latencies
+):
     """
     Method to calculate prefetching average latency.
     :return: Prefetching average latency.
@@ -404,21 +406,21 @@ def compute_cache_metrics(
     (
         hit_rate,
         miss_rate
-    ) = calculate_hit_miss_rate(
+    ) = _calculate_hit_miss_rate(
         counters
     )
 
     # component evaluation
-    prefetch_hit_rate = compute_prefetch_hit_rate(
+    prefetch_hit_rate = _calculate_prefetch_hit_rate(
         counters['hits'] - counters['hits_cold_start'],
         tot_prefetch
     )
-    eviction_mistake_rate = compute_eviction_mistake_rate(
+    eviction_mistake_rate = _calculate_eviction_mistake_rate(
         metrics_logger
     )
 
     # calculate avg prefetching average
-    avg_prefetching_latency = calculate_prefetching_avg_latency(
+    avg_prefetching_latency = _calculate_prefetching_avg_latency(
         autoregressive_latencies
     )
 

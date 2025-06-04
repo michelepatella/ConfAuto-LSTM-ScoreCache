@@ -1,5 +1,5 @@
 import numpy as np
-from data_generation.patterns_generator import _generate_pattern_requests
+from data_generation.generators.patterns_generator import _generate_pattern_requests
 from data_generation.zipf_calculator import _calculate_zipf_distribution_probs
 from utils.log_utils import info, debug
 

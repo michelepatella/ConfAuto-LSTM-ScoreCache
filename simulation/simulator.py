@@ -2,11 +2,11 @@ from tqdm import tqdm
 from simulation.lstm_policy_handler import handle_lstm_cache_policy
 from simulation.preprocessing import preprocess_data
 from utils.simulation_utils import search_key
-from utils.AccessLogsDataset import AccessLogsDataset
-from utils.dataloader_utils import dataloader_setup
+from utils.data.AccessLogsDataset import AccessLogsDataset
+from utils.data.dataloader_utils import dataloader_setup
 from utils.log_utils import info, debug
-from utils.evaluation_utils import compute_cache_metrics
-from utils.model_utils import trained_model_setup
+from utils.evaluation.evaluation_utils import compute_cache_metrics
+from utils.model.model_utils import trained_model_setup
 
 
 def _setup_simulation(

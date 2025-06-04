@@ -3,8 +3,8 @@ import time
 import numpy as np
 from torch.nn.functional import softmax
 from utils.simulation_utils import search_key
-from utils.AccessLogsDataset import AccessLogsDataset
-from utils.inference_utils import calculate_confidence_intervals, autoregressive_rollout
+from utils.data.AccessLogsDataset import AccessLogsDataset
+from utils.model.inference_utils import calculate_confidence_intervals, autoregressive_rollout
 from utils.log_utils import info
 
 
