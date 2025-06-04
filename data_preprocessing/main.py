@@ -1,5 +1,5 @@
-from data_preprocessing.cleaner import _remove_missing_values
-from data_preprocessing.feature_engineering import build_features
+from data_preprocessing.cleaner import remove_missing_values
+from data_preprocessing.features_engineering import build_features
 from utils.logs.log_utils import info, phase_var
 from utils.data.dataset.dataset_loader import load_dataset
 from utils.data.dataset.dataset_saver import save_dataset
@@ -20,7 +20,7 @@ def data_preprocessing(config_settings):
     df = load_dataset(config_settings)
 
     # remove missing values
-    df_no_missing_values = _remove_missing_values(df)
+    df_no_missing_values = remove_missing_values(df)
 
     # feature engineering
     df_final = build_features(

@@ -1,7 +1,7 @@
 from utils.logs.log_utils import info, debug
 
 
-def _remove_missing_values(df):
+def remove_missing_values(df):
     """
     Method to remove missing values from a dataframe.
     :param df: The dataframe to remove missing values from.
