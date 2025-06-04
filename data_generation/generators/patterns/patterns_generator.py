@@ -1,4 +1,4 @@
-from data_generation.generators.patterns.access_pattern_generator import _generate_access_pattern
+from data_generation.generators.patterns.access_pattern_generator import generate_access_pattern
 from data_generation.generators.patterns.temporal_pattern_generator import generate_temporal_pattern
 from utils.logs.log_utils import debug, info
 import numpy as np
@@ -79,7 +79,7 @@ def generate_pattern_requests(
             total_time = day * period + time_in_day
 
             # generate request
-            request = _generate_access_pattern(
+            request = generate_access_pattern(
                 probs,
                 key_range,
                 total_time,

@@ -2,7 +2,7 @@ import numpy as np
 from utils.logs.log_utils import info
 
 
-def _generate_access_pattern(
+def generate_access_pattern(
         probs,
         key_range,
         current_time,
