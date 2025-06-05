@@ -1,5 +1,5 @@
 from data_preprocessing.features_engineering.features_builder import build_features
-from data_preprocessing.utils.cleaner import remove_missing_values
+from data_preprocessing.utils.dataset_cleaner import remove_missing_values
 from utils.logs.log_utils import info, phase_var
 from utils.data.dataset.dataset_loader import load_dataset
 from utils.data.dataset.dataset_saver import save_dataset

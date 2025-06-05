@@ -2,7 +2,7 @@ from tqdm import tqdm
 from utils.logs.log_utils import info, debug
 from validation.best_params.best_params_updater import check_and_update_best_params
 from validation.tuning.time_series_cv import compute_time_series_cv
-from validation.search_space.combinator import get_parameters_combination
+from validation.search_space.search_space_combinator import get_parameters_combination
 
 
 def compute_grid_search(

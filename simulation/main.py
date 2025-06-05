@@ -5,7 +5,7 @@ from simulation.caches.utils.CacheWrapper import CacheWrapper
 from simulation.caches.baseline_caches.FIFOCache import FIFOCache
 from simulation.caches.baseline_caches.LFUCache import LFUCache
 from simulation.caches.baseline_caches.LRUCache import LRUCache
-from simulation.runner.simulation_runner import run_cache_simulation
+from simulation.running.simulation_runner import run_cache_simulation
 from simulation.evaluation.visualization.simulation_plotter import plot_hit_miss_rate_over_time
 from utils.logs.log_utils import info
 from simulation.evaluation.visualization.simulation_reporter import generate_caches_evaluation_report

@@ -4,7 +4,7 @@ from utils.logs.log_utils import info, phase_var
 from utils.data.dataloader.dataloader_utils import extract_targets_from_dataloader
 from utils.data.dataloader.dataloader_setup import dataloader_setup
 from utils.data.dataloader.dataloader_builder import create_data_loader
-from utils.training.train_n_epochs import train_n_epochs
+from utils.training.n_epochs_trainer import train_n_epochs
 from utils.model.setup.model_setup import model_setup
 from training.utils.model_saver import save_model
 
