@@ -28,7 +28,7 @@ def calculate_key_scores(
                 # calculate the final score as a combination of
                 # probability of a key of being used and CIs related
                 # to that prediction
-                score += prob_matrix[t, k] * (1 + (conf_matrix[t, k] - 0.5))
+                score += prob_matrix[t, k] * (conf_matrix[t, k] + 0.5)
             scores[k] = score
 
         # normalize scores in [0,1]
