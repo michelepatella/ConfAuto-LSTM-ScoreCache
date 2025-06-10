@@ -82,16 +82,17 @@ def get_parameters_combination(config_settings):
 
         # check if there is at least a parameter combination found
         if not param_combinations:
-            raise ValueError("❌ No parameters combination found.")
+            raise ValueError("No parameters combination found.")
 
         # show a successful message
         info("🟢 Parameters combined together.")
 
         return param_combinations
-
-    except (
-            KeyError,
-            TypeError,
-            ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while generating parameter combinations: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")

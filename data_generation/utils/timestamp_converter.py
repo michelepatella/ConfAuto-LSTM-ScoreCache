@@ -15,12 +15,14 @@ def timestamps_to_hours(timestamps):
     try:
         # consider timestamps as hours of the day
         timestamps = np.array(timestamps) / 3600.0
-    except (
-        NameError,
-        TypeError,
-        ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while converting timestamps to hours of the day: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Timestamps converted.")

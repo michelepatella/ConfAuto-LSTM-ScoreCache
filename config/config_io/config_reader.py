@@ -32,11 +32,15 @@ def get_config(
         info(f"🟢 {keys} read.")
 
         return value
-    except (
-            KeyError,
-            TypeError,
-            IndexError,
-            AttributeError,
-            ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while reading config file: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")

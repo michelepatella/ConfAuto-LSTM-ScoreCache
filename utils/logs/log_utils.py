@@ -54,14 +54,18 @@ def info(
             extra={"phase": phase_var.get()},
             **kwargs
         )
-    except (
-            KeyError,
-            ValueError,
-            LookupError,
-            TypeError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while logging info message: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except LookupError as e:
+        raise LookupError(f"LookupError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
 
 def debug(
@@ -83,11 +87,15 @@ def debug(
             extra={"phase": phase_var.get()},
             **kwargs
         )
-    except (
-            KeyError,
-            ValueError,
-            LookupError,
-            TypeError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while logging debug message: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except LookupError as e:
+        raise LookupError(f"LookupError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")

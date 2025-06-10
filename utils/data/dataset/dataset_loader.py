@@ -22,13 +22,10 @@ def load_dataset(config_settings):
     try:
         # load the dataset
         df = pd.read_csv(dataset_path)
-    except (
-            ValueError,
-            EmptyDataError,
-            ParserError,
-            UnicodeDecodeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while loading dataset: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # debugging
     debug(f"⚙️ Shape of the dataset loaded: {df.shape}.")

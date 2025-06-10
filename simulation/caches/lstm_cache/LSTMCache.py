@@ -28,12 +28,14 @@ class LSTMCache(BaseCache):
         )
         try:
             self.threshold_score = config_settings.threshold_score
-        except (
-                AttributeError,
-                TypeError,
-                NameError
-        ) as e:
-            raise RuntimeError(f"❌ Error while initializing LSTM cache: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # debugging
         debug(f"⚙️Threshold score: {self.threshold_score}.")
@@ -123,12 +125,14 @@ class LSTMCache(BaseCache):
             self.store.pop(key, None)
             self.expiry.pop(key, None)
             self.scores.pop(key, None)
-        except (
-            AttributeError,
-            TypeError,
-            NameError
-        ) as e:
-            raise RuntimeError(f"❌ Error while evicting the key: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # print a successful message
         info("🟢 LSTM-based cache key evicted.")
@@ -160,12 +164,14 @@ class LSTMCache(BaseCache):
                 current_time,
                 self.ttl
             )
-        except (
-            AttributeError,
-            TypeError,
-            NameError
-        ) as e:
-            raise RuntimeError(f"❌ Error while putting the key in cache: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # print a successful message
         info("🟢 LSTM-based cache key inserted.")
@@ -289,11 +295,13 @@ class LSTMCache(BaseCache):
                 # print a successful message
                 info("🟢 Key inserted.")
                 return True
-
-        except (
-                AttributeError,
-                TypeError,
-                KeyError,
-                ValueError
-        ) as e:
-            raise RuntimeError(f"❌ Error while putting the key into the cache: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except KeyError as e:
+            raise KeyError(f"KeyError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")

@@ -60,12 +60,14 @@ def simulation_setup(
         try:
             model.eval()
             model.to(device)
-        except (
-                AttributeError,
-                NameError,
-                TypeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while setting model evaluation and moving it to device: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
     # print a successful message
     info("🟢 Simulation setup completed.")

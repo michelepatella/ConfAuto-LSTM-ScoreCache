@@ -51,13 +51,14 @@ def calculate_class_weights(
                 computed_weights
         ):
             class_weights[cls] = weight
-
-    except (
-            ValueError,
-            TypeError,
-            IndexError
-    ) as e:
-        raise RuntimeError(f"❌ Error while calculating the class weights: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Class weights calculated.")

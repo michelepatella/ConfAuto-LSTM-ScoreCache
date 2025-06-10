@@ -40,14 +40,18 @@ def preprocess_row(row):
 
         # extract the key
         key = y_key.item()
-    except (
-            AttributeError,
-            IndexError,
-            TypeError,
-            ValueError,
-            NameError
-    ) as e:
-        raise RuntimeError(f"❌ Error while preprocessing data for cache simulation: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # print a successful message
     info("🟢 Cache simulation preprocessing completed.")

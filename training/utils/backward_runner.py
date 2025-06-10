@@ -20,11 +20,12 @@ def compute_backward(
 
         # optimize backward pass
         optimizer.step()
-    except (
-            AttributeError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error during backpropagation: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Backward pass computed.")

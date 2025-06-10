@@ -239,4 +239,4 @@ def prepare_config():
         )
 
     except Exception as e:
-        raise RuntimeError(f"❌ Error while preparing configuration: {e}.")
+        raise RuntimeError(f"RuntimeError: {e}.")

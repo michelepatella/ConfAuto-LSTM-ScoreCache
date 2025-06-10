@@ -18,8 +18,16 @@ def get_config_abs_path():
             'config.yaml'
         )
         abs_path = os.path.abspath(path)
-    except (NameError, TypeError, AttributeError, OSError) as e:
-        raise RuntimeError(f"❌ Error while getting the config absolute path: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except OSError as e:
+        raise OSError(f"OSError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # debugging
     debug(f"⚙️ Absolute path of config file: {abs_path}.")

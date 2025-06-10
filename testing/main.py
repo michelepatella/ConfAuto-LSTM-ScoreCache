@@ -74,14 +74,18 @@ def testing(config_settings):
         plot_confusion_matrix(
             metrics["confusion_matrix"]
         )
-    except (
-        KeyError,
-        NameError,
-        TypeError,
-        AttributeError,
-        ValueError,
-    ) as e:
-        raise RuntimeError(f"❌ Error while showing testing results: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # print a successful message
     info("✅ Testing completed.")

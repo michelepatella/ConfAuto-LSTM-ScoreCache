@@ -27,9 +27,9 @@ def generate_dynamic_requests(config_settings):
 
         # check validity of generated alpha values
         if len(alpha_values) != config_settings.zipf_time_steps:
-            raise ValueError("❌ alpha_values length must match time_steps.")
+            raise ValueError("alpha_values length must match time_steps.")
         if any(alpha <= 0 for alpha in alpha_values):
-            raise ValueError("❌ All alpha values must be positive.")
+            raise ValueError("All alpha values must be positive.")
 
         # calculate the time step duration
         time_step_duration = (
@@ -74,14 +74,16 @@ def generate_dynamic_requests(config_settings):
         # debugging
         debug(f"⚙️Requests length: {len(requests)}.")
         debug(f"⚙️timestamps length: {len(timestamps)}.")
-
-    except (
-        AttributeError,
-        TypeError,
-        ValueError,
-        ZeroDivisionError
-    ) as e:
-        raise RuntimeError(f"❌ Error while generating dynamic data: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except ZeroDivisionError as e:
+        raise ZeroDivisionError(f"ZeroDivisionError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Dynamic requests generated.")

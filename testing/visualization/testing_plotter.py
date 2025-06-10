@@ -66,13 +66,14 @@ def plot_precision_recall_curve(
         )
         plt.show()
         plt.close()
-
-    except (
-            ValueError,
-            TypeError,
-            IndexError
-    ) as e:
-        raise RuntimeError(f"❌ Error while building the precision-recall curve: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Precision-Recall curve built.")
@@ -110,12 +111,14 @@ def plot_confusion_matrix(confusion_matrix):
         plt.tight_layout()
         plt.show()
         plt.close()
-    except (
-            AttributeError,
-            TypeError,
-            ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while building the confusion matrix plot: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Confusion matrix built.")

@@ -56,13 +56,16 @@ def generate_model_evaluation_report(
         print(f"Weighted Avg F1-Score:        {weighted.get('f1-score', 0):.4f}")
 
         print("\n" + "=" * 85 + "\n")
-    except (
-            TypeError,
-            AttributeError,
-            KeyError,
-            ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while printing evaluation report: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # print a successful message
     info("🟢 Evaluation report printed.")

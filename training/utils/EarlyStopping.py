@@ -29,12 +29,14 @@ class EarlyStopping:
             self.best_avg_loss = np.inf
             self.counter = 0
             self.early_stop = False
-        except (
-                NameError,
-                AttributeError,
-                TypeError
-        ) as e:
-            raise RuntimeError(f"❌ Error setting the class fields: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # debugging
         debug(f"⚙️ Patience for Early Stopping: {self.patience}.")
@@ -79,12 +81,14 @@ class EarlyStopping:
                 if self.counter >= self.patience:
                     # early stopping is triggered
                     self.early_stop = True
-        except (
-                AttributeError,
-                TypeError,
-                NameError
-        ) as e:
-            raise RuntimeError(f"❌ Error while calling Early Stopping's object: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # show a successful message
         info(f"🟢 EarlyStopping check completed.")

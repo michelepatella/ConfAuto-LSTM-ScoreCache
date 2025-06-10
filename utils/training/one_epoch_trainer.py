@@ -46,7 +46,7 @@ def train_one_epoch(
 
             # check loss
             if loss is None:
-                raise ValueError("❌ Error while training the model due to None loss returned.")
+                raise ValueError("Error while training the model due to None loss returned.")
 
             # backward pass
             compute_backward(
@@ -57,15 +57,18 @@ def train_one_epoch(
             training_loader.set_postfix(
                 loss=loss.item()
             )
-
-    except (
-            AttributeError,
-            TypeError,
-            ValueError,
-            StopIteration,
-            AssertionError
-    ) as e:
-        raise RuntimeError(f"❌ Error while training the model (one-epoch): {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except StopIteration as e:
+        raise StopIteration(f"StopIteration: {e}.")
+    except AssertionError as e:
+        raise AssertionError(f"AssertionError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Epoch training completed.")

@@ -41,16 +41,20 @@ def calculate_key_scores(
             k: (v - min_score) / score_range
             for k, v in scores.items()
         }
-
-    except (
-            IndexError,
-            ZeroDivisionError,
-            ValueError,
-            TypeError,
-            KeyError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while calculating key scores: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except ZeroDivisionError as e:
+        raise ZeroDivisionError(f"ZeroDivisionError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # print a successful message
     info("🟢 Key scores calculated.")

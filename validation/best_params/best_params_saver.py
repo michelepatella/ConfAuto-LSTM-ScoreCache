@@ -24,23 +24,24 @@ def save_best_params(
         for section, params in best_params.items():
             # check section and fields (and subfields, if any)
             if section not in config_settings.config_file:
-                raise KeyError(f"❌ Section '{section}' not found in config.")
+                raise KeyError(f" Section '{section}' not found in config.")
             if not isinstance(params, dict):
-                raise ValueError(f"❌ Parameters for section '{section}' must be a dict. "
+                raise ValueError(f" Parameters for section '{section}' must be a dict. "
                                  f"Received: {type(params)}.")
             if not isinstance(config_settings.config_file[section], dict):
-                raise ValueError(f"❌ Config section '{section}' must be a dict. "
+                raise ValueError(f" Config section '{section}' must be a dict. "
                                  f"Found: {type(config_settings.config_file[section])}.")
 
             # update parameter
             config_settings.config_file[section].update(params)
-
-    except (
-            KeyError,
-            TypeError,
-            ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while saving the best parameters: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # update the best parameters on the config file
     new_config_settings = update_config(

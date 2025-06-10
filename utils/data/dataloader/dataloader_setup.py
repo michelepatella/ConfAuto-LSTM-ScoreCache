@@ -38,15 +38,18 @@ def dataloader_setup(
             batch_size=batch_size,
             shuffle=shuffle
         )
-    except (
-            FileNotFoundError,
-            IOError,
-            OSError,
-            ValueError,
-            TypeError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while set upping the loader: {e}.")
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"FileNotFoundError: {e}.")
+    except IOError as e:
+        raise IOError(f"IOError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Loader setup completed.")

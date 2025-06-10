@@ -39,14 +39,18 @@ def trace_hits_misses(
             'total_hits': counters['hits'],
             'total_misses': counters['misses']
         })
-    except (
-            KeyError,
-            TypeError,
-            AttributeError,
-            IndexError,
-            ZeroDivisionError
-    ) as e:
-        raise RuntimeError(f"❌ Error while keeping track of the no. of hits and misses: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except ZeroDivisionError as e:
+        raise ZeroDivisionError(f"ZeroDivisionError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # print a successful message
     info("🟢 Number of hits and misses counted.")

@@ -43,14 +43,17 @@ def extract_seed_seq(
         seed_seq = testing_window_dataset.__getitem__(
             len(testing_window_dataset) - 1
         )
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
-    except (
-        NameError,
-        AttributeError,
-        TypeError,
-        IndexError
-    ) as e:
-        raise RuntimeError(f"❌ Error while extracting seed sequence: {e}.")
 
     # print a successful message
     info("🟢 Seed sequence extracted.")

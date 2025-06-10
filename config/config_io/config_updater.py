@@ -38,13 +38,16 @@ def _merge_config(
                 _merge_config(config[key], value)
             else:
                 config[key] = value
-    except (
-            AttributeError,
-            TypeError,
-            KeyError,
-            RecursionError
-    ) as e:
-        raise RuntimeError(f"❌ Error while merging config file: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except RecursionError as e:
+        raise RecursionError(f"RecursionError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Config merged.")
@@ -91,13 +94,16 @@ def update_config(
                 sort_keys=False,
                 allow_unicode=True
             )
-    except (
-            FileNotFoundError,
-            PermissionError,
-            IsADirectoryError,
-            OSError
-    ) as e:
-        raise RuntimeError(f"❌ Error while updating the config file: {e}.")
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"FileNotFoundError: {e}.")
+    except PermissionError as e:
+        raise PermissionError(f"PermissionError: {e}.")
+    except IsADirectoryError as e:
+        raise IsADirectoryError(f"IsADirectoryError: {e}.")
+    except OSError as e:
+        raise OSError(f"OSError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Config file updated.")

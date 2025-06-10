@@ -35,10 +35,13 @@ def build_features(
         info("🟢 Feature engineering completed.")
 
         return df
-    except (
-            KeyError,
-            TypeError,
-            ValueError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error during feature engineering: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")

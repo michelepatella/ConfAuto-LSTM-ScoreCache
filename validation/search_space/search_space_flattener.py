@@ -37,12 +37,14 @@ def flatten_search_space(d, parent_key=()):
                     new_key,
                     values
                 ))
-    except (
-            TypeError,
-            RecursionError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while making flatten the search space: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except RecursionError as e:
+        raise RecursionError(f"RecursionError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Search space flatten.")

@@ -67,15 +67,18 @@ def find_key_candidates(
 
         # select the keys
         keys = list(scores.keys())
-
-    except (
-            IndexError,
-            ZeroDivisionError,
-            TypeError,
-            KeyError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while finding key candidates: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except ZeroDivisionError as e:
+        raise ZeroDivisionError(f"ZeroDivisionError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # print a successful message
     info("🟢 Key candidates found.")

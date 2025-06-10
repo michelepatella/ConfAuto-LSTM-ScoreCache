@@ -31,7 +31,7 @@ def encode_time_trigonometrically(
         df = df.drop(columns=[time_column])
 
     except KeyError as e:
-        raise RuntimeError(f"❌ Error during trigonometrical encoding: {e}.")
+        raise KeyError(f"KeyError: {e}.")
 
     # show successful message
     info("🟢 Time column encoded trigonometrically.")

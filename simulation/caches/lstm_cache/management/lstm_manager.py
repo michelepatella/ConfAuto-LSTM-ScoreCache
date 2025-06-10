@@ -126,15 +126,20 @@ def manage_lstm_cache(
                 # increase the number of prefetched keys
                 if is_cached:
                     num_insertion += 1
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
-    except (
-            IndexError,
-            KeyError,
-            ValueError,
-            AttributeError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while handling LSTM-based cache policy: {e}.")
+
 
     # print a successful message
     info(f"🟢 LSTM-based cache policy management completed.")

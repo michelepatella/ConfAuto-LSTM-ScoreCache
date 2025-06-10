@@ -48,12 +48,12 @@ def compute_model_metrics(
             targets,
             predictions
         )
-
-    except (
-            ValueError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while computing metrics: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # collect metrics
     metrics = {

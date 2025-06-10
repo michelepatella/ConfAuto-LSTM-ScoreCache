@@ -111,15 +111,18 @@ def train_n_epochs(
         if validation_loader is not None:
             # load best weights to the model
             model.load_state_dict(best_model_wts)
-
-    except (
-            NameError,
-            AttributeError,
-            TypeError,
-            ValueError,
-            LookupError
-    ) as e:
-        raise RuntimeError(f"❌ Error while training the model (n-epochs): {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except LookupError as e:
+        raise LookupError(f"LookupError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # debugging
     debug(f"⚙️ Number of epochs run: {num_epochs_run}.")

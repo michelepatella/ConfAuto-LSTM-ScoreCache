@@ -62,14 +62,17 @@ def run_simulations(config_settings):
                 config_settings
             )
             results.append(result)
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
-    except (
-            KeyError,
-            TypeError,
-            ValueError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while running cache simulations: {e}.")
 
     # show results
     generate_caches_evaluation_report(results)

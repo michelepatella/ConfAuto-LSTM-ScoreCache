@@ -35,13 +35,16 @@ class BaseCache(ABC):
             self.expiry = {}
             self.scores = {}
             self._last_put_time = None
-        except (
-            AttributeError,
-            TypeError,
-            NameError,
-            ValueError
-        ) as e:
-            raise RuntimeError(f"❌ Error while initializing the base cache: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # print a successful message
         info("🟢 Base cache initialized.")
@@ -69,12 +72,14 @@ class BaseCache(ABC):
                     key in self.expiry and
                     self.expiry[key] < current_time
             )
-        except (
-                AttributeError,
-                TypeError,
-                KeyError
-        ) as e:
-            raise RuntimeError(f"❌ Error while checking if the key is expired: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except KeyError as e:
+            raise KeyError(f"KeyError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
 
     def _remove_expired_keys(
@@ -113,14 +118,18 @@ class BaseCache(ABC):
                     k,
                     current_time
                 )
-        except (
-            AttributeError,
-            TypeError,
-            NameError,
-            KeyError,
-            ValueError
-        ) as e:
-            raise RuntimeError(f"❌ Error while removing expired keys from cache: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except KeyError as e:
+            raise KeyError(f"KeyError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # print a successful message
         info("🟢 Expired key removed.")
@@ -183,12 +192,14 @@ class BaseCache(ABC):
                 info("🟢 Key access finished.")
 
                 return False
-        except (
-                AttributeError,
-                TypeError,
-                KeyError
-        ) as e:
-            raise RuntimeError(f"❌ Error while checking if the key is cached: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except KeyError as e:
+            raise KeyError(f"KeyError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
 
     def _on_evict(
@@ -211,7 +222,7 @@ class BaseCache(ABC):
             )
             debug(f"⚙️ Key {key} evicted by cachetools.")
         except Exception as e:
-            raise RuntimeError(f"❌ Error while logging cachetools eviction: {e}")
+            raise RuntimeError(f"RuntimeError: {e}")
 
 
     @abstractmethod

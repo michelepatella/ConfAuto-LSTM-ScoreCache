@@ -79,7 +79,7 @@ def infer_batch(
 
                 # check the loss
                 if loss is None:
-                    raise ValueError("❌ Error while computing average loss due to loss equals None.")
+                    raise ValueError("Error while computing average loss due to loss equals None.")
 
                 # update the total loss
                 total_loss += loss.item()
@@ -98,15 +98,18 @@ def infer_batch(
                 all_outputs.extend(
                     outputs_mean.cpu()
                 )
-
-    except (
-            IndexError,
-            ValueError,
-            KeyError,
-            AttributeError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Batch inferred.")

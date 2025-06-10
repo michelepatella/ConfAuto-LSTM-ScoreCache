@@ -25,22 +25,24 @@ def compute_forward(
 
         # debugging
         debug(f"⚙️ Target batch: {y_key}.")
-    except (
-            ValueError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while error unpacking data: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     try:
         # move data to the device
         x_features = x_features.to(device)
         x_keys = x_keys.to(device)
         y_key = y_key.to(device)
-    except (
-            AttributeError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while moving data to device: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     try:
         # calculate the outputs
@@ -53,11 +55,12 @@ def compute_forward(
         debug(f"⚙️ Input batch shape: {x_features.shape}.")
         debug(f"⚙️ Input keys shape: {x_keys.shape}")
         debug(f"⚙️ Model output shape: {outputs.shape}.")
-    except (
-            TypeError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error during model inference: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     loss = None
     if criterion is not None:
@@ -70,11 +73,12 @@ def compute_forward(
 
             # debugging
             debug(f"⚙️ Loss: {loss.item()}.")
-        except (
-                TypeError,
-                ValueError
-        ) as e:
-            raise RuntimeError(f"❌ Error while calculating loss: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Forward pass computed.")

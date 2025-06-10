@@ -37,10 +37,13 @@ def find_key(
             # print a successful message
             info(f"🟢 Key search completed.")
             return False
-    except (
-        NameError,
-        TypeError,
-        AttributeError,
-        ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while searching a key into the cache: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")

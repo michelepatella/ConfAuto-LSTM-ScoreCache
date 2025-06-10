@@ -14,15 +14,16 @@ def create_dataframe(columns):
     try:
         # check the columns
         if any(col is None for col in columns):
-            raise ValueError("❌ One or more elements in 'columns' are None.")
+            raise ValueError("One or more elements in 'columns' are None.")
 
         # create the dataframe
         df = pd.DataFrame(columns)
-    except (
-            ValueError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while creating the dataframe: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info(f"🟢 Dataframe created.")

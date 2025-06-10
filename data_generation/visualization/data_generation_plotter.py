@@ -16,7 +16,7 @@ def plot_zipf_loglog(requests):
     try:
         # check requests list
         if not requests:
-            raise ValueError("❌ Request list is empty, cannot generate plot.")
+            raise ValueError(" Request list is empty, cannot generate plot.")
 
         # count the requests
         key_counts = Counter(requests)
@@ -55,14 +55,18 @@ def plot_zipf_loglog(requests):
         plt.tight_layout()
         plt.show()
         plt.close()
-    except (
-            NameError,
-            AttributeError,
-            TypeError,
-            ValueError,
-            IndexError
-    ) as e:
-        raise RuntimeError(f"❌ Error while building Zipg log-log plot: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Zipf log-log plot built.")
@@ -127,7 +131,7 @@ def plot_daily_profile(
         plt.close()
 
     except Exception as e:
-        raise RuntimeError(f"❌ Error while building daily request profile: {e}.")
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     info("🟢 Daily request profile plot built.")
 
@@ -207,13 +211,16 @@ def plot_key_usage_heatmap(
         plt.tight_layout()
         plt.show()
         plt.close()
-    except (
-            AttributeError,
-            TypeError,
-            ValueError,
-            IndexError
-    ) as e:
-        raise RuntimeError(f"❌ Error while building the confusion matrix plot: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show successful message
     info("🟢 Key usage heatmap for all 24 hours plotted.")

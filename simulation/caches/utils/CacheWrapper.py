@@ -42,12 +42,12 @@ class CacheWrapper(BaseCache):
 
             # debugging
             debug(f"⚙️Key {key} cached.")
-
-        except (
-                AttributeError,
-                TypeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while caching the key: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # print a successful message
         info("🟢 Key inserted.")

@@ -94,14 +94,17 @@ def plot_hit_miss_rate_over_time(results):
         )
         plt.show()
         plt.close()
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
-    except (
-            KeyError,
-            TypeError,
-            ValueError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while building the hit rate and miss rate plot: {e}.")
 
     # show a successful message
     info("🟢 Hit rate and miss rate plot built.")

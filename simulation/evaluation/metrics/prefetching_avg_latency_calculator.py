@@ -28,14 +28,18 @@ def calculate_prefetching_avg_latency(
                         sum(valid_latencies)/
                         len(valid_latencies)
                 )
-    except (
-        TypeError,
-        ZeroDivisionError,
-        AttributeError,
-        NameError,
-        ValueError,
-    ) as e:
-        raise RuntimeError(f"❌ Error while calculating average prefetching latency: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ZeroDivisionError as e:
+        raise ZeroDivisionError(f"ZeroDivisionError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Prefetching average latency calculated.")

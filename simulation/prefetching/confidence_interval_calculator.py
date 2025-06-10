@@ -42,14 +42,16 @@ def calculate_confidence_interval(
             outputs_tensor +
             z_score * outputs_std
         )
-
-    except (
-            NameError,
-            TypeError,
-            ValueError,
-            IndexError
-    ) as e:
-        raise RuntimeError(f"❌ Error while calculating confidence intervals: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Confidence intervals calculated.")

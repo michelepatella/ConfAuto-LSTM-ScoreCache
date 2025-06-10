@@ -24,15 +24,20 @@ def save_model(
             model.state_dict(),
             config_settings.model_save_path
         )
-    except (
-            KeyError,
-            TypeError,
-            ValueError,
-            AttributeError,
-            FileNotFoundError,
-            PermissionError
-    ) as e:
-        raise RuntimeError(f"❌ Error while saving the model: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"FileNotFoundError: {e}.")
+    except PermissionError as e:
+        raise PermissionError(f"PermissionError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info(f"🟢 Model save to '{config_settings.model_save_path}'.")

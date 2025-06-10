@@ -28,12 +28,14 @@ def create_data_loader(
             batch_size=batch_size,
             shuffle=shuffle
         )
-    except (
-            TypeError,
-            ValueError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while creating data loader: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Data loader created.")

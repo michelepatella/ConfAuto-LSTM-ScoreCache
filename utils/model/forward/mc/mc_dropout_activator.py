@@ -23,11 +23,12 @@ def enable_mc_dropout(model):
 
         # set dropout enabled
         model.use_mc_dropout = True
-    except (
-            AttributeError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while inferring the batch: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 MC dropout enabled.")

@@ -39,14 +39,18 @@ def manage_cold_start(
                 cold_start=True,
                 config_settings=config_settings
             )
-    except (
-        NameError,
-        AttributeError,
-        TypeError,
-        ValueError,
-        KeyError
-    ) as e:
-        raise RuntimeError(f"❌ Error while handling cache cold start: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # print a successful message
     info("🟢 Cold start handled.")

@@ -51,12 +51,12 @@ def generate_pattern_requests(
 
     # check timestamps and probabilities
     if len(timestamps) == 0:
-        raise ValueError("❌ timestamps list cannot be empty.")
+        raise ValueError(" timestamps list cannot be empty.")
     if (
         not isinstance(probs, np.ndarray) or
         not np.isclose(np.sum(probs), 1.0)
     ):
-        raise ValueError("❌ probs must be a numpy array summing to 1.")
+        raise ValueError(" probs must be a numpy array summing to 1.")
 
     try:
         # to make the process deterministic
@@ -95,16 +95,20 @@ def generate_pattern_requests(
             debug(f"⚙️ Number of request generated: {i+1}.")
             debug(f"⚙️ Request generated: {request}.")
             debug(f"⚙️ Timestamps generated: {timestamps}.")
-
-    except (
-            ValueError,
-            TypeError,
-            IndexError,
-            ZeroDivisionError,
-            AttributeError,
-            MemoryError
-    ) as e:
-        raise RuntimeError(f"❌ Error while generating data access pattern: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except ZeroDivisionError as e:
+        raise ZeroDivisionError(f"ZeroDivisionError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except MemoryError as e:
+        raise MemoryError(f"MemoryError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info(f"🟢 Pattern requests generated.")

@@ -105,14 +105,17 @@ def autoregressive_rollout(
             debug(f"⚙️ New Prediction: {pred_key}.")
             debug(f"⚙️ At time: {last_time}.")
             debug(f"⚙️ Variance: {outputs_var}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
-    except (
-            AttributeError,
-            IndexError,
-            TypeError,
-            ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while performing autoregressive rollout: {e}.")
 
     # show a successful message
     info("🟢 Autoregressive rollout completed.")

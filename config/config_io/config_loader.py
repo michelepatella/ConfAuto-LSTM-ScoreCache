@@ -19,14 +19,18 @@ def load_config():
         # load the file
         with open(config_path, "r") as f:
             config_file = yaml.safe_load(f)
-    except (
-            FileNotFoundError,
-            PermissionError,
-            IsADirectoryError,
-            OSError,
-            YAMLError
-    ) as e:
-        raise RuntimeError(f"❌ Error while loading config file: {e}.")
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"FileNotFoundError: {e}.")
+    except PermissionError as e:
+        raise PermissionError(f"PermissionError: {e}.")
+    except IsADirectoryError as e:
+        raise IsADirectoryError(f"IsADirectoryError: {e}.")
+    except OSError as e:
+        raise OSError(f"OSError: {e}.")
+    except YAMLError as e:
+        raise YAMLError(f"YAMLError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Config file loaded.")

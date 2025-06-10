@@ -29,12 +29,12 @@ def check_and_update_best_params(
             avg_loss is None or
             not isinstance(avg_loss, (float, int))
         ):
-            raise ValueError(f"❌ avg_loss must be a float or int. Received: {avg_loss}.")
+            raise ValueError(f" avg_loss must be a float or int. Received: {avg_loss}.")
         if (
             best_avg_loss is not None and
             not isinstance(best_avg_loss, (float, int))
         ):
-            raise ValueError(f"❌ best_avg_loss must be a float or int. Received: {best_avg_loss}.")
+            raise ValueError(f" best_avg_loss must be a float or int. Received: {best_avg_loss}.")
 
         # if the average loss is less than the best one,
         # update it and the best parameters
@@ -58,9 +58,8 @@ def check_and_update_best_params(
         else:
             info("ℹ️ No best average loss improvement, best "
                   "parameters not updated.")
-
     except ValueError as e:
-        raise RuntimeError(f"❌ Error while checking and/or updating best parameters: {e}.")
+        raise ValueError(f"ValueError: {e}.")
 
     # print a successful message
     info("🟢 Best parameters check and update completed.")

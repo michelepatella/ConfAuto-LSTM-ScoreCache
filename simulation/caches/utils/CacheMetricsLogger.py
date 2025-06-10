@@ -16,12 +16,14 @@ class CacheMetricsLogger:
             self.access_events = defaultdict(list)
             self.evicted_keys = defaultdict(list)
             self.prefetch_predictions = {}
-        except (
-            NameError,
-            TypeError,
-            AttributeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while instantiating cache metrics logger: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # print a successful message
         info("🟢 CacheMetricsLogger initialized.")
@@ -44,12 +46,14 @@ class CacheMetricsLogger:
 
         try:
             self.put_events.setdefault(key, []).append((time, ttl))
-        except (
-            NameError,
-            TypeError,
-            AttributeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while keeping track of put events: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # print a successful message
         info("🟢 Key insertion traced.")
@@ -71,12 +75,14 @@ class CacheMetricsLogger:
 
         try:
             self.access_events[key].append(time)
-        except (
-            AttributeError,
-            NameError,
-            TypeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while keeping track of access events: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # print a successful message
         info("🟢 Key access traced.")
@@ -98,12 +104,14 @@ class CacheMetricsLogger:
 
         try:
             self.evicted_keys[key].append(time)
-        except (
-            AttributeError,
-            NameError,
-            TypeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while keeping track of evictions: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # print a successful message
         info("🟢 Key eviction traced.")
@@ -125,12 +133,14 @@ class CacheMetricsLogger:
 
         try:
             self.prefetch_predictions[time] = predicted_keys
-        except (
-            AttributeError,
-            TypeError,
-            NameError
-        ) as e:
-            raise RuntimeError(f"❌ Error while keeping track of prefetched predictions: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # print a successful message
         info("🟢 Key prefetching traced.")

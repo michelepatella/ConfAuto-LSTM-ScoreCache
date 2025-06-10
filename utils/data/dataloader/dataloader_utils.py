@@ -16,12 +16,14 @@ def extract_targets_from_dataloader(data_loader):
         # extract targets from data loader
         for _, _, targets in data_loader:
             all_targets.append(targets)
-    except (
-            TypeError,
-            ValueError,
-            IndexError
-    ) as e:
-        raise RuntimeError(f"❌ Error while extracting targets from loader: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # debugging
     debug(f"⚙️ Target extracted: {all_targets}.")

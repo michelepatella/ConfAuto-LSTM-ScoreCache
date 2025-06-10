@@ -62,12 +62,14 @@ def model_setup(
             learning_rate,
             config_settings
         )
-    except (
-            TypeError,
-            ValueError,
-            KeyError
-    ) as e:
-        raise RuntimeError(f"❌ Error while setting up the model: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Model setup completed.")

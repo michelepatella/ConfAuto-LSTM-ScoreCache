@@ -19,13 +19,16 @@ def remove_missing_values(df):
 
         # size of the dataset without missing values
         final_len = len(df)
-    except (
-            AttributeError,
-            TypeError,
-            ValueError,
-            KeyError
-    ) as e:
-        raise RuntimeError(f"❌ Error while removing missing values from the dataset: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # debugging
     debug(f"⚙️Number of rows with missing values: {initial_len - final_len}.")

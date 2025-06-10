@@ -36,12 +36,14 @@ def set_nested_dict(d, keys, value):
         # set the desired value in the last position
         # indicate by the sequence
         current[keys[-1]] = value
-    except (
-            TypeError,
-            IndexError,
-            KeyError
-    ) as e:
-        raise RuntimeError(f"❌ Error while setting a value in a nested dictionary: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Nested dictionary setting completed.")

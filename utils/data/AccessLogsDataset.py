@@ -27,12 +27,14 @@ class AccessLogsDataset(Dataset):
             # define the splitting's index
             split_idx = int(len(self.data) *
             config_settings.training_perc)
-        except (
-                AttributeError,
-                TypeError,
-                ValueError
-        ) as e:
-            raise RuntimeError(f"❌ Error while defining the dataset splitting's index: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # debugging
         debug(f"⚙️ Split index: {split_idx}.")
@@ -43,12 +45,14 @@ class AccessLogsDataset(Dataset):
                 self.data = self.data[:split_idx]
             else:
                 self.data = self.data[split_idx:]
-        except (
-                TypeError,
-                IndexError,
-                AttributeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while splitting the dataset: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except IndexError as e:
+            raise IndexError(f"IndexError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # show a successful message
         info("🟢 Dataset split.")
@@ -82,13 +86,14 @@ class AccessLogsDataset(Dataset):
             debug(f"⚙️ Feature(s): {self.features}.")
             debug(f"⚙️ Target: {self.target}.")
             debug(f"⚙️ Sequence length: {self.seq_len}.")
-
-        except (
-                AttributeError,
-                TypeError,
-                IndexError
-        ) as e:
-            raise RuntimeError(f"❌ Error setting the class fields: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except IndexError as e:
+            raise IndexError(f"IndexError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # show a successful message
         info("🟢 AccessLogsDataset fields set.")
@@ -118,15 +123,20 @@ class AccessLogsDataset(Dataset):
             df[df.columns[-1]] = df[df.columns[-1]].astype(int) - 1
             # set data
             self.data = df.copy()
-        except (
-                AttributeError,
-                KeyError,
-                ValueError,
-                TypeError,
-                IndexError,
-                MemoryError
-        ) as e:
-            raise RuntimeError(f"❌ Error setting data of the dataset by copying it: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except KeyError as e:
+            raise KeyError(f"KeyError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except IndexError as e:
+            raise IndexError(f"IndexError: {e}.")
+        except MemoryError as e:
+            raise MemoryError(f"MemoryError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # split the dataset to assign data properly
         self._split_dataset(
@@ -191,15 +201,18 @@ class AccessLogsDataset(Dataset):
             debug(f"⚙️ Feature vector shape: {x_features.shape}.")
             debug(f"⚙️ Key shape: {x_keys.shape}")
             debug(f"⚙️ Target: {y_key.item()}.")
-
-        except (
-                IndexError,
-                KeyError,
-                ValueError,
-                TypeError,
-                AttributeError
-        ) as e:
-            raise RuntimeError(f"❌ Error retrieving item at index {idx}: {e}.")
+        except IndexError as e:
+            raise IndexError(f"IndexError: {e}.")
+        except KeyError as e:
+            raise KeyError(f"KeyError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # show a successful message
         info("🟢 AccessLogsDataset retrieved.")

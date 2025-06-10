@@ -78,14 +78,16 @@ class LSTM(nn.Module):
                 self.num_keys,
                 self.embedding_dim
             )
-
-        except (
-                AttributeError,
-                KeyError,
-                TypeError,
-                ValueError
-        ) as e:
-            raise RuntimeError(f"❌ Error while setting class fields: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except KeyError as e:
+            raise KeyError(f"KeyError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # show a successful message
         info("🟢 LSTM fields set.")
@@ -132,33 +134,38 @@ class LSTM(nn.Module):
                 bidirectional=self.bidirectional,
                 proj_size=self.proj_size
             )
-        except (
-                TypeError,
-                ValueError,
-                KeyError
-        ) as e:
-            raise RuntimeError(f"❌ Error while instantiating LSTM model: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except KeyError as e:
+            raise KeyError(f"KeyError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         try:
             self.mc_dropout_layer = nn.Dropout(
                 p=self.dropout
             )
-        except (
-                TypeError,
-                AttributeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while instantiating the Dropout layer: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
+
         try:
             # fully-connected layer (linear)
             self.fc = nn.Linear(
                 self.hidden_size,
                 self.num_keys
             )
-        except (
-                TypeError,
-                ValueError
-        ) as e:
-            raise RuntimeError(f"❌ Error while instantiating the FC layer: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # show a successful message
         info("🟢 LSTM initialized.")
@@ -183,7 +190,7 @@ class LSTM(nn.Module):
             x_features is None or
             x_keys is None
         ):
-            raise ValueError("❌ Input features cannot be None.")
+            raise ValueError("Input features cannot be None.")
 
         # debugging
         debug(f"⚙️ Input features shape: {x_features.shape}.")
@@ -201,11 +208,12 @@ class LSTM(nn.Module):
                 (x_features, embedded_keys),
                 dim=-1
             )
-        except (
-                RuntimeError,
-                TypeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while constructing the LSTM input: {e}.")
+        except RuntimeError as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # show a successful message
         info("🟢 LSTM input retrieved.")
@@ -240,13 +248,14 @@ class LSTM(nn.Module):
             # check if using dropout
             if self.use_mc_dropout:
                 lstm_out = self.mc_dropout_layer(lstm_out)
-
-        except (
-                AttributeError,
-                TypeError,
-                ValueError
-        ) as e:
-            raise RuntimeError(f"❌ Error while passing data through LSTM: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # debugging
         debug(f"⚙️ Output shape: {lstm_out.shape}.")
@@ -254,11 +263,12 @@ class LSTM(nn.Module):
         try:
             # get the logits from the LSTM output
             logits = self.fc(lstm_out[:, -1, :])
-        except (
-                IndexError,
-                AttributeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while processing LSTM output: {e}.")
+        except IndexError as e:
+            raise IndexError(f"IndexError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # debugging
         debug(f"⚙️ Logits shape: {logits.shape}.")

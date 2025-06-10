@@ -35,11 +35,12 @@ def compute_time_series_cv(
         tscv = TimeSeriesSplit(
             n_splits=config_settings.cv_num_folds
         )
-    except (
-            ValueError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while instantiating Time Series Split: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     fold_losses = []
     # iterate over the training set
@@ -83,13 +84,16 @@ def compute_time_series_cv(
                 extract_targets_from_dataloader(training_loader),
                 config_settings
             )
-        except (
-            KeyError,
-            TypeError,
-            AttributeError,
-            ValueError
-        ) as e:
-            raise RuntimeError(f"❌ Error while performing setup for training: {e}.")
+        except KeyError as e:
+            raise KeyError(f"KeyError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # train the model
         avg_loss, _ = train_n_epochs(
@@ -108,12 +112,14 @@ def compute_time_series_cv(
             # save avg loss
             if avg_loss is not None:
                 fold_losses.append(avg_loss)
-        except (
-            NameError,
-            AttributeError,
-            TypeError
-        ) as e:
-            raise RuntimeError(f"❌ Error while saving average loss: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Time Series Cross-Validation completed.")
@@ -121,11 +127,13 @@ def compute_time_series_cv(
     try:
         # calculate the average of loss
         final_avg_loss = np.mean(fold_losses)
-    except (
-        NameError,
-        TypeError,
-        ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while calculating final average loss: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     return final_avg_loss

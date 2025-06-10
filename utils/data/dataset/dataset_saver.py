@@ -28,14 +28,14 @@ def save_dataset(
             dataset_path,
             index=False
         )
+    except OSError as e:
+        raise OSError(f"OSError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
-        # show a successful message
-        info(f"🟢 Dataset saved to '{dataset_path}'.")
-    except (
-            OSError,
-            PermissionError,
-            FileNotFoundError,
-            ValueError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while saving the dataset: {e}.")
+    # show a successful message
+    info(f"🟢 Dataset saved to '{dataset_path}'.")

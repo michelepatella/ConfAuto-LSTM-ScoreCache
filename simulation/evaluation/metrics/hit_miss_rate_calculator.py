@@ -15,13 +15,16 @@ def calculate_hit_miss_rate(counters):
         total = counters['hits'] + counters['misses']
         hit_rate = counters['hits'] / total * 100
         miss_rate = counters['misses'] / total * 100
-    except (
-            KeyError,
-            ZeroDivisionError,
-            TypeError,
-            AttributeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while calculating hit and miss rate: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except ZeroDivisionError as e:
+        raise ZeroDivisionError(f"ZeroDivisionError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Hit and miss rate calculated.")

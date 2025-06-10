@@ -56,14 +56,18 @@ def split_training_set(
             training_set,
             validation_indices
         )
-    except (
-        TypeError,
-        ValueError,
-        AttributeError,
-        IndexError,
-        NameError
-    ) as e:
-        raise RuntimeError(f"❌ Error while splitting training set into training and validation sets: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Training set split.")

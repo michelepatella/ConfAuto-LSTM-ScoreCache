@@ -65,14 +65,17 @@ def mc_forward_passes(
             dim=0,
             unbiased=False
         ) if mc_dropout_samples > 1 else None
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
-    except (
-            TypeError,
-            AttributeError,
-            IndexError,
-            ValueError
-    ) as e:
-        raise ValueError(f"❌ Error while computing MC forward passes: {e}.")
 
     # show a successful message
     info("🟢 MC forward passes computed.")

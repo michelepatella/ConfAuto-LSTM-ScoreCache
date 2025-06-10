@@ -21,11 +21,12 @@ def calculate_kappa_statistic(
             targets,
             predictions
         )
-    except (
-            ValueError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while calculating kappa statistic: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Kappa statistic calculated.")

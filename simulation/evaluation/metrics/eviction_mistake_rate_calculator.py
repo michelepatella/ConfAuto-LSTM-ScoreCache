@@ -30,12 +30,14 @@ def calculate_eviction_mistake_rate(
                 ]
                 if future_accesses:
                     mistakes += 1
-    except (
-        AttributeError,
-        TypeError,
-        ZeroDivisionError
-    ) as e:
-        raise RuntimeError(f"❌ Error while computing eviction mistake rate: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ZeroDivisionError as e:
+        raise ZeroDivisionError(f"ZeroDivisionError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Eviction mistake rate computed.")

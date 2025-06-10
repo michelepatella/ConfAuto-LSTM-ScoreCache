@@ -40,14 +40,18 @@ def build_optimizer(
                 lr=learning_rate,
                 momentum=config_settings.momentum
             )
-    except (
-            ValueError,
-            TypeError,
-            UnboundLocalError,
-            KeyError,
-            AssertionError
-    ) as e:
-        raise RuntimeError(f"❌ Error while building optimizer: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except UnboundLocalError as e:
+        raise UnboundLocalError(f"UnboundLocalError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except AssertionError as e:
+        raise AssertionError(f"AssertionError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Optimizer building completed.")

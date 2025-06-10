@@ -45,13 +45,15 @@ def generate_caches_evaluation_report(results):
                 f"{prefetch_rate:22}"
             )
         print("\n" + "=" * 155 + "\n")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except KeyError as e:
+        raise KeyError(f"KeyError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
-    except (
-            TypeError,
-            KeyError,
-            ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while printing system simulation report: {e}.")
 
     # print a successful message
     info("🟢 System simulation report printed.")

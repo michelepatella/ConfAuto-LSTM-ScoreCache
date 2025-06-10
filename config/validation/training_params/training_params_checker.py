@@ -15,7 +15,7 @@ def check_general_training_params(
         ("batch_size", training_batch_size)
     ]:
         if not (isinstance(val, int) and val > 0):
-            raise RuntimeError(f"❌ 'training.general.{name}' must be an integer > 0.")
+            raise RuntimeError(f"'training.general.{name}' must be an integer > 0.")
 
 
 def check_optimizer_params(
@@ -34,28 +34,28 @@ def check_optimizer_params(
     """
     # check optimizer type
     if optimizer_type not in {"adam", "adamw", "sgd"}:
-        raise RuntimeError("❌ 'training.optimizer.type' must 'adam', 'adamw', or 'sgd'.")
+        raise RuntimeError("'training.optimizer.type' must 'adam', 'adamw', or 'sgd'.")
 
     # check learning rate
     if (
         not isinstance(learning_rate, float)
         or learning_rate <= 0
     ):
-        raise RuntimeError("❌ 'training.optimizer.learning_rate' must be a float > 0.")
+        raise RuntimeError("'training.optimizer.learning_rate' must be a float > 0.")
 
     # check weight decay
     if (
         not isinstance(weight_decay, float)
         or weight_decay < 0
     ):
-        raise RuntimeError("❌ 'training.optimizer.weight_decay' must be a float >= 0.")
+        raise RuntimeError("'training.optimizer.weight_decay' must be a float >= 0.")
 
     # check momentum
     if (
         not isinstance(momentum, float)
         or not (0 <= momentum <= 1)
     ):
-        raise RuntimeError("❌ 'training.optimizer.momentum' must be a float between 0.0 and 1.0.")
+        raise RuntimeError("'training.optimizer.momentum' must be a float between 0.0 and 1.0.")
 
 
 def check_training_early_stopping_params(
@@ -73,11 +73,11 @@ def check_training_early_stopping_params(
         not isinstance(training_early_stopping_patience, int)
         or training_early_stopping_patience < 0
     ):
-        raise RuntimeError("❌ 'training.early_stopping.patience' must be an integer >= 0.")
+        raise RuntimeError("'training.early_stopping.patience' must be an integer >= 0.")
 
     # check delta
     if (
         not isinstance(training_early_stopping_delta, (int, float)) or
         training_early_stopping_delta < 0
     ):
-        raise RuntimeError("❌ 'training.early_stopping.delta' must be a number >= 0.")
+        raise RuntimeError("'training.early_stopping.delta' must be a number >= 0.")

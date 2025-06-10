@@ -44,15 +44,18 @@ def calculate_top_k_accuracy(
 
         # calculate the accuracy
         accuracy = correct / len(targets)
-
-    except (
-            RuntimeError,
-            IndexError,
-            TypeError,
-            ZeroDivisionError,
-            ValueError
-    ) as e:
-        raise RuntimeError(f"❌ Error while computing top-k accuracy: {e}.")
+    except RuntimeError as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except ZeroDivisionError as e:
+        raise ZeroDivisionError(f"ZeroDivisionError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Top-k accuracy computed.")

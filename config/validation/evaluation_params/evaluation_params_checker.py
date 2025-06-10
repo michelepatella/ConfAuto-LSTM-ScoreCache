@@ -9,4 +9,4 @@ def check_evaluation_params(top_k):
         not isinstance(top_k, int) or
         top_k <= 0
     ):
-        raise RuntimeError("❌ 'evaluation.top_k' must be an integer > 0.")
+        raise RuntimeError("'evaluation.top_k' must be an integer > 0.")

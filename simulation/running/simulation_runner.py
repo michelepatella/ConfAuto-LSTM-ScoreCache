@@ -57,15 +57,20 @@ def run_cache_simulation(
 
             # keep track of the no. of hits so far
             prev_hits = counters['hits']
-        except (
-            NameError,
-            IndexError,
-            TypeError,
-            KeyError,
-            AttributeError,
-            ValueError
-        ) as e:
-            raise RuntimeError(f"❌ Error while running simulation: {e}.")
+        except NameError as e:
+            raise NameError(f"NameError: {e}.")
+        except IndexError as e:
+            raise IndexError(f"IndexError: {e}.")
+        except TypeError as e:
+            raise TypeError(f"TypeError: {e}.")
+        except KeyError as e:
+            raise KeyError(f"KeyError: {e}.")
+        except AttributeError as e:
+            raise AttributeError(f"AttributeError: {e}.")
+        except ValueError as e:
+            raise ValueError(f"ValueError: {e}.")
+        except Exception as e:
+            raise RuntimeError(f"RuntimeError: {e}.")
 
         # extrapolate timestamp and key from the row
         (

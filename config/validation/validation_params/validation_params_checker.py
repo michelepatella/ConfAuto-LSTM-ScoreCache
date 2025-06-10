@@ -13,14 +13,14 @@ def check_cv_params(
         cv_num_folds <= 1 or
         not isinstance(cv_num_folds, int)
     ):
-        raise RuntimeError("❌ 'validation.cross_validation.num_folds' must be an integer > 1.")
+        raise RuntimeError("'validation.cross_validation.num_folds' must be an integer > 1.")
 
     # check number of epochs
     if (
         validation_num_epochs <= 0 or
         not isinstance(validation_num_epochs, int)
     ):
-        raise RuntimeError("❌ 'validation.cross_validation.num_epochs' must be an integer > 0.")
+        raise RuntimeError("'validation.cross_validation.num_epochs' must be an integer > 0.")
 
 
 def check_validation_early_stopping_params(
@@ -41,7 +41,7 @@ def check_validation_early_stopping_params(
          validation_early_stopping_delta, (int, float), 0)
     ]:
         if not (isinstance(val, t) and val >= min_val):
-            raise RuntimeError(f"❌ '{name}' must be a "
+            raise RuntimeError(f"'{name}' must be a "
                                f"{'number' if t == (int, float) else 'integer'} >= {min_val}.")
 
 
@@ -82,4 +82,4 @@ def check_search_space_params(
             or not all(isinstance(v, typ) for v in val)
             or not all(cond(v) for v in val)
         ):
-            raise RuntimeError(f"❌ '{name}' must be {msg}.")
+            raise RuntimeError(f"'{name}' must be {msg}.")

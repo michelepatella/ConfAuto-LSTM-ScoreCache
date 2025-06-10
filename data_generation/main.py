@@ -40,12 +40,14 @@ def data_generation(config_settings):
                 "request": requests,
             }
         )
-    except (
-        NameError,
-        TypeError,
-        IndexError
-    ) as e:
-        raise RuntimeError(f"❌ Error while creating the dataframe: {e}.")
+    except NameError as e:
+        raise NameError(f"NameError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except IndexError as e:
+        raise IndexError(f"IndexError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # save the dataset
     save_dataset(

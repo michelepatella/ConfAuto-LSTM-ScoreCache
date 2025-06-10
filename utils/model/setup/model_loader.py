@@ -26,14 +26,18 @@ def load_model(
             config_settings.model_save_path,
             map_location=device
         ))
-    except (
-            FileNotFoundError,
-            PermissionError,
-            AttributeError,
-            ValueError,
-            TypeError
-    ) as e:
-        raise RuntimeError(f"❌ Error while loading the model: {e}.")
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"FileNotFoundError: {e}.")
+    except PermissionError as e:
+        raise PermissionError(f"PermissionError: {e}.")
+    except AttributeError as e:
+        raise AttributeError(f"AttributeError: {e}.")
+    except ValueError as e:
+        raise ValueError(f"ValueError: {e}.")
+    except TypeError as e:
+        raise TypeError(f"TypeError: {e}.")
+    except Exception as e:
+        raise RuntimeError(f"RuntimeError: {e}.")
 
     # show a successful message
     info("🟢 Model loaded.")
