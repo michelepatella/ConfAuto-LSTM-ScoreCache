@@ -10,7 +10,7 @@ class LRUCache(Cache):
             callback=None
     ):
         """
-        Method to instantiate a LRU cache.
+        Method to instantiate an LRU cache.
         :param maxsize: Max size of the LRU cache.
         :param callback: The callback object.
         """
